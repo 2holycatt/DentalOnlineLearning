@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <!-- <link rel="stylesheet" href="/css/event.css"> -->
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
+  <%- include("./partials/header.ejs")%>
+  <style>
+    * {
+      box-sizing: border-box !important;
+    }
+
+    .card-1,
+    .card-body-1 {
+
+      border: none !important;
+
+    }
+
+    .descp {
+      text-indent: 2em;
+      margin: 0 2em;
+    }
+
+
+    .rectangle-141 {
+      background-color: white;
+      border-radius: 0.75em;
+      box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+      height: 14.6875em;
+      left: 4.6875em;
+      top: 37.3125em;
+      width: 39.125em;
+      width: 75%;
+      margin: 2em 2em;
+    }
+
+    .home-div,
+    .a-home {
+      color: #999999 !important;
+    }
+
+    .above-nav {
+      background-color: white !important;
+      border-bottom: 1px solid #999999;
+    }
+
+    .status-a {
+      color: #404258 !important;
+    }
+
+    .list-lesson-p {
+      color: #8A2BE2;
+
+    }
+
+    .list-lesson-p-span {
+      color: #4B0082;
+    }
+
+    .each-lesson {
+      border-top: 0.1em solid #8A2BE2;
+    }
+
+    /* .each-lesson-a {
+      border-top: 0.1em solid #8A2BE2;
+    } */
+
+    .aside-right {
+      background-color: #dde6ed1a;
+      height: 100%;
+    }
+
+    .manange-bar {
+      border-radius: 0.5em;
+      justify-content: space-between !important;
+    }
+
+    .add-button {
+      border-radius: 0.5em !important;
+      width: 20% !important;
+      height: auto !important;
+
+    }
+
+    .lesson-content {
+      height: fit-content !important;
+      border-radius: 1em !important;
+
+      justify-content: center !important;
+      /* border-top: 0.5em solid #8A2BE2; */
+    }
+
+    .lesson-nothing {
+      margin: 25% 0 !important;
+      padding: 0 !important;
+    }
+
+    .each-lesson-a {
+      text-decoration: none !important;
+    }
+
+    .each-lesson-a:hover .each-lesson {
+      border-left: 0.2em solid #8A2BE2 !important;
+      /* background-color: #404258 !important; */
+    }
+
+    .card-img-top {
+      box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+    }
+
+    .setColumn {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr !important;
+    }
+
+    .card-a {
+      text-decoration: none !important;
+
+    }
+
+    .card-a:hover,
+    .card-a:hover .p-lesson-name {
+      color: #007bff !important;
+      transition: 0.5s;
+    }
+
+    .card-a:hover .bi-book {
+      color: #007bff !important;
+      transition: color 0.5s;
+    }
+
+    .bi-book-fill {
+      display: none;
+    }
+
+    .card-a:hover .bi-book-fill {
+      display: inline-block !important;
+      transition: 0.5s;
+    }
+
+    .card-a:hover .bi-book {
+      display: none;
+      transition: 0.5s;
+    }
+
+    .manange-bar,
+    .lesson-content {
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+      border-radius: 0.5em;
+    }
+
+    .card-1 {
+      width: 90% !important;
+      height: fit-content !important;
+      transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+      cursor: pointer;
+      border-radius: 0.5em;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+
+    }
+
+    .card-1:hover {
+      transform: scale(1.05);
+    }
+
+    .card-header {
+      border-right: 1px solid #EAEFF4;
+      border-bottom: 1px solid #EAEFF4;
+
+    }
+
+    .a-list-1,
+    .bi-1 {
+      color: #8A2BE2 !important;
+    }
+
+
+    #dashboardSelector {
+      border-color: #EAEFF4;
+      border-radius: 0.5em;
+      background-color: white !important;
+      font-size: smaller;
+      padding: 0.5em !important;
+    }
+
+    #dashboardSelector option {
+      color: #404258;
+      background-color: white !important;
+
+
+    }
+
+    .sectionSelector {
+      border-color: #EAEFF4;
+      border-radius: 0.5em;
+      background-color: white !important;
+      font-size: smaller;
+      padding: 0.5em !important;
+    }
+
+    .sectionSelector option {
+      color: #404258;
+      background-color: white !important;
+
+    }
+
+    /* .set-border {
+      border-bottom: 1px solid #EAEFF4;
+      padding-bottom: 1em !important;
+
+    } */
+
+    .set-border-bottom {
+      border-bottom: 1px solid #EAEFF4;
+      margin-bottom: 1em !important;
+
+    }
+
+    .lesson-bar {
+      border-left: 0.25em solid #007bff !important;
+      padding-left: 0.5em !important;
+      margin-right: 0.5em !important;
+
+    }
+
+    .a-add {
+      color: #007bff !important;
+    }
+
+    .a-add:hover {
+      color: #0053ac !important;
+    }
+
+    .graph-container {
+      margin-right: 1em !important;
+      margin-bottom: 2em !important;
+    }
+
+    .graph-container-2 {
+      margin-bottom: 1em !important;
+      /* background-color: #5D87FF; */
+      color: white;
+    }
+
+    .graph-container-3 {
+      margin-bottom: 1em !important;
+      /* background-color: #5D87FF; */
+      color: #7C8FAC;
+    }
+
+    .graph-container-4 {
+      margin-bottom: 1em !important;
+      /* background-color: #5D87FF; */
+      color: #7C8FAC;
+    }
+
+    .graph-label {
+      border-bottom: 1px solid #EAEFF4;
+    }
+
+    .progress-bar-white {
+      background-color: white;
+      /* color: #5D87FF; */
+      /* ถ้าต้องการให้ข้อความเป็นสีดำเพื่อความชัดเจน */
+
+    }
+
+    .progress {
+      margin-top: 1em !important;
+    }
+
+    .success-eachday {
+      color: #7C8FAC !important;
+    }
+
+    .success-eachday:hover {
+      color: #0053ac !important;
+      transition: 0.3s;
+    }
+
+    .quiz-label {
+      font-size: small;
+    }
+  </style>
+
+</head>
+
+<body>
+  <%- include("./partials/nav.ejs")%>
+  <!-- <div class="above-nav d-flex px-4 py-3">
+    <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
+      <i class="bi bi-house mx-2"></i>
+      <a href="/adminIndex" class="a-home">
+        <p class="m-0">หน้าหลัก &nbsp;&nbsp;></p>
+      </a>
+    </div>
+    <a href="#" class="status-a mx-2 my-0 align-middle">
+      <p class="m-0">บทเรียน</p>
+    </a>
+  </div> -->
+  <div class="main-content d-flex">
+    <% const pageName = "adminLessonIndex" %>
+    <%- include("./partials/lessonsList.ejs", { pageName: pageName })%>
+    <!-- <div style="width: 20%;"><p class="w-100">&nbsp;</p></div> -->
+    <div class="aside-right bg-white h-auto p-4" style="width: 80%;">
+      <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
+        <p class="fw-bold fs-3 lesson-bar">แดชบอร์ด (Dashboard)</p>
+        <div class="d-flex justify-content-center" style="align-items: center;">
+          <label class="mx-2" for="dashboardSelector">แดชบอร์ดของ: </label>
+          <select id="dashboardSelector">
+            <option value="/adminIndex/adminDashboard" selected>
+              ทั้งหมด
+              </a>
+            </option>
+            <option value="/adminIndex">
+              บทเรียน
+            </option>
+            <option value="/adminIndex">
+              แบบทดสอบ
+            </option>
+            <option value="/adminIndex">
+              งานที่มอบหมาย
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="lesson-content p-4 bg-white w-100 my-4">
+        <div style="border-bottom: 1px solid #EAEFF4;" class="mb-3">
+          <p class="fs-4 fw-bold mb-2 text-primary">
+            <i class="bi bi-pie-chart-fill"></i>
+            <span class="">ภาพรวมของบทเรียน</span>
+            <span class="">(Overview of Lessons)</span>
+          </p>
+        </div>
+        <div class="d-flex mb-3" style="align-items: center;">
+          <div class="">
+            <label class="quiz-label" for="dashboardSelector">รายวิชา: </label>
+            <% if (subjects) { %>
+            <select class="sectionSelector" onchange="submitSubjectId(this.value)">
+              <% subjects.forEach(subject => { %>
+              <option value="<%= subject._id %>" <%= subject._id.equals(latestSubject._id) ? 'selected' : '' %>>
+                <%= subject.subjectId %> <%= subject.subjectName %>
+                ปีการศึกษา: <%= subject.semester %> กลุ่ม: <%= subject.section %>
+              </option>
+              <% }) %>
+            </select>
+            <% } %>
+          </div>
+          <!-- <div class="mx-2">
+            <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
+            <select class="sectionSelector">
+              <option value="allLessons" selected>
+                ทั้งหมด
+                </a>
+              </option>
+              <option value="JavaScript">
+                1
+              </option>
+              <option value="Python">
+                2
+              </option>
+              <option value="PHP">
+                10
+              </option>
+              <option value="HTML">
+                11
+              </option>
+            </select>
+          </div> -->
+        </div>
+
+        <% if (lessonLabels.length > 0) { %>
+        <div class="row">
+          <div class="col-8">
+            <div class="graph-container shadow-sm rounded">
+              <div class="p-3 graph-label">
+                <div class="">
+                  <p class="fw-bold">กราฟแท่งแสดงความสำเร็จแต่ละบทเรียน</p>
+                  <small>จำนวนความสำเร็จของบทเรียนที่นักศึกษาทำเสร็จสิ้นไป</small>
+                </div>
+              </div>
+              <div class="w-auto">
+                <canvas id="myChart" class="h-auto w-100 p-3"></canvas>
+                <div class="d-flex" style="border-top: 1px solid #EAEFF4;">
+                  <small class="ms-auto my-2 mx-3">
+                    <a href="/adminIndex/moreDetailChart?subjectId=<%=latestSubject._id%>" class="ms-auto success-eachday">รายละเอียดเพิ่มเติม</a>
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="graph-container shadow-sm rounded">
+              <div class="p-3 graph-label">
+                <div class="mb-2">
+                  <p class="fw-bold">กราฟวงกลมแสดงความสำเร็จแต่ละบทเรียน</p>
+                  <small>เปอร์เซ็นความสำเร็จของบทเรียนที่นักศึกษาทำเสร็จสิ้นไป</small>
+                </div>
+
+              </div>
+              <div class="w-auto">
+                <canvas id="myChart2" class="h-auto w-100 px-3 py-2"></canvas>
+              </div>
+              <div class="d-flex" style="border-top: 1px solid #EAEFF4;">
+                <small class="ms-auto my-2 mx-3">
+                  <a href="/adminIndex/moreDetailChart?subjectId=<%=latestSubject._id%>" class="ms-auto success-eachday">รายละเอียดเพิ่มเติม</a>
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="graph-container-2">
+              <div class="w-auto">
+                <div class="p-3 shadow-sm rounded" style="background-color: #5D87FF;">
+                  <p class="fw-bold">ความสำเร็จของบทเรียนทั้ง <%=totalLessons%> บท</p>
+                  <small>เปอร์เซ็นความสำเร็จของทุกบทเรียนที่รวมจากจำนวนนักศึกษาทั้งหมด</small>
+                  <h1 class="text-center"><%=finalPercentageTofixed%> %</h1>
+                </div>
+              </div>
+            </div>
+            <div class="graph-container-3">
+              <div class="w-auto">
+                <div class="p-3 shadow-sm rounded">
+                  <small>จำนวนนักศึกษาที่เข้าถึงบทเรียนในวันนี้</small>
+                  <p class="fw-bold fs-4 text-black"><%=countToday%> คน</p>
+                  <small>
+                    <% if (countToday < yesterdayCount) {%>
+                    <i class="bi bi-graph-down-arrow text-danger"></i>
+                    <span class="mx-1">
+                      <%=message%> <%=percentChange%>%
+                    </span>
+                    <% } else if (countToday > yesterdayCount ) {%>
+                    <i class="bi bi-graph-up-arrow text-success"></i>
+                    <span class="mx-1">
+                      <%=message%> <%=percentChange%>%
+                    </span>
+                    <% } else if (countToday == yesterdayCount) {%>
+                    <i class="bi bi-graph-up text-primary"></i>
+                    <span class="mx-1">
+                      จำนวนเท่ากับเมื่อวาน
+                    </span>
+                    <% } %>
+
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="graph-container-4">
+              <div class="w-auto">
+                <div class="p-3 shadow-sm rounded">
+                  <div class="d-flex align-items-center pb-2 mb-2" style="border-bottom: 1px solid #EAEFF4;">
+                    <p class="fw-bold text-black mb-0">บันทึกความสำเร็จประจำวัน</p>
+                    <a href="/adminIndex/dayProgressHistory" class="ms-auto success-eachday">
+                      <small>ดูทั้งหมด</small>
+                    </a>
+                  </div>
+                  <div class="my-2">
+                    <% if (lessonFinishedToday.length > 0) {%>
+                    <ul>
+                      <% lessonFinishedToday.forEach(finishedInDay => { %>
+                      <li class="my-2">
+                        <small>
+                          <span class="date" data-date="<%= finishedInDay.finishedProgress.finishehDate %>"></span> -
+                          <span class="message"><%= finishedInDay.finishedProgress.message %></span>
+                        </small>
+                      </li>
+                      <% });%>
+                      <!-- <li class="my-2">
+                          <small>
+                            08:46 - ก้องกังวาลย์ ทำบทเรียนที่ 1 สำเร็จแล้ว
+                          </small>
+                        </li>
+                        <li class="my-2">
+                          <small>
+                            08:41 - อริญชวุธ ทำบทเรียนที่ 2 สำเร็จแล้ว
+                          </small>
+                        </li>
+                        <li class="my-2">
+                          <small>
+                            02:22 - ภูเบศ ทำบทเรียนที่ 2 สำเร็จแล้ว
+                          </small>
+                        </li>
+                        <li class="my-2">
+                          <small>
+                            01:31 - กมลวรรณ ทำบทเรียนที่ 3 สำเร็จแล้ว
+                          </small>
+                        </li>
+                        <li class="my-2">
+                          <small>
+                            00:11 - ปภินวิทย์ ทำบทเรียนที่ 5 สำเร็จแล้ว
+                          </small>
+                        </li>
+                        <li class="my-2">
+                          <._doc.finishedProgresssmall>
+                            00:10 - พลอธิป ทำบทเรียนที่ 5 สำเร็จแล้ว
+                          </._doc.finishedProgresssmall>
+                        </li> -->
+                    </ul>
+                    <% } else { %>
+                      <small>ไม่มีความคืบหน้าในวันนี้</small>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <% } else {%>
+        <div class="row">
+          <p class="">
+            ไม่สามารถสรุปภาพรวมข้อมูลของบทเรียนกับนักศึกษาได้ เนื่องจากรายวิชานี้ยังไม่มีข้อมูลบทเรียน
+          </p>
+        </div>
+        <% } %>
+
+        <!-- <script type="module" src="dimensions.js"></script> -->
+      </div>
+
+      <div class="lesson-content p-4 bg-white w-100 my-4">
+        <div style="border-bottom: 1px solid #EAEFF4;" class="mb-3">
+          <p class="fs-4 fw-bold mb-2 text-primary">
+            <i class="bi bi-pie-chart-fill"></i>
+            <span class="">ภาพรวมของแบบทดสอบ</span>
+            <span class="">(Overview of Quizes)</span>
+          </p>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <div class="graph-container shadow-sm rounded">
+              <div class="p-3 graph-label">
+                <div class="mb-2">
+                  <p class="fw-bold">แผนภูมิการกระจายของคะแนนและเวลาที่ทำได้</p>
+                  <small>ช่วงของคะแนนและเวลาที่ทำได้จากการทำแบบทดสอบ</small>
+                </div>
+                <div class="d-flex" style="align-items: center;">
+                  <div>
+                    <label class="quiz-label" for="dashboardSelector">แบบทดสอบเรื่อง: </label>
+                    <select class="sectionSelector" id="LessonSelector">
+                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="allLessons" selected>
+                        ทั้งหมด
+                        </a>
+                      </option>
+                      <option value="JavaScript">
+                        JavaScript
+                      </option>
+                      <option value="Python">
+                        Python
+                      </option>
+                      <option value="PHP">
+                        PHP
+                      </option>
+                      <option value="HTML">
+                        HTML
+                      </option>
+                    </select>
+                  </div>
+                  <div class="mx-2">
+                    <label class="quiz-label" for="dashboardSelector">ปีการศึกษา: </label>
+                    <select class="sectionSelector">
+                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="allLessons" selected>
+                        ทั้งหมด
+                        </a>
+                      </option>
+                      <option value="JavaScript">
+                        2560
+                      </option>
+                      <option value="Python">
+                        2561
+                      </option>
+                      <option value="PHP">
+                        2562
+                      </option>
+                      <option value="HTML">
+                        2563
+                      </option>
+                    </select>
+                  </div>
+                  <div class="mx-2">
+                    <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
+                    <select class="sectionSelector">
+                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="allLessons" selected>
+                        ทั้งหมด
+                        </a>
+                      </option>
+                      <option value="JavaScript">
+                        1
+                      </option>
+                      <option value="Python">
+                        2
+                      </option>
+                      <option value="PHP">
+                        10
+                      </option>
+                      <option value="HTML">
+                        11
+                      </option>
+                    </select>
+                  </div>
+
+
+                </div>
+              </div>
+              <div class="w-auto scatter-container">
+                <canvas id="myScatterChart" class="h-auto w-100 px-3 py-2"></canvas>
+                <div class="d-flex" style="border-top: 1px solid #EAEFF4;">
+                  <small class="ms-auto my-2 mx-3">
+                    <a href="/adminIndex/moreDetailChart?subjectId=<%=subjects._id%>" class="ms-auto success-eachday">รายละเอียดเพิ่มเติม</a>
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="graph-container shadow-sm rounded">
+              <div class="p-3 graph-label">
+                <div class="mb-2">
+                  <p class="fw-bold">กราฟแท่งแสดงความสำเร็จแต่ละแบบทดสอบ
+                  </p>
+                  <small>เปอร์เซ็นความสำเร็จของแบบทดสอบที่นักศึกษาทำเสร็จสิ้นไป</small>
+                </div>
+                <div class="d-flex" style="align-items: center;">
+                  <div class="">
+                    <label class="quiz-label" for="dashboardSelector">ปีการศึกษา: </label>
+                    <select class="sectionSelector">
+                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="allLessons" selected>
+                        ทั้งหมด
+                        </a>
+                      </option>
+                      <option value="JavaScript">
+                        2560
+                      </option>
+                      <option value="Python">
+                        2561
+                      </option>
+                      <option value="PHP">
+                        2562
+                      </option>
+                      <option value="HTML">
+                        2563
+                      </option>
+                    </select>
+                  </div>
+                  <div class="mx-2">
+                    <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
+                    <select class="sectionSelector">
+                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="allLessons" selected>
+                        ทั้งหมด
+                        </a>
+                      </option>
+                      <option value="JavaScript">
+                        1
+                      </option>
+                      <option value="Python">
+                        2
+                      </option>
+                      <option value="PHP">
+                        10
+                      </option>
+                      <option value="HTML">
+                        11
+                      </option>
+                    </select>
+                  </div>
+
+
+                </div>
+              </div>
+              <div class="w-auto">
+                <canvas id="myChart5" class="h-auto w-100 px-3 py-2"></canvas>
+              </div>
+              <div class="d-flex" style="border-top: 1px solid #EAEFF4;">
+                <small class="ms-auto my-2 mx-3">
+                  <a href="/adminIndex/moreDetailChart" class="ms-auto success-eachday">รายละเอียดเพิ่มเติม</a>
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="graph-container-2">
+              <div class="w-auto">
+                <div class="p-3 shadow-sm rounded" style="background-color: #5D87FF;">
+                  <p class="fw-bold">ความสำเร็จแบบทดสอบ 5 บท</p>
+                  <small>เปอร์เซ็นความสำเร็จทั้งหมดของแบบทดสอบที่นักศึกษาทำ</small>
+                  <div class="progress" style="height: 20px;">
+                    <div class="progress-bar progress-bar-white text-primary" role="progressbar" style="width: 41%;" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100">
+                      41%
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="graph-container-3">
+              <div class="w-auto">
+                <div class="p-3 shadow-sm rounded">
+                  <div class="d-flex align-items-center pb-3 mb-3" style="border-bottom: 1px solid #EAEFF4;">
+                    <p class="text-black fw-bold mb-0">
+                      ภาพรวมของคะแนนแบบทดสอบ
+                    </p>
+                    <select class="sectionSelector ms-auto" id="LessonSelector">
+                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="allLessons" selected>
+                        ทั้งหมด
+                      </option>
+                      <option value="JavaScript">
+                        JavaScript
+                      </option>
+                      <option value="Python">
+                        HTML
+                      </option>
+                      <option value="PHP">
+                        CSS
+                      </option>
+                      <option value="HTML">
+                        Python
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="">
+                    <div class="d-flex align-items-center">
+                      <p class="text-center">ค่าเฉลี่ยกลางของแต่ละแบบทดสอบ
+                        <span class="text-primary">(Mean)</span>
+                      </p>
+                    </div>
+
+                    <p class="fw-bold py-2 fs-4 text-warning">50.8 คะแนน</p>
+
+                  </div>
+
+                  <div class="">
+                    <div class="d-flex align-items-center">
+                      <p>คะแนนสูงสุดของแต่ละแบบทดสอบ
+                        <span class="text-primary">(Max)</span>
+                      </p>
+                    </div>
+                    <p class="fw-bold py-2 fs-4 text-success">80 คะแนน</p>
+                  </div>
+
+                  <div class="">
+                    <div class="d-flex align-items-center">
+                      <p>คะแนนต่ำสุดของแต่ละแบบทดสอบ
+                        <span class="text-primary">(Min)</span>
+                      </p>
+                    </div>
+                    <p class="fw-bold py-2 fs-4 text-danger">17 คะแนน</p>
+                  </div>
+                  <div class="d-flex pt-2 justify-content-center" style="border-top: 1px solid #EAEFF4">
+                    <small class="ms-auto mx-3">
+                      <a href="/adminIndex/moreDetailChart" class="ms-auto success-eachday">รายละเอียดเพิ่มเติม</a>
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="graph-container-4">
+              <div class="w-auto">
+                <div class="p-3 shadow-sm rounded">
+                  <div class="d-flex align-items-center pb-2 mb-2" style="border-bottom: 1px solid #EAEFF4;">
+                    <p class="fw-bold text-black mb-0">ประวัติการทำแบบทดสอบประจำวัน</p>
+                    <a href="#" class="ms-auto success-eachday">
+                      <small>ดูทั้งหมด</small>
+                    </a>
+                  </div>
+                  <div class="my-2">
+                    <ul>
+                      <li class="my-2">
+                        <small>
+                          09:46 - ปภินวิทย์ ทำแบบทดสอบที่ 6 สำเร็จแล้ว
+                        </small>
+                      </li>
+                      <li class="my-2">
+                        <small>
+                          08:46 - ก้องกังวาลย์ ทำแบบทดสอบที่ 1 สำเร็จแล้ว
+                        </small>
+                      </li>
+                      <li class="my-2">
+                        <small>
+                          08:41 - อริญชวุธ ทำแบบทดสอบที่ 2 สำเร็จแล้ว
+                        </small>
+                      </li>
+                      <li class="my-2">
+                        <small>
+                          02:22 - ภูเบศ ทำแบบทดสอบที่ 2 สำเร็จแล้ว
+                        </small>
+                      </li>
+                      <li class="my-2">
+                        <small>
+                          01:31 - กมลวรรณ ทำแบบทดสอบที่ 3 สำเร็จแล้ว
+                        </small>
+                      </li>
+                      <li class="my-2">
+                        <small>
+                          00:11 - ปภินวิทย์ ทำแบบทดสอบที่ 5 สำเร็จแล้ว
+                        </small>
+                      </li>
+                      <li class="my-2">
+                        <small>
+                          00:10 - พลอธิป ทำแบบทดสอบที่ 5 สำเร็จแล้ว
+                        </small>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-content p-4 bg-white w-100 my-4">
+        <div style="border-bottom: 1px solid #EAEFF4;" class="mb-3">
+          <p class="fs-4 fw-bold mb-2 text-primary">
+            <i class="bi bi-pie-chart-fill"></i>
+            <span class="">ภาพรวมของงานที่มอบหมาย</span>
+            <span class="">(Overview of Assignments)</span>
+          </p>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <div class="graph-container shadow-sm rounded">
+              <div class="p-3 graph-label">
+                <div class="mb-2">
+                  <p class="fw-bold">กราฟแท่งแสดงความสำเร็จแต่งานที่มอบหมาย</p>
+                  <small>จำนวนความสำเร็จของงานที่มอบหมายที่นักศึกษาทำส่งแล้ว</small>
+                </div>
+                <div class="d-flex" style="align-items: center;">
+                  <div class="">
+                    <label class="quiz-label" for="dashboardSelector">ปีการศึกษา: </label>
+                    <select class="sectionSelector">
+                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="allLessons" selected>
+                        ทั้งหมด
+                        </a>
+                      </option>
+                      <option value="JavaScript">
+                        2560
+                      </option>
+                      <option value="Python">
+                        2561
+                      </option>
+                      <option value="PHP">
+                        2562
+                      </option>
+                      <option value="HTML">
+                        2563
+                      </option>
+                    </select>
+                  </div>
+                  <div class="mx-2">
+                    <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
+                    <select class="sectionSelector">
+                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="allLessons" selected>
+                        ทั้งหมด
+                        </a>
+                      </option>
+                      <option value="JavaScript">
+                        1
+                      </option>
+                      <option value="Python">
+                        2
+                      </option>
+                      <option value="PHP">
+                        10
+                      </option>
+                      <option value="HTML">
+                        11
+                      </option>
+                    </select>
+                  </div>
+
+
+                </div>
+              </div>
+              <div class="w-auto">
+                <canvas id="myChart6" class="h-auto w-100 p-3"></canvas>
+                <div class="d-flex" style="border-top: 1px solid #EAEFF4;">
+                  <small class="ms-auto my-2 mx-3">
+                    <a href="#" class="success-eachday">รายละเอียดเพิ่มเติม</a>
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="graph-container shadow-sm rounded">
+              <div class="p-3 graph-label">
+                <div class="mb-2">
+                  <p class="fw-bold">กราฟวงกลมแสดงความสำเร็จแต่ละบทเรียน</p>
+                  <small>เปอร์เซ็นความสำเร็จของบทเรียนที่นักศึกษาทำเสร็จสิ้นไป</small>
+                </div>
+                <div class="d-flex" style="align-items: center;">
+                  <div class="">
+                    <label class="quiz-label" for="dashboardSelector">ปีการศึกษา: </label>
+                    <select class="sectionSelector">
+                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="allLessons" selected>
+                        ทั้งหมด
+                        </a>
+                      </option>
+                      <option value="JavaScript">
+                        2560
+                      </option>
+                      <option value="Python">
+                        2561
+                      </option>
+                      <option value="PHP">
+                        2562
+                      </option>
+                      <option value="HTML">
+                        2563
+                      </option>
+                    </select>
+                  </div>
+                  <div class="mx-2">
+                    <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
+                    <select class="sectionSelector">
+                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="allLessons" selected>
+                        ทั้งหมด
+                        </a>
+                      </option>
+                      <option value="JavaScript">
+                        1
+                      </option>
+                      <option value="Python">
+                        2
+                      </option>
+                      <option value="PHP">
+                        10
+                      </option>
+                      <option value="HTML">
+                        11
+                      </option>
+                    </select>
+                  </div>
+
+
+                </div>
+              </div>
+              <div class="w-auto">
+                <canvas id="myChart7" class="h-auto w-100 px-3 py-2"></canvas>
+              </div>
+              <div class="d-flex" style="border-top: 1px solid #EAEFF4;">
+                <small class="ms-auto my-2 mx-3">
+                  <a href="#" class="ms-auto success-eachday">รายละเอียดเพิ่มเติม</a>
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="graph-container-2">
+              <div class="w-auto">
+                <div class="p-3 shadow-sm rounded" style="background-color: #5D87FF;">
+                  <p class="fw-bold">ความสำเร็จของงานที่มอบหมาย 9 งาน</p>
+                  <small>เปอร์เซ็นความสำเร็จทั้งหมดของงานที่มอบที่นักศึกษาส่ง</small>
+                  <div class="progress" style="height: 20px;">
+                    <div class="progress-bar progress-bar-white text-primary" role="progressbar" style="width: 10%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+                      10%
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="graph-container-3">
+              <div class="w-auto">
+                <div class="p-3 shadow-sm rounded">
+                  <small>จำนวนนักศึกษาที่ส่งงานวันนี้</small>
+                  <p class="fw-bold fs-4 text-black">0</p>
+                  <small>
+                    <i class="bi bi-graph-down-arrow text-danger"></i>
+                    <span class="mx-1">
+                      ลดลงจากเมื่อวาน +9%
+                    </span>
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="graph-container-4">
+              <div class="w-auto">
+                <div class="p-3 shadow-sm rounded">
+                  <div class="d-flex align-items-center pb-2 mb-2" style="border-bottom: 1px solid #EAEFF4;">
+                    <p class="fw-bold text-black mb-0">ประวัติการส่งงานประจำวัน</p>
+                    <a href="#" class="ms-auto success-eachday">
+                      <small>ดูทั้งหมด</small>
+                    </a>
+                  </div>
+                  <div class="my-2">
+                    <small>- ยังไม่มีนักศึกษาคนใดส่งงาน</ห>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- <script type="module" src="dimensions.js"></script> -->
+      </div>
+    </div>
+  </div>
+  <%- include("./partials/footer.ejs")%>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <script>
+    AOS.init();
+  </script>
+  <script>
+    document.querySelectorAll('.date').forEach(element => {
+      const dateValue = element.getAttribute('data-date');
+      if (dateValue) {
+        // แปลงวันที่ด้วย JavaScript
+        const date = new Date(dateValue);
+        const hoursAndMinutes = date.toLocaleTimeString('th-TH', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        element.textContent = `${hoursAndMinutes}`;
+      } 
+    });
+
+    function submitSubjectId(subjectId) {
+      if (subjectId) {
+        window.location.href = `/adminIndex/adminDashboard?subjectId=${subjectId}`;
+      }
+    }
+
+    const labels = `<%= lessonLabels %>`;
+    const splitLabels = labels.split(",");
+
+    const studentAmount = '<%= studentAmount%>';
+    const parsintStdAmount = parseInt(studentAmount, 10);
+    const data = `<%= progressData %>`;
+    const splitData = data.split(",");
+
+    const predefinedColors = [
+      'rgba(255, 99, 132)', // แดงชมพู
+      'rgba(54, 162, 235)', // น้ำเงินสด
+      'rgba(255, 206, 86)', // เหลืองอ่อน
+      'rgba(75, 192, 192)', // เขียวน้ำทะเล
+      'rgba(153, 102, 255)', // ม่วงอ่อน
+      'rgba(255, 159, 64)', // ส้มอ่อน
+      'rgba(255, 99, 71)', // แดงส้ม
+      'rgba(60, 179, 113)', // เขียวมิ้นต์
+      'rgba(135, 206, 250)', // ฟ้าอ่อน
+      'rgba(148, 0, 211)', // ม่วงเข้ม
+      'rgba(220, 20, 60)', // แดงเข้ม
+      'rgba(244, 164, 96)', // ส้มทองอ่อน
+      'rgba(100, 149, 237)', // ฟ้าเทา
+      'rgba(255, 215, 0)', // เหลืองทอง
+      'rgba(255, 105, 180)', // ชมพูสด
+      'rgba(70, 130, 180)', // ฟ้าน้ำทะเล
+      'rgba(32, 178, 170)', // เขียวน้ำทะเลเข้ม
+      'rgba(186, 85, 211)', // ม่วงสดใส
+      'rgba(238, 130, 238)', // ม่วงพาสเทล
+      'rgba(255, 140, 0)' // ส้มเข้ม
+    ];
+    const COLOR_OPACITY = 1;
+
+    // ฟังก์ชันสุ่มสีใหม่ ๆ
+    function randomColor() {
+      const MAX_COLOR_VALUE = 255;
+      const r = Math.floor(Math.random() * MAX_COLOR_VALUE);
+      const g = Math.floor(Math.random() * MAX_COLOR_VALUE);
+      const b = Math.floor(Math.random() * MAX_COLOR_VALUE);
+      return `rgba(${r}, ${g}, ${b}, ${COLOR_OPACITY})`;
+    }
+
+    // ฟังก์ชันสุ่มเลือกสีจาก predefinedColors หรือสร้างสีใหม่
+    function getRandomOrPredefinedColor() {
+      const randomIndex = Math.floor(Math.random() * 10); // เลขสุ่ม 0-9
+      // 60% โอกาสที่จะใช้สีจาก predefinedColors
+      if (randomIndex < predefinedColors.length) {
+        return predefinedColors[randomIndex];
+      } else {
+        return randomColor();
+      }
+    }
+
+    // สร้างสีแบบสุ่มสำหรับแต่ละรายการ
+    const backgroundColors = splitLabels.map(() => getRandomOrPredefinedColor());
+    // const borderColors = splitLabels.map(() => getRandomOrPredefinedColor());
+
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+      type: 'bar', // ประเภทของแผนภูมิ เช่น 'bar', 'line', 'pie', 'doughnut' ฯลฯ
+      data: {
+        labels: splitLabels, // ป้ายจาก EJS
+        datasets: [{
+          label: 'บทเรียน',
+          data: splitData, // ข้อมูลจาก EJS
+          backgroundColor: backgroundColors, // สุ่มสี background
+          // borderColor: borderColors, // สุ่มสี border
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'บทเรียน', // ป้ายกำกับแกน X
+              font: {
+                size: 16, // ขนาดตัวหนังสือของป้ายกำกับแกน X
+                family: 'Noto Sans Thai, sans-serif'
+              }
+            },
+            ticks: {
+              font: {
+                size: 14, // ขนาดตัวหนังสือของป้ายข้อมูลในแกน X
+                family: 'Noto Sans Thai, sans-serif'
+
+              }
+            }
+          },
+          y: {
+            beginAtZero: true,
+            max: parsintStdAmount, // ตั้งค่าสูงสุดของแกน Y เป็น 100
+            title: {
+              display: true,
+              text: 'จำนวนนักศึกษาที่สำเร็จบทเรียน', // ป้ายกำกับแกน Y
+              font: {
+                size: 16, // ขนาดตัวหนังสือของป้ายกำกับแกน Y
+                family: 'Noto Sans Thai, sans-serif'
+
+              }
+            },
+            ticks: {
+              font: {
+                size: 14, // ขนาดตัวหนังสือของป้ายข้อมูลในแกน Y
+                family: 'Noto Sans Thai, sans-serif'
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const ctx2 = document.getElementById('myChart2').getContext('2d');
+    const myChart2 = new Chart(ctx2, {
+      type: 'pie', // ประเภทของแผนภูมิเปลี่ยนเป็น 'pie'
+      data: {
+        labels: splitLabels, // ป้ายของข้อมูล
+        datasets: [{
+          label: 'บทเรียน',
+          data: splitData,
+          backgroundColor: backgroundColors,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false, // ไม่รักษาอัตราส่วนเดิม
+        plugins: {
+          legend: {
+            position: 'left', // เปลี่ยนตำแหน่งของ legend เป็นด้านขวา
+            align: 'start', // ให้ label เรียงเป็น block ในแนวตั้ง
+            labels: {
+              boxWidth: 20, // กำหนดความกว้างของกล่องสีใน legend
+              padding: 15 // กำหนดระยะห่างระหว่างกล่องสีและข้อความ
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                let total = context.dataset.data.reduce((acc, curr) => acc + curr, 0);
+                let percentage = ((context.raw / total) * 100).toFixed(2);
+                label += `${context.raw} (${percentage}%)`;
+                return label;
+              }
+            }
+          }
+        }
+      }
+    });
+    // window.chartData2 = `<%= (latestSubject._id) %>`;
+  </script>
+  <!-- <script src="/js/chart.js"></script> -->
+
+</body>
+
+
+</html>

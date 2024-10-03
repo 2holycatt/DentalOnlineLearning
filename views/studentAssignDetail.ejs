@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายละเอียดงานที่มอบหมาย</title>
+  <%- include("./partials/header.ejs")%>
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
+  <link rel="stylesheet" href="/css/assignment.css">
+  <link rel="stylesheet" href="/css/fixedSwal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty@4/lib/noty.css">
+  <script src="https://cdn.jsdelivr.net/npm/noty@4/lib/noty.min.js"></script>
+  <style>
+    .submit-a:hover,
+    .submit-a:hover>i {
+      color: rgb(0, 17, 173) !important;
+      transition: 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="blur-container">
+    <%- include("./partials/StudentNav.ejs")%>
+    <!-- <div class="above-nav d-flex px-4 py-3">
+      <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
+        <i class="bi bi-house mx-2"></i>
+        <a href="/adminIndex" class="a-home">
+          <p class="m-0">หน้าหลัก &nbsp;&nbsp;></p>
+        </a>
+      </div>
+      <a href="#" class="status-a mx-2 my-0 align-middle">
+        <p class="m-0">บทเรียน</p>
+      </a>
+    </div> -->
+  </div>
+  <div class="main-content d-flex w-100 h-auto">
+    <%- include("./partials/studentAside.ejs")%>
+    <div class="aside-right w-75 h-auto p-4">
+      <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
+        <p class="fw-bold fs-3 lesson-bar">งานที่มอบหมาย</p>
+        <!-- <div>
+          <a href="/adminIndex/addAssign" class="add-button btn btn-primary m-0 p-2">
+            มอบหมายงาน <i class="bi bi-file-arrow-up-fill"></i>
+          </a>
+          <a href="#" class="add-button btn btn-dark m-0 p-2">
+            นำออกข้อมูลนักศึกษา (Export file) <i class="bi bi-file-arrow-down-fill"></i>
+            </i>
+          </a>
+        </div> -->
+        <div class="col-6 d-flex justify-content-end">
+          <a href="/studentAssignment" class="btn btn-primary py-2 px-2">ย้อนกลับ <i class="bi bi-arrow-return-left"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="lesson-content bg-white w-100 p-4 my-4" style="height: fit-content;">
+        <div class="row assign-head">
+          <div class="row">
+            <div class="col-5 mb-3">
+              <p class="fs-5 fw-bold"><i class="bi bi-clipboard-fill text-primary fs-5"></i> <%=assignment.name%></p>
+            </div>
+            <% if (userSubmit) {%>
+            <div class="col-7 mb-3 d-flex justify-content-end">
+              <% if (userSubmit.sendStatus.status == "ส่งตรงเวลา") { %>
+
+              <p class="mx-2"><span class="fw-bold text-success">สถานะการส่ง: </span><%=userSubmit.sendStatus.status%></p>
+              <p class="mx-2"><span class="fw-bold text-success">คะแนนที่ได้: </span><%=userSubmit.Score%></p>
+
+              <a href="#editAssignment" class="submit-a mx-2 text-primary"><i class="bi bi-arrow-right-short text-primary"></i>
+                แก้ไขงานที่ส่ง</i>
+              </a>
+              <% } else if (userSubmit.sendStatus.status == "ส่งช้า") { %>
+              <% const day = userSubmit.sendStatus.day; %>
+              <% const hour = userSubmit.sendStatus.hour; %>
+              <% const minute = userSubmit.sendStatus.minute; %>
+
+              <p class="mx-2"><span class="fw-bold text-danger">สถานะการส่ง: </span><%=userSubmit.sendStatus.status%> <%=day%> วัน <%=hour%> ชั่วโมง <%=minute%> นาที</p>
+              <p class="mx-2"><span class="fw-bold text-success">คะแนนที่ได้: </span><%=userSubmit.Score%></p>
+              <a href="#editAssignment" class="submit-a mx-2 text-primary"><i class="bi bi-arrow-right-short text-primary"></i>
+                แก้ไขงานที่ส่ง</i>
+              </a>
+              <% } %>
+            </div>
+            <% } else if (!userSubmit) {%>
+            <div class="col-7 mb-3 d-flex justify-content-end">
+              <p class="mx-2"><span class="fw-bold text-success">สถานะการส่ง: </span>ยังไม่ส่ง</p>
+              <p class="mx-2"><span class="fw-bold text-success">คะแนนที่ได้: </span>0</p>
+              <a href="#submitForm" class="submit-a mx-2 text-primary"><i class="bi bi-arrow-right-short text-primary"></i>
+                ส่งงาน</i>
+              </a>
+            </div>
+            <% } %>
+          </div>
+          <div class="col-12 row">
+            <div class="col-4">
+              <p class="fs-6 fw-bold"><i class="fs-5 bi bi-stopwatch text-success"></i><span class="mx-1 text-success">วันที่เปิดให้ส่ง</span>: <span class="fw-normal"><%=formattedStartDate%></span></p>
+            </div>
+            <div class="col-4">
+              <p class="fs-6 fw-bold"><i class="fs-5 bi bi-stopwatch text-danger"></i><span class="mx-1 text-danger">วันที่หมดเขตส่ง</span>: <span class="fw-normal"><%=formattedDeadline%></span></p>
+            </div>
+          </div>
+        </div>
+        <div class="row my-2 desDiv">
+          <p class="fs-6 fw-bold text-primary">คำอธิบาย: </p>
+          <textarea class="form-control w-100 descriptionText" name="Description" disabled><%=assignment.Description%></textarea>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <p class="my-1 w-100 fw-bold text-primary">ไฟล์ที่เกี่ยวข้อง</p>
+            <% if (assignment.files.length > 0) { %>
+            <div class="row">
+              <div class="col-12">
+                <% const files = assignment.files%>
+                <% files.forEach((file, index) => { %>
+                <a class="file-a" href="/studentIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
+                  <span class=""><%=index+1%>. </span>
+                  <%=file.file.slice(25)%>
+                </a>
+                <br>
+                <% }); %>
+              </div>
+            </div>
+            <% } else if (assignment.files.length < 1) { %>
+            <div class="row">
+              <p class="fs-6 text-center py-2" style="border-top: 1px solid #EAEFF4; border-bottom: 1px solid #EAEFF4;">ไม่มีไฟล์ที่ถูกแนบ</p>
+            </div>
+            <% } %>
+          </div>
+          <div class="col-4">
+            <div class="row">
+              <div class="col-6">
+                <p class="my-1 w-100 text-center fw-bold text-primary">คะแนนเต็ม</p>
+              </div>
+              <div class="col-6">
+                <p class="my-1 w-100 text-center fw-bold text-primary">จำนวนนักศึกษาส่งงาน</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="h-auto row">
+                <div class="col-6 setRight p-3 d-flex justify-content-center">
+                  <p class="fw-bold fs-2 text-success"><%=assignment.Score%></p>
+                </div>
+                <div class="col-6 p-3 d-flex justify-content-center">
+                  <p class="fw-bold fs-2 text-info"><%=assignment.sentCount%></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% if (userSubmit) { %>
+      <% if (userSubmit.checked == true) { %>
+      <div class="lesson-content bg-white w-100 p-4 my-4" style="height: fit-content;">
+        <p class="fs-5 fw-bold fs-5"><i class="bi bi-info-circle-fill text-primary "></i>
+          รายละเอียดการตรวจ
+        </p>
+        <div class="py-1" style="border-bottom: 1px solid #EAEFF4;">
+          <p class="text-primary">คะแนนที่ได้: <span class="text-dark"><%=userSubmit.Score%></span></p>
+          <p class="text-primary w-75">ความคิดเห็นจากผู้ตรวจ: <span class="text-dark"><%=userSubmit.teacherComment%></span></p>
+          <% const checkDate = new Date(userSubmit.checkDate).toLocaleString('en-US', {timeZone: 'Asia/Bangkok', hour12: true, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}); %>
+          <p class="text-success">วันที่และเวลาตรวจ: <span class="text-dark"><%=checkDate.replace(',','')%></span></p>
+        </div>
+        <div class="my-1">
+          <p class="fw-bold">โดย: <span class="fw-normal">ดร. สุรัชธัยณโยธิน วงศ์สวัสดิ</span></p>
+        </div>
+      </div>
+      <% } %>
+      <% } %>
+      <div class="lesson-content bg-white w-100 p-4 my-4" style="height: fit-content;">
+        <% if (userSubmit) { %>
+        <form action="/studentEditAssignment" id="editAssignment" method="post" enctype="multipart/form-data">
+          <input type="text" name="submitAssignId" class="d-none" value="<%=userSubmit._id%>">
+          <input type="text" name="assignId" class="d-none" value="<%=assignment._id%>">
+          <div class="assignFormContainer row">
+            <div class="col-12 mb-3">
+              <p class="fs-5 fw-bold"><i class="bi bi-pencil text-warning fs-5"></i>
+                แก้ไขงานที่ส่ง: <span><%=assignment.name%></span>
+              </p>
+            </div>
+            <div class="col-12">
+              <div class="my-1 mb-3">
+                <label for="comment" class="form-label fs-bold">ความคิดเห็น:</label>
+                <textarea class="form-control w-50 p-3" name="comment" style="height: 100px;"><%=userSubmit.comment%></textarea>
+              </div>
+              <div class="mb-3 row w-50">
+                <p>ไฟล์ที่ถูกแนบ:</p>
+                <div class="row">
+                  <% if (userSubmit.files.length< 1) {%>
+                  <p class="mx-1" style="font-size: small;"> - ไม่มีไฟล์ที่ถูกอัปโหลด</p>
+                  <% } else if (userSubmit.files.length > 0) {%>
+                  <% let files = userSubmit.files; %>
+                  <% files.forEach((file, index) => { %>
+                  <div class="row">
+                    <div class="col-7">
+                      <a class="file-a-2 mb-1" href="/adminIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
+                        <%=index+1%>. <%=file.file.slice(25)%>
+                      </a>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                      <a href="/adminIndex/delFile?assignId=<%=assignment._id%>&fileIndex=<%=index%>" class="text-danger fs-6 delFile">ลบ</a>
+                    </div>
+                  </div>
+                  <% }) %>
+                  <% }%>
+                </div>
+              </div>
+              <div class="my-1 mb-3">
+                <label for="formFileMultiple" class="form-label">แนบไฟล์:</label>
+                <input class="form-control w-50 file-input" name="file" type="file" id="formFileMultiple" accept="image/*,
+                application/pdf,
+                application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                application/msword,video/*,
+                application/vnd.ms-powerpoint,
+                application/vnd.openxmlformats-officedocument.presentationml.presentation,
+                application/vnd.ms-excel,
+                application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple>                <p class="p-1" style="font-size: small;"><span class="text-primary">ประเภทไฟล์ที่รองรับ:</span> รูปภาพ, PDF, Word, Power Point และ Excel ขนาดไม่เกิน 100 mb</p>
+              </div>
+            </div>
+            <div class="col-12 d-flex justify-content-start pt-4" style="border-top: 1px solid #EAEFF4;">
+              <button class="btn btn-warning p-2" type="submit">บันทึกการแก้ไข <i class="bi bi-pencil text-dark"></i></button>
+              <a href="/studentCancelAssign?submitId=<%=userSubmit._id%>&assignmentId=<%=assignment._id%>" class="btn btn-danger p-2 mx-3" type="submit">ยกเลิกการส่งงาน </a>
+            </div>
+          </div>
+        </form>
+        <% } else if (!userSubmit) { %>
+        <form action="/submitAssignment" id="submitForm" method="post" enctype="multipart/form-data">
+          <input type="text" name="assignId" class="d-none" value="<%=assignment._id%>">
+          <input type="text" name="userId" class="d-none" value="<%=userData._id%>">
+          <div class="assignFormContainer row">
+            <div class="col-12 mb-3">
+              <p class="fs-5 fw-bold"><i class="bi bi-send text-success fs-5"></i>
+                ส่งงาน: <span><%=assignment.name%></span>
+              </p>
+            </div>
+            <div class="col-12">
+              <div class="my-1 mb-3">
+                <label for="comment" class="form-label fs-bold">ความคิดเห็น:</label>
+                <textarea class="form-control w-50 p-3" name="comment" style="height: 100px;"></textarea>
+              </div>
+              <div class="my-1 mb-3">
+                <label for="formFileMultiple" class="form-label">แนบไฟล์:</label>
+                <input class="form-control w-50 file-input" name="file" type="file" id="formFileMultiple" accept="image/*,
+                application/pdf,
+                application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                application/msword,video/*,
+                application/vnd.ms-powerpoint,
+                application/vnd.openxmlformats-officedocument.presentationml.presentation,
+                application/vnd.ms-excel,
+                application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple>
+                <p class="p-1" style="font-size: small;"><span class="text-primary">ประเภทไฟล์ที่รองรับ:</span> รูปภาพ, PDF, Word, Power Point และ Excel ขนาดไม่เกิน 100 mb</p>
+              </div>
+            </div>
+            <div class="col-12 d-flex justify-content-start pt-4" style="border-top: 1px solid #EAEFF4;">
+              <button class="btn btn-success p-2" type="submit">ส่งงาน <i class="bi bi-send text-light"></i></button>
+            </div>
+          </div>
+        </form>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+  </div>
+  <%- include("./partials/footer.ejs")%>
+</body>
+
+
+</html>

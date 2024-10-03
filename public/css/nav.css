@@ -1,0 +1,21 @@
+.bell-animation {
+    position: relative;
+    display: inline-block;
+}
+
+.bi-bell-fill {
+    position: absolute;
+    animation: swing 2s ease-in-out infinite;
+}
+
+@keyframes swing {
+    0% {
+        transform: rotateZ(0deg) scale(1);
+      }
+      50% {
+        transform: rotateZ(15deg) scale(1.1); /* เพิ่ม scale 1.1 */
+      }
+      100% {
+        transform: rotateZ(0deg) scale(1);
+    }
+}

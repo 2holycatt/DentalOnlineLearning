@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lessons</title>
+  <!-- <link rel="stylesheet" href="/css/event.css"> -->
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+  <link rel="stylesheet" href="/css/getMoreAddContent.css">
+
+  <%- include("./partials/header.ejs")%>
+  <style>
+    .descp {
+      text-indent: 2em;
+      margin: 0 2em;
+    }
+
+    .rectangle-141 {
+      background-color: white;
+      border-radius: 0.75em;
+      box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+      height: 14.6875em;
+      left: 4.6875em;
+      top: 37.3125em;
+      width: 39.125em;
+      width: 75%;
+      margin: 2em 2em;
+    }
+
+    .home-div,
+    .a-home {
+      color: #999999 !important;
+    }
+
+    .above-nav {
+      background-color: #dde6ed33;
+    }
+
+    .status-a {
+      color: #404258 !important;
+    }
+
+    .list-lesson-p {
+      color: #8A2BE2;
+
+    }
+
+    .list-lesson-p-span {
+      color: #4B0082;
+    }
+
+    .each-lesson {
+      border-top: 0.1em solid #8A2BE2;
+
+    }
+
+    .aside-right {
+      background-color: #dde6ed1a;
+      height: 100%;
+    }
+
+    .manange-bar {
+      border-radius: 1em;
+      /* grid-template-columns: 1fr 1fr; */
+      /* justify-content: space-between !important; */
+
+    }
+
+    .add-button {
+      border-radius: 0.5em !important;
+      width: 20%;
+
+    }
+
+    .main-content {
+      height: 100%;
+    }
+
+    .lesson-content {
+      height: 100%;
+      border-radius: 1em !important;
+
+      justify-content: center !important;
+      border-top: 0.5em solid #8A2BE2;
+    }
+
+    .lesson-nothing {
+      /* margin: 25% 0 !important; */
+      padding: 0 !important;
+    }
+
+    .add-lesson-btn {
+      float: right;
+      width: auto;
+    }
+
+
+    .show-layout-2 {
+      display: block;
+      opacity: 1;
+      /* สิ้นสุดที่ความทึบ 1 */
+      transition: opacity 0.5s ease;
+      /* กำหนดการเปลี่ยนแปลงที่ต้องการ */
+    }
+
+    .layout01-mainDes {
+
+      font-size: xx-large !important;
+      font-weight: bolder !important;
+
+    }
+
+    /* .input-mainSubDes,
+    .input-mainDes,
+    .input-mainSubDes2 {
+      white-space: pre-wrap !important;
+      overflow: auto !important;
+    } */
+
+    .subDes,
+    .subDesNumber2 {
+      border: none !important;
+    }
+
+    .layout1-contents {
+      background-color: #dde6ed1a;
+      width: 85%;
+
+    }
+
+    .layout01_gird {
+      display: grid;
+      grid-template-columns: 0.75fr 1.25fr;
+    }
+
+
+    .Topic1 {
+      /* background-color: #8A2BE2 !important; */
+      color: white !important;
+      border-radius: 1em !important;
+      width: 70% !important;
+    }
+
+    .Topic1::placeholder {
+      color: white !important;
+      font-size: xx-large;
+      font-weight: bolder;
+      text-align: center !important;
+    }
+
+    #file-input {
+      display: none !important;
+    }
+
+    .center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: ฟ;
+      /* ทำให้สูงเต็มหน้าจอ */
+    }
+
+    video {
+      border-radius: 0.5em;
+      box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+
+    }
+
+    .file-icon {
+      font-size: 7em;
+    }
+
+    .content-2 {
+      border-top: 0.5em solid #8A2BE2;
+      border-radius: 1em !important;
+      height: 100% !important;
+      background-color: #dde6ed1a !important;
+      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+    }
+
+    .main-content-long-text {
+      color: #8A2BE2 !important;
+      border: none !important;
+
+    }
+
+    .text-areas-indent {
+      text-indent: 2em;
+    }
+
+    .main-content-long-text::placeholder {
+      color: #8A2BE2 !important;
+      /* text-indent: 2em !important; */
+    }
+
+    .setEdge1,
+    .setEdge2 {
+      border-right: 1px solid #8A2BE2 !important;
+      border-bottom-width: 50% !important;
+      box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset !important;
+    }
+
+    .add-button-2 {
+      float: right;
+
+    }
+
+    .layout01_gird {
+      display: grid;
+      grid-template-columns: 0.75fr 1.25fr;
+    }
+
+    .allCOntent {
+      height: fit-content;
+    }
+
+    .subLayout2Contents2 div {
+      height: fit-content !important;
+    }
+
+    .setborder {
+      border-radius: 0.5em !important;
+    }
+
+    .addContent-a {
+      text-decoration: none !important;
+      transition-duration: 0.3s;
+    }
+
+    .addContent-a:hover {
+      color: #0d57d6 !important;
+      transition: 0.3s;
+    }
+
+    .lesson-bar {
+      border-left: 0.25em solid #387bef !important;
+      padding-left: 0.5em !important;
+    }
+
+    .comment-table tr th {
+      padding-top: 1em !important;
+      padding-bottom: 1em !important;
+      border-bottom: 1px solid #ced4daa0;
+      color: #5a6a85 !important;
+
+    }
+
+    .comment-table tr td {
+      padding-top: 1em !important;
+      /* padding-bottom: 1em !important; */
+      /* border-bottom: 1px solid #ced4daa0; */
+
+    }
+
+    .comment {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      max-height: 104px;
+    }
+
+    .comment img {
+      width: 50px;
+      height: 50px;
+      border-radius: 25%;
+      margin-right: 1em !important;
+      object-fit: cover;
+
+    }
+
+    /* .comment .content {
+      flex-grow: 1;
+    } */
+
+    .comment-color {
+      color: #7C8FAC !important;
+    }
+
+    .fancyBox {
+      width: 10%;
+      height: auto;
+    }
+
+    .comment-files {
+      width: 125px;
+      height: 125px;
+      margin-right: 1em !important;
+      border-radius: 10%;
+    }
+
+    .commentOption {
+      position: absolute;
+
+    }
+
+    .optionComment:hover {
+      color: #003ba1 !important;
+      transition: 0.3s;
+    }
+
+    .reply-comment {
+      display: none;
+    }
+
+    .pdf-iframe {
+      width: 100%;
+      height: calc(100vh - 50px);
+      /* Adjust height based on toolbar */
+      border: none;
+    }
+
+    .editQuestion,
+    .deleteQuesitonsCheckbox,
+    #cancelDeleteCheckQuesitonLink,
+    .checkAllDeleteDiv {
+      display: none;
+    }
+
+
+    /* .spn-comment {
+      font-size:xx-small !important;
+      border: 2px solid white;
+      padding: 0.25em !important;
+      border-radius: 0.25em;
+    } */
+  </style>
+</head>
+
+<body>
+
+  <%- include("./partials/nav.ejs")%>
+  <!-- <div class="above-nav d-flex px-4 py-3">
+    <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
+      <i class="bi bi-house mx-2"></i>
+      <a href="/adminIndex" class="a-home">
+        <p class="m-0">หน้าหลัก &nbsp;&nbsp;></p>
+      </a>
+    </div>
+
+    <a href="#" class="status-a mx-2 my-0 align-middle">
+      <p class="m-0">บทเรียน</p>
+    </a>
+
+  </div> -->
+  <div class="main-content d-flex w-100 h-auto">
+    <%- include("./partials/lessonsList.ejs")%>
+    <div class="row allCOntent" style="width: 80% !important;">
+      <div class="col-12 aside-right px-4 py-4 bg-white" style="width: 100% !important;">
+        <div class="manange-bar px-4 py-3 bg-white w-100">
+          <div class="d-row" style="border-bottom: 1px solid #ced4daa0; padding-bottom: 0.5em !important;">
+            <div class="d-flex col-12" style="align-items: center; grid-template-columns: 0.5fr 1.5fr;">
+              <p class="fw-normal w-auto fs-6 lesson-bar">บทเรียน:
+                <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;"><%=lesson.LessonName%></span>
+                วิชา:
+                <span class="fw-normal fs-6 text-primary"><%=subject.subjectId%> <%=subject.subjectName%></span>
+                ภาคการศึกษา:
+                <span class="fw-normal fs-6 text-primary"><%=subject.semester%></span>
+                กลุ่มที่:
+                <span class="fw-normal fs-6 text-primary"><%=subject.section%></span>
+              </p>
+              <div class="d-flex justify-content-end w-auto">
+                <a href="/adminIndex/eachLessons?lessonId=<%=lesson._id%>" class="edit-a text-dark px-2" style="border-left: 1px solid #ced4daa0 ;margin:0em 1em !important; font-size: small;">แก้ไขชื่อและรูปปก<i class="bi bi-pencil mx-2"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <% const questions = lesson.lessonQuestion %>
+          <div class="d-flex">
+            <div class="d-flex w-50">
+              <a href="/adminIndex/getMoreAddContent?lesson=<%=lesson._id%>" class="add-button btn btn-primary my-2 p-2">
+                เพิ่มเนื้อหา<i class="bi bi-plus-circle-fill mx-2"></i>
+              </a>
+              <a href="/adminIndex/editLesson?lesson=<%=lesson._id%>" class="btn add-button btn-warning my-2 p-2 mx-2" style="height: fit-content !important;">
+                แก้ไขเนื้อหาภายในบทเรียน<i class="bi bi-pencil-square mx-2"></i>
+              </a>
+              <% if (questions) {%>
+              <a href="/adminIndex/editEndChapterQuestion?lesson=<%=lesson._id%>" class="btn add-button btn-info my-2 p-2" style="height: fit-content !important;">
+                แก้ไขคำถามท้ายบท<i class="bi bi-question-circle mx-2"></i>
+              </a>
+              <% } else { %>
+              <a href="/adminIndex/addEndChapterQuestion?lesson=<%=lesson._id%>" class="btn add-button btn-info my-2 p-2" style="height: fit-content !important;">
+                เพิ่มคำถามท้ายบท<i class="bi bi-question-circle mx-2"></i>
+              </a>
+              <% } %>
+
+            </div>
+            <div class="d-flex w-50 justify-content-end">
+              <a href="/adminIndex/deleteLesson?lessonId=<%=lesson._id%>&subjectId=<%=subject._id%>" class="btn add-button btn-danger my-2 p-2 mx-2" style="height: fit-content !important;">
+                ลบบทเรียน: <span class="text-light"><%=lesson.LessonName%></span><i class="bi bi-eraser-fill mx-2"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+        <div class="hide-layout-2">
+          <% if (paginatedLayouts.length > 0) { %>
+          <% paginatedLayouts.forEach(Layout => {%>
+          <% if (Layout.name === "Layout01") {%>
+          <div class="layout" data-id="<%= Layout._id %>" data-type="Layout1s" style="display: none;"></div>
+          <p class="layout01-mainDes mx-3 my-3"><%= Layout.Topic%></p>
+          <p class="text-areas-indent mx-3 fs-5" style="width: 90%;"><%= Layout.MainDescription%></p>
+          <!-- <input class="input-mainSubDes form-control mx-5 p-3 w-75 h-auto" name="LessonNumber" placeholder="กรอกข้อความส่วนอธิบายเนื้อหาเพิ่มเติม..."> -->
+          <div class="lesson-content py-4 px-3 bg-white w-100 my-4">
+            <div class="px-3">
+              <p class="text-areas-indent my-2  pb-2 fs-5 w-100 px-4 border-bottom border-light-subtle"><%= Layout.SubDescription%></p>
+            </div>
+            <% const AboutImage = Layout.AboutImage %>
+            <% AboutImage.forEach ( Img => { %>
+            <input type="text" class="d-none" value="<%=Layout._id%>">
+            <div class="layout01_gird my-3">
+              <div class="AboutImage h-auto">
+                <div class="w-100">
+                  <p class="Topic1 bg-primary p-3 h-auto my-0 mx-auto text-center"><%= Img.title %></p>
+                </div>
+                <div class="w-100 text-center">
+                  <% const file = Img.file %>
+                  <% if (Img.contentType.startsWith("image/")) { %>
+                  <img class="ImageFile w-75 h-75 my-4 shadow rounded" src="/<%=Img.file%>" alt="รูปภาพประกอบการเรียน">
+                  <% } else { %>
+                  <video class="ImageFile w-75 h-75 object-fit-cover my-4" src="/<%=Img.file%>" controls autoplay></video>
+                  <% } %>
+                </div>
+              </div>
+              <div class="h-100 content-2">
+                <p class="fs-5 text-areas-indent main-content-long-text my-2 h-100 w-100 py-2 px-3" style="color: #212529 !important;"><%= Img.ImageDescription %></p>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <% } else if (Layout.name === "Layout02") {%>
+          <div class="layout" data-id="<%= Layout._id %>" data-type="Layout2s" style="display: none;"></div>
+          <div class="lesson-content py-2 bg-white my-4">
+            <input class="d-none" type="text" name="_id" value="<%= Layout._id %>">
+            <div class="IandMain d-grid">
+              <p class="layout01-mainDes mx-4 px-3"><%=Layout.Topic %></p>
+              <!-- <input class="input-mainDes form-control mx-4 p-3 h-auto" name="Topic" value="<%=Layout.Topic %>"> -->
+            </div>
+            <div class="setMargin py-2 px-4 bg-white w-100">
+              <div class="Layout2Contents w-100">
+                <div class="changeLayout02">
+                  <div class="Layout2ContentsDiv p-1">
+                    <div class="subLayout2Contents bg-white border-top border-primary border-2 rounded">
+                      <div class="w-100 h-auto p-2">
+                        <p class="fs-5"><%=Layout.TextArea1%></p>
+                      </div>
+                      <!-- <textarea name="TextArea1" class="textAreaLayout2 w-100 h-100 bg-white" disabled></textarea> -->
+                    </div>
+                    <div class="subLayout2Contents bg-white border-top border-primary border-2 rounded">
+                      <div class="w-100 h-auto p-2">
+                        <p class="fs-5"><%=Layout.TextArea2%></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="subLayout2Contents2 bg-white border-top border-primary border-2 rounded">
+                    <div class="w-100 h-auto p-2">
+                      <p class="fs-5"><%=Layout.TextArea3%></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% } else if (Layout.name === "Layout03") {%>
+          <div class="layout" data-id="<%= Layout._id %>" data-type="Layout3s" style="display: none;"></div>
+
+          <div class="lesson-content py-2 bg-white my-4">
+            <input class="d-none" type="text" name="_id" value="<%= Layout._id %>">
+            <div class="IandMain d-grid">
+              <p class="layout01-mainDes mx-4 px-1 py-3 h-auto"><%=Layout.Description%></p>
+            </div>
+            <div class="setMargin py-2 px-4 bg-white w-100">
+              <div class="Layout2Contents w-100 p-3 d-flex justify-content-center">
+                <% if (Layout.contentType == "image/png") { %>
+                <img class="ImageFile h-auto w-100 mx-auto my-2 shadow rounded" style="max-height: 750px;" src="/<%=Layout.file%>" alt="รูปภาพประกอบการเรียน">
+                <% } else if (Layout.contentType == "video/mp4") {%>
+                <video class="w-100 h-auto object-fit-cover" src="/<%=Layout.file%>" controls autoplay></video>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          <% } else if (Layout.name === "Layout04") {%>
+          <div class="layout" data-id="<%= Layout._id %>" data-type="Layout4s" style="display: none;"></div>
+          <div class="lesson-content py-2 bg-white my-4">
+            <input class="d-none" type="text" name="_id" value="<%= Layout._id %>">
+            <div class="IandMain" style="width: 100% !important;">
+              <p class="mx-4 px-1 mb-3 mt-2 fs-2 fw-bold border-bottom border-light-subtle" style="margin-bottom:0em !important;"><%= Layout.Topic%></p>
+            </div>
+            <div class="mt-2">
+              <p class="mx-4 w-100 h-auto bg-white px-1 fs-5"><%= Layout.Description%></p>
+            </div>
+            <div class="mt-1">
+              <% const List = Layout.Lists %>
+              <% List.forEach((list, index) => { %>
+              <p class="mx-4 px-1 py-1 w-75 lh-lg"><%= list.list %></p>
+              <% }); %>
+            </div>
+
+          </div>
+          <% } else if (Layout.name === "Layout05") { %>
+          <div class="lesson-content py-2 bg-white my-4">
+            <input class="d-none" type="text" name="_id" value="<%= Layout._id %>">
+            <div>
+              <p class="mx-4 p-3 fs-2"><%= Layout.name %></p>
+              <div>
+                <!-- <embed src="/pdfs/example.pdf" type="application/pdf" width="100%" height="600px" /> -->
+                <a href="/adminIndex/showFile?fileId=<%=Layout._id%>" target="_blank">โชว์ pdf</a>
+              </div>
+              <!-- <div>
+                  <a href="/adminIndex/pdfDowload?id=<%= Layout._id %>">ดาวน์โหลด PDF</a>
+                  <a href="/adminIndex/showPdf?pdfId=<%= Layout._id %>">แสดงผล PDF</a>
+                </div> -->
+            </div>
+          </div>
+          <% } else if (Layout.name === "pdfFiles") { %>
+          <div class="layout" data-id="<%= Layout._id %>" data-type="pdfFile" style="display: none;"></div>
+          <div class="lesson-content py-2 bg-white my-4">
+            <input class="d-none" type="text" name="_id" value="<%= Layout._id %>">
+            <iframe class="pdf-iframe" src="/<%=Layout.file%>" frameborder="0"></iframe>
+          </div>
+          <% } %>
+          <% }); %>
+          <% } else {%>
+          <div class="lesson-content bg-white w-100 py-3 my-4">
+            <p class="px-3">บทเรียนยังไม่มีเนื้อหา เนื่องจากคุณยังไม่ได้เพิ่มเนื้อหาใด ๆ ให้แก่บทเรียนนี้
+            </p>
+            <a href="/adminIndex/getMoreAddContent?lesson=<%=lesson._id%>" class="px-3 addContent-a text-primary">
+              เพิ่มเนื้อหา
+              <i class="bi bi-plus-circle-fill"></i>
+            </a>
+          </div>
+          <% }; %>
+        </div>
+        <div class="row mt-4">
+          <div class="col-12 d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination">
+                <% if (currentPage > 1) { %>
+                <li class="page-item">
+                  <a class="page-link px-2" href="/adminIndex/eachLessons?lessonId=<%= lesson._id %>&page=<%= currentPage - 1 %>">ก่อนหน้า</a>
+                </li>
+                <% } else { %>
+                <li class="page-item disabled">
+                  <a class="page-link px-2" href="#">ก่อนหน้า</a>
+                </li>
+                <% } %>
+
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                <% if (i === currentPage) { %>
+                <li class="page-item active">
+                  <a class="page-link px-2" href="#"><%= i %></a>
+                </li>
+                <% } else { %>
+                <li class="page-item">
+                  <a class="page-link px-2" href="/adminIndex/eachLessons?lessonId=<%= lesson._id %>&page=<%= i %>"><%= i %></a>
+                </li>
+                <% } %>
+                <% } %>
+
+                <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                  <a class="page-link px-2" href="/adminIndex/eachLessons?lessonId=<%= lesson._id %>&page=<%= currentPage + 1 %>">ถัดไป</a>
+                </li>
+                <% } else { %>
+                <li class="page-item disabled">
+                  <a class="page-link px-2" href="#">ถัดไป</a>
+                </li>
+                <% } %>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- lessonQuestions -->
+        <% if (questions) { %>
+        <div class="lesson-content bg-white w-100 p-4 my-4 addQuestion">
+          <div class="row d-flex align-items-center">
+            <div class="col">
+              <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">คำถามท้ายบท
+                <i class="bi bi-question-circle mx-2 text-primary"></i>
+              </p>
+            </div>
+            <div class="col d-flex justify-content-end">
+              <a href="#" class="text-primary" id="editQuesitonLink">แก้ไขคำถามท้ายบท</a>
+            </div>
+          </div>
+          <div class="m-2">
+            <ol class="list-group list-group-numbered">
+              <% questions.Questions.forEach(question => {%>
+              <li class="list-group-item border border-0"><%=question.questionText%></li>
+              <% }) %>
+            </ol>
+          </div>
+        </div>
+        <div class="lesson-content p-4 bg-white w-100 h-auto my-2 editQuestion">
+          <div class="row d-flex align-items-center">
+            <div class="col row">
+              <div class="col row">
+                <div class="col d-flex align-items-center">
+                  <p class="fw-bold me-3">แก้ไขคำถามท้ายบท</p>
+
+                  <div class="checkAllDeleteDiv">
+                    <div class="d-flex align-items-center">
+                      <input type="checkbox" class="me-2 form-check-input checkAllQuestionsToDelete" id="checkAllQuestionsToDelete">
+                      <label for="checkAllQuestionsToDelete">ลบทั้งหมด</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col d-flex justify-content-end">
+                <div class="d-flex">
+                  <a href="#" class="text-danger me-2" id="deleteCheckQuesitonLink">ลบรายการคำถาม</a>
+                  <a href="#" class="text-danger me-2" id="cancelDeleteCheckQuesitonLink">ยกเลิกการลบรายการคำถาม</a>
+                  <a href="#" class="text-primary" id="cancelEditQuesitonLink">ย้อนกลับ</a>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="col d-flex justify-content-end">
+              <a href="#" onclick="resetQuestions()" class="reset text-dark">
+                <i class="bi bi-arrow-clockwise fs-5"></i>
+              </a>
+            </div> -->
+          </div>
+          <form action="/adminIndex/editEndQuestionChapter" method="post">
+            <input type="text" class="d-none" name="questionId" value="<%=questions._id%>">
+            <div class="questionForm">
+              <div class="mt-1">
+                <% questions.Questions.forEach(question => {%>
+                <div class="mb-1 row editQuestionDiv">
+                  <div class="col-12 d-flex align-items-center">
+                    <i class="bi text-primary bi-dot fs-2 questionsIcon"></i>
+                    <input class="form-check-input me-3 deleteQuesitonsCheckbox" type="checkbox" name="questionCheckDelete<%=question.questionNo%>">
+                    <textarea class="form-control my-1 p-2 question<%=question.questionNo%>" name="question<%=question.questionNo%>" rows="1"><%=question.questionText%></textarea>
+                  </div>
+                </div>
+                <% }); %>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end mt-2">
+              <!-- <button onclick="addQuestion()" class="add-button btn btn-primary p-2" type="button" style="height: fit-content !important;">
+                เพิ่มคำถาม<i class="bi bi-plus-circle-fill mx-2"></i>
+              </button> -->
+              <button type="submit" class="btn add-button btn-success p-2" style="height: fit-content !important;">
+                บันทึก<i class="bi bi-pencil-square mx-2"></i>
+              </button>
+              <!-- <a href="/adminIndex/editLesson?lesson=<%=lesson._id%>" class="btn add-button btn-success p-2 mx-2" style="height: fit-content !important;">
+                บันทึก<i class="bi bi-pencil-square mx-2"></i>
+              </a> -->
+            </div>
+          </form>
+        </div>
+        <% } %>
+
+        <div class="lesson-content bg-white w-100 p-4 my-4">
+
+          <div class="d-flex">
+            <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">แสดงความคิดเห็น
+              <i class="bi bi-chat-dots mx-2 text-primary"></i>
+            </p>
+          </div>
+          <div class="m-2">
+            <form action="/adminIndex/comment" method="post" enctype="multipart/form-data">
+              <input type="text" class="d-none" name="lessonId" value="<%=lesson._id%>">
+              <textarea class="form-control p-3 w-100 mb-3" name="comment" id="comment" placeholder="แสดงความคิดเห็นของคุณ"></textarea>
+              <div class="row">
+                <div class="col-6">
+                  <div class="comment-image">
+                    <div class="d-flex align-items-center">
+                      <input type="file" class="form-control d-none" name="files" id="fileInput" accept="image/*,video/*" multiple>
+                      <i class="bi bi-camera-fill p-2 btn btn-primary" id="iconClick"></i>
+                      <p id="fileName" class="mx-2"></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                  <button class="btn btn-primary p-2" type="submit">แสดงความคิดเห็น</button>
+                </div>
+              </div>
+            </form>
+            <!-- <form action="">
+                <input type="file" name="fileName" id="fileName">
+                <input type="submit">
+              </form> -->
+          </div>
+        </div>
+        <% if (lessonComment.comments.length > 0) { %>
+        <div class="lesson-content bg-white w-100 p-4 my-4">
+          <div class="d-flex">
+            <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">ความคิดเห็น</p>
+            <% if (lessonComment.comments.length > 0) { %>
+            <p class="fw-normal fs-5 my-1 mx-2 px-3" style="border-left: 1px solid #ced4daa0;"><%=lessonComment.comments.length%></p>
+            <% } else if (lessonComment.comments.length < 1) { %>
+            <p class="fw-normal fs-5 my-1 mx-2 px-3" style="border-left: 1px solid #ced4daa0;">0</p>
+            <% } %>
+          </div>
+          <div>
+            <table class="w-100 comment-table mx-2">
+              <tr>
+                <th colspan="3">ความคิดเห็นล่าสุด</th>
+              </tr>
+              <% lessonComment.comments.forEach(comment => { %>
+              <% const userDataId = userData._id %>
+              <% const userCommentId = comment.user._id%>
+              <tr>
+                <td style="border-top: 1px solid #ced4daa0; padding-bottom:1em !important;">
+                  <div class="comment">
+                    <div class="content d-flex">
+                      <img src="<%=comment.user.img%>" alt="รูปโปรไฟล์ผู้ใช้">
+                      <div>
+                        <p class="fw-bold" class="username-comment"><%=comment.user.fname%> <%=comment.user.lname%>
+                          <span class="fw-normal" style="font-size: small;">
+                            | <%= comment.createdAtFormatted %>
+                          </span>
+                          <span class="fw-normal" style="font-size: small;">
+                            |
+                            <% if (String(userDataId) == String(userCommentId)) { %>
+                            <a href="/adminIndex/editComment?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment">แก้ไข</a>
+                            <a href="/adminIndex/deleteComment?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
+                            <% } %>
+                          </span>
+                        </p>
+                        <p class="comment-color"><%=comment.comment%></p>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td style="border-top: 1px solid #ced4daa0;">
+                  <p class="comment-color"><%=comment.timeSince%></p>
+                </td>
+                <!-- <td style="border-top: 1px solid #ced4daa0;">
+                    <div style="position:relative;">
+                      <a href="javascript:void(0);" class="icon" onclick="commentOption()">
+                        <i class="bi text-primary bi-three-dots-vertical"></i>
+                      </a>
+                      <div class="commentOption">
+                        <ul class="">
+                          <li> <a href="#reply">ตอบกลับ</a></li>
+                          <li> <a href="#edit">แก้ไข</a></li>
+                          <li><a href="#delete">ลบ</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </td> -->
+              </tr>
+              <% if (comment.files.length > 0) { %>
+              <tr>
+                <td colspan="3" style="padding-bottom: 1em !important">
+                  <p class="mb-2 fw-bold">รูปภาพหรือวิดีโอที่แนบ: </p>
+                  <div class="d-flex" id="gallery">
+                    <% comment.files.forEach((file, index) => { %>
+                    <% if (file.contentType.startsWith("image")) { %>
+                    <a href="/<%= file.file %>" class="a-fancyBox">
+                      <img class="comment-files" src="/<%= file.file %>" alt="ไฟล์รูปภาพ">
+                    </a>
+                    <% } else if (file.contentType.startsWith("video/")) {%>
+                    <a href="/<%= file.file %>" class="a-fancyBox">
+                      <video class="comment-files" controls autoplay>
+                        <source src="/<%= file.file %>" type="<%= file.contentType%>">
+                        Your browser does not support the video tag.
+                      </video>
+                    </a>
+                    <% } %>
+                    <% }); %>
+                  </div>
+                </td>
+              </tr>
+              <% } %>
+              <!-- <tr>
+                  <td colspan="3" style="padding-bottom: 1em !important;">
+                    <div class="d-flex">
+                      <% if (String(userDataId) == String(userCommentId)) { %>
+                      <a href="" class="text-primary optionComment">แก้ไข</a>
+                      <a href="" class="mx-2 text-primary optionComment">ลบ</a>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr> -->
+              <!-- <tr id="reply-comment" style="width: 1980px !important;">
+                  <td colspan="3" style="padding-bottom: 1em !important;">
+                    <form action="/adminIndex/replyComment" method="post" enctype="multipart/form-data">
+                      <input type="text" class="d-none" name="lessonId" value="<%= lesson._id %>">
+                      <textarea class="form-control p-3 w-100 mb-3" name="replyComment" id="comment" placeholder="ตอบกลับความคิดเห็น"></textarea>
+                      <div class="d-flex justify-content-end">
+                        <button class="btn btn-primary p-2" type="submit">ตอบกลับความคิดเห็น</button>
+                      </div>
+                    </form>
+                  </td>
+                </tr> -->
+              <% }); %>
+              <!-- <tr>
+                    <td>
+                      <div class="comment">
+                        <div class="content d-flex">
+                          <img src="data:image/jpeg;base64,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" alt="รูปโปรไฟล์ผู้ใช้">
+                          <div>
+                            <p class="fw-bold">Jungkook
+                              <span class="fw-normal" style="font-size: small;">
+                                / 29 พฤษภาคม 2567 19:30
+                              </span>
+                            </p>
+                            <p class="comment-color">ชอบการสอนของคุณ มาร้องเพลงด้วยกันนะ</p>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="comment-color">3 วันที่แล้ว</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="comment">
+                        <div class="content d-flex">
+                          <img src="https://today-obs.line-scdn.net/0hdGyibs2gO2hEECnrz1ZEP3xGNxl3diFhZiUmCTIYNlFsPHs5cHBoCzFEY0Q6JX1pZCZ9BzESNgg7cn5qKA/w644" alt="รูปโปรไฟล์ผู้ใช้">
+                          <div>
+                            <p class="fw-bold">Cha Eun Woo
+                              <span class="fw-normal" style="font-size: small;">
+                                / 29 พฤษภาคม 2567 19:30
+                              </span>
+                            </p>
+                            <p class="comment-color">สอนดีมาก ๆ เลยครับ</p>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="comment-color">3 วันที่แล้ว</p>
+                    </td>
+                  </tr> -->
+            </table>
+          </div>
+        </div>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+  <%- include("./partials/footer.ejs")%>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.6.347/build/pdf.min.js"></script> -->
+
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+     
+      document.getElementById('editQuesitonLink').onclick = function(event) {
+        event.preventDefault(); // ป้องกันไม่ให้ลิงก์ทำการเปลี่ยนหน้า
+        var aq = document.querySelector('.addQuestion');
+        var eq = document.querySelector('.editQuestion');
+        eq.style.display = 'block'; // เปลี่ยนการแสดงผลจาก none เป็น block
+        aq.style.display = 'none';
+        // var checkbox = document.querySelectorAll('.deleteQuesitonsCheckbox');
+        // document.querySelectorAll('.deleteQuesitonsCheckbox').forEach(function(checkbox) {
+        //   checkbox.style.display = 'block';
+        // });
+        // document.querySelectorAll('.questionsIcon').forEach(function(checkbox) {
+        //   checkbox.style.display = 'none';
+        // });
+        // var icon = document.querySelectorAll('.questionsIcon');
+
+        // checkbox.style.display = 'block';
+        // icon.style.display = 'none';
+
+      };
+
+      document.getElementById('cancelEditQuesitonLink').onclick = function(event) {
+        event.preventDefault(); // ป้องกันไม่ให้ลิงก์ทำการเปลี่ยนหน้า
+        var aq = document.querySelector('.addQuestion');
+        var eq = document.querySelector('.editQuestion');
+        eq.style.display = 'none'; // เปลี่ยนการแสดงผลจาก none เป็น block
+        aq.style.display = 'block';
+        // var checkbox = document.querySelectorAll('.deleteQuesitonsCheckbox');
+        // document.querySelectorAll('.deleteQuesitonsCheckbox').forEach(function(checkbox) {
+        //   checkbox.style.display = 'none';
+        // });
+        // document.querySelectorAll('.questionsIcon').forEach(function(checkbox) {
+        //   checkbox.style.display = 'block';
+        // });
+        // var icon = document.querySelectorAll('.questionsIcon');
+
+        // checkbox.style.display = 'block';
+        // icon.style.display = 'none';
+
+      };
+      document.getElementById('deleteCheckQuesitonLink').onclick = function(event) {
+        event.preventDefault(); // ป้องกันไม่ให้ลิงก์ทำการเปลี่ยนหน้า
+        var deleteLink = document.querySelector('#deleteCheckQuesitonLink');
+        deleteLink.style.display = 'none';
+        var cancelDeleteCheckQuesitonLink = document.querySelector('#cancelDeleteCheckQuesitonLink');
+        cancelDeleteCheckQuesitonLink.style.display = 'block';
+        var checkAllDeleteDiv = document.querySelector('.checkAllDeleteDiv');
+        checkAllDeleteDiv.style.display = 'block';
+
+        // var checkAllQuestionsToDelete = document.getElementsByClassName('checkAllQuestionsToDelete');
+        // checkAllQuestionsToDeleteLabel.style.display = 'block';
+        // checkAllQuestionsToDelete.style.display = 'block';
+
+        var checkbox = document.querySelectorAll('.deleteQuesitonsCheckbox');
+        document.querySelectorAll('.deleteQuesitonsCheckbox').forEach(function(checkbox) {
+          checkbox.style.display = 'block';
+        });
+        document.querySelectorAll('.questionsIcon').forEach(function(checkbox) {
+          checkbox.style.display = 'none';
+        });
+
+
+      };
+      document.getElementById('cancelDeleteCheckQuesitonLink').onclick = function(event) {
+        event.preventDefault(); // ป้องกันไม่ให้ลิงก์ทำการเปลี่ยนหน้า
+        var deleteLink = document.querySelector('#deleteCheckQuesitonLink');
+        var checkbox = document.querySelectorAll('.deleteQuesitonsCheckbox');
+        deleteLink.style.display = 'block';
+        var cancelDeleteCheckQuesitonLink = document.querySelector('#cancelDeleteCheckQuesitonLink');
+        cancelDeleteCheckQuesitonLink.style.display = 'none';
+        var checkAllDeleteDiv = document.querySelector('.checkAllDeleteDiv');
+        checkAllDeleteDiv.style.display = 'none';
+        // var checkAllQuestionsToDeleteLabel = document.getElementsByClassName('checkAllQuestionsToDeleteLabel');
+        // var checkAllQuestionsToDelete = document.getElementsByClassName('checkAllQuestionsToDelete');
+        // checkAllQuestionsToDeleteLabel.style.display = 'none';
+        // checkAllQuestionsToDelete.style.display = 'none';
+        document.querySelectorAll('.deleteQuesitonsCheckbox').forEach(function(checkbox) {
+          checkbox.checked = false; // ตั้งค่า checked ให้เป็น false (ไม่ถูกเลือก)
+          checkbox.style.display = 'none';
+
+        });
+        document.querySelectorAll('.questionsIcon').forEach(function(checkbox) {
+          checkbox.style.display = 'block';
+        });
+
+
+      };
+
+      var checkAll = document.querySelector('.checkAllQuestionsToDelete');
+
+      // ฟังการเปลี่ยนแปลงสถานะของ checkbox หลัก
+      checkAll.addEventListener('change', function() {
+        // ดึง checkbox ทั้งหมดที่มีคลาส .deleteQuesitonsCheckbox
+        var checkboxes = document.querySelectorAll('.deleteQuesitonsCheckbox');
+
+        // ตั้งค่า checked ให้กับ checkbox ทุกอัน
+        checkboxes.forEach(function(checkbox) {
+          checkbox.checked = checkAll.checked; // ถ้า checkbox หลักไม่ถูกเช็ค ให้ทุกอันไม่ถูกเช็คด้วย
+        });
+      });
+
+
+
+      document.querySelectorAll('.ReplyOptionComment').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+
+          // Show the reply-comment row
+          document.getElementById('reply-comment').style.display = 'flex';
+
+        });
+      });
+    });
+
+    Fancybox.bind("#gallery a", {
+      groupAll: true,
+    });
+
+    document.getElementById('iconClick').addEventListener('click', function() {
+      document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function() {
+      const file = this.files;
+      if (file && file.length == 1) {
+        document.getElementById('fileName').textContent = `ไฟล์ที่อัปโหลด: ${file[0].name}`;
+      } else if (file && file.length > 1) {
+        document.getElementById('fileName').textContent = `อัปโหลดไฟล์จำนวน: ${file.length} ไฟล์`;
+      } else {
+        document.getElementById('fileName').textContent = '';
+      }
+    });
+  </script>
+</body>
+
+</html>

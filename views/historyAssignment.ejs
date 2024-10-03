@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ประวัติการส่งงาน</title>
+  <%- include("./partials/header.ejs")%>
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
+  <link rel="stylesheet" href="/css/assignment.css">
+  <link rel="stylesheet" href="/css/fixedSwal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty@4/lib/noty.css">
+  <script src="https://cdn.jsdelivr.net/npm/noty@4/lib/noty.min.js"></script>
+
+  <style>
+    .list-div, .list-div-data {
+        grid-template-columns: 1fr 1fr 1.25fr 0.75fr 1fr;
+        
+    }
+
+    .list-div-data {
+        color: black;
+
+    }
+  </style>
+</head>
+
+<body>
+  <div id="blur-container">
+    <%- include("./partials/studentNav.ejs")%>
+    <!-- <div class="above-nav d-flex px-4 py-3">
+      <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
+        <i class="bi bi-house mx-2"></i>
+        <a href="/adminIndex" class="a-home">
+          <p class="m-0">หน้าหลัก &nbsp;&nbsp;></p>
+        </a>
+      </div>
+      <a href="#" class="status-a mx-2 my-0 align-middle">
+        <p class="m-0">บทเรียน</p>
+      </a>
+    </div> -->
+  </div>
+  <div class="main-content d-flex w-100 h-auto">
+    <%- include("./partials/studentAside.ejs")%>
+    <div class="aside-right w-75 h-auto p-4">
+      <div class="manange-bar px-4 py-3 bg-white d-flex w-100 row" id="topBar">
+        <div class="col-6">
+          <p class="fw-bold fs-3 lesson-bar">ประวัติการส่งงาน</p>
+        </div>
+        <div class="col-6 d-flex justify-content-end">
+          <a href="/studentAssignment" class="btn btn-primary py-2 px-2">ย้อนกลับ <i class="bi bi-arrow-return-left"></i>
+          </a>
+        </div>
+        <!-- <div>
+          <a href="/adminIndex/addAssign" class="add-button btn btn-primary m-0 p-2">
+            มอบหมายงาน <i class="bi bi-file-arrow-up-fill"></i>
+          </a>
+          <a href="#" class="add-button btn btn-dark m-0 p-2">
+            นำออกข้อมูลนักศึกษา (Export file) <i class="bi bi-file-arrow-down-fill"></i>
+            </i>
+          </a>
+        </div> -->
+      </div>
+      <div class="lesson-content bg-white w-100 p-4 my-4" style="height: fit-content;">
+        <p class="fw-bold">
+          <i class="bi bi-card-list text-primary fs-5"></i>
+          <span class="mx-1 fs-5 py-1">รายการประวัติการส่งงาน
+          </span>
+        </p>
+        <% const schoolYear = userData.student.schoolYear.schoolYear%>
+        <div class="showYear show<%=schoolYear%>">
+          <div class="set-border-bottom">
+            <p class="my-2 p-schoolYear"><span class="text-dark fw-bold">ปีการศึกษา: </span>
+              <span class="text-primary"> <%=schoolYear%></span>
+            </p>
+          </div>
+        </div>
+        <% if (assignmentArray.length > 0) { %>
+        <div class="list-div">
+          <p class="fs-6 fw-bold">
+            ชื่อ
+          </p>
+          <p class="fs-6 fw-bold">
+            วันที่ส่ง
+          </p>
+          <p class="fs-6 fw-bold">
+            สถานะการส่ง
+          </p>
+          <p class="fs-6 fw-bold text-center">
+            สถานะการตรวจ
+          </p>
+          <p class="fs-6 fw-bold text-center">
+            คะแนนที่ได้
+          </p>
+        </div>
+        <% assignmentArray.forEach(histAssign => { %>
+        <% const sendDate = new Date(histAssign.updatedAt).toLocaleString('en-US', {timeZone: 'Asia/Bangkok', hour12: true, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}); %>
+        <% const sendStatus = histAssign.sendStatus.status %>
+        <a href="/studentAssignDetail?id=<%= histAssign.assignment._id %>" class="data-a">
+          <div class="list-div-data py-3">
+            <p class="fs-6 fw-normal text-dark">
+              <%= histAssign.assignment.name %>
+            </p>
+            <p class="fs-6 fw-normal">
+              <%= sendDate.replace(',', '')%>
+            </p>
+            <% if (sendStatus == "ส่งตรงเวลา") { %>
+            <p class="fs-6 fw-normal text-success">
+              <%= sendStatus %>
+            </p>
+            <% } else if (sendStatus == "ส่งช้า") { %>
+            <% const day = histAssign.sendStatus.day %>
+            <% const hour = histAssign.sendStatus.hour %>
+            <% const minute = histAssign.sendStatus.minute %>
+            <p class="fs-6 fw-normal text-danger">
+              <%= sendStatus %> <%= day %> วัน <%=hour%> ชั่วโมง <%=minute%> นาที
+            </p>
+            <% } %>
+
+            <% const checked = histAssign.checked; %>
+              <% if (checked == false) { %>
+                <p class="fs-6 fw-normal text-center text-danger">
+                    ยังไม่ตรวจ
+                </p>
+              <% } else if (checked == true) { %>
+                <p class="fs-6 fw-normal text-center text-success">
+                    ตรวจแล้ว
+                </p>
+              <% } %>
+            <p class="fs-6 fw-normal text-success text-center">
+              <%= histAssign.Score %> / <%= histAssign.assignment.Score%>
+            </p>
+          </div>
+        </a>
+        <% }); %>
+        <% } else if (assignmentArray.length < 1) {%>
+        <div class="list-no-assign">
+          <p class="text-start text-secondary" style="font-size: small;">ยังไม่มีการส่งงานที่มอบหมาย ๆ ใด จากคุณ</span></p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+  </div>
+  <%- include("./partials/footer.ejs")%>
+</body>
+
+
+</html>

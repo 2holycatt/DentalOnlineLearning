@@ -1,0 +1,40 @@
+.layout-react {
+    background: #EEE;
+}
+
+.grid-item {
+    background: #FFF;
+    border: 1px solid #CCC;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.react-grid-layout {
+    margin: 0.5em 0.25em !important;
+}
+
+.delete-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50 !important;
+    padding: 1em !important;
+    border: 1px solid red;
+    border-radius: 0.5em;
+    width: max-content !important;
+
+}
+
+.save-btn {
+    border-top: 1px solid #DDD;
+    margin-top: 1em !important;
+}
+
+.btn-widget{
+    border: 1px solid #DDD;
+    border-radius: 0.25em;
+    background-color: white !important;
+}

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>งานที่มอบหมาย</title>
+  <%- include("./partials/header.ejs")%>
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
+  <link rel="stylesheet" href="/css/assignment.css">
+  <link rel="stylesheet" href="/css/fixedSwal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty@4/lib/noty.css">
+  <script src="https://cdn.jsdelivr.net/npm/noty@4/lib/noty.min.js"></script>
+</head>
+
+<body>
+  <div id="blur-container">
+    <%- include("./partials/nav.ejs")%>
+    <!-- <div class="above-nav d-flex px-4 py-3">
+      <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
+        <i class="bi bi-house mx-2"></i>
+        <a href="/adminIndex" class="a-home">
+          <p class="m-0">หน้าหลัก &nbsp;&nbsp;></p>
+        </a>
+      </div>
+      <a href="#" class="status-a mx-2 my-0 align-middle">
+        <p class="m-0">บทเรียน</p>
+      </a>
+    </div> -->
+  </div>
+  <div class="main-content d-flex w-100 h-auto">
+    <%- include("./partials/lessonsList.ejs")%>
+    <div class="aside-right w-75 h-auto p-4">
+      <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
+        <p class="fw-bold fs-3 lesson-bar">รายละเอียดการส่งงาน</p>
+        <!-- <div>
+          <a href="/adminIndex/addAssign" class="add-button btn btn-primary m-0 p-2">
+            มอบหมายงาน <i class="bi bi-file-arrow-up-fill"></i>
+          </a>
+          <a href="#" class="add-button btn btn-dark m-0 p-2">
+            นำออกข้อมูลนักศึกษา (Export file) <i class="bi bi-file-arrow-down-fill"></i>
+            </i>
+          </a>
+        </div> -->
+      </div>
+      <div class="lesson-content bg-white w-100 p-4 my-4" style="height: fit-content;">
+        <div class="row assign-head">
+          <div class="row">
+            <div class="col-8 mb-3">
+              <p class="fs-6 fw-bold"><i class="bi bi-person-fill text-primary fs-5"></i> รหัสนักศึกษา:
+                <span class="fw-normal">
+                  <%=getSubmitDetail.user.student.studentId%>
+                </span>
+                  ชื่อ-นามสกุล
+                <span class="fw-normal">
+                  <%=getSubmitDetail.user.name%>
+                </span>
+              </p>
+            </div>
+            <div class="col-4 d-flex justify-content-end">
+              <div>
+                <% if (getSubmitDetail.checked == false) {%>
+                  <a href="#checkAssign" class="btn btn-success py-1 px-2">ตรวจงาน <i class="bi bi-pencil-square"></i>
+                  </a>
+                <% } else if (getSubmitDetail.checked == true) {%>
+                  <a href="#checkAssign" class="btn btn-warning py-1 px-2">แก้ไขงานที่ตรวจ <i class="bi bi-pencil-square"></i>
+                  </a>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 row">
+            <div class="col-4">
+              <% const sendDate = new Date(getSubmitDetail.createdAt).toLocaleString('en-US', {timeZone: 'Asia/Bangkok', hour12: true, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}); %>
+              <p class="fs-6 fw-bold"><i class="fs-5 bi bi-stopwatch text-success"></i><span class="mx-1 text-success">วันที่ส่งงาน</span>: <span class="fw-normal"><%=sendDate.replace(',','')%></span></p>
+            </div>
+            <div class="col-4">
+              <p class="fs-6 fw-bold"><i class="fs-5 bi bi-clipboard-check-fill text-success"></i><span class="mx-1 text-success">สถานะการส่ง:</span>
+                <% const day = getSubmitDetail.sendStatus.day; %>
+                <% const hour = getSubmitDetail.sendStatus.hour; %>
+                <% const minute = getSubmitDetail.sendStatus.minute; %>
+              <% if (getSubmitDetail.sendStatus.status == "ส่งตรงเวลา") { %>
+                <span class="fw-bold text-success">
+                  <%=getSubmitDetail.sendStatus.status%>
+                </span>
+              <% } else {%>
+                <span class="fw-bold text-danger">
+                  <%=getSubmitDetail.sendStatus.status%> <%=day%> วัน <%=hour%> ชั่วโมง <%=minute%> นาที
+                </span>
+              <% } %>
+                
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row my-2 desDiv">
+          <p class="fs-6 fw-bold text-primary">ความคิดเห็น: </p>
+          <textarea class="form-control w-100 descriptionText" name="Description" disabled><%=getSubmitDetail.comment%></textarea>
+        </div>
+        <div class="row mt-3">
+          <div class="mb-3 row col-8">
+            <p>ไฟล์ที่เกี่ยวข้อง:</p>
+            <div class="row">
+              <% if (assignment.files.length < 1) {%>
+              <p class="mx-1" style="font-size: small;"> - ไม่มีไฟล์ที่ถูกอัปโหลด</p>
+              <% } else if (assignment.files.length > 0) {%>
+              <% let files = assignment.files; %>
+              <% files.forEach((file, index) => { %>
+              <div class="row">
+                <div class="col-7">
+                  <a class="file-a-2 mb-1" href="/adminIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
+                  <%=index+1%>. <%=file.file.slice(25)%>
+                  </a>
+                </div>
+                <div class="col-2 d-flex justify-content-center">
+                  <a href="/adminIndex/delFile?assignId=<%=assignment._id%>&fileIndex=<%=index%>" class="text-danger fs-6 delFile">ลบ</a>
+                </div>
+              </div>
+              <% }) %>
+              <% }%>
+            </div>
+          </div>
+          <div class="col-4" style="border-left: 1px solid rgb(215, 215, 215)">
+            <div class="row">
+              <div class="col-12">
+                <p class="my-1 fs-5 w-100 text-center fw-bold text-primary">คะแนนที่ได้:</p>
+              </div>
+              <!-- <div class="col-6">
+                <p class="my-1 w-100 text-center fw-bold text-primary">จำนวนการส่ง</p>
+              </div> -->
+            </div>
+            <div class="row">
+              <div class="h-auto row">
+                <div class="col-12 p-3 d-flex justify-content-center">
+                  <p class="fw-bold fs-1 text-success"><%=getSubmitDetail.Score%> / <%=assignment.Score%></p>
+                </div>
+                <!-- <div class="col-6 p-3 d-flex justify-content-center">
+                  <p class="fw-bold fs-2 text-info"><%=assignment.sentCount%></p>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">มอบหมายงาน
+        </p> -->
+      </div>
+      <% if (getSubmitDetail.checked == false) { %>
+        <div class="lesson-content bg-white w-100 p-4 my-4" style="height: fit-content;">
+          <form action="/adminIndex/checkAssignment" id="checkAssign" method="post">
+            <input type="text" name="submitId" class="d-none" value="<%=getSubmitDetail._id%>">
+            <input type="text" name="assignId" class="d-none" value="<%=assignment._id%>">
+            <div class="assignFormContainer p-2 row">
+              <div class="col-12 mb-3">
+                <p class="fs-5 fw-bold"><i class="bi bi-pencil-square text-success fs-5"></i>
+                  ตรวจงาน</p>
+              </div>
+              <div class="col-12">
+                <div class="col-12 my-1 mb-3">
+                  <label for="teacherComment" class="form-label fs-bold">ความคิดเห็น:</label>
+                  <textarea class="form-control w-75 p-3" name="teacherComment" style="height: 50px;"></textarea>
+                  <p class="my-1" style="font-size: small;"><span class="text-primary">*</span> ไม่บังคับ</p>
+                </div>
+                <div class="col-12 my-1 mb-3">
+                  <label for="Score" class="form-label fs-bold">คะแนนที่ได้:</label>
+                  <input type="number" min="0" max="<%=assignment.Score%>" class="form-control p-3 w-25" name="Score" placeholder="0">
+                  <p class="my-1" style="font-size: small;"><span class="text-primary">คะแนนเต็ม: </span><%=assignment.Score%></p>
+                </div>
+              </div>
+              <div class="col-12 d-flex justify-content-start pt-4" style="border-top: 1px solid #28a745;">
+                <button class="btn btn-success p-2" type="submit">บันทึกการตรวจงาน <i class="bi bi-check-circle-fill"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      <% } else if (getSubmitDetail.checked == true) { %>
+        <div class="lesson-content bg-white w-100 p-4 my-4" style="height: fit-content;">
+          <form action="/adminIndex/checkEditAssignment" id="checkAssign" method="post">
+            <input type="text" name="submitId" class="d-none" value="<%=getSubmitDetail._id%>">
+            <input type="text" name="assignId" class="d-none" value="<%=assignment._id%>">
+            <div class="assignFormContainer p-2 row">
+              <div class="col-12 mb-3">
+                <p class="fs-5 fw-bold"><i class="bi bi-pencil-square text-warning fs-5"></i>
+                  แก้ไขงานที่ตรวจ
+                </p>
+              </div>
+              <div class="col-12">
+                <div class="col-12 my-1 mb-3">
+                  <label for="teacherComment" class="form-label fs-bold">ความคิดเห็น:</label>
+                  <textarea class="form-control w-75 p-3" name="teacherComment" style="height: 50px;"><%=getSubmitDetail.teacherComment%></textarea>
+                  <p class="my-1" style="font-size: small;"><span class="text-primary">*</span> ไม่บังคับ</p>
+                </div>
+                <div class="col-12 my-1 mb-3">
+                  <label for="Score" class="form-label fs-bold">คะแนนที่ได้:</label>
+                  <input type="number" min="0" max="<%=assignment.Score%>" class="form-control p-3 w-25" name="Score" value="<%=getSubmitDetail.Score%>">
+                  <p class="my-1" style="font-size: small;"><span class="text-primary">คะแนนเต็ม: </span><%=assignment.Score%></p>
+                </div>
+              </div>
+              <div class="col-12 d-flex justify-content-start pt-4" style="border-top: 1px solid #EAEFF4;">
+                <button class="btn btn-warning p-2" type="submit">บันทึกการแก้ไข <i class="bi bi-check-circle-fill"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      <% } %>
+    </div>
+  </div>
+  </div>
+  <%- include("./partials/footer.ejs")%>
+  <script>
+    // ดึง element ของ startTime และ endTime จากฟอร์ม
+    const startTimeInput = document.getElementById('StartDate');
+    const endTimeInput = document.getElementById('Deadline');
+
+    startTimeInput.addEventListener('input', function() {
+      checkTimeValidity();
+    });
+
+    endTimeInput.addEventListener('input', function() {
+      checkTimeValidity();
+    });
+
+    // ฟังก์ชันสำหรับตรวจสอบความถูกต้องของเวลาและแสดง alert ถ้ามีข้อผิดพลาด
+    function checkTimeValidity() {
+      const startTime = new Date(startTimeInput.value);
+      const endTime = new Date(endTimeInput.value);
+
+      if (startTime >= endTime) {
+        Swal.fire({
+          icon: "error",
+          title: "กำหนดวันที่และเวลาไม่ถูกต้อง",
+          text: "วันที่หมดเขตส่งไม่สามารถต่ำกว่าวันที่เปิดให้ส่งได้",
+          timer: 2000,
+          customClass: {
+            container: 'swal-container-padding', // กำหนด padding ให้ container ของ Swal
+            icon: 'swal-icon-center', // กำหนดให้ icon อยู่กึ่งกลาง
+            confirmButton: 'swal-btn-padding' // กำหนด padding ให้ปุ่ม "OK"
+          }
+        });
+        endTimeInput.value = '';
+      }
+    }
+  </script>
+</body>
+
+
+</html>

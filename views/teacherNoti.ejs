@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>การแจ้งเตือน</title>
+  <%- include("./partials/header.ejs")%>
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
+  <link rel="stylesheet" href="/css/assignment.css">
+  <link rel="stylesheet" href="/css/fixedSwal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty@4/lib/noty.css">
+  <script src="https://cdn.jsdelivr.net/npm/noty@4/lib/noty.min.js"></script>
+  <!-- <script src="/socket.io/socket.io.js"></script> -->
+  <style>
+    #sortTime {
+      border-radius: 0.25em;
+      margin-right: 1em !important;
+      border: 1px solid #cdcdcd !important;
+
+    }
+
+    .set-border-bottom {
+      border-bottom: 1px solid #EAEFF4;
+      padding-bottom: 0.5em !important;
+    }
+
+    .eachNoti {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      max-height: 104px;
+    }
+
+    .eachNoti img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 1em !important;
+      object-fit: cover;
+
+    }
+
+    .eachNoti .content {
+      flex-grow: 1;
+    }
+
+    .eachNoti .content p {
+      margin: 0;
+    }
+
+    .eachNoti .content .time {
+      color: gray;
+      font-size: 0.9em;
+    }
+
+    .mark-as-read-each {
+      display: flex;
+      justify-content: end;
+      align-items: center;
+      text-align: center;
+    }
+
+    .mask-each-read:hover {
+      color: blue !important;
+      transition: 03.s;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="blur-container">
+    <%- include("./partials/nav.ejs")%>
+    <!-- <div class="above-nav d-flex px-4 py-3">
+      <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
+        <i class="bi bi-house mx-2"></i>
+        <a href="/adminIndex" class="a-home">
+          <p class="m-0">หน้าหลัก &nbsp;&nbsp;></p>
+        </a>
+      </div>
+      <a href="#" class="status-a mx-2 my-0 align-middle">
+        <p class="m-0">บทเรียน</p>
+      </a>
+    </div> -->
+  </div>
+  <div class="main-content d-flex w-100 h-auto">
+    <%- include("./partials/lessonsList.ejs")%>
+    <div class="aside-right w-75 h-auto p-4">
+      <div class="manange-bar px-4 py-3 bg-white d-flex w-100 row" id="topBar">
+        <div class="col-6">
+          <p class="fw-bold fs-3 lesson-bar">การแจ้งเตือน</p>
+        </div>
+        <!-- <div class="col-6">
+          <a href="#addForm" class="text-primary py-2 px-2">ทำเครื่องหมายว่าอ่านทั้งหมดแล้ว</i></a>
+        </div> -->
+
+        <div class="col-6 d-flex justify-content-end">
+          <a href="/adminIndex/maskAllAsRead" class="add-button btn btn-success m-0 p-2">
+            ทำเครื่องหมายว่าอ่านทั้งหมดแล้ว <i class="bi bi-check-circle"></i>
+          </a>
+          <!-- <a href="#" class="add-button btn btn-dark m-0 p-2">
+            นำออกข้อมูลนักศึกษา (Export file) <i class="bi bi-file-arrow-down-fill"></i>
+            </i>
+          </a> -->
+        </div>
+      </div>
+      <% if (notifications.docs.length > 0) { %>
+      <div class="my-4 row">
+        <div class="col-6 py-2">
+          <label for="sortTime">เรียงตามวันที่: </label>
+          <select id="sortTime">
+            <option value="asc">ล่าสุด-เก่าที่สุด</option>
+            <option value="desc">เก่าที่สุด-ล่าสุด</option>
+          </select>
+        </div>
+        <div class="col-6 d-flex justify-content-end">
+          <a href="#addForm" class="text-primary py-2 px-2">ดูการแจ้งเตือนทั้งหมด</i></a>
+        </div>
+      </div>
+      <% notifications.docs.forEach(noti => { %>
+      <div class="lesson-content bg-white w-100 p-4 my-4" style="height: fit-content;">
+        <div class="row set-border-bottom">
+          <div class="col-6">
+            <p class="fw-normal">
+              <i class="bi bi-bell text-primary fs-5"></i>
+              <span class="mx-1 fs-6 py-1"><%=noti.date%>
+              </span>
+            </p>
+          </div>
+        </div>
+        <% const getAllNotices = noti.notifications%>
+        <div class="notificationArray">
+          <% getAllNotices.forEach((a, index) => { %>
+          <div class="row my-3" data-id="<%= noti._id %>" data-noti-id="<%= a._id %>">
+            <div class="col-8 eachNoti">
+              <img src="https://media.themoviedb.org/t/p/w500/1iDRxID6mHf8rftDG0kLWzfXvQA.jpg" alt="รูปโปรไฟล์ผู้ใช้">
+              <div class="content">
+                <p class="fw-bold"><%=a.name%></p>
+                <p class=""><%=a.about%></p>
+                <p class="time"><%=a.time%></p>
+
+              </div>
+            </div>
+            <% if (a.isRead === false) { %>
+            <div class="col-4 mark-as-read-each">
+              <a href="/markAsRead?index=<%=index%>&notiId=<%=noti._id%>" class="mask-each-read fs-4 text-success" style="margin-right: 2em !important;"><i class="bi bi-check-circle-fill"></i>
+              </a>
+            </div>
+            <% } else if (a.isRead === true) { %>
+            <div class="col-4 mark-as-read-each">
+              <a class="fs-4 text-secondary" style="margin-right: 2em !important;"><i class="bi bi-check-circle-fill"></i>
+              </a>
+            </div>
+            <% } %>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+      <% });%>
+      <% } else if (notifications.length < 1 ) {%>
+      <div class="my-4 row">
+        <div class="col-2 py-2">
+          <p>ยังไม่มีการแจ้งเตือนใด ๆ จากระบบ</p>
+        </div>
+      </div>
+      <% } %>
+
+      <div class="d-flex justify-content-end">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <% if (notifications.hasPrevPage) { %>
+            <li class="page-item">
+              <a class="page-link px-2" href="/adminIndex/teacherNotification?page=<%= notifications.prevPage %>&limit=<%= notifications.limit %>">Previous</a>
+            </li>
+            <% } else { %>
+            <li class="page-item disabled">
+              <a class="page-link px-2" href="#">ก่อนหน้า</a>
+            </li>
+            <% } %>
+
+            <% let startPage = Math.max(notifications.page - 1, 1); %>
+            <% let endPage = Math.min(startPage + 2, notifications.totalPages); %>
+
+            <% if (startPage > 1) { %>
+            <li class="page-item">
+              <a class="page-link px-2" href="/adminIndex/teacherNotification?page=1&limit=<%= notifications.limit %>">1</a>
+            </li>
+            <% if (startPage > 2) { %>
+            <li class="page-item disabled"><a class="page-link px-2">...</a></li>
+            <% } %>
+            <% } %>
+
+
+            <% for (let i = startPage; i <= endPage; i++) { %>
+            <li class="page-item <%= notifications.page === i ? 'active' : '' %>">
+              <a class="page-link px-2" href="/adminIndex/teacherNotification?page=<%= i %>&limit=<%= notifications.limit %>"><%= i %></a>
+            </li>
+            <% } %>
+
+
+            <% if (endPage < notifications.totalPages) { %>
+            <% if (endPage < notifications.totalPages - 1) { %>
+            <li class="page-item disabled"><a class="page-link">...</a></li>
+            <% } %>
+            <li class="page-item">
+              <a class="page-link px-2" href="/adminIndex/teacherNotification?page=<%= notifications.totalPages %>&limit=<%= notifications.limit %>"><%= notifications.totalPages %></a>
+            </li>
+            <% } %>
+
+            <% if (notifications.hasNextPage) { %>
+            <li class="page-item">
+              <a class="page-link px-2" href="/adminIndex/teacherNotification?page=<%= notifications.nextPage %>&limit=<%= notifications.limit %>">Next</a>
+            </li>
+            <% } else { %>
+            <li class="page-item disabled">
+              <a class="page-link px-2" href="#">ถัดไป</a>
+            </li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- <div class="w-100 d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <li class="page-item">
+              <a class="page-link px-2" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <% for (let i = 1; i <= notifications.length; i++) { %>
+            <li class="page-item"><a class="page-link px-2" href="#"><%=i%></a></li>
+            <% } %>
+            <li class="page-item">
+              <a class="page-link px-2" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div> -->
+    </div>
+
+  </div>
+  <%- include("./partials/footer.ejs")%>
+  <script>
+    // const socket = io();
+
+    // document.querySelectorAll('.eachNoti').forEach(noti => {
+    //   noti.addEventListener('mouseenter', () => {
+    //     const notificationId = noti.dataset.id;
+    //     const eachNotiId = noti.dataset.notiId;
+
+    //     socket.emit('markAsRead', {
+    //       notificationId,
+    //       eachNotiId
+    //     });
+    //   });
+    // });
+
+    // socket.on('markedAsRead', (eachNotiId) => {
+    //   document.querySelector(`.eachNoti[data-noti-id="${eachNotiId}"]`).style.backgroundColor = '#e0e0e0'; // เปลี่ยนสีพื้นหลังเมื่ออ่านแล้ว
+    // });
+
+
+    // ดึง element ของ startTime และ endTime จากฟอร์ม
+    const startTimeInput = document.getElementById('StartDate');
+    const endTimeInput = document.getElementById('Deadline');
+
+    startTimeInput.addEventListener('input', function() {
+      checkTimeValidity();
+    });
+
+    endTimeInput.addEventListener('input', function() {
+      checkTimeValidity();
+    });
+
+    // ฟังก์ชันสำหรับตรวจสอบความถูกต้องของเวลาและแสดง alert ถ้ามีข้อผิดพลาด
+    function checkTimeValidity() {
+      const startTime = new Date(startTimeInput.value);
+      const endTime = new Date(endTimeInput.value);
+
+      if (startTime >= endTime) {
+        Swal.fire({
+          icon: "error",
+          title: "กำหนดวันที่และเวลาไม่ถูกต้อง",
+          text: "วันที่หมดเขตส่งไม่สามารถต่ำกว่าวันที่เปิดให้ส่งได้",
+          timer: 2000,
+          customClass: {
+            container: 'swal-container-padding', // กำหนด padding ให้ container ของ Swal
+            icon: 'swal-icon-center', // กำหนดให้ icon อยู่กึ่งกลาง
+            confirmButton: 'swal-btn-padding' // กำหนด padding ให้ปุ่ม "OK"
+          }
+        });
+        endTimeInput.value = '';
+      }
+    }
+  </script>
+</body>
+
+
+</html>

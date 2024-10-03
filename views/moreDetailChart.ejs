@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <!-- <link rel="stylesheet" href="/css/event.css"> -->
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
+  <%- include("./partials/header.ejs")%>
+  <style>
+    * {
+      box-sizing: border-box !important;
+    }
+
+    .card-1,
+    .card-body-1 {
+
+      border: none !important;
+
+    }
+
+    .descp {
+      text-indent: 2em;
+      margin: 0 2em;
+    }
+
+
+    .rectangle-141 {
+      background-color: white;
+      border-radius: 0.75em;
+      box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+      height: 14.6875em;
+      left: 4.6875em;
+      top: 37.3125em;
+      width: 39.125em;
+      width: 75%;
+      margin: 2em 2em;
+    }
+
+    .home-div,
+    .a-home {
+      color: #999999 !important;
+    }
+
+    .above-nav {
+      background-color: white !important;
+      border-bottom: 1px solid #999999;
+    }
+
+    .status-a {
+      color: #404258 !important;
+    }
+
+    .list-lesson-p {
+      color: #8A2BE2;
+
+    }
+
+    .list-lesson-p-span {
+      color: #4B0082;
+    }
+
+    .each-lesson {
+      border-top: 0.1em solid #8A2BE2;
+    }
+
+    /* .each-lesson-a {
+      border-top: 0.1em solid #8A2BE2;
+    } */
+
+    .aside-right {
+      background-color: #dde6ed1a;
+      height: 100%;
+    }
+
+    .manange-bar {
+      border-radius: 0.5em;
+      justify-content: space-between !important;
+    }
+
+    .add-button {
+      border-radius: 0.5em !important;
+      width: 20% !important;
+      height: auto !important;
+
+    }
+
+    .lesson-content {
+      height: fit-content !important;
+      border-radius: 1em !important;
+
+      justify-content: center !important;
+      /* border-top: 0.5em solid #8A2BE2; */
+    }
+
+    .lesson-nothing {
+      margin: 25% 0 !important;
+      padding: 0 !important;
+    }
+
+    .each-lesson-a {
+      text-decoration: none !important;
+    }
+
+    .each-lesson-a:hover .each-lesson {
+      border-left: 0.2em solid #8A2BE2 !important;
+      /* background-color: #404258 !important; */
+    }
+
+    .card-img-top {
+      box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+    }
+
+    .setColumn {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr !important;
+    }
+
+    .card-a {
+      text-decoration: none !important;
+
+    }
+
+    .card-a:hover,
+    .card-a:hover .p-lesson-name {
+      color: #007bff !important;
+      transition: 0.5s;
+    }
+
+    .card-a:hover .bi-book {
+      color: #007bff !important;
+      transition: color 0.5s;
+    }
+
+    .bi-book-fill {
+      display: none;
+    }
+
+    .card-a:hover .bi-book-fill {
+      display: inline-block !important;
+      transition: 0.5s;
+    }
+
+    .card-a:hover .bi-book {
+      display: none;
+      transition: 0.5s;
+    }
+
+    .manange-bar,
+    .lesson-content {
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+      border-radius: 0.5em;
+    }
+
+    .card-1 {
+      width: 90% !important;
+      height: fit-content !important;
+      transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+      cursor: pointer;
+      border-radius: 0.5em;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+
+    }
+
+    .card-1:hover {
+      transform: scale(1.05);
+    }
+
+    .card-header {
+      border-right: 1px solid #EAEFF4;
+      border-bottom: 1px solid #EAEFF4;
+
+    }
+
+    .a-list-1,
+    .bi-1 {
+      color: #8A2BE2 !important;
+    }
+
+
+    #dashboardSelector {
+      border-color: #EAEFF4;
+      border-radius: 0.5em;
+      background-color: white !important;
+      font-size: smaller;
+      padding: 0.5em !important;
+    }
+
+    #dashboardSelector option {
+      color: #404258;
+      background-color: white !important;
+
+
+    }
+
+    .sectionSelector {
+      border-color: #EAEFF4;
+      border-radius: 0.5em;
+      background-color: white !important;
+      font-size: smaller;
+      padding: 0.5em !important;
+    }
+
+    .sectionSelector option {
+      color: #404258;
+      background-color: white !important;
+
+    }
+
+    /* .set-border {
+      border-bottom: 1px solid #EAEFF4;
+      padding-bottom: 1em !important;
+
+    } */
+
+    .set-border-bottom {
+      border-bottom: 1px solid #EAEFF4;
+      margin-bottom: 1em !important;
+
+    }
+
+    .lesson-bar {
+      border-left: 0.25em solid #007bff !important;
+      padding-left: 0.5em !important;
+      margin-right: 0.5em !important;
+
+    }
+
+    .a-add {
+      color: #007bff !important;
+    }
+
+    .a-add:hover {
+      color: #0053ac !important;
+    }
+
+    .graph-container {
+      margin-right: 1em !important;
+      margin-bottom: 2em !important;
+    }
+
+    .graph-container-2 {
+      margin-bottom: 1em !important;
+      /* background-color: #5D87FF; */
+      color: white;
+    }
+
+    .graph-container-3 {
+      margin-bottom: 1em !important;
+      /* background-color: #5D87FF; */
+      color: #7C8FAC;
+    }
+
+    .graph-container-4 {
+      margin-bottom: 1em !important;
+      /* background-color: #5D87FF; */
+      color: #7C8FAC;
+    }
+
+    .graph-label {
+      border-bottom: 1px solid #EAEFF4;
+    }
+
+    .progress-bar-white {
+      background-color: white;
+      /* color: #5D87FF; */
+      /* ถ้าต้องการให้ข้อความเป็นสีดำเพื่อความชัดเจน */
+
+    }
+
+    .progress {
+      margin-top: 1em !important;
+    }
+
+    .success-eachday {
+      color: #7C8FAC !important;
+    }
+
+    .success-eachday:hover {
+      color: #0053ac !important;
+      transition: 0.3s;
+    }
+
+    .quiz-label {
+      font-size: small;
+    }
+
+    .list-div {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr 1.25fr 0.75fr 0.75fr;
+      padding-top: 0.5em;
+      border-bottom: 1px solid #EAEFF4;
+    }
+
+    .list-div-data {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr 1.25fr 0.75fr 0.75fr;
+      padding-top: 1em;
+      border-bottom: 1px solid #EAEFF4;
+      text-align: start;
+      color: #4e5458 !important;
+
+    }
+
+    .setGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .studentDetail-a:hover>.list-div-data {
+      color: #0053ac !important;
+      transition: 0.3s;
+    }
+  </style>
+
+</head>
+
+<body>
+  <%- include("./partials/nav.ejs")%>
+  <!-- <div class="above-nav d-flex px-4 py-3">
+    <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
+      <i class="bi bi-house mx-2"></i>
+      <a href="/adminIndex" class="a-home">
+        <p class="m-0">หน้าหลัก &nbsp;&nbsp;></p>
+      </a>
+    </div>
+    <a href="#" class="status-a mx-2 my-0 align-middle">
+      <p class="m-0">บทเรียน</p>
+    </a>
+  </div> -->
+  <div class="main-content d-flex">
+    <% const pageName = "adminLessonIndex" %>
+    <%- include("./partials/lessonsList.ejs", { pageName: pageName })%>
+    <!-- <div style="width: 20%;"><p class="w-100">&nbsp;</p></div> -->
+    <div class="aside-right bg-white h-auto p-4" style="width: 80%;">
+      <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
+        <p class="fw-bold fs-3 lesson-bar">ภาพรวมของบทเรียน (Overview of Lessons)</p>
+        <!-- <div class="d-flex justify-content-center" style="align-items: center;">
+          <label class="mx-2" for="dashboardSelector">แดชบอร์ดของ: </label>
+          <select id="dashboardSelector">
+            <option value="/adminIndex/adminDashboard" selected>
+              ทั้งหมด
+              </a>
+            </option>
+            <option value="/adminIndex">
+              บทเรียน
+            </option>
+            <option value="/adminIndex">
+              แบบทดสอบ
+            </option>
+            <option value="/adminIndex">
+              งานที่มอบหมาย
+            </option>
+          </select>
+        </div> -->
+      </div>
+
+      <div class="lesson-content p-4 bg-white w-100 my-4">
+        <div class="row pb-2" style="border-bottom: 1px solid #EAEFF4; align-items: center;">
+          <div class="col-2">
+            <p class="fs-5 fw-bold ">
+              <i class="bi bi-people-fill text-primary"></i><span class="mx-2">รายชื่อนักศึกษา </span>
+              <!-- <span class="fs-6 fw-light mx-2" style="color: #5A6A85;">(3 x 8) แถว/คอลัมน์ แรก</span> -->
+            </p>
+          </div>
+          <div class="col-10 d-flex justify-content-end" style="align-items: center;">
+            <div class="d-flex mb-3" style="align-items: center;">
+              <div class="">
+                <label class="quiz-label" for="dashboardSelector">รายวิชา: </label>
+                <% if (subjects) { %>
+                <select class="sectionSelector" onchange="submitSubjectId(this.value)">
+                  <% subjects.forEach(subject => { %>
+                  <option value="<%= subject._id %>" <%= subject._id.equals(findSubject._id) ? 'selected' : '' %>>
+                    <%= subject.subjectId %> <%= subject.subjectName %>
+                    ปีการศึกษา: <%= subject.semester %> กลุ่ม: <%= subject.section %>
+                  </option>
+                  <% }) %>
+                </select>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="">
+          <div class="file-example w-100">
+            <div class="list-div text-primary">
+              <p class="fw-bold my-3">
+                รหัสนักศึกษา
+              </p>
+              <p class="fw-bold my-3">
+                ชื่อ - นามสกุล
+              </p>
+              <p class="fw-bold my-3">
+                ที่อยู่อีเมล (Email)
+              </p>
+              <p class="fw-bold my-3 text-center">
+                ความสำเร็จ
+              </p>
+              <p class="fw-bold my-3 text-center">
+                เวลาที่ใช้
+              </p>
+            </div>
+            <% if (paginateStudents.length > 0) { %>
+            <% paginateStudents.forEach((student, index) => { %>
+            <a href="/adminIndex/studentDetail?studentId=<%=student._id%>&subjectId=<%=subjectId%>" class="studentDetail-a">
+              <div class="list-div-data">
+                <p class="fw-normal my-3">
+                  <%= student.studentId %>
+                </p>
+                <p class="fw-normal my-3">
+                  <%= student.user.name %>
+                </p>
+                <p class="fw-normal my-3">
+                  <%= student.user.email %>
+                </p>
+                <% if (paginateProgress[index]) { %>
+                <% const percent = paginateProgress[index].userProgressSummary.toFixed(0); %>
+                <% if (percent < 49) { %>
+                <p class="fw-normal my-3 text-center text-danger">
+                  <%= percent %> %
+                </p>
+                <% } else if (percent >= 50 && percent <= 79) { %>
+                <p class="fw-normal my-3 text-center text-warning">
+                  <%= percent %> %
+                </p>
+                <% } else if (percent >= 80 && percent <= 100) { %>
+                <p class="fw-normal my-3 text-center text-success">
+                  <%= percent %> %
+                </p>
+                <% } %>
+                <% } else { %>
+                <p class="fw-normal my-3 text-center text-danger">
+                  0 %
+                </p>
+                <% } %>
+
+                <p class="fw-normal my-3 text-center">
+                  <% if (paginateProgress[index]) { %>
+                  <%= paginateProgress[index].totalTimeSpent %> นาที
+                  <% } else { %>
+                  0 นาที
+                  <% } %>
+                </p>
+              </div>
+            </a>
+            <% }); %>
+            <% } %>
+            <!-- <a href="/adminIndex/studentDetail" class="studentDetail-a">
+              <div class="list-div-data">
+                <p class="fw-normal my-3">
+                  643021231-9
+                </p>
+                <p class="fw-normal my-3">
+                  นายอริญชวุธ กัลยานาม
+                </p>
+                <p class="fw-normal my-3">
+                  arinchawut.k@kkumail.com
+                </p>
+                <p class="fw-normal my-3 text-center text-success">
+                  100 %
+                </p>
+                <p class="fw-normal my-3 text-center">
+                  100 นาที
+                </p>
+              </div>
+            </a>
+            <a href="/adminIndex/studentDetail" class="studentDetail-a">
+              <div class="list-div-data">
+                <p class="fw-normal my-3">
+                  643020423-0
+                </p>
+                <p class="fw-normal my-3">
+                  นายภูเบศ โกมุติบาล
+                </p>
+                <p class="fw-normal my-3">
+                  phubet.k@kkumail.com
+                </p>
+                <p class="fw-normal my-3 text-center text-danger">
+                  10 %
+                </p>
+                <p class="fw-normal my-3 text-center">
+                  5 นาที
+                </p>
+              </div>
+            </a>
+            <a href="/adminIndex/studentDetail" class="studentDetail-a">
+              <div class="list-div-data">
+                <p class="fw-normal my-3">
+                  643020396-1
+                </p>
+                <p class="fw-normal my-3">
+                  นางสาวกมลวรรณ หอมสมบัติ
+                </p>
+                <p class="fw-normal my-3">
+                  kamonwan.h@kkumail.com
+                </p>
+                <p class="fw-normal my-3 text-center text-success">
+                  49 %
+                </p>
+                <p class="fw-normal my-3 text-center">
+                  22 นาที
+                </p>
+              </div>
+            </a>
+            <a href="/adminIndex/studentDetail" class="studentDetail-a">
+              <div class="list-div-data">
+                <p class="fw-normal my-3">
+                  643021564-9
+                </p>
+                <p class="fw-normal my-3">
+                  นายพัชรพล แก้วหย่อง
+                </p>
+                <p class="fw-normal my-3">
+                  patcharapon.k@kkumail.com
+                </p>
+                <p class="fw-normal my-3 text-center text-warning">
+                  69 %
+                </p>
+                <p class="fw-normal my-3 text-center">
+                  80 นาที
+                </p>
+              </div>
+            </a>
+            <a href="/adminIndex/studentDetail" class="studentDetail-a">
+              <div class="list-div-data">
+                <p class="fw-normal my-3">
+                  643020341-7
+                </p>
+                <p class="fw-normal my-3">
+                  นางสาวธิดารัตน์ วงศ์วรัญญู
+                </p>
+                <p class="fw-normal my-3">
+                  thidarat.w@kkumail.com
+                </p>
+                <p class="fw-normal my-3 text-center text-success">
+                  71 %
+                </p>
+                <p class="fw-normal my-3 text-center">
+                  31 นาที
+                </p>
+              </div>
+            </a> -->
+          </div>
+        </div>
+        <div class="mt-3 d-flex justify-content-end">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <% if (currentPage > 1) { %>
+              <li class="page-item">
+                <a class="page-link px-2" href="/adminIndex/moreDetailChart?subjectId=<%= subjectId %>&page=<%= currentPage - 1 %>">ก่อนหน้า</a>
+              </li>
+              <% } else { %>
+              <li class="page-item disabled">
+                <a class="page-link px-2" href="#">ก่อนหน้า</a>
+              </li>
+              <% } %>
+
+              <% const maxPagesToShow = 5; %>
+              <% let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2)); %>
+              <% let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1); %>
+
+              <% if (startPage > 1) { %>
+              <li class="page-item">
+                <a class="page-link px-2" href="/adminIndex/moreDetailChart?subjectId=<%= subjectId %>&page=1">1</a>
+              </li>
+              <% if (startPage > 2) { %>
+              <li class="page-item disabled">
+                <a class="page-link px-2" href="#">...</a>
+              </li>
+              <% } %>
+              <% } %>
+
+              <% for (let i = startPage; i <= endPage; i++) { %>
+              <% if (i === currentPage) { %>
+              <li class="page-item active">
+                <a class="page-link px-2" href="#"><%= i %></a>
+              </li>
+              <% } else { %>
+              <li class="page-item">
+                <a class="page-link px-2" href="/adminIndex/moreDetailChart?subjectId=<%= subjectId %>&page=<%= i %>"><%= i %></a>
+              </li>
+              <% } %>
+              <% } %>
+
+              <% if (endPage < totalPages) { %>
+              <% if (endPage < totalPages - 1) { %>
+              <li class="page-item disabled">
+                <a class="page-link px-2" href="#">...</a>
+              </li>
+              <% } %>
+              <li class="page-item">
+                <a class="page-link px-2" href="/adminIndex/moreDetailChart?subjectId=<%= subjectId %>&page=<%= totalPages %>"><%= totalPages %></a>
+              </li>
+              <% } %>
+
+              <% if (currentPage < totalPages) { %>
+              <li class="page-item">
+                <a class="page-link px-2" href="/adminIndex/moreDetailChart?subjectId=<%= subjectId %>&page=<%= currentPage + 1 %>">ถัดไป</a>
+              </li>
+              <% } else { %>
+              <li class="page-item disabled">
+                <a class="page-link px-2" href="#">ถัดไป</a>
+              </li>
+              <% } %>
+            </ul>
+          </nav>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+  <%- include("./partials/footer.ejs")%>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <script>
+    AOS.init();
+  </script>
+  <script src="/js/chart.js"></script>
+  <script>
+    function submitSubjectId(subjectId) {
+      if (subjectId) {
+        window.location.href = `/adminIndex/moreDetailChart?subjectId=${subjectId}`;
+      }
+    }
+  </script>
+
+</body>
+
+
+</html>

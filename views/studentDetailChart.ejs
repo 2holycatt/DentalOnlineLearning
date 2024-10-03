@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายละเอียดนักศึกษา</title>
+  <!-- <link rel="stylesheet" href="/css/event.css"> -->
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
+  <%- include("./partials/header.ejs")%>
+  <style>
+    * {
+      box-sizing: border-box !important;
+    }
+
+    .card-1,
+    .card-body-1 {
+
+      border: none !important;
+
+    }
+
+    .descp {
+      text-indent: 2em;
+      margin: 0 2em;
+    }
+
+
+    .rectangle-141 {
+      background-color: white;
+      border-radius: 0.75em;
+      box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+      height: 14.6875em;
+      left: 4.6875em;
+      top: 37.3125em;
+      width: 39.125em;
+      width: 75%;
+      margin: 2em 2em;
+    }
+
+    .home-div,
+    .a-home {
+      color: #999999 !important;
+    }
+
+    .above-nav {
+      background-color: white !important;
+      border-bottom: 1px solid #999999;
+    }
+
+    .status-a {
+      color: #404258 !important;
+    }
+
+    .list-lesson-p {
+      color: #8A2BE2;
+
+    }
+
+    .list-lesson-p-span {
+      color: #4B0082;
+    }
+
+    .each-lesson {
+      border-top: 0.1em solid #8A2BE2;
+    }
+
+    /* .each-lesson-a {
+      border-top: 0.1em solid #8A2BE2;
+    } */
+
+    .aside-right {
+      background-color: #dde6ed1a;
+      height: 100%;
+    }
+
+    .manange-bar {
+      border-radius: 0.5em;
+      justify-content: space-between !important;
+    }
+
+    .add-button {
+      border-radius: 0.5em !important;
+      width: 20% !important;
+      height: auto !important;
+
+    }
+
+    .lesson-content {
+      height: fit-content !important;
+      border-radius: 1em !important;
+
+      justify-content: center !important;
+      /* border-top: 0.5em solid #8A2BE2; */
+    }
+
+    .lesson-nothing {
+      margin: 25% 0 !important;
+      padding: 0 !important;
+    }
+
+    .each-lesson-a {
+      text-decoration: none !important;
+    }
+
+    .each-lesson-a:hover .each-lesson {
+      border-left: 0.2em solid #8A2BE2 !important;
+      /* background-color: #404258 !important; */
+    }
+
+    .card-img-top {
+      box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+    }
+
+    .setColumn {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr !important;
+    }
+
+    .card-a {
+      text-decoration: none !important;
+
+    }
+
+    .card-a:hover,
+    .card-a:hover .p-lesson-name {
+      color: #007bff !important;
+      transition: 0.5s;
+    }
+
+    .card-a:hover .bi-book {
+      color: #007bff !important;
+      transition: color 0.5s;
+    }
+
+    .bi-book-fill {
+      display: none;
+    }
+
+    .card-a:hover .bi-book-fill {
+      display: inline-block !important;
+      transition: 0.5s;
+    }
+
+    .card-a:hover .bi-book {
+      display: none;
+      transition: 0.5s;
+    }
+
+    .manange-bar,
+    .lesson-content {
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+      border-radius: 0.5em;
+    }
+
+    .card-1 {
+      width: 90% !important;
+      height: fit-content !important;
+      transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+      cursor: pointer;
+      border-radius: 0.5em;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+
+    }
+
+    .card-1:hover {
+      transform: scale(1.05);
+    }
+
+    .card-header {
+      border-right: 1px solid #EAEFF4;
+      border-bottom: 1px solid #EAEFF4;
+
+    }
+
+    .a-list-1,
+    .bi-1 {
+      color: #8A2BE2 !important;
+    }
+
+
+    #dashboardSelector {
+      border-color: #EAEFF4;
+      border-radius: 0.5em;
+      background-color: white !important;
+      font-size: smaller;
+      padding: 0.5em !important;
+    }
+
+    #dashboardSelector option {
+      color: #404258;
+      background-color: white !important;
+
+
+    }
+
+    .sectionSelector {
+      border-color: #EAEFF4;
+      border-radius: 0.5em;
+      background-color: white !important;
+      font-size: smaller;
+      padding: 0.5em !important;
+    }
+
+    .sectionSelector option {
+      color: #404258;
+      background-color: white !important;
+
+    }
+
+    /* .set-border {
+      border-bottom: 1px solid #EAEFF4;
+      padding-bottom: 1em !important;
+
+    } */
+
+    .set-border-bottom {
+      border-bottom: 1px solid #EAEFF4;
+      margin-bottom: 1em !important;
+
+    }
+
+    .lesson-bar {
+      border-left: 0.25em solid #007bff !important;
+      padding-left: 0.5em !important;
+      margin-right: 0.5em !important;
+
+    }
+
+    .a-add {
+      color: #007bff !important;
+    }
+
+    .a-add:hover {
+      color: #0053ac !important;
+    }
+
+    .graph-container {
+      margin-left: 1em !important;
+    }
+
+    .graph-container-2 {
+      margin-bottom: 1em !important;
+      /* background-color: #5D87FF; */
+      color: white;
+    }
+
+    .graph-container-3 {
+      margin-bottom: 1em !important;
+      /* background-color: #5D87FF; */
+      color: #7C8FAC;
+    }
+
+    .graph-container-4 {
+      margin-bottom: 1em !important;
+      /* background-color: #5D87FF; */
+      color: #7C8FAC;
+    }
+
+    .graph-label {
+      border-bottom: 1px solid #EAEFF4;
+    }
+
+    .progress-bar-white {
+      background-color: white;
+      /* color: #5D87FF; */
+      /* ถ้าต้องการให้ข้อความเป็นสีดำเพื่อความชัดเจน */
+
+    }
+
+    .progress {
+      margin-top: 1em !important;
+    }
+
+    .success-eachday {
+      color: #7C8FAC !important;
+    }
+
+    .success-eachday:hover {
+      color: #0053ac !important;
+      transition: 0.3s;
+    }
+
+    .quiz-label {
+      font-size: small;
+    }
+
+    .list-div {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr 1.25fr 0.75fr 0.75fr;
+      padding-top: 0.5em;
+      border-bottom: 1px solid #EAEFF4;
+    }
+
+    .list-div-data {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr 1.25fr 0.75fr 0.75fr;
+      padding-top: 1em;
+      border-bottom: 1px solid #EAEFF4;
+      text-align: start;
+      color: #4e5458 !important;
+
+    }
+
+    .setGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .studentDetail-a:hover>.list-div-data {
+      color: #0053ac !important;
+      transition: 0.3s;
+    }
+
+    .img-square {
+      width: 100%;
+      height: 250px;
+    }
+
+    .img-square img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 0.5em;
+    }
+
+    .set-bg {
+      border-radius: 0.5em;
+    }
+  </style>
+
+</head>
+
+<body>
+  <%- include("./partials/nav.ejs")%>
+  <!-- <div class="above-nav d-flex px-4 py-3">
+    <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
+      <i class="bi bi-house mx-2"></i>
+      <a href="/adminIndex" class="a-home">
+        <p class="m-0">หน้าหลัก &nbsp;&nbsp;></p>
+      </a>
+    </div>
+    <a href="#" class="status-a mx-2 my-0 align-middle">
+      <p class="m-0">บทเรียน</p>
+    </a>
+  </div> -->
+  <div class="main-content d-flex">
+    <% const pageName = "adminLessonIndex" %>
+    <%- include("./partials/lessonsList.ejs", { pageName: pageName })%>
+    <!-- <div style="width: 20%;"><p class="w-100">&nbsp;</p></div> -->
+    <div class="aside-right bg-white h-auto p-4" style="width: 80%;">
+      <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
+        <p class="fw-bold fs-3 lesson-bar">รายละเอียดของนักศึกษา</p>
+        <!-- <div class="d-flex justify-content-center" style="align-items: center;">
+          <label class="mx-2" for="dashboardSelector">แดชบอร์ดของ: </label>
+          <select id="dashboardSelector">
+            <option value="/adminIndex/adminDashboard" selected>
+              ทั้งหมด
+              </a>
+            </option>
+            <option value="/adminIndex">
+              บทเรียน
+            </option>
+            <option value="/adminIndex">
+              แบบทดสอบ
+            </option>
+            <option value="/adminIndex">
+              งานที่มอบหมาย
+            </option>
+          </select>
+        </div> -->
+      </div>
+
+      <div class="lesson-content p-4 bg-white w-100 my-4">
+        <!-- <div class="row pb-2" style="border-bottom: 1px solid #EAEFF4; align-items: center;">
+    
+        </div> -->
+        <div class="d-flex justify-content-start" style="align-items: center;">
+          <div class="d-flex mb-3" style="align-items: center;">
+            <div class="">
+              <label class="quiz-label" for="dashboardSelector">รายวิชา: </label>
+              <% if (subjects) { %>
+              <select class="sectionSelector" onchange="submitSubjectId(this.value)">
+                <% subjects.forEach(subject => { %>
+                <option value="<%= subject._id %>" <%= subject._id.equals(subjectId) ? 'selected' : '' %>>
+                  <%= subject.subjectId %> <%= subject.subjectName %>
+                  ปีการศึกษา: <%= subject.semester %> กลุ่ม: <%= subject.section %>
+                </option>
+                <% }) %>
+              </select>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4 p-2 set-bg">
+            <div class="row">
+              <div class="col-12 img-square">
+                <img class="shadow-sm" src="<%=findStudent.user.img%>" alt="รูปโปรไฟล์">
+              </div>
+              <div class="col-12">
+                <p class="fw-bold fs-4 text-center mt-2"><%=findStudent.user.name%></p>
+                <p class="fw-bold text-center text-primary"><%=findStudent.studentId%></p>
+                <div class="mt-2" style="border-bottom: 1px solid #EAEFF4;">
+                  <i class="bi bi-clipboard-data fs-5 text-primary"></i><span class="mx-2 fw-bold">ข้อมูลนักศึกษา</span>
+                </div>
+                <div>
+                  <div class="d-flex justify-content-between my-3">
+                    <small class="text-primary fw-bold">อีเมล (email):</small>
+                    <small><%=findStudent.user.email%></small>
+                  </div>
+                  <!-- <div class="d-flex justify-content-between my-3">
+                    <small class="text-primary fw-bold">คณะ:</small>
+                  </div> -->
+                  <div class="d-flex justify-content-between my-3">
+                    <small class="text-primary fw-bold">สาขาวิชา:</small>
+                    <small><%=findStudent.user.major%></small>
+                  </div>
+                  <!-- <div class="d-flex justify-content-between my-3">
+                    <small class="text-primary fw-bold">ปีการศึกษา:</small>
+                    <small>2560</small>
+                  </div>
+                  <div class="d-flex justify-content-between my-3">
+                    <small class="text-primary fw-bold">ชั้นปี:</small>
+                    <small>4</small>
+                  </div> -->
+                  <div class="d-flex justify-content-between my-3">
+                    <small class="text-primary fw-bold">กลุ่มเรียน:</small>
+                    <small>1</small>
+                  </div>
+                </div>
+
+                <div class="mt-2" style="border-bottom: 1px solid #EAEFF4;">
+                  <i class="bi fs-5 bi-bar-chart text-primary"></i><span class="mx-2 fw-bold">ข้อมูลสถิติ</span>
+                </div>
+                <div>
+                  <div class="d-flex justify-content-between my-3">
+                    <small class="text-primary fw-bold">คะแนนรวมแบบทดสอบทั้งหมด:</small>
+                    <small>49</small>
+                  </div>
+                  <div class="d-flex justify-content-between my-3">
+                    <small class="text-primary fw-bold">คะแนนรวมงานที่มอบหมายทั้งหมด:</small>
+                    <small>70</small>
+                  </div>
+                  <div class="d-flex justify-content-between my-3">
+                    <small class="text-primary fw-bold">ความสำเร็จบทเรียนทั้งหมด (%):</small>
+                    <small>
+                      <%=allFinishedProgressLesson%>
+                    </small>
+                  </div>
+                  <div class="d-flex justify-content-between my-3">
+                    <small class="text-primary fw-bold">ความสำเร็จแบบทดสอบทั้งหมด (%):</small>
+                    <small>50</small>
+                  </div>
+                  <div class="d-flex justify-content-between my-3">
+                    <small class="text-primary fw-bold">ความสำเร็จงานที่มอบหมายทั้งหมด (%):</small>
+                    <small>90</small>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="col-8 p-2">
+            <div class="graph-container shadow-sm rounded mb-4">
+              <div class="p-2 graph-label">
+                <div class="">
+                  <p class="fw-bold">กราฟแท่งแสดงความสำเร็จแต่ละบทเรียน</p>
+                  <small>เปอร์เซ็นของบทเรียนที่นักศึกษาทำเสร็จสิ้นไป</small>
+                </div>
+              </div>
+              <div class="w-auto">
+                <canvas id="studentChart" class="h-auto w-100 p-3"></canvas>
+                <!-- <div class="d-flex" style="border-top: 1px solid #EAEFF4;">
+                  <small class="ms-auto my-2 mx-3">
+                    <a href="/adminIndex/moreDetailChart" class="ms-auto success-eachday">รายละเอียดเพิ่มเติม</a>
+                  </small>
+                </div> -->
+              </div>
+            </div>
+            <div class="graph-container shadow-sm rounded mb-4">
+              <div class="p-2 graph-label">
+                <div class="">
+                  <p class="fw-bold">กราฟแท่งแสดงเวลาที่ใช้ไปในแต่ละบทเรียน</p>
+                  <small>เวลาที่ใช้ไปในหน่วยนาที</small>
+                </div>
+              </div>
+              <div class="w-auto">
+                <canvas id="lessonTimeChart" class="h-auto w-100 p-3"></canvas>
+              </div>
+            </div>
+
+
+            <!-- <div class="graph-container shadow-sm rounded p-2" style="color: #5A6A85 ;">
+            <p class="fw-bold pb-1 mb-2 text-black" style="border-bottom: 1px solid #EAEFF4;">แถบความคืบหน้าแต่ละบทเรียน (Progress Bar)</p>
+            <div class="mb-2">
+              <small class="fw-bold">Python</small>
+              <div class="row" style="display: flex; align-items: center;">
+                <div class="col-8">
+                  <div class="progress" style="margin: 0 !important">
+                    <div class="progress-bar" role="progressbar" style="width: 100%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">100%</div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <p class="px-3">
+                    <i class="bi bi-clock text-primary"></i>
+                    <span class="mx-2">120 นาที</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <small class="fw-bold">Java</small>
+              <div class="row" style="display: flex; align-items: center;">
+                <div class="col-8">
+                  <div class="progress" style="margin: 0 !important">
+                    <div class="progress-bar" role="progressbar" style="width: 20%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">20%</div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <p class="px-3">
+                    <i class="bi bi-clock text-primary"></i>
+                    <span class="mx-2">30 นาที</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <small class="fw-bold">C++</small>
+              <div class="row" style="display: flex; align-items: center;">
+                <div class="col-8">
+                  <div class="progress" style="margin: 0 !important">
+                    <div class="progress-bar" role="progressbar" style="width: 39%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">39%</div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <p class="px-3">
+                    <i class="bi bi-clock text-primary"></i>
+                    <span class="mx-2">47 นาที</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <small class="fw-bold">Node.js</small>
+              <div class="row" style="display: flex; align-items: center;">
+                <div class="col-8">
+                  <div class="progress" style="margin: 0 !important">
+                    <div class="progress-bar" role="progressbar" style="width: 79%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">79%</div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <p class="px-3">
+                    <i class="bi bi-clock text-primary"></i>
+                    <span class="mx-2">90 นาที</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <small class="fw-bold">PHP</small>
+              <div class="row" style="display: flex; align-items: center;">
+                <div class="col-8">
+                  <div class="progress" style="margin: 0 !important">
+                    <div class="progress-bar" role="progressbar" style="width: 91%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">91%</div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <p class="px-3">
+                    <i class="bi bi-clock text-primary"></i>
+                    <span class="mx-2">75 นาที</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <small class="fw-bold">HTML5</small>
+              <div class="row" style="display: flex; align-items: center;">
+                <div class="col-8">
+                  <div class="progress" style="margin: 0 !important">
+                    <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">50%</div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <p class="px-3">
+                    <i class="bi bi-clock text-primary"></i>
+                    <span class="mx-2">113 นาที</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div> -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <%- include("./partials/footer.ejs")%>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script> -->
+  <script>
+    AOS.init();
+  </script>
+  <script>
+    let stdId = '<%=studentId%>';
+
+    function submitSubjectId(subjectId) {
+      if (subjectId) {
+        window.location.href = `/adminIndex/studentDetail?studentId=${stdId}&subjectId=${subjectId}`;
+      }
+    }
+
+    const ctxStudent1 = document.getElementById('studentChart').getContext('2d');
+    // console.log(ctxStudent1)
+    const labels = `<%= lessonLabels %>`;
+    const splitLabels = labels.split(",");
+
+    const data = `<%= progressData %>`;
+    const splitData = data.split(",");
+
+    const timeSpent = `<%= timeSpent %>`;
+    const splitTimeSpent = timeSpent.split(",");
+
+    const predefinedColors = [
+      'rgba(255, 99, 132)', // แดงชมพู
+      'rgba(54, 162, 235)', // น้ำเงินสด
+      'rgba(255, 206, 86)', // เหลืองอ่อน
+      'rgba(75, 192, 192)', // เขียวน้ำทะเล
+      'rgba(153, 102, 255)', // ม่วงอ่อน
+      'rgba(255, 159, 64)', // ส้มอ่อน
+      'rgba(255, 99, 71)', // แดงส้ม
+      'rgba(60, 179, 113)', // เขียวมิ้นต์
+      'rgba(135, 206, 250)', // ฟ้าอ่อน
+      'rgba(148, 0, 211)', // ม่วงเข้ม
+      'rgba(220, 20, 60)', // แดงเข้ม
+      'rgba(244, 164, 96)', // ส้มทองอ่อน
+      'rgba(100, 149, 237)', // ฟ้าเทา
+      'rgba(255, 215, 0)', // เหลืองทอง
+      'rgba(255, 105, 180)', // ชมพูสด
+      'rgba(70, 130, 180)', // ฟ้าน้ำทะเล
+      'rgba(32, 178, 170)', // เขียวน้ำทะเลเข้ม
+      'rgba(186, 85, 211)', // ม่วงสดใส
+      'rgba(238, 130, 238)', // ม่วงพาสเทล
+      'rgba(255, 140, 0)' // ส้มเข้ม
+    ];
+
+    const COLOR_OPACITY = 1;
+
+    // ฟังก์ชันสุ่มสีใหม่ ๆ
+    function randomColor() {
+      const MAX_COLOR_VALUE = 255;
+      const r = Math.floor(Math.random() * MAX_COLOR_VALUE);
+      const g = Math.floor(Math.random() * MAX_COLOR_VALUE);
+      const b = Math.floor(Math.random() * MAX_COLOR_VALUE);
+      return `rgba(${r}, ${g}, ${b}, ${COLOR_OPACITY})`;
+    }
+
+    // ฟังก์ชันสุ่มเลือกสีจาก predefinedColors หรือสร้างสีใหม่
+    function getRandomOrPredefinedColor() {
+      const randomIndex = Math.floor(Math.random() * 10); // เลขสุ่ม 0-9
+      // 60% โอกาสที่จะใช้สีจาก predefinedColors
+      if (randomIndex < predefinedColors.length) {
+        return predefinedColors[randomIndex];
+      } else {
+        return randomColor();
+      }
+    }
+
+    // สร้างสีแบบสุ่มสำหรับแต่ละรายการ
+    const backgroundColors = splitLabels.map(() => getRandomOrPredefinedColor())
+
+    const studentChart = new Chart(ctxStudent1, {
+      type: 'bar', // ประเภทของแผนภูมิ เช่น 'bar', 'line', 'pie', 'doughnut' ฯลฯ
+      data: {
+        labels: splitLabels, // ป้ายของข้อมูล
+        datasets: [{
+          label: 'บทเรียน',
+          data: splitData,
+          backgroundColor: backgroundColors,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'บทเรียน', // ป้ายกำกับแกน X
+              font: {
+                size: 16, // ขนาดตัวหนังสือของป้ายกำกับแกน X
+                family: 'Noto Sans Thai, sans-serif'
+              }
+            },
+            ticks: {
+              font: {
+                size: 14, // ขนาดตัวหนังสือของป้ายข้อมูลในแกน X
+                family: 'Noto Sans Thai, sans-serif'
+
+              }
+            }
+          },
+          y: {
+            beginAtZero: true,
+            max: 100, // กำหนดค่าสูงสุดเป็น 100%
+            title: {
+              display: true,
+              text: 'เปอร์เซ็นความสำเร็จ',
+              font: {
+                size: 16,
+                family: 'Noto Sans Thai, sans-serif'
+              }
+            },
+            ticks: {
+              stepSize: 20, // กำหนดระยะห่างระหว่างขีดบอกค่าเป็น 20%
+              font: {
+                size: 14,
+                family: 'Noto Sans Thai, sans-serif'
+              },
+              callback: function(value) {
+                return value + '%';
+              }
+            }
+          }
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'บทเรียน',
+          font: {
+            size: 16,
+            family: 'Noto Sans Thai, sans-serif'
+          },
+          align: 'center',
+          position: 'top'
+        },
+        legend: {
+          display: false
+        }
+      }
+    });
+
+    const ctx = document.getElementById('lessonTimeChart').getContext('2d');
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: splitLabels,
+        datasets: [{
+          label: 'เวลาที่ใช้ (นาที)',
+          data: splitTimeSpent,
+          backgroundColor: backgroundColors,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'เวลาที่ใช้ (นาที)',
+              font: {
+                size: 16, // ขนาดตัวหนังสือของป้ายกำกับแกน X
+                family: 'Noto Sans Thai, sans-serif'
+              },
+              align: 'center',
+              position: 'top'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'บทเรียน',
+              font: {
+                size: 16, // ขนาดตัวหนังสือของป้ายกำกับแกน X
+                family: 'Noto Sans Thai, sans-serif'
+              }
+            }
+          }
+        },
+        plugins: {
+        title: {
+          display: true,
+          text: 'เวลาที่ใช้ในแต่ละบทเรียนของนักเรียน',
+          font: {
+            size: 14,
+            family: 'Noto Sans Thai, sans-serif'
+          },
+          align: 'center',
+          position: 'top'
+        },
+        legend: {
+          display: false
+        }
+      }
+      }
+      
+    });
+  </script>
+
+</body>
+
+
+</html>

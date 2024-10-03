@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เลือกรายวิชา</title>
+  <%- include("./partials/header.ejs")%>
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
+  <style>
+    .add-button {
+      width: fit-content !important;
+    }
+
+    .list-header {
+      box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+    }
+
+    .p-header-1,
+    .p-header-2 {
+      border-right: 1px solid #999999 !important;
+    }
+
+    .p-header-4 {
+      border-left: 1px solid #999999 !important;
+    }
+
+    .student-list {
+      border-bottom: 1px solid #cdcdcd !important;
+      color: #898989 !important;
+    }
+
+    .email-p {
+      font-size: smaller !important;
+    }
+
+    .link-list {
+      text-decoration: none !important;
+    }
+
+    .link-list:hover .student-list {
+      color: black !important;
+      transition: 0.3s;
+    }
+
+    .addContent-a {
+      text-decoration: none !important;
+      transition-duration: 0.3s;
+    }
+
+    .addContent-a:hover {
+      color: #0d57d6 !important;
+      transition: 0.3s;
+    }
+
+    .list-div {
+
+      padding-top: 0.5em;
+      border-bottom: 1px solid #EAEFF4;
+    }
+
+    .list-div-data {
+
+      padding-top: 1em;
+      border-bottom: 1px solid #EAEFF4;
+      text-align: start;
+      color: #4e5458 !important;
+
+    }
+
+    .lesson-bar {
+      border-left: 0.25em solid #007bff !important;
+      padding-left: 0.5em !important;
+      margin-right: 0.5em !important;
+
+    }
+
+    .studentDetail-a:hover>.list-div-data {
+      color: #0053ac !important;
+      transition: 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+  <%- include("./partials/nav.ejs")%>
+  <!-- <div class="above-nav d-flex px-4 py-3">
+      <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
+        <i class="bi bi-house mx-2"></i>
+        <a href="/adminIndex" class="a-home">
+          <p class="m-0">หน้าหลัก &nbsp;&nbsp;></p>
+        </a>
+      </div>
+      <a href="#" class="status-a mx-2 my-0 align-middle">
+        <p class="m-0">บทเรียน</p>
+      </a>
+    </div> 
+    </div> -->
+  <div class="main-content d-flex w-100 h-auto">
+    <%- include("./partials/lessonsList.ejs")%>
+    <div class="aside-right w-75 h-auto p-4 m">
+      <div class="manange-bar p-3 bg-white d-flex w-100">
+        <p class="fw-bold fs-3 lesson-bar">เลือกรายวิชาที่ต้องมอบหมายงาน</p>
+        <div>
+          <!-- <a href="/adminIndex/chooseSubject2" class="add-button btn btn-primary m-0 p-2">
+            อัปโหลดข้อมูลนักศึกษา <i class="bi bi-file-arrow-up-fill"></i>
+          </a>
+          <a href="#" class="add-button btn btn-dark m-0 p-2">
+            นำออกข้อมูลนักศึกษา <i class="bi bi-file-arrow-down-fill"></i>
+            </i>
+          </a> -->
+        </div>
+      </div>
+      <% if (allSubjects.length < 1) { %>
+      <div class="lesson-content bg-white w-100 py-3 my-2" style="height: fit-content;">
+        <p class="px-3">ยังไม่มีรายวิชาใด ๆ ในระบบ
+        </p>
+        <a href="/adminIndex/addSubject" class="px-3 addContent-a text-primary">
+          เพิ่มรายวิชา
+          <i class="bi bi-plus-circle-fill"></i>
+        </a>
+      </div>
+      <% } else if (allSubjects.docs.length > 0) {%>
+
+      <div class="lesson-content p-4 bg-white w-100 my-2 h-auto">
+        <div class="">
+          <p class="fw-bold fs-5 my-1">
+            <i class="bi bi-card-list text-primary me-1"></i>
+            รายวิชาภายในระบบ
+          </p>
+        </div>
+        <div class="list-div text-primary row">
+          <p class="fw-bold my-3 col-2">
+            รหัสวิชา
+          </p>
+          <p class="fw-bold my-3 col-4">
+            ชื่อวิชา
+          </p>
+          <p class="fw-bold my-3 col text-center">
+            ภาคการศึกษา
+          </p>
+          <p class="fw-bold my-3 col text-center">
+            กลุ่ม
+          </p>
+          <p class="fw-bold my-3 col text-center">
+            จำนวนงานที่มอบหมาย
+          </p>
+        </div>
+        <% allSubjects.docs.forEach ((subject, index) => { %>
+        <a href="/adminIndex/subjectCreateAssignment?subjectId=<%=subject._id%>" class="studentDetail-a">
+          <div class="list-div-data row">
+            <p class="fw-normal my-3 col-2">
+              <%=subject.subjectId%>
+            </p>
+            <p class="fw-normal my-3 col-4">
+              <%=subject.subjectName%>
+            </p>
+            <p class="fw-normal my-3 col text-center">
+              <%=subject.semester%>
+            </p>
+            <p class="fw-normal my-3 col text-center">
+              <%=subject.section%>
+            </p>
+            <p class="fw-normal my-3 col text-center">
+              <%=subject.Assignments.length%>
+            </p>
+          </div>
+        </a>
+        <% }); %>
+      </div>
+      <div class="d-flex justify-content-end mt-3">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <% if (allSubjects.hasPrevPage) { %>
+            <li class="page-item">
+              <a class="page-link px-2" href="/adminIndex/chooseSubject?page=<%= allSubjects.prevPage %>&limit=<%= allSubjects.limit %>">ก่อนหน้า</a>
+            </li>
+            <% } else { %>
+            <li class="page-item disabled">
+              <a class="page-link px-2" href="#">ก่อนหน้า</a>
+            </li>
+            <% } %>
+
+            <% let startPage = Math.max(allSubjects.page - 1, 1); %>
+            <% let endPage = Math.min(startPage + 2, allSubjects.totalPages); %>
+
+            <% if (startPage > 1) { %>
+            <li class="page-item">
+              <a class="page-link px-2" href="/adminIndex/chooseSubject?page=1&limit=<%= allSubjects.limit %>">1</a>
+            </li>
+            <% if (startPage > 2) { %>
+            <li class="page-item disabled"><a class="page-link px-2">...</a></li>
+            <% } %>
+            <% } %>
+
+
+            <% for (let i = startPage; i <= endPage; i++) { %>
+            <li class="page-item <%= allSubjects.page === i ? 'active' : '' %>">
+              <a class="page-link px-2" href="/adminIndex/chooseSubject?page=<%= i %>&limit=<%= allSubjects.limit %>"><%= i %></a>
+            </li>
+            <% } %>
+
+
+            <% if (endPage < allSubjects.totalPages) { %>
+            <% if (endPage < allSubjects.totalPages - 1) { %>
+            <li class="page-item disabled"><a class="page-link">...</a></li>
+            <% } %>
+            <li class="page-item">
+              <a class="page-link px-2" href="/adminIndex/chooseSubject?page=<%= allSubjects.totalPages %>&limit=<%= allSubjects.limit %>"><%= allSubjects.totalPages %></a>
+            </li>
+            <% } %>
+
+            <% if (allSubjects.hasNextPage) { %>
+            <li class="page-item">
+              <a class="page-link px-2" href="/adminIndex/chooseSubject?page=<%= allSubjects.nextPage %>&limit=<%= allSubjects.limit %>">ถัดไป</a>
+            </li>
+            <% } else { %>
+            <li class="page-item disabled">
+              <a class="page-link px-2" href="#">ถัดไป</a>
+            </li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+      <% } %>
+    </div>
+  </div>
+  <%- include("./partials/footer.ejs")%>
+</body>
+
+</html>

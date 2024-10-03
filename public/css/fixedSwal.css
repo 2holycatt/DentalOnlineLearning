@@ -1,0 +1,27 @@
+.swal-icon-center {
+    margin: 1em auto !important;
+}
+
+.swal-btn-padding {
+    padding: 0.5em !important;
+    margin: 1em auto !important;
+}
+
+.swal-container-padding {
+    padding: 1em !important;
+    /* ปรับขนาด padding ตามที่ต้องการ */
+}
+
+.custom-popup {
+    padding: 1em 0 !important;
+}
+
+.custom-icon {
+    margin: 2em auto !important;
+}
+
+.custom-button {
+    /* กำหนดลักษณะของ button */
+    padding: 0.5em 1em !important;
+    margin-top: 1em !important;
+}
