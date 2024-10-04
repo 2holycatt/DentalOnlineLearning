@@ -18,8 +18,8 @@ var multer = require('multer');
 const cors = require('cors');
 const passport = require('passport');
 // const LessonProgress = require('./models/lessonsProgress'); // นำเข้ารุ่น (model) LessonProgress
-const PORT = process.env.PORT || 4000
-const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/Elearning";
+// const PORT = process.env.PORT || 4000;
+const MONGO_URI = process.env.MONGO_URI;
 
 // const MongoStore = require('connect-mongo');
 // const authRouter = require('./routes/auth');
@@ -161,23 +161,34 @@ var type = upload.single('file');
 
 // const url = "mongodb://localhost:27017/Elearning";
 
+// mongoose.connect(MONGO_URI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+// })
+//     .then(() => {
+//         console.log("Connected to MongoDB");
+//         // Start Express server หลังจากที่ MongoDB เชื่อมต่อเรียบร้อยแล้ว
+//         app.listen(PORT, () => {
+//             console.log("Express server is running on " + PORT);
+//         });
+
+//     })
+//     .catch((err) => {
+//         console.error("MongoDB connection error:", err);
+//     });
 mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
     .then(() => {
         console.log("Connected to MongoDB");
-        // Start Express server หลังจากที่ MongoDB เชื่อมต่อเรียบร้อยแล้ว
-        app.listen(PORT, () => {
-            console.log("Express server is running on " + PORT);
-        });
-
+        // ไม่ต้องเรียกใช้ app.listen ใน Vercel
     })
     .catch((err) => {
         console.error("MongoDB connection error:", err);
     });
 
-
+global.loggedIn = null
 app.use((req, res, next) => {
     // ตรวจสอบว่าผู้ใช้ล็อกอินหรือไม่
     if (req.isAuthenticated) {

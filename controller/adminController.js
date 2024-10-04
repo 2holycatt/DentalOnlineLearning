@@ -229,14 +229,16 @@ async function getUniqueSubjectValues() {
     result[key] = Array.from(valueSet);
   });
 
+  // สร้าง filteredResult และตรวจสอบค่าจาก result
   const filteredResult = {
-    subjectId: result.subjectId,
-    subjectName: result.subjectName,
-    semester: result.semester
+    subjectId: result.subjectId ? result.subjectId : [],
+    subjectName: result.subjectName ? result.subjectName : [],
+    semester: result.semester ? result.semester : []
   };
 
   return filteredResult;
 }
+
 
 const addSubject = async (req, res) => {
   try {
@@ -246,7 +248,7 @@ const addSubject = async (req, res) => {
 
     // console.log(filteredResult);
     const filteredResult = await getUniqueSubjectValues();
-
+    console.log(filteredResult);
     res.render("addSubjects", { mytitle: "addSubject", filteredResult: filteredResult || [], formData: {} , error: null });
   } catch (err) {
     console.error(err);
