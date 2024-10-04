@@ -115,6 +115,9 @@ app.use(session({
 //     }
 //     next();
 // }
+app.get('/', (req, res) => {
+    res.render('notLoggedIn');  // หรือ res.send('Home Page') เป็นต้น
+  });
 
 app.get('/students', (req, res, next) => {
     res.render('studentInformation');
