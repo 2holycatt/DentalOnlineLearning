@@ -247,7 +247,7 @@ const addSubject = async (req, res) => {
     // console.log(filteredResult);
     const filteredResult = await getUniqueSubjectValues();
 
-    res.render("addSubjects", { mytitle: "addSubject", filteredResult, formData: {}, error: null });
+    res.render("addSubjects", { mytitle: "addSubject", filteredResult: filteredResult || [], formData: {} , error: null });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");

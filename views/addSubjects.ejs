@@ -171,11 +171,14 @@
           <div class="mb-3">
             <label for="subject" class="form-label">ชื่อวิชา:</label>
             <input type="text" list="script-3" class="form-control p-3 w-50" value="<%= formData ? formData.subjectName : '' %>" name="subjectName" id="subject" required>
+            <% if (filteredResult.length > 0) { %>
+            <% console.log(filteredResult); %>
             <datalist id="script-3">
               <% filteredResult.subjectName.forEach (sub => {%>
               <option value="<%=sub%>"></option>
               <% });%>
             </datalist>
+            <% } %>
           </div>
           <div class="mb-3">
             <div class="row">
