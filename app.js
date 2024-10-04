@@ -18,7 +18,7 @@ var multer = require('multer');
 const cors = require('cors');
 const passport = require('passport');
 // const LessonProgress = require('./models/lessonsProgress'); // นำเข้ารุ่น (model) LessonProgress
-
+const PORT = process.env.PORT || 4000
 
 // const MongoStore = require('connect-mongo');
 // const authRouter = require('./routes/auth');
@@ -176,8 +176,8 @@ mongoose.connect(url, {
     .then(() => {
         console.log("Connected to MongoDB");
         // Start Express server หลังจากที่ MongoDB เชื่อมต่อเรียบร้อยแล้ว
-        app.listen(4000, () => {
-            console.log("Express server is running");
+        app.listen(PORT, () => {
+            console.log("Express server is running on "+PORT);
         });
        
     })
