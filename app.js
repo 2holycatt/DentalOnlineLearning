@@ -116,8 +116,18 @@ app.use(session({
 //     next();
 // }
 app.get('/', (req, res) => {
-    res.render('notLoggedIn');  // หรือ res.send('Home Page') เป็นต้น
-  });
+    try {
+        let permission = req.query.permission;
+        let noPermission = null
+        if (permission) {
+            noPermission = "คุณไม่มีสิทธิ์ในการเข้าใช้งาน"
+        }
+        res.render("notLoggedIn", { noPermission });
+        // หรือ res.send('Home Page') เป็นต้น
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 app.get('/students', (req, res, next) => {
     res.render('studentInformation');
@@ -181,9 +191,9 @@ mongoose.connect(MONGO_URI, {
         console.log("Connected to MongoDB");
         // Start Express server หลังจากที่ MongoDB เชื่อมต่อเรียบร้อยแล้ว
         app.listen(PORT, () => {
-            console.log("Express server is running on "+PORT);
+            console.log("Express server is running on " + PORT);
         });
-       
+
     })
     .catch((err) => {
         console.error("MongoDB connection error:", err);
@@ -195,7 +205,7 @@ app.use(passport.session());
 // app.use('/', authRouter);
 // app.use('/teacher', authRouter);
 // app.use('/profile', authRouter);
-app.use('/', Router)
+app.use('/to', Router)
 app.use(multer().any());
 
 app.use("*", (req, res, next) => {
