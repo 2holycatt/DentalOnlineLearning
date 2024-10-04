@@ -19,6 +19,7 @@ const cors = require('cors');
 const passport = require('passport');
 // const LessonProgress = require('./models/lessonsProgress'); // นำเข้ารุ่น (model) LessonProgress
 const PORT = process.env.PORT || 4000
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/Elearning";
 
 // const MongoStore = require('connect-mongo');
 // const authRouter = require('./routes/auth');
@@ -167,9 +168,9 @@ app.use((req, res, next) => {
 app.use(cors());
 
 
-const url = "mongodb://localhost:27017/Elearning";
+// const url = "mongodb://localhost:27017/Elearning";
 
-mongoose.connect(url, {
+mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
