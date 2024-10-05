@@ -8,9 +8,11 @@ const Lesson = require("../models/Lessons");
 var SchoolYear = require('../models/schoolYear')
 const logger = require('../logs/logger');
 const axios = require('axios');
-const YOUR_CLIENT_ID = '24763268362-repsshdr1kg3btst8om00g7h91hnal0u.apps.googleusercontent.com'
-const YOUR_CLIENT_SECRET = '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'
-const YOUR_REDIRECT_URL = 'http://localhost:4000/auth/google/callback'
+const YOUR_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const YOUR_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+// const YOUR_REDIRECT_URL = 'http://localhost:4000/auth/google/callback'
+const YOUR_REDIRECT_URL = 'https://rpd-dt.onrender.com/auth/google/callback'
+
 
 const authGoogle = async (req, res) => {
     const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${YOUR_CLIENT_ID}&redirect_uri=${YOUR_REDIRECT_URL}&response_type=code&scope=profile email`;
