@@ -237,11 +237,13 @@
         <!-- <p class="lesson-nothing text-center">ยังไม่มีข้อมูลจากบทเรียน
           <br>โปรดเลือกบทเรียนที่มีอยู่ในรายชื่อหากต้องดูข้อมูลและจัดการ
         </p> -->
+        <% if (userData.student.subjects) {%>
         <% const subject = userData.student.subjects %>
-        <% if (subject) {%>
+
         <% if (subject.length > 0)  { %>
         <div class="my-3">
           <% subject.forEach (sub => {%>
+
           <div class="showSubject show<%=sub.subjectName%>" data-aos="fade-left" data-aos-duration="1000">
             <div class="set-border-bottom">
               <p class="my-2 p-schoolYear">
@@ -251,6 +253,10 @@
                 <span class="text-primary"> <%=sub.subjectMongooseId.semester%></span>
                 <span class="text-dark fw-bold ms-2">กลุ่มที่:</span>
                 <span class="text-primary"> <%=sub.subjectMongooseId.section%></span>
+                <a href="/subjectDetail?subjectDbId=<%=sub.subjectMongooseId._id%>" class="mx-1 a-add" style="float: right;">รายละเอียด
+                  <i class="bi bi-info-circle-fill mx-1 a-add"></i>
+                </a>
+                </span>
               </p>
             </div>
             <div class="setColumn row">
@@ -294,9 +300,9 @@
           <% });%>
         </div>
         <% } else if (subject.length < 1) {%>
-          <div class="my-3">
-            <p>ไม่มีข้อมูลรายวิชาเนื่องจากไม่มีข้อมูลหรือยังไม่ได้รับการลงทะเียนของคุณ</p>
-          </div>
+        <div class="my-3">
+          <p>ไม่มีข้อมูลรายวิชาเนื่องจากไม่มีข้อมูลหรือยังไม่ได้รับการลงทะเบียนของคุณ</p>
+        </div>
         <% } %>
         <% }%>
       </div>

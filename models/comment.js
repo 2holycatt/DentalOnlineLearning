@@ -18,16 +18,13 @@ const CommentSchema = new Schema({
         ref: 'User',
         required: true
     },
-    replyComments: [{
-        userReply: {
-            type: mongoose.Schema.ObjectId,
-            ref: 'User',
-            required: true
-        },
-        replyComment: {
-            type: String
+    replies: [
+        {
+            content: String,
+            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            createdAt: { type: Date, default: Date.now }
         }
-    }],
+    ],
     Lesson: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'lessons'

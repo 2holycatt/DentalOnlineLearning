@@ -255,7 +255,7 @@
       left: -140px !important;
       width: 150px !important;
     }
-
+    
     .custom-dropdown-item {
       padding: 10px 20px !important;
       display: block !important;
@@ -315,7 +315,7 @@
       <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
         <p class="fw-bold fs-3 lesson-bar">จัดการรายวิชา</p>
         <div>
-          <a href="/adminIndex/addLesson" class="btn btn-warning m-0 p-2">
+          <a href="/adminIndex/editSubject?subjectId=<%=subject._id%>" class="btn btn-warning m-0 p-2">
             แก้ไขรายวิชา<i class="bi bi-pencil-fill mx-2"></i>
           </a>
           <a href="/adminIndex/deleteSubject?subjectId=<%=subject._id%>" class="btn btn-danger m-0 p-2">
@@ -372,8 +372,8 @@
                 </a>
                 <ul class="custom-dropdown-menu" id="custom-dropdown-menu">
                   <li><a class="custom-dropdown-item" href="/adminIndex/addLesson?subjectDbId=<%=subject._id%>&subjectName=<%=subject.subjectName%>&subjectSection=<%=subject.section%>&subjectId=<%=subject.subjectId%>&subjectSemester=<%=subject.semester%>">เพิ่มบทเรียน</a></li>
-                  <li><a class="custom-dropdown-item" href="/exportLogs?value=csv">เพิ่มบทเรียนด้วยการคัดลอก</a></li>
-                  <li><a class="custom-dropdown-item" href="/exportLogs?value=plain">ลบบทเรียน</a></li>
+                  <li><a class="custom-dropdown-item" href="/adminIndex/copyLessons?subjectId=<%=subject._id%>">เพิ่มบทเรียนด้วยการคัดลอก</a></li>
+                  <!-- <li><a class="custom-dropdown-item" href="/exportLogs?value=plain">ลบบทเรียน</a></li> -->
                 </ul>
               </div>
             </div>

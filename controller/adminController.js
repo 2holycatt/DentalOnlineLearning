@@ -2,6 +2,8 @@ const Lesson = require("../models/Lessons");
 const Layout1 = require("../models/Layout1");
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
+const unlinkFile = util.promisify(fs.unlink);
 const Layout2 = require("../models/Layout2");
 const Layout3 = require("../models/Layout3");
 const Layout4 = require("../models/Layout4");
@@ -16,6 +18,7 @@ const Subject = require("../models/subjects");
 const { logs } = require('../controller/LogsFile');
 const PDFDocument = require('pdfkit');
 const lessonQuestion = require("../models/LessonQuestion");
+const StudentAnswer = require("../models/StudentAnswerEndChapQuestion");
 
 // const atob = require('atob');
 const fontPath = path.join(__dirname, 'THSarabunNew.ttf'); // ระบุที่อยู่ของไฟล์ฟอนต์ THSarabun.ttf
@@ -42,7 +45,7 @@ const adminIndex = async (req, res) => {
     const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
     const getLessonId = req.query.lessonId;
     const lesson = await Lesson.findById(getLessonId);
-    console.log(userData);
+    // console.log(userData);
     res.render("adminIndex", { lessons, lesson, userData });
   } catch (err) {
     console.error(err);
@@ -208,6 +211,20 @@ const addLesson = async (req, res) => {
 
 }
 
+// const editLesson = async (req, res) => {
+//   try {
+//     const lessonId = req.query.lessonId;
+//     const findLesson = await Lesson.findById(lessonId);
+//     // const schoolYears = await SchoolYear.find().sort({ schoolYear: 0 });
+//     res.render("editLesson", { mytitle: "editLesson", findLesson});
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("เกิดข้อผิดพลาด");
+//   }
+
+// }
+
+
 
 // สำหรับการดึงข้อมูลรายวิชา
 async function getUniqueSubjectValues() {
@@ -248,8 +265,8 @@ const addSubject = async (req, res) => {
 
     // console.log(filteredResult);
     const filteredResult = await getUniqueSubjectValues();
-    console.log(filteredResult);
-    res.render("addSubjects", { mytitle: "addSubject", filteredResult: filteredResult || [], formData: {} , error: null });
+    // console.log(filteredResult);
+    res.render("addSubjects", { mytitle: "addSubject", filteredResult: filteredResult || [], formData: {}, error: null });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -257,13 +274,119 @@ const addSubject = async (req, res) => {
 
 }
 
+const editSubject = async (req, res) => {
+  try {
+    const SubjectId = req.query.subjectId;
+    const findSubject = await Subject.findOne({ _id: SubjectId });
+    // res.json(findSubject);
+    let error = req.query.error || null;
+    // const SubjectSemester = req.query.subjectSemester;
+    // const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
+
+    // console.log(filteredResult);
+    // const filteredResult = await getUniqueSubjectValues();
+    // // console.log(filteredResult);
+    res.render("editSubjects", { mytitle: "editSubjects", findSubject, error });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("เกิดข้อผิดพลาด");
+  }
+
+}
+
+const updateSubject = async (req, res) => {
+  try {
+    const { subjectDbId, subjectId, subjectName, semester, unit, section } = req.body;
+
+    const findSubject = await Subject.findByIdAndUpdate(
+      { _id: subjectDbId },
+      {
+        $set: {
+          subjectId: subjectId,
+          subjectName: subjectName,
+          semester: semester,
+          unit: unit,
+          section: section
+        }
+      },
+      { new: true }
+    );
+    res.redirect(`/adminIndex/manageSubject?subjectDbId=${subjectDbId}`);
+    // res.json(findSubject);
+
+    // const SubjectSemester = req.query.subjectSemester;
+    // const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
+
+    // console.log(filteredResult);
+    // const filteredResult = await getUniqueSubjectValues();
+    // // console.log(filteredResult);
+    // res.render("editSubjects", { mytitle: "editSubjects", findSubject, error: null });
+  } catch (err) {
+    console.error(err);
+    const { subjectDbId, subjectId, subjectName, semester, unit, section } = req.body;
+
+    if (err.code === 11000) { // รหัสข้อผิดพลาดสำหรับ duplicate key error
+      return res.redirect(`/adminIndex/editSubject?subjectId=${subjectDbId}&error=มีรายวิชานี้อยู่ในระบบแล้ว`);
+
+      // const formData = `subjectId=${subjectId}&subjectName=${subjectName}&semester=${semester}&unit=${unit}&section=${section}&error=วิชานี้มีอยู่แล้วในภาคการศึกษานี้`;
+      // return res.redirect(`/adminIndex/addSubject?${formData}`);
+    } else {
+      return res.status(500).send('An error occurred');
+    }
+  }
+
+}
+
+const updateLesson = async (req, res) => {
+  try {
+    const { lessonId, lessonName } = req.body;
+    const file = req.file;
+
+    const findLesson = await Lesson.findById(lessonId);
+
+    if (findLesson.file && req.file) {
+      var filePath = path.join(__dirname, '../uploads', findLesson.file); // สร้าง path ของไฟล์
+      var fileToUpdate = req.file.filename;
+      unlinkFile(filePath)
+
+      findLesson.LessonName = lessonName;
+      findLesson.file = fileToUpdate;
+      findLesson.save();
+     
+    } else if (!findLesson.file && req.file) {
+      var fileToUpdate = req.file.filename;
+      findLesson.LessonName = lessonName;
+      findLesson.file = fileToUpdate;
+      findLesson.save();
+    } else if (!findLesson.file && !req.file) {
+      findLesson.LessonName = lessonName;
+      findLesson.save();
+    } else {
+      findLesson.LessonName = lessonName;
+      findLesson.save();
+    }
+    
+    res.redirect(`/adminIndex/editLesson?lessonId=${lessonId}&subjectId=${findLesson.subject.subjectMongooseId}`);
+   
+  } catch (err) {
+    console.error(err);
+  }
+
+}
+
 const copyLessons = async (req, res) => {
   try {
-    const lessons = await Lesson.find().sort({ createdAt: 1 }).populate("schoolYear");
-    const schoolYears = await SchoolYear.find().sort({ schoolYear: 0 });
-    const findYear = null;
+    const subjectId = req.query.subjectId;
+    const subjectWithLessons = await Subject.findById(subjectId)
+      .populate(
+        "lessonArray"
+      );
+    const subjectToCopy = await Subject.find({ _id: { $ne: subjectId } }).populate("lessonArray");
+    // const lessons = await Lesson.find().sort({ createdAt: 1 }).populate("schoolYear");
+    // const schoolYears = await SchoolYear.find().sort({ schoolYear: 0 });
+    // const findYear = null;
 
-    res.render("copyLessons", { mytitle: "copyLessons", lessons, schoolYears, findYear });
+    res.render("copyLessons", { mytitle: "copyLessons", subjectWithLessons, subjectToCopy });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -310,7 +433,7 @@ const createLayout = async function (req, res, next) {
         { $push: { lessonArray: lessonCreate._id } },
         { new: true, runValidators: true }
       ).exec();
-      
+
       // const schYear = addId.schoolYear;
       // const lessons = await Lesson.find().sort({ createdAt: 1 }).populate("schoolYear");
 
@@ -358,7 +481,7 @@ const createLayout = async function (req, res, next) {
         { $push: { lessonArray: lessonCreate._id } },
         { new: true, runValidators: true }
       ).exec();
-      
+
 
       // await Promise.all(users.map(async user => {
       //   const findUser = await User.findById(user._id)
@@ -573,10 +696,10 @@ const eachLessons = async (req, res) => {
       return comment;
     });
 
-    let pdfLists = [];
-    for (const id of layout05) {
-      const findLayout = await Layout5.findById(id);
-    }
+    // let pdfLists = [];
+    // for (const id of layout05) {
+    //   const findLayout = await Layout5.findById(id);
+    // }
 
     const foundLayouts = [];
     async function findLayoutsAndStoreData(deleteLayouts, Layout) {
@@ -657,9 +780,21 @@ const eachLessonStudent = async (req, res) => {
   try {
     const lessonId = req.query.lessonId;
 
-    const lesson = await Lesson.findById(lessonId).populate("subject.subjectMongooseId");
+
+    const lesson = await Lesson.findById(lessonId).populate("subject.subjectMongooseId")
+      .populate("lessonQuestion");
     // const lessonComment = await Lesson.findById(lessonId).populate("comments");
     const userData = await User.findById(req.session.userId);
+    let studentAnswer = null;
+    if (lesson.lessonQuestion) {
+      let findStudentAnswer = await StudentAnswer.findOne(
+        {
+          lessonQuestion: lesson.lessonQuestion._id,
+          user: userData._id
+        }
+      ) || [];
+      studentAnswer = findStudentAnswer;
+    }
 
     const layout01 = lesson.LayOut1ArrayObject;
     const layout02 = lesson.LayOut2ArrayObject;
@@ -671,9 +806,10 @@ const eachLessonStudent = async (req, res) => {
     const lessonComment = await Lesson.findById(lessonId)
       .populate({
         path: "comments",
-        populate: {
-          path: "user",
-        }
+        populate: [
+          { path: "user" },
+          { path: "replies.user" }
+        ]
       });
 
     // ฟังก์ชันสำหรับจัดรูปแบบวันที่
@@ -713,9 +849,15 @@ const eachLessonStudent = async (req, res) => {
     lessonComment.comments = lessonComment.comments.map((comment) => {
       comment.createdAtFormatted = formatDate(comment.createdAt);
       comment.timeSince = timeSince(comment.createdAt);
+      comment.replies = comment.replies.map((reply) => {
+        reply.createdAtFormatted = formatDate(reply.createdAt);
+        reply.timeSince = timeSince(reply.createdAt);
+        return reply;
+      });
       return comment;
     });
 
+    // res.json(lessonComment);
     let pdfLists = [];
     for (const id of layout05) {
       const findLayout = await Layout5.findById(id);
@@ -782,9 +924,10 @@ const eachLessonStudent = async (req, res) => {
     const percentage = Math.min(100, (progress / totalPages) * 100);
 
     // console.log(totalPages+" "+page)
-
+    const lessonQuestions = lesson.lessonQuestion || null;
     // res.json(foundLayouts)
     // res.json(lay01_contents)
+    // res.json(studentAnswer);
     res.render("eachLessonStudent", {
       mytitle: "eachLessonStudent",
       lesson,
@@ -794,7 +937,9 @@ const eachLessonStudent = async (req, res) => {
       currentPage: page,
       paginatedLayouts,
       totalPages,
-      percentage
+      percentage,
+      lessonQuestions,
+      studentAnswer
     });
 
     // res.render("eachLessonStudent", { mytitle: "eachLessons", lesson, lessons, foundLayouts, schYear, lessonComment, userData });
@@ -1354,7 +1499,310 @@ const addEndChapterQuestion = async (req, res) => {
   }
 };
 
+const editEndQuestionChapter = async (req, res) => {
+  try {
+    const questionId = req.body.questionId;
 
+    // ดึงข้อมูล lessonQuestion จาก database โดยใช้ questionId
+    let lessonQuestionData = await lessonQuestion.findById(questionId);
+    if (!lessonQuestionData) {
+      return res.status(404).send('Lesson Question not found');
+    }
+
+    // วนลูปเพื่อจัดการคำถามจากฐานข้อมูล
+    for (const question of lessonQuestionData.Questions) {
+      let questionNo = question.questionNo; // เลขของคำถาม
+
+      // ตรวจสอบว่ามีการทำเครื่องหมายลบคำถามหรือไม่
+      if (req.body[`questionCheckDelete${questionNo}`] === 'on') {
+        // ถ้าถูกทำเครื่องหมายให้ลบ ก็ให้ลบคำถามนี้ออกจาก database โดยใช้ pull
+        await lessonQuestion.updateOne(
+          { _id: questionId },
+          { $pull: { Questions: { questionNo: questionNo } } }
+        );
+      } else if (req.body[`question${questionNo}`]) {
+        // ถ้าไม่ถูกลบ ให้ตรวจสอบว่ามีการอัปเดตข้อความคำถามหรือไม่
+        await lessonQuestion.updateOne(
+          { _id: questionId, 'Questions.questionNo': questionNo },
+          { $set: { 'Questions.$.questionText': req.body[`question${questionNo}`] } }
+        );
+      }
+    }
+
+    const checkLength = await lessonQuestion.findById(lessonQuestionData._id)
+    if (checkLength.Questions.length < 1) {
+      const daleteFromLesson = await Lesson.findByIdAndUpdate(
+        { _id: checkLength.Lesson },
+        {
+          $pull: {
+            lessonQuestion: checkLength._id
+          }
+        },
+        {
+          new: true
+        }
+      )
+
+      const deleteQuestion = await lessonQuestion.findByIdAndDelete(checkLength._id);
+    }
+
+    res.redirect(`/adminIndex/eachLessons?lessonId=${checkLength.Lesson}`)
+
+    // res.json(req.body);
+  } catch (err) {
+    console.error(err);
+
+  }
+}
+
+const studentAnswerEndChapterQuestions = async (req, res) => {
+  try {
+    const lessonQuestionId = req.body.lessonQuestionId;
+    const lessonId = req.body.lessonId;
+    let lessonQuestionData = await lessonQuestion.findById(lessonQuestionId);
+
+    if (!lessonQuestionData) {
+      return res.status(404).send('Lesson Question not found');
+    }
+
+    const checkExist = await StudentAnswer.findOne(
+      {
+        lessonQuestion: lessonQuestionId,
+        user: req.session.userId
+      }
+    );
+    // let userId = req.session.userId;
+    if (checkExist) {
+      for (const question of lessonQuestionData.Questions) {
+        let questionNo = question.questionNo; // เลขของคำถาม
+
+        // ตรวจสอบว่ามีการทำเครื่องหมายลบคำถามหรือไม่
+        if (req.body[`question${questionNo}`] != "") {
+
+          // ถ้าถูกทำเครื่องหมายให้ลบ ก็ให้ลบคำถามนี้ออกจาก database โดยใช้ pull
+          await StudentAnswer.updateOne(
+            {
+              _id: checkExist._id,
+              'Questions.questionNo': questionNo
+            },
+            { $set: { 'Questions.$.questionText': req.body[`question${questionNo}`] } }
+          );
+
+        }
+      }
+
+    } else if (!checkExist) {
+      let newStudentAnswer = new StudentAnswer({
+        lessonQuestion: lessonQuestionId,
+        user: req.session.userId
+      })
+      await newStudentAnswer.save();
+
+      // วนลูปเพื่อจัดการคำถามจากฐานข้อมูล
+      for (const question of lessonQuestionData.Questions) {
+        let questionNo = question.questionNo; // เลขของคำถาม
+
+        // ตรวจสอบว่ามีการทำเครื่องหมายลบคำถามหรือไม่
+        if (req.body[`question${questionNo}`] != "") {
+
+          let question = {
+            questionNo: questionNo,
+            questionText: req.body[`question1${questionNo}`]
+          }
+          // ถ้าถูกทำเครื่องหมายให้ลบ ก็ให้ลบคำถามนี้ออกจาก database โดยใช้ pull
+          await StudentAnswer.updateOne(
+            { _id: newStudentAnswer._id },
+            { $push: { Questions: question } }
+          );
+        }
+      }
+    }
+    res.redirect(`/studentIndex/eachLessonStudent?lessonId=${lessonId}`)
+    // res.json(req.body);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+const studentEditAnswerEndChapter = async (req, res) => {
+  try {
+    const studentAnswerId = req.body.studentAnswerId;
+    const lessonId = req.body.lessonId;
+    let StudentAnswerData = await StudentAnswer.findById(studentAnswerId);
+
+    if (!StudentAnswerData) {
+      return res.status(404).send('Lesson Question not found');
+    } else if (StudentAnswerData) {
+      for (const question of StudentAnswerData.Questions) {
+        let questionNo = question.questionNo; // เลขของคำถาม
+
+        // ตรวจสอบว่ามีการทำเครื่องหมายลบคำถามหรือไม่
+        if (req.body[`question${questionNo}`] != "") {
+
+          await StudentAnswer.updateOne(
+            {
+              _id: StudentAnswerData._id,
+              'Questions.questionNo': questionNo
+            },
+            { $set: { 'Questions.$.questionText': req.body[`question${questionNo}`] } }
+          );
+        }
+      }
+    }
+    res.redirect(`/studentIndex/eachLessonStudent?lessonId=${lessonId}`)
+    // res.json(req.body);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+const replyComment = async (req, res) => {
+  try {
+    const { commentId, replyMainComment, lessonId } = req.body;
+    const userWhoComments = req.session.userId;
+    const findUser = await User.findById(userWhoComments);
+    const commentObject = {
+      content: replyMainComment,
+      user: userWhoComments,
+
+    }
+    const updateComment = await Comment.findByIdAndUpdate(
+      { _id: commentId },
+      {
+        $push: { replies: commentObject }
+      },
+      {
+        new: true
+      }
+    )
+
+    if (findUser.role == 'teacher') {
+      res.redirect(`/adminIndex/eachLesson?lessonId=${lessonId}`)
+
+    } else if (findUser.role == 'student') {
+      res.redirect(`/studentIndex/eachLessonStudent?lessonId=${lessonId}`)
+
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+const editReplyComment = async (req, res) => {
+  try {
+    const { commentId, userId, lessonId, commentContent, oldCOntent } = req.body;
+    // const setNewDate = new Date(createdAt);
+    // console.log(createdAt);
+    // console.log(typeof createdAt);
+    // console.log(setNewDate);
+    // console.log(typeof setNewDate);
+
+    const updatedComment = await Comment.findOneAndUpdate(
+      {
+        _id: commentId,
+        replies: {
+          $elemMatch: {
+            user: userId,
+            content: oldCOntent // เปรียบเทียบวันที่
+          }
+        }
+      },
+      {
+        $set: {
+          "replies.$.content": commentContent // ใช้ $ เพื่ออัปเดต reply ที่ตรงเงื่อนไข
+        }
+      },
+      { new: true } // คืนค่าใหม่หลังอัปเดตสำเร็จ
+    );
+
+    console.log(updatedComment);
+    // console.log(commentId);
+    const findUser = await User.findOne({ _id: userId });
+    //    console.log(findUser);
+    if (findUser.role == 'teacher') {
+      res.redirect(`/adminIndex/eachLesson?lessonId=${lessonId}`)
+
+    } else if (findUser.role == 'student') {
+      res.redirect(`/studentIndex/eachLessonStudent?lessonId=${lessonId}`)
+
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+const editLessonContent = async (req, res) => {
+  try {
+    const lessonId = req.query.lesson;
+    const userData = await User.findById(req.session.userId);
+    const lesson = await Lesson.findById(lessonId).populate('subject.subjectMongooseId').populate('lessonQuestion');
+    const subject = lesson.subject.subjectMongooseId;
+    const layout01 = lesson.LayOut1ArrayObject;
+    const layout02 = lesson.LayOut2ArrayObject;
+    const layout03 = lesson.LayOut3ArrayObject;
+    const layout04 = lesson.LayOut4ArrayObject;
+    const layout05 = lesson.LayOut5ArrayObject;
+    const pdfFiles = lesson.PdfFiles;
+
+    const foundLayouts = [];
+    async function findLayoutsAndStoreData(deleteLayouts, Layout) {
+
+      if (deleteLayouts.length > 0) {
+        for (const layoutId of deleteLayouts) {
+          const foundLayout = await Layout.findById(layoutId);
+          if (foundLayout) {
+            foundLayouts.push(foundLayout);
+          }
+        }
+      }
+
+      return foundLayouts;
+    }
+
+    const foundLayouts1 = await findLayoutsAndStoreData(layout01, Layout1);
+    const foundLayouts2 = await findLayoutsAndStoreData(layout02, Layout2);
+    const foundLayouts3 = await findLayoutsAndStoreData(layout03, Layout3);
+    const foundLayouts4 = await findLayoutsAndStoreData(layout04, Layout4);
+    const foundLayouts5 = await findLayoutsAndStoreData(layout05, Layout5);
+    const foundPdfFiles = await findLayoutsAndStoreData(pdfFiles, PdfFile);
+
+    foundLayouts.sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+
+      if (dateA < dateB) {
+        return -1;
+      } else if (dateA > dateB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 4; // จำนวนข้อมูลต่อหน้า
+    // const paginatedLayouts = paginate(foundLayouts, pageSize, page);
+    const totalPages = Math.ceil(foundLayouts.length / pageSize);
+
+    // ตรวจสอบว่า paginate มีการนำเข้าและใช้งานถูกต้อง
+    function paginate(array, pageSize, page) {
+      return array.slice((page - 1) * pageSize, page * pageSize);
+    }
+
+    const paginatedLayouts = paginate(foundLayouts, pageSize, page);
+    // res.json(foundLayouts);
+    res.render("adminEdit", {
+      lesson,
+      subject,
+      currentPage: page,
+      paginatedLayouts,
+      totalPages,
+    });
+
+  } catch (err) {
+    console.log(err);
+  }
+}
 module.exports = {
   adminIndex,
   adminLessonIndex,
@@ -1391,5 +1839,14 @@ module.exports = {
   subjectCreateAssignment,
   downloadFile,
   setPermission,
-  addEndChapterQuestion
+  addEndChapterQuestion,
+  editEndQuestionChapter,
+  studentAnswerEndChapterQuestions,
+  studentEditAnswerEndChapter,
+  replyComment,
+  editReplyComment,
+  editSubject,
+  updateSubject,
+  updateLesson,
+  editLessonContent
 }

@@ -136,6 +136,85 @@
       padding: 0.5em 1em !important;
       margin-top: 1em !important;
     }
+
+    .lesson-bar {
+      border-left: 0.25em solid #007bff !important;
+      padding-left: 0.5em !important;
+      margin-right: 0.5em !important;
+
+    }
+
+    .set-border-header {
+      border-left: 0.25em solid #387bef;
+      padding-left: 0.50em !important;
+    }
+
+    .container2 {
+      align-items: center;
+      display: grid;
+      grid-template-columns: 0.5fr 1.5fr;
+    }
+
+    .container3 {
+      display: grid;
+      grid-template-columns: 0.5fr 1.5fr;
+    }
+
+
+
+    .card {
+      border-radius: 0.5em;
+      /* box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3); */
+      background-color: #ffffff;
+      padding: 1em !important;
+    }
+
+    .card h3 {
+      font-size: x-large;
+      font-weight: 600;
+      margin-bottom: 0.5em !important;
+
+    }
+
+    .drop_box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      border: 3px dotted #a3a3a3;
+      border-radius: 5px;
+      padding: 1.5em 1em !important;
+    }
+
+    .drop_box h4 {
+      font-size: 16px;
+      font-weight: 400;
+      color: #2e2e2e;
+    }
+
+    .drop_box p {
+      font-size: 12px;
+      color: #a3a3a3;
+    }
+
+    .btn-focus {
+      text-decoration: none !important;
+      background-color: #005af0 !important;
+      color: #ffffff !important;
+      padding: 10px 20px !important;
+      border: none !important;
+      outline: none !important;
+      transition: 0.3s !important;
+    }
+
+    .btn-focus:hover {
+      text-decoration: none !important;
+      background-color: #ffffff !important;
+      color: #005af0 !important;
+      padding: 10px 20px !important;
+      border: none !important;
+      outline: 1px solid #010101 !important;
+    }
   </style>
 </head>
 
@@ -159,64 +238,66 @@
     <%- include("./partials/lessonsList.ejs", { pageName: pageName })%>
     <div class="aside-right w-75 h-auto p-4 bg-white">
       <div class="manange-bar p-3 bg-white d-flex w-100">
-        <p class="fw-bold fs-3">เพิ่มรายวิชา</p>
+        <p class="fw-bold fs-3 lesson-bar">เพิ่มรายวิชา</p>
         <a href="/adminIndex/adminLessonIndex" class="add-button btn btn-primary m-0 p-2">
           ยกเลิกการเพิ่ม<i class="bi bi-x-circle-fill mx-2"></i>
         </a>
       </div>
       <div class="lesson-content p-4 bg-white w-100 my-4" style="height: auto;">
-        <form action="/adminIndex/createSubject" method="post">
-          <div id="scriptData" class="form-text my-1 w-75"><span class="text-primary">* </span>รหัสและภาคการศึกษาของรายวิชาจะส่งผลต่อ<span class="text-danger"> การเข้าถึงบทเรียน </span>ของนักศึกษา หากชื่อรายวิชาและภาคการศึกของการลงทะเบียนเรียนจากนักศึกษานั้นไม่ตรงกับข้อมูลรายวิชาที่สร้าง นักศึกษาจะไม่สามารถเข้าถึงบทเรียนของรายวิชานั้นได้
-          </div>
-          <div class="mb-3">
-            <label for="subject" class="form-label">ชื่อวิชา:</label>
-            <input type="text" list="script-3" class="form-control p-3 w-50" value="<%= formData ? formData.subjectName : '' %>" name="subjectName" id="subject" required>
-            <% if (filteredResult.length > 0) { %>
-            <% console.log(filteredResult); %>
-            <datalist id="script-3">
-              <% filteredResult.subjectName.forEach (sub => {%>
-              <option value="<%=sub%>"></option>
-              <% });%>
-            </datalist>
-            <% } %>
-          </div>
-          <div class="mb-3">
-            <div class="row">
-              <div class="col-3">
-                <label for="subjectId" class="form-label">รหัสวิชา:</label>
-                <input type="text" list="script" class="form-control p-3 w-75" value="<%= formData ? formData.subjectId : '' %>" name="subjectId" id="subjectId" required>
-                <datalist id="script">
-                  <% filteredResult.subjectId.forEach (sub => {%>
-                  <option value="<%=sub%>"></option>
-                  <% });%>
-                </datalist>
-              </div>
-              <div class="col-3">
-                <label for="semester" class="form-label">ภาคศึกษา:</label>
-                <input type="text" list="script-2" class="form-control p-3 w-50" value="<%= formData ? formData.semester : '' %>" name="semester" id="semester" maxlength="6" required>
-                <datalist id="script-2">
-                  <% filteredResult.semester.forEach (sub => {%>
-                  <option value="<%= sub%>"></option>
-                  <% });%>
-                </datalist>
+        <div class="pb-3 mb-3" style="border-bottom: 1px solid #EAEFF4;">
+          <p class="fw-bold fs-3 set-border-header mb-3">แบบฟอร์มเพิ่มรายวิชา</p>
+          <form action="/adminIndex/createSubject" method="post">
+            <div id="scriptData" class="form-text my-1 w-75"><span class="text-primary">* </span>รหัสและภาคการศึกษาของรายวิชาจะส่งผลต่อ<span class="text-danger"> การเข้าถึงบทเรียน </span>ของนักศึกษา หากชื่อรายวิชาและภาคการศึกของการลงทะเบียนเรียนจากนักศึกษานั้นไม่ตรงกับข้อมูลรายวิชาที่สร้าง นักศึกษาจะไม่สามารถเข้าถึงบทเรียนของรายวิชานั้นได้
+            </div>
+            <div class="mb-3">
+              <label for="subject" class="form-label">ชื่อวิชา:</label>
+              <input type="text" list="script-3" class="form-control p-3 w-50" value="<%= formData ? formData.subjectName : '' %>" name="subjectName" id="subject" required>
+              <% if (filteredResult.length > 0) { %>
+              <% console.log(filteredResult); %>
+              <datalist id="script-3">
+                <% filteredResult.subjectName.forEach (sub => {%>
+                <option value="<%=sub%>"></option>
+                <% });%>
+              </datalist>
+              <% } %>
+            </div>
+            <div class="mb-3">
+              <div class="row">
+                <div class="col-3">
+                  <label for="subjectId" class="form-label">รหัสวิชา:</label>
+                  <input type="text" list="script" class="form-control p-3 w-75" value="<%= formData ? formData.subjectId : '' %>" name="subjectId" id="subjectId" required>
+                  <datalist id="script">
+                    <% filteredResult.subjectId.forEach (sub => {%>
+                    <option value="<%=sub%>"></option>
+                    <% });%>
+                  </datalist>
+                </div>
+                <div class="col-3">
+                  <label for="semester" class="form-label">ภาคศึกษา:</label>
+                  <input type="text" list="script-2" class="form-control p-3 w-50" value="<%= formData ? formData.semester : '' %>" name="semester" id="semester" maxlength="6" required>
+                  <datalist id="script-2">
+                    <% filteredResult.semester.forEach (sub => {%>
+                    <option value="<%= sub%>"></option>
+                    <% });%>
+                  </datalist>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="mb-3">
-            <div class="row">
-              <div class="col-3">
-                <label for="subjectId" class="form-label">หน่วยกิต:</label>
-                <input type="number" class="form-control p-3 w-50" value="<%= formData ? formData.unit : '' %>" name="unit" min="1" id="unit" required>
-              </div>
-              <div class="col-3">
-                <label for="semester" class="form-label">กลุ่มเรียนที่:</label>
-                <input type="number" class="form-control p-3 w-50" value="<%= formData ? formData.section : '' %>" min="1" name="section" id="section" required>
+            <div class="mb-3">
+              <div class="row">
+                <div class="col-3">
+                  <label for="subjectId" class="form-label">หน่วยกิต:</label>
+                  <input type="number" class="form-control p-3 w-50" value="<%= formData ? formData.unit : '' %>" name="unit" min="1" id="unit" required>
+                </div>
+                <div class="col-3">
+                  <label for="semester" class="form-label">กลุ่มเรียนที่:</label>
+                  <input type="number" class="form-control p-3 w-50" value="<%= formData ? formData.section : '' %>" min="1" name="section" id="section" required>
+                </div>
               </div>
             </div>
-          </div>
 
 
-          <!-- <div class="mb-3">
+            <!-- <div class="mb-3">
             <label for="lessonName" class="form-label">ชื่อบทเรียน:</label>
             <input type="text" class="form-control p-3 w-50" name="lessonName" placeholder="กรอกชื่อบทเรียน" required>
           </div>
@@ -225,13 +306,77 @@
             <input type="file" class="w-50 img-input" style="background-color: white !important;" name="file" accept="image/*">
             <div id="emailHelp" class="form-text my-1"><span class="text-primary">* </span>ไม่ต้องทำการอัปโหลดรูปภาพ หากไม่มีรูปภาพที่ต้องการใช้</div>
           </div> -->
-          <div class="d-flex justify-content-end">
-            <button type="submit" class="add-lesson-btn btn btn-primary py-2 px-3 shadow">
-              <span>เพิ่มรายวิชา</span><i class="bi bi-plus-circle-fill mx-2"></i>
-              </i>
-            </button>
-          </div>
-        </form>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="add-lesson-btn btn btn-primary py-2 px-3 shadow">
+                <span>เพิ่มรายวิชา</span><i class="bi bi-plus-circle-fill mx-2"></i>
+                </i>
+              </button>
+            </div>
+          </form>
+
+        </div>
+        <div class="pb-3" style="border-bottom: 1px solid #EAEFF4;">
+          <p class="fw-bold fs-3 set-border-header">อัปโหลดไฟล์</p>
+          <form action="/upload" method="post" enctype="multipart/form-data">
+            <div class="container3 my-3">
+              <div class="card shadow-sm" style="height: fit-content !important;">
+                <!-- <h3>Upload Files</h3> -->
+                <div class="drop_box">
+                  <header>
+                    <h4 class="my-1">เลือกไฟล์ที่จะอัปโหลดที่นี่</h4>
+                  </header>
+                  <p class="my-1 desText">ไฟล์ที่สามารถอัปโหลดได้: .xls</p>
+                  <input type="file" name="excelFile" class="input-file" hidden accept=".xlsx, .xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" id="fileID" style="display:none;">
+                  <button class="choose-btn btn-focus my-1" type="button">เลือกไฟล์</button>
+                </div>
+              </div>
+              <div class="file-description w-100">
+                <p class="fw-bold mx-4" style="color: #5A6A85;">คำอธิบายเกี่ยวกับการอัปโหลดไฟล์:
+                  <br>
+                  <span class="fw-light">
+                    1. ข้อมูลที่ได้จากการอัปโหลไฟล์ จะได้แก่ ข้อมูลรายวิชาและข้อมูลนักศึกษา <br>
+                    2. ระบบจะบันทึกข้อมูลและรายชื่อการลงทะเบียนเรียนของนักศึกษาและรายวิชาในไฟล์ที่แนบให้อัติโนมัติ <br>
+                    3. เมื่อมีอัปโหลดข้อมูลรายวิชาและรายชื่อนักศึกษาที่ซ้ำ ระบบจะไม่ทำการบันทึกการอัปโหลด
+                  </span>
+                </p>
+
+                <p class="fw-bold mx-4 text-success mt-2">ไฟล์ที่รองรับ:
+                  <span class="fw-light" style="color: #5A6A85;">ไฟล์ Excel (.xls) ที่ได้จากเว็บไซต์สำนักบริหารและพัฒนาวิชาการ (reg.kku.ac.th)</span>
+                </p>
+
+                <!-- <p class="fw-bold mx-4 text-success">จำนวนคอลัมน์:
+                  <span class="fw-light" style="color: #5A6A85;"> 8 คอลัมน์ หากไฟล์ที่คุณอัปโหลดมีจำนวนคอลัมน์มากกว่าและน้อยกว่า 8 คอลัมน์ <br>
+                    จะไม่สามารถอัปโหลดไฟล์ได้
+                  </span>
+                </p>
+                <p class="fw-bold mx-4 text-success">ความถูกต้องของข้อมูล:
+                  <span class="fw-light" style="color: #5A6A85;"> ควรกรอกข้อมูลให้เหมาะสมกับคอลัมน์ เช่น <span class="text-primary">School_Year</span> ควรกรอกเป็นตัวเลข<br>
+                    จำนวน 4 หลัก, <span class="text-primary">Year_Level</span> 1 หลัก และ <span class="text-primary">email</span> ควรมี @
+                  </span>
+                </p> -->
+                <p class="fw-bold mx-4 text-danger mt-2">ข้อควรระวัง:
+                  <span class="fw-light" style="color: #5A6A85;">
+                    <!-- <span class="text-primary">School_Year, Year_Level</span>  -->
+                    หลีกเลี่ยงการแก้ไขไฟล์เพิ่มเติมหลังที่จากดาวน์โหลดจากสำนักบริหารและพัฒนาวิชาการ
+                  </span>
+                </p>
+
+
+
+              </div>
+              <div class="mt-3">
+                <p class="fw-bold text-primary text-center">ตัวอย่างไฟล์:</p>
+                <div class="d-flex justify-content-center">
+                  <a href="/adminIndex/downloadFile" class="btn btn-outline-primary p-1">
+                    <small>Teach_stdlistExcel.xls
+                      <i class="bi bi-download ms-1"></i>
+                    </small>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
 
       <% if (error != null) { %>
@@ -246,7 +391,43 @@
   <%- include("./partials/footer.ejs")%>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      var errorMessage = document.getElementById('error-message').textContent;
+  
+      const dropArea = document.querySelector(".drop_box"),
+        button = dropArea.querySelector(".choose-btn"),
+        dragText = dropArea.querySelector("header"),
+        input = dropArea.querySelector(".input-file");
+      let file;
+      var filename;
+
+      button.onclick = () => {
+        input.click();
+      };
+
+      input.addEventListener("change", function(e) {
+        var fileName = e.target.files[0].name;
+        var headerText = document.querySelector('.drop_box header h4');
+        var descText = document.querySelector('.desText');
+
+        // เปลี่ยนข้อความใน element เป็นชื่อไฟล์ที่ถูกเลือก
+        headerText.textContent = fileName;
+        descText.textContent = 'ไฟล์ถูกอัปโหลดแล้ว';
+        // let filedata = `
+        // <h4 class="my-2">${fileName}</h4>
+        //;
+        // dropArea.innerHTML = filedata;
+        var uploadButton = document.createElement('div');
+        uploadButton.classList.add('d-flex', 'justify-content-center', 'my-1');
+        uploadButton.innerHTML = `
+        <button class="btn-focus">อัปโหลด</button>
+        `;
+        dropArea.appendChild(uploadButton);
+
+        // ซ่อนปุ่ม "เลือกไฟล์"
+        var chooseButton = document.querySelector('.choose-btn');
+        chooseButton.style.display = 'none';
+      });
+
+      var errorMessage = document.getElementById('error-message').textContent || "error";
       if (errorMessage) {
         Swal.fire({
           icon: 'warning',
@@ -264,8 +445,9 @@
         });
 
       }
-    });
 
+      
+      
     document.getElementById('semester').addEventListener('input', function(e) {
       let value = e.target.value;
 
@@ -287,6 +469,8 @@
         e.target.value = value[0] + '/' + value.slice(2);
       }
     });
+    });
+
   </script>
 
 

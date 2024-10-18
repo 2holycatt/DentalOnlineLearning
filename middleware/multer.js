@@ -17,14 +17,14 @@ const storage = multer.diskStorage({
     const timestamp = new Date().toISOString().replace(/:/g, '-'); // แทนที่ ":" เพื่อหลีกเลี่ยงปัญหาใน Windows
     const originalFilename = file.originalname;
     const filenameWithoutSpaces = originalFilename.replace(/\s+/g, '_'); // แทนที่ช่องว่างด้วย "_"
-    const filename = iconv.decode(filenameWithoutSpaces, 'utf-8'); // ถอดรหัสจาก originalName เป็น utf-8 (ภาษาไทย)
+    const filename = iconv.decode(Buffer.from(filenameWithoutSpaces, 'utf-8'), 'utf-8');
     const finalFilename = timestamp + '_' + filename;
 
     // พิมพ์เส้นทางไฟล์เพื่อการ debug
     console.log('Saving file to:', path.join(uploadDir, finalFilename));
 
     cb(null, finalFilename); // เชื่อมต่อ timestamp กับชื่อไฟล์เข้าด้วยกัน
-  },
+  }, 
 });
 
 const fileFilter = (req, file, cb) => {

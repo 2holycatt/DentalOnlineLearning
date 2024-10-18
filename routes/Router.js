@@ -15,7 +15,7 @@ const dashboardManagement = require("../controller/dashboardManagement");
 
 // Middleware For Files Uploading
 const upload = require("../middleware/multer");
-
+// const uploadMemory = require('../middleware/multerMemory'); // เรียกใช้ multer middleware
 // Middleware For Login System
 const redirectIfAuth = require("../middleware/redirectIfAuth");
 const studentMiddleware = require("../middleware/studentMiddleware");
@@ -48,17 +48,19 @@ router.get('/adminIndex/uploadStudent2', adminController.uploadStudent2);
 router.get('/adminIndex/schoolYearRender', teacherMiddleware, adminController.schoolYearRender);
 router.get('/adminIndex/addLesson', adminController.addLesson);
 router.get('/adminIndex/addSubject', teacherMiddleware, adminController.addSubject);
+router.get('/adminIndex/editSubject', teacherMiddleware, adminController.editSubject);
 router.get('/adminIndex/getEditLessonNamePage', teacherMiddleware, adminController.getEditLessonNamePage);
 router.post('/adminIndex/editLessonName', adminController.editLessonName);
 router.get('/adminIndex/pdfDowload', teacherMiddleware, adminController.pdfDowload);
 router.get('/adminIndex/showFile', teacherMiddleware, adminController.showFile);
 
 // router.post('/adminIndex/createLayout', adminController.createLayout);
-const { createLayout } = require("../controller/adminController");
+const { createLayout, updateLesson } = require("../controller/adminController");
 router.post('/adminIndex/createSubject', teacherMiddleware, adminController.createSubject);
 router.route('/adminIndex/createLayout').post(upload.single("file"), createLayout);
+router.route('/adminIndex/updateLesson').post(upload.single("file"), updateLesson);
 router.get('/adminIndex/eachLessons', adminController.eachLessons)
-router.get('/adminIndex/copyLessons', teacherMiddleware, adminController.copyLessons)
+router.get('/adminIndex/copyLessons', adminController.copyLessons)
 router.get('/adminIndex/manageSubject', adminController.manageSubject)
 router.get('/adminIndex/logsFile', teacherMiddleware, adminController.logsFile)
 router.get('/adminIndex/teacherNotification', teacherMiddleware, adminController.teacherNotification)
@@ -79,6 +81,14 @@ router.get('/adminIndex/chooseSubject', adminController.chooseSubject);
 router.get('/adminIndex/subjectCreateAssignment', adminController.subjectCreateAssignment);
 router.get('/adminIndex/setPermission', adminController.setPermission);
 router.get('/adminIndex/addEndChapterQuestion', adminController.addEndChapterQuestion);
+router.post('/adminIndex/editEndQuestionChapter', adminController.editEndQuestionChapter);
+router.post('/replyComment', adminController.replyComment);
+router.post('/editReplyComment', adminController.editReplyComment);
+router.post('/adminIndex/updateSubject', adminController.updateSubject);
+router.get('/adminIndex/editLessonContent', adminController.editLessonContent);
+
+
+
 // router.post('/adminIndex/makeEditComment', teacherMiddleware, adminController.makeEditComment)
 
 
@@ -113,9 +123,10 @@ router.post('/adminIndex/makeEdit', adminEditDelete.makeEdit)
 router.post('/adminIndex/makeEdit2', adminEditDelete.makeEdit2)
 router.post('/adminIndex/makeEdit3', adminEditDelete.makeEdit3)
 router.get('/adminIndex/deleteLayout', teacherMiddleware, adminEditDelete.deleteLayout)
-router.post('/adminIndex/addEndQuestionChapter', adminManageLayouts.addEndQuestionChapter)
+// router.post('/adminIndex/addEndQuestionChapter', adminManageLayouts.addEndQuestionChapter)
 
-const { createLayout_05 } = require("../controller/adminManageLayouts");
+const { createLayout_05, addEndQuestionChapter } = require("../controller/adminManageLayouts");
+router.route('/adminIndex/addEndQuestionChapter').post(upload.array("file"), addEndQuestionChapter);
 router.route('/adminIndex/createLayout_05').post(upload.single("file"), createLayout_05);
 
 //Admin Dashboard
@@ -127,8 +138,9 @@ router.get('/adminIndex/studentDetail', adminDashboard.studentDetail);
 
 //Admin Students Management
 // app.post('/upload', manageStudent.upload.single('excelFile'), manageStudent.uploadedFile);
-// const { uploadedFile } = require("../controller/manageStudent");
-router.post('/upload', manageStudent.uploadedFile)
+const { uploadedFile } = require("../controller/manageStudent");
+// router.post('/upload', manageStudent.uploadedFile)
+router.route('/upload').post(upload.single("excelFile"), uploadedFile);
 router.route('/adminIndex/createLayout_05').post(upload.single("file"), createLayout_05);
 router.post('/adminIndex/upload-form', manageStudent.uploadedForm);
 router.get('/adminIndex/studentInformationAccount', manageStudent.studentInformationAccount);
@@ -139,14 +151,18 @@ router.post('/adminIndex/editScorePerweek', manageStudent.editScorePerweek);
 router.post('/adminIndex/setPermissionStudentLists', manageStudent.setPermissionStudentLists)
 
 // Dashboard Management
-dashboardManagement
 router.post('/updateLessonProgress', dashboardManagement.updateLessonProgress);
 router.post('/calculateTimeSpent', dashboardManagement.calculateTimeSpent);
 
 //Student Router
 router.get('/studentIndex', studentMiddleware, studentController.studentIndex);
 router.get('/studentLesson', studentMiddleware, studentController.studentLesson);
+router.get('/subjectDetail', studentController.subjectDetail);
 router.get('/studentAssignment', studentMiddleware, studentController.studentAssignment);
+router.post('/studentAnswerEndChapterQuestions', studentMiddleware, adminController.studentAnswerEndChapterQuestions);
+router.post('/studentEditAnswerEndChapter', studentMiddleware, adminController.studentEditAnswerEndChapter);
+router.post('/studentEditScorePerweek', studentMiddleware, studentController.studentEditScorePerweek);
+
 
 //Student Assignment Router
 const { submitAssignment, studentEditAssignment } = require("../controller/studentAssignment");
@@ -156,7 +172,7 @@ router.route('/studentEditAssignment').post(upload.array("file"), studentEditAss
 router.get('/delStudentFile', studentMiddleware, studentAssignment.delStudentFile);
 router.get('/historyAssignment', studentMiddleware, studentAssignment.historyAssignment);
 router.get('/studentCancelAssign', studentMiddleware, studentAssignment.studentCancelAssign);
-router.get('/studentIndex/showFileArray', studentMiddleware, assignmentsController.showFileArray);
+router.get('/studentIndex/showFileArray', assignmentsController.showFileArray);
 
 // Logs file controller
 router.get('/logs', LogsFile.logs);

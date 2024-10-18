@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายละเอียดบทเรียน</title>
+  <%- include("./partials/header.ejs")%>
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
+  <style>
+    .add-button {
+      width: fit-content !important;
+    }
+
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+    .setWidth85 {
+      width: 85% !important;
+    }
+
+    .setWidth70 {
+      width: 70% !important;
+    }
+
+    /* * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    } */
+
+    .container2 {
+      align-items: center;
+      display: grid;
+      grid-template-columns: 0.5fr 1.5fr;
+    }
+
+    .container3 {
+      display: grid;
+      grid-template-columns: 0.5fr 1.5fr;
+    }
+
+
+
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
+      background-color: #ffffff;
+      padding: 1em !important;
+    }
+
+    .card h3 {
+      font-size: x-large;
+      font-weight: 600;
+      margin-bottom: 0.5em !important;
+
+    }
+
+    .drop_box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      border: 3px dotted #a3a3a3;
+      border-radius: 5px;
+      padding: 1.5em 1em !important;
+    }
+
+    .drop_box h4 {
+      font-size: 16px;
+      font-weight: 400;
+      color: #2e2e2e;
+    }
+
+    .drop_box p {
+      font-size: 12px;
+      color: #a3a3a3;
+    }
+
+    .btn-focus {
+      text-decoration: none !important;
+      background-color: #005af0 !important;
+      color: #ffffff !important;
+      padding: 10px 20px !important;
+      border: none !important;
+      outline: none !important;
+      transition: 0.3s !important;
+    }
+
+    .btn-focus:hover {
+      text-decoration: none !important;
+      background-color: #ffffff !important;
+      color: #005af0 !important;
+      padding: 10px 20px !important;
+      border: none !important;
+      outline: 1px solid #010101 !important;
+    }
+
+    .form input {
+      margin: 10px 0;
+      width: 100%;
+      background-color: #e2e2e2;
+      border: none;
+      outline: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+    }
+
+    .form-select:focus {
+      /* border-color: #000; */
+      box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    }
+
+    .form-select:focus-visible option:checked {
+      background-color: #0d6efd;
+      color: white;
+    }
+
+    .set-border-header {
+      border-left: 0.25em solid #387bef;
+      padding-left: 0.50em !important;
+    }
+
+    .list-div {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+      padding-top: 0.5em;
+      border-bottom: 1px solid #EAEFF4;
+    }
+
+    .list-div-data {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+      padding-top: 1em;
+      border-bottom: 1px solid #EAEFF4;
+      text-align: start;
+
+    }
+
+    .setGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .file-description {
+      align-items: normal !important;
+    }
+
+    .set-border-bottom {
+      border-bottom: 1px solid #EAEFF4;
+      padding-bottom: 0.5em !important;
+
+    }
+
+    .table td {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 5% !important;
+      /* หรือค่าอื่นๆ ตามต้องการ */
+
+    }
+
+    .editWeeks {
+      display: none;
+    }
+
+    .cancelAssign {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="blur-container2">
+    <%- include("./partials/nav.ejs")%>
+    <div class="main-content d-flex w-100 h-auto">
+      <%- include("./partials/lessonsList.ejs")%>
+      <div class="aside-right w-75 h-auto p-4">
+        <div class="manange-bar p-3 bg-white d-flex w-100">
+          <p class="fw-bold fs-3 lesson-bar">รายละเอียดของนักศึกษา</p>
+          <a href="/studentLesson" class="add-button btn btn-primary m-0 p-2">
+            ย้อนกลับ <i class="bi bi-x-circle-fill mx-2"></i>
+          </a>
+        </div>
+        <div class="lesson-content p-4 bg-white w-100 my-4" style="height: fit-content !important;">
+          <----------- รอให้ฟังก์ชันแก้ไขบัญชีผู้ใช้ของนักศึกษาเสร็จ ----------->
+        </div>
+        <% if (filterSubject) {%>
+        <% filterSubject.forEach((subject, index) => {%>
+        <div class="lesson-content p-4 bg-white w-100 my-4 h-auto">
+          <div class="row">
+            <div class="set-border-bottom col-12">
+              <p class="fw-bold fs-5 my-1">
+                วิชา:
+                <span class="text-primary fw-normal">
+                  <%=subject.subjectId%> <%=subject.subjectMongooseId.subjectName%>
+                </span>
+                <span class="">
+                  ภาคการศึกษา:
+                </span>
+                <span class="text-primary fw-normal">
+                  <%=subject.subjectMongooseId.semester%>
+                </span>
+                <span class="">
+                  กลุ่มที่:
+                </span>
+                <span class="text-primary fw-normal">
+                  <%=subject.subjectMongooseId.section%>
+                </span>
+              </p>
+            </div>
+          </div>
+          <div class="row d-flex align-items-center">
+            <div class="col-12 row mt-3">
+              <div class="col-6">
+                <p class="fw-bold fs-6 my-1">
+                  <i class="bi bi-card-list text-primary me-1"></i>
+                  ตารางคะแนนรายสัปดาห์ของนักศึกษา
+                </p>
+              </div>
+              <div class="divAssignScore<%=index%> col-6 d-flex justify-content-end">
+                <button class="assignScore<%=index%> assignScore btn btn-outline-primary btn-sm p-1">กรอกคะแนน</button>
+                <button class="cancelAssignScore<%=index%> cancelAssign btn btn-outline-primary btn-sm p-1" style="display: none">ยกเลิกการกรอกคะแนน</button>
+              </div>
+            </div>
+          </div>
+          <div class="showWeeks showWeeks<%=index%> row">
+            <table class="table mt-2">
+              <thead>
+                <th class="text-center py-2 border-top" scope="col" colspan="17">สัปดาห์</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row" class="py-2 border-end">สัปดาห์ที่</th>
+                  <% subject.weeks.forEach (week => { %>
+                  <td class="col-md-1 text-center py-2 border-end"><%=week.week%></td>
+                  <% }); %>
+                </tr>
+                <tr>
+                  <th scope="row" class="py-2 border-end">คะแนน</th>
+                  <% subject.weeks.forEach (week => { %>
+                  <td class="col-md-1 text-center text-secondary py-2 border-end"><%=week.scorePerWeek%></td>
+                  <% }); %>
+                </tr>
+              </tbody>
+            </table>
+            <div class="mt-3">
+              <p class="text-primary fw-bold">คะแนนรวมทุกสัปดาห์:
+                <span class="text-dark"><%=totalScore%></span>
+              </p>
+            </div>
+          </div>
+          <form action="/studentEditScorePerweek" method="post">
+            <input type="text" name="studentId" class="d-none" value="<%=findUser.student._id%>">
+            <input type="text" name="subjectId" class="d-none" value="<%=subjectId%>">
+            <div class="editWeeks<%=index%> editWeeks row">
+              <table class="table mt-2">
+                <thead>
+                  <th class="text-center py-2 border-top" scope="col" colspan="17">สัปดาห์</th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row" class="py-2 border-end">สัปดาห์ที่</th>
+                    <% subject.weeks.forEach (week => { %>
+                    <td class="col-md-1 text-center py-2 border-end"><%=week.week%></td>
+                    <% }); %>
+                  </tr>
+                  <tr>
+                    <th scope="row" class="py-2 border-end">คะแนน</th>
+                    <% subject.weeks.forEach ((week, index) => { %>
+                    <td class="col-md-1 text-center py-2 border-end">
+                      <input type="text" name="editScorePerweek<%=index%>" class="numericInput text-primary" value="<%= week.scorePerWeek %>" min="0" pattern="\d*" title="โปรดกรอกตัวเลข" style="width: 100%; height: 100%; box-sizing: border-box; border: none; outline: none; text-align: center; padding: 0; margin: 0; line-height: 1.5;" required>
+                    </td>
+                    <% }); %>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="row mt-3 d-flex align-items-center">
+                <div class="col d-flex align-items-center">
+                  <p class="text-primary fw-bold">คะแนนรวมทุกสัปดาห์:
+                    <span class="text-dark"><%=totalScore%></span>
+                  </p>
+                </div>
+                <div class="col d-flex justify-content-end d-flex align-items-center">
+                  <button class="btn btn-success btn-sm p-1">บันทึกการกรอกคะแนน</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <% }) %>
+        <% } %>
+      </div>
+    </div>
+    <%- include("./partials/footer.ejs")%>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const assignButtons = document.querySelectorAll('[class^="assignScore"]');
+      const cancelButtons = document.querySelectorAll('[class^="cancelAssignScore"]');
+      console.log(assignButtons);
+      console.log(cancelButtons);
+      // สร้าง event listeners สำหรับปุ่ม assignScore
+      assignButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const index = this.className.match(/\d+/)[0]; // ดึงเลข index จาก class name
+          const showWeeks = document.querySelector(`.showWeeks${index}`);
+          const editWeeks = document.querySelector(`.editWeeks${index}`);
+          const assignButton = document.querySelector(`.assignScore${index}`);
+          const editButton = document.querySelector(`.cancelAssignScore${index}`);
+
+          // console.log(assignButton);
+          // console.log(editButton);
+          if (showWeeks && editWeeks) {
+            showWeeks.style.display = 'none';
+            editWeeks.style.display = 'block';
+            assignButton.style.display = 'none';
+            editButton.style.display = 'block';
+
+          }
+        });
+      });
+
+      // สร้าง event listeners สำหรับปุ่ม cancelAssignScore
+      cancelButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const index = this.className.match(/\d+/)[0]; // ดึงเลข index จาก class name
+          const showWeeks = document.querySelector(`.showWeeks${index}`);
+          const editWeeks = document.querySelector(`.editWeeks${index}`);
+          const assignButton = document.querySelector(`.assignScore${index}`);
+          const editButton = document.querySelector(`.cancelAssignScore${index}`);
+          if (showWeeks && editWeeks) {
+            showWeeks.style.display = 'block';
+            editWeeks.style.display = 'none';
+            assignButton.style.display = 'block';
+            editButton.style.display = 'none';
+          }
+        });
+      });
+    });
+
+
+    // let inputNumber = document.querySelectorAll('numericInput');
+
+    // if (inputNumber.textContent === '') {
+    // inputNumber.textContent = 0;
+    // }
+  </script>
+</body>
+
+</html>

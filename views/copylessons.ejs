@@ -273,9 +273,49 @@
       padding: 2em auto !important;
     }
 
-    /* .float-btn div {
-      
-    } */
+
+    .checkbox-wrapper-18 .round {
+      position: relative;
+    }
+
+    .checkbox-wrapper-18 .round label {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      cursor: pointer;
+      height: 28px;
+      width: 28px;
+      display: block;
+    }
+
+    .checkbox-wrapper-18 .round label:after {
+      border: 2px solid #fff;
+      border-top: none;
+      border-right: none;
+      content: "";
+      height: 6px;
+      left: 8px;
+      opacity: 0;
+      position: absolute;
+      top: 9px;
+      transform: rotate(-45deg);
+      width: 12px;
+    }
+
+    .checkbox-wrapper-18 .round input[type="checkbox"] {
+      visibility: hidden;
+      display: none;
+      opacity: 0;
+    }
+
+    .checkbox-wrapper-18 .round input[type="checkbox"]:checked+label {
+      background-color: #66bb6a;
+      border-color: #66bb6a;
+    }
+
+    .checkbox-wrapper-18 .round input[type="checkbox"]:checked+label:after {
+      opacity: 1;
+    }
   </style>
 
 </head>
@@ -321,194 +361,326 @@
         </p> -->
         <div class="d-flex">
           <div class="set-border d-flex">
-            <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">ปีการศึกษาต่าง ๆ</p>
-            <!-- <div class="d-flex justify-content-center" style="align-items: center;">
-              <label class="mx-2" for="yearSelector">ปีการศึกษา: </label>
-              <select id="yearSelector">
-                <option value="all">ทั้งหมด</option>
-                <% schoolYears.forEach (year => {%>
-                <option value="<%= year.schoolYear%>"><%=year.schoolYear%></option>
-                <% });%>
-              </select>
-            </div> -->
+            <p class="fw-bold fs-5 my-1" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">รายวิชา:
+              <span class="fw-normal">
+                <%=subjectWithLessons.subjectId%>
+                <%=subjectWithLessons.subjectName%>
+                <%=subjectWithLessons.semester%>
+                กลุ่มที่: <%=subjectWithLessons.section%>
+
+              </span>
+            </p>
           </div>
         </div>
-        <p class="mx-3 my-2 text-secondary"><i class="bi bi-exclamation-circle text-primary"></i>
-          ทำการเลือกปีการศึกษาที่ต้องการจะคัดลอก โดยมีขั้นตอนดังนี้ <br>
-          1. เลือกปีการศึกษาแรกที่ต้องการจะคัดลอก <br>
-          2. เลือกปีการศึกษาที่สองที่ต้องการเพิ่มบทเรียนจากปีการศึกษาแรกที่ถูกคัดลอก<br>
+        <p class="my-2 text-secondary"><i class="bi bi-exclamation-circle text-primary"></i>
+          รายวิชานี้จะเป็นรายวิชาที่ไปคัดลอกเนื้อหาภายในบทเรียนจากรายวิชาอื่น ๆ
+          <!-- 1. เลือกปีการศึกษาแรกที่ต้องการจะคัดลอก <br>
+          2. เลือกปีการศึกษาที่สองที่ต้องการเพิ่มบทเรียนจากปีการศึกษาแรกที่ถูกคัดลอก<br> -->
         </p>
-        <p class="mx-3 text-warning fw-bold">ข้อควรระวัง: <span class="fw-normal text-secondary">ปีการศึกษาที่ถูกคัดลอก จะต้องมีบทเรียนก่อน ถึงจะทำการคัดลอกได้</span> </p>
-        <form action="/adminIndex/copyLessons" method="post" id="copyForm">
+        <!-- <p class="mx-3 text-warning fw-bold">ข้อควรระวัง: <span class="fw-normal text-secondary">ปีการศึกษาที่ถูกคัดลอก จะต้องมีบทเรียนก่อน ถึงจะทำการคัดลอกได้</span> </p>
+        <form action="/adminIndex/copyLessons" method="post" id="copyForm"> -->
+        <p class="my-2 fw-bold">
+          บทเรียนในภายในรายวิชา:
 
-          <% if (lessons.length > 0 || lessons.length < 1) { %>
-          <div class="px-3 my-3">
-            <% schoolYears.forEach ((year, index) => {%>
-            <div class="showYear show<%=year.schoolYear%>" data-aos="fade-left" data-aos-duration="1000">
-              <% if (year.lessonArray.length > 0) { %>
-              <div class="set-border-bottom">
-                <p class="my-2 p-schoolYear"><span class="text-dark fw-bold">ปีการศึกษา:</span><span class="text-primary allYear year<%=index+1%>"> <%=year.schoolYear%></span></p>
-                <div class="form-check form-switch set-align">
-                  <p>เลือกปีการศึกษานี้: </p>
-                  <input class="form-check-input hasLessons mx-2" type="checkbox" name="checkbox<%=index+1%>" value="<%=year._id%>" role="switch" id="flexSwitchCheckDefault">
-                  <label class="form-check-label p-has text-success" for="flexSwitchCheckDefault"></label>
+        </p>
+        <div class="setColumn row">
+          <% if (subjectWithLessons.lessonArray.length > 0) {%>
+          <% const lessons = subjectWithLessons.lessonArray %>
+          <% lessons.forEach((lesson,index) => { %>
+          <% if (lesson.file) { %>
+          <div class="position-relative row my-2">
+            <div class="row d-flex justify-content-center">
+              <div class="card-1 text-bg-white mb-3" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
+                <div class="card-header bg-white px-2 py-1 fw-bold text-primary" style="width: fit-content; border-bottom-right-radius:0.5em; position: absolute;">
+                  <p class="text-break" style="font-size: small;"><%= lesson.LessonName %></p>
+                </div>
+                <div class="card-body-1">
+                  <%const image = lesson.file%>
+                  <img src="/<%=image%>" alt="รูปภาพประกอบบทเรียน" class="card-img" alt="รูปของบทเรียน" style="width: 100%; height: 20%; max-width: 15.125em; max-height: 8.8125em; border-radius: 0.5em;">
+                  <!-- /* <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของบทเรียน" style="height: 100%; width: 50%; object-fit: cover;"> */ -->
                 </div>
               </div>
-              <% } else if (year.lessonArray.length < 1) {%>
-              <div class="set-border-bottom">
-                <p class="my-2 p-schoolYear"><span class="text-dark fw-bold">ปีการศึกษา:</span><span class="text-primary "> <%=year.schoolYear%></span></p>
-                <div class="form-check form-switch set-align">
-                  <p>เลือกปีการศึกษานี้: </p>
-                  <input class="form-check-input noLessons mx-2" type="checkbox" name="noLessons<%=index+1%>" value="<%=year._id%>" role="switch" id="flexSwitchCheckDefault">
-                  <label class="form-check-label p-no text-success" for="flexSwitchCheckDefault"></label>
-
+            </div>
+          </div>
+          <% } else if (!lesson.file) { %>
+          <div class="position-relative row my-2">
+            <div class="row d-flex justify-content-center">
+              <div class="col-12 card-1 text-bg-white mb-4" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
+                <div class="card-header bg-white px-2 py-1 fw-bold text-primary" style="width: fit-content; border-bottom-right-radius: 0.5em; position: absolute; ">
+                  <p class="text-break" style="font-size: small;"><%= lesson.LessonName %></p>
+                </div>
+                <div class="card-body-1 d-flex justify-content-center p-4">
+                  <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของบทเรียน" style="height: 100%; width: 50%; object-fit: cover; max-width: 15.125em; max-height: 8.8125em ;">
                 </div>
               </div>
-              <%}%>
-            <div class="setColumn">
-              <% if (year.lessonArray.length > 0) {%>
-              <% lessons.forEach(lesson => { %>
-              <% if (lesson.LessonImage && lesson.LessonImage.data && (year.schoolYear == lesson.schoolYear.schoolYear) ) { %>
-              <a href="/adminIndex/eachLessons?lessonId=<%= lesson._id %>">
+            </div>
+          </div>
+          <% } %>
+          <% }); %>
+          <% } else if (subjectWithLessons.lessonArray.length < 1) {%>
+          <p class="showSubject show<%=subjectWithLessons.subjectId%> mb-2">ไม่มีบทเรียนในรายวิชานี้</span>
+          </p>
+          <% } %>
+        </div>
+      </div>
+
+      <form action="/adminIndex/copyLessons" method="post">
+        <div class="lesson-content p-4 bg-white w-100 my-4">
+          <p class="my-2 text-success"><i class="bi bi-exclamation-circle text-primary"></i>
+            รายวิชาที่จะถูกคัดลอกข้อมูลหรือเนื้อหาภายในแต่ละบทเรียน
+            <!-- 1. เลือกปีการศึกษาแรกที่ต้องการจะคัดลอก <br>
+          2. เลือกปีการศึกษาที่สองที่ต้องการเพิ่มบทเรียนจากปีการศึกษาแรกที่ถูกคัดลอก<br> -->
+          </p>
+          <% if (subjectToCopy.length > 0) {%>
+          <% subjectToCopy.forEach(subject => {%>
+          <div class="d-flex">
+            <div class="set-border d-flex">
+              <p class="fw-bold fs-6 my-1">รายวิชา:
+                <span class="fw-normal">
+                  <%=subject.subjectId%>
+                  <%=subject.subjectName%>
+                  <%=subject.semester%>
+                  กลุ่มที่: <%=subject.section%>
+                </span>
+              </p>
+            </div>
+          </div>
+          <!-- <p class="my-2 fw-bold">
+          บทเรียนในภายในรายวิชา:
+        </p> -->
+          <div class="setColumn row mb-3 pb-3 border-bottom border-light-subtle">
+            <% if (subject.lessonArray.length > 0) {%>
+            <% const lessons = subject.lessonArray %>
+            <% lessons.forEach((lesson,index) => { %>
+            <% if (lesson.file) { %>
+            <div class="position-relative row my-2">
+              <div class="row d-flex justify-content-center">
                 <div class="card-1 text-bg-white mb-3" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
                   <div class="card-header bg-white px-2 py-1 fw-bold text-primary" style="width: fit-content; border-bottom-right-radius:0.5em; position: absolute;">
-                    <%= lesson.LessonName %>
+                    <p class="text-break" style="font-size: small;"><%= lesson.LessonName %></p>
                   </div>
                   <div class="card-body-1">
-                    <img src="data:<%= lesson.LessonImage.contentType %>;base64,<%= lesson.LessonImage.data.toString('base64') %>" alt="<%= lesson.LessonName %>" class="card-img" alt="รูปของบทเรียน" style="width: 100%; height: 20%; max-width: 15.125em; max-height: 8.8125em; border-radius: 0.5em;">
+                    <%const image = lesson.file%>
+                    <img src="/<%=image%>" alt="รูปภาพประกอบบทเรียน" class="card-img" alt="รูปของบทเรียน" style="width: 100%; height: 20%; max-width: 15.125em; max-height: 8.8125em; border-radius: 0.5em;">
                     <!-- /* <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของบทเรียน" style="height: 100%; width: 50%; object-fit: cover;"> */ -->
                   </div>
                 </div>
-              </a>
-              <% } else if (year.schoolYear == lesson.schoolYear.schoolYear) { %>
-              <a href="/adminIndex/eachLessons?lessonId=<%= lesson._id %>">
-                <div class="card-1 text-bg-white mb-4" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
+              </div>
+              <div class="col-12 d-flex justify-content-center">
+                <div class="checkbox-wrapper-18">
+                  <div class="round">
+                    <input type="checkbox" id="checkbox-<%= lesson._id %>" value="<%=lesson._id%>" name="checkedLesson" />
+                    <label for="checkbox-<%= lesson._id %>"></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% } else if (!lesson.file) { %>
+            <div class="position-relative row my-2">
+              <div class="row d-flex justify-content-center">
+                <div class="col-12 card-1 text-bg-white mb-4" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
                   <div class="card-header bg-white px-2 py-1 fw-bold text-primary" style="width: fit-content; border-bottom-right-radius: 0.5em; position: absolute; ">
-                    <%= lesson.LessonName %>
+                    <p class="text-break" style="font-size: small;"><%= lesson.LessonName %></p>
                   </div>
                   <div class="card-body-1 d-flex justify-content-center p-4">
                     <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของบทเรียน" style="height: 100%; width: 50%; object-fit: cover; max-width: 15.125em; max-height: 8.8125em ;">
                   </div>
                 </div>
-              </a>
-              <% } %>
-              <% }); %>
-              <% } else if (year.lessonArray.length < 1) {%>
-              <p class="showYear show<%=year.schoolYear%> mb-2">ไม่พบบทเรียนในระบบของปีการศึกษา:<span> <%= year.schoolYear%></span>
-              </p>
-              <% } %>
+              </div>
+              <div class="col-12 d-flex justify-content-center">
+                <div class="checkbox-wrapper-18">
+                  <div class="round">
+                    <input type="checkbox" id="checkbox-<%= lesson._id %>" value="<%=lesson._id%>" name="checkedLesson" />
+                    <label for="checkbox-<%= lesson._id %>"></label>
+                  </div>
+                </div>
+              </div>
             </div>
+            <% } %>
+            <% }); %>
+            <% } else if (subject.lessonArray.length < 1) {%>
+            <p class="showSubject show<%=subject.subjectId%> mb-2">ไม่มีบทเรียนในรายวิชานี้</span>
+            </p>
+            <% } %>
           </div>
-          <% });%>
-      </div>
-      <% } %>
-      <div class="float-btn d-flex justify-content-between">
-        <p class="fs-6 text-white my-1 mx-3"><span class="text-warning fw-bold"><i class="bi bi-exclamation-circle mx-2"></i>โปรดทราบ: </span>ต้องเลือกปีการศึกษาให้ครบ 2 ปีการศึกษา จึงจะสามารถบันทึกได้</p>
-        <div class="p-2 d-flex" style="height: fit-content !important; align-items: center;">
-          <!-- <p class="fs-6 text-white my-2">ปีการศึกษาที่ 1: <span class="yeartext1"></span></p>
-        <p class="fs-6 text-white my-2">ปีการศึกษาที่ 2: <span class="yeartext2"></span></p> -->
-          <button class="submit-form btn btn-success py-2 px-2" type="submit" disabled>บันทึกการคัดลอก <i class="bi bi-copy mx-2"></i></button>
+          <% }); %>
+          <% } else {%>
+
+          <% } %>
         </div>
-      </div>
+        <div class="float-btn d-flex justify-content-between">
+          <div class="d-flex my-1 mx-3">
+            <p>
+              <span class="text-warning fw-bold"><i class="bi bi-exclamation-circle mx-2"></i>จำนวนบทเรียนที่เลือก:</span>
+            </p>
+            <p id="checkedCount" class="fs-6 text-white mx-2"></p>
+          </div>
+          <div class="p-2 d-flex" style="height: fit-content !important; align-items: center;">
+            <!-- <p class="fs-6 text-white my-2">ปีการศึกษาที่ 1: <span class="yeartext1"></span></p>
+        <p class="fs-6 text-white my-2">ปีการศึกษาที่ 2: <span class="yeartext2"></span></p> -->
+            <input type="text" value="<%=subjectWithLessons._id%>" name="subjectId" class="d-none">
+            <button class="submit-form btn btn-success py-2 px-2" type="submit" disabled>บันทึกการคัดลอก <i class="bi bi-copy mx-2"></i></button>
+          </div>
+        </div>
       </form>
     </div>
   </div>
   </div>
   <%- include("./partials/footer.ejs")%>
   <script>
-    const checkbox = document.querySelectorAll('.form-check-input');
-    const year = document.querySelectorAll('.allYear');
-    const submitBtn = document.querySelector('.submit-form')
-    const checkboxArray = Array.from(checkbox);
+    function checkCheckboxes() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]'); // ดึง checkbox ทั้งหมด
+      const submitBtn = document.querySelector('.submit-form')
+      const checkedCountElement = document.getElementById('checkedCount'); // Element ที่จะแสดงจำนวน checkbox ที่ถูก checked
+      // const selectedValues = [];
+      // ตรวจสอบว่ามี checkbox ที่ถูกเลือกหรือไม่
 
-    let countTimes = 0;
-    const maxCount = 2;
+      const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
 
-    checkboxArray.forEach((checkbox) => {
-      checkbox.addEventListener('change', () => {
-        // ตรวจสอบว่า checkbox ถูกคลิกหรือไม่
-        if (checkbox.checked && checkbox.name.startsWith('noLessons') && (countTimes == 0)) {
-          checkbox.checked = false;
-          // console.log(countTimes);
-          Swal.fire({
-            icon: "warning",
-            position: 'middle',
-            text: "ปีการศึกษาแรกที่เลือกต้องมีบทเรียนในปีการศึกษาก่อน",
-            showConfirmButton: false,
-            timer: 2000,
-            customClass: {
-              container: 'custom-container-class2',
-              text: 'custom-title-class2',
-              icon: 'custom-icon-class2',
-              popup: 'custom-popup-class',
-            },
-          });
-        } else if (checkbox.checked && checkbox.name.startsWith('checkbox')) {
-          countTimes++;
-          // console.log(countTimes);
+      if (isChecked) {
+        submitBtn.disabled = false; // ถ้ามี checkbox ถูกเลือก ยกเลิก disabled ของปุ่ม
+      } else {
+        submitBtn.disabled = true; // ถ้าไม่มี checkbox ถูกเลือก ให้ปุ่ม disabled เหมือนเดิม
+      }
 
-          // ตรวจสอบว่า countTimes มากกว่า maxCount หรือไม่
-          if (countTimes > maxCount) {
-            Swal.fire({
-              icon: "warning",
-              position: 'middle',
-              text: "สามารถเลือกปีการศึกษาได้สูงสุดแค่ 2 ครั้งเท่านั้น",
-              showConfirmButton: false,
-              timer: 2000,
-              customClass: {
-                container: 'custom-container-class2',
-                text: 'custom-title-class2',
-                icon: 'custom-icon-class2',
-                popup: 'custom-popup-class',
-              },
-            });
-            countTimes--;
+      let checkedCount = 0; // ตัวแปรสำหรับนับจำนวน
 
-            checkbox.checked = false;
-          }
+      // ตรวจสอบแต่ละ checkbox ว่าถูก checked หรือไม่
+      checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          checkedCount++; // เพิ่มค่าหาก checkbox ถูก checked
+          // selectedValues.push(checkbox.value); // เก็บค่าที่ถูกเลือกในอาร์เรย์
 
-        } else if (!checkbox.checked && checkbox.name.startsWith('checkbox')) {
-          countTimes--;
-          console.log(countTimes);
-
-        } else if (checkbox.checked && checkbox.name.startsWith('noLessons') && (countTimes > 0)) {
-          countTimes++;
-          console.log(countTimes);
-
-          // ตรวจสอบว่า countTimes มากกว่า maxCount หรือไม่
-          if (countTimes > maxCount) {
-            // alert(`จำนวน checkbox ที่เลือก มากกว่า ${maxCount}`);
-            Swal.fire({
-              icon: "warning",
-              position: 'middle',
-              text: "สามารถเลือกปีการศึกษาได้สูงสุดแค่ 2 ครั้งเท่านั้น",
-              showConfirmButton: false,
-              timer: 2000,
-              customClass: {
-                container: 'custom-container-class2',
-                text: 'custom-title-class2',
-                icon: 'custom-icon-class2',
-                popup: 'custom-popup-class',
-              },
-            });
-            countTimes--;
-
-            checkbox.checked = false;
-          }
-
-        } else if (!checkbox.checked && checkbox.name.startsWith('noLessons') && (countTimes > 0)) {
-          countTimes--;
-          console.log(countTimes);
         }
-
-        if (countTimes == maxCount) {
-          submitBtn.removeAttribute('disabled');
-        } else {
-          submitBtn.setAttribute('disabled', true);
-        }
-
       });
+
+      checkedCountElement.textContent = checkedCount;
+
+      // submitBtn.onclick = async () => {
+      //   try {
+      //     const response = await fetch('/adminIndex/copyLessons', {
+      //       method: 'POST',
+      //       headers: {
+      //         'Content-Type': 'application/json',
+      //       },
+      //       body: JSON.stringify({
+      //         selectedValues
+      //       }), // ส่งค่าที่เลือกเป็น JSON
+      //     });
+
+      //     console.log(response);
+      //     // if (response.ok) {
+      //     //   const result = await response.json();
+      //     //   console.log('Success:', result);
+      //     //   // ทำการอัพเดต UI หรือการจัดการอื่นๆ ตามต้องการ
+      //     // } else {
+      //     //   console.error('Error:', response.statusText);
+      //     // }
+      //   } catch (error) {
+      //     console.error('Error:', error);
+      //   }
+      // };
+    }
+
+    // เพิ่ม event listener ให้ checkbox ทุกอัน
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', checkCheckboxes); // เรียกฟังก์ชันเมื่อสถานะ checkbox เปลี่ยน
     });
+
+    // เรียกฟังก์ชันครั้งแรกเพื่อตั้งค่าเริ่มต้น
+    checkCheckboxes();
+
+    // const year = document.querySelectorAll('.allYear');
+    // const checkboxArray = Array.from(checkbox);
+
+    // let countTimes = 0;
+    // const maxCount = 2;
+
+    // checkboxArray.forEach((checkbox) => {
+    //   checkbox.addEventListener('change', () => {
+    //     // ตรวจสอบว่า checkbox ถูกคลิกหรือไม่
+    //     if (checkbox.checked && checkbox.name.startsWith('noLessons') && (countTimes == 0)) {
+    //       checkbox.checked = false;
+    //       // console.log(countTimes);
+    //       Swal.fire({
+    //         icon: "warning",
+    //         position: 'middle',
+    //         text: "ปีการศึกษาแรกที่เลือกต้องมีบทเรียนในปีการศึกษาก่อน",
+    //         showConfirmButton: false,
+    //         timer: 2000,
+    //         customClass: {
+    //           container: 'custom-container-class2',
+    //           text: 'custom-title-class2',
+    //           icon: 'custom-icon-class2',
+    //           popup: 'custom-popup-class',
+    //         },
+    //       });
+    //     } else if (checkbox.checked && checkbox.name.startsWith('checkbox')) {
+    //       countTimes++;
+    //       // console.log(countTimes);
+
+    //       // ตรวจสอบว่า countTimes มากกว่า maxCount หรือไม่
+    //       if (countTimes > maxCount) {
+    //         Swal.fire({
+    //           icon: "warning",
+    //           position: 'middle',
+    //           text: "สามารถเลือกปีการศึกษาได้สูงสุดแค่ 2 ครั้งเท่านั้น",
+    //           showConfirmButton: false,
+    //           timer: 2000,
+    //           customClass: {
+    //             container: 'custom-container-class2',
+    //             text: 'custom-title-class2',
+    //             icon: 'custom-icon-class2',
+    //             popup: 'custom-popup-class',
+    //           },
+    //         });
+    //         countTimes--;
+
+    //         checkbox.checked = false;
+    //       }
+
+    //     } else if (!checkbox.checked && checkbox.name.startsWith('checkbox')) {
+    //       countTimes--;
+    //       console.log(countTimes);
+
+    //     } else if (checkbox.checked && checkbox.name.startsWith('noLessons') && (countTimes > 0)) {
+    //       countTimes++;
+    //       console.log(countTimes);
+
+    //       // ตรวจสอบว่า countTimes มากกว่า maxCount หรือไม่
+    //       if (countTimes > maxCount) {
+    //         // alert(`จำนวน checkbox ที่เลือก มากกว่า ${maxCount}`);
+    //         Swal.fire({
+    //           icon: "warning",
+    //           position: 'middle',
+    //           text: "สามารถเลือกปีการศึกษาได้สูงสุดแค่ 2 ครั้งเท่านั้น",
+    //           showConfirmButton: false,
+    //           timer: 2000,
+    //           customClass: {
+    //             container: 'custom-container-class2',
+    //             text: 'custom-title-class2',
+    //             icon: 'custom-icon-class2',
+    //             popup: 'custom-popup-class',
+    //           },
+    //         });
+    //         countTimes--;
+
+    //         checkbox.checked = false;
+    //       }
+
+    //     } else if (!checkbox.checked && checkbox.name.startsWith('noLessons') && (countTimes > 0)) {
+    //       countTimes--;
+    //       console.log(countTimes);
+    //     }
+
+    //     if (countTimes == maxCount) {
+    //       submitBtn.removeAttribute('disabled');
+    //     } else {
+    //       submitBtn.setAttribute('disabled', true);
+    //     }
+
+    //   });
+    // });
 
     // document.getElementsByClassName('.submit-forim').addEventListener('click', function(event) {
     //   // แสดง Swal ก่อนที่ฟอร์มจะถูกส่ง

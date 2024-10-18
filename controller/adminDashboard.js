@@ -127,107 +127,115 @@ const adminDashboard = async (req, res) => {
 
         let latestSubject;
         if (subjectId) {
-            // ถ้ามี subjectId ให้ค้นหา subject นั้น
             latestSubject = await Subject.findOne({ _id: subjectId }).populate("lessonArray");
         } else {
-            // ถ้าไม่มี subjectId ให้ใช้ subject ล่าสุดตาม createdAt
             latestSubject = await Subject.findOne({ _id: "66a5b280abf2f346ab789a54" }).populate("lessonArray");
 
             // latestSubject = await Subject.findOne().populate("lessonArray").sort({ createdAt: -1 });
         }
 
-        // ดึงข้อมูล subject ทั้งหมดเพื่อแสดงใน dropdown
-        const subjects = await Subject.find().sort({ "createdAt": 1 });
+        if (latestSubject != null) {
+            // ดึงข้อมูล subject ทั้งหมดเพื่อแสดงใน dropdown
+            const subjects = await Subject.find().sort({ "createdAt": 1 });
 
+            const lessonProgressList = await lessonProgress.find({ subjectMongooseId: latestSubject._id }).populate('lesson'); // populate เฉพาะฟิลด์ lessonName จาก lesson model
 
-        const lessonProgressList = await lessonProgress.find({ subjectMongooseId: latestSubject._id }).populate('lesson'); // populate เฉพาะฟิลด์ lessonName จาก lesson model
+            const today = new Date();
+            // กำหนดช่วงเวลาของวันที่ปัจจุบัน ตั้งแต่ 00:00:00 ถึง 23:59:59
+            const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+            const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
-        const today = new Date();
-        // กำหนดช่วงเวลาของวันที่ปัจจุบัน ตั้งแต่ 00:00:00 ถึง 23:59:59
-        const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-        const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+            const lessonFinishedToday = await lessonProgress.find(
+                {
+                    subjectMongooseId: latestSubject._id,
+                    'finishedProgress.finishehDate': {
+                        $gte: startOfDay, // เริ่มต้นที่ 00:00:00
+                        $lte: endOfDay   // สิ้นสุดที่ 23:59:59
+                    }
+                });
 
-        const lessonFinishedToday = await lessonProgress.find(
-            {
-                subjectMongooseId: latestSubject._id,
-                'finishedProgress.finishehDate': {
-                    $gte: startOfDay, // เริ่มต้นที่ 00:00:00
-                    $lte: endOfDay   // สิ้นสุดที่ 23:59:59
+            const totalLessons = latestSubject.lessonArray.length;
+            const studentAmount = latestSubject.students.length;
+            // สร้างตัวแปร array เพื่อเก็บผลลัพธ์
+            let lessonProgressArray = [];
+
+            // ใช้ Map เพื่อจัดกลุ่มตาม lesson._id
+            let lessonMap = new Map();
+
+            // ดึงข้อมูลบทเรียนทั้งหมดจาก subject (ตั้งค่าเริ่มต้นเป็น 0 สำหรับทุกบทเรียน)
+            latestSubject.lessonArray.forEach(lesson => {
+                const lessonId = lesson._id.toString();
+                const lessonName = lesson.LessonName;
+
+                // เพิ่มบทเรียนทั้งหมดเข้าไปใน Map และตั้งค่า lessonFinishedProgressAmount เป็น 0
+                lessonMap.set(lessonId, {
+                    lessonName: lessonName,
+                    lessonFinishedProgressAmount: 0 // เริ่มต้นที่ 0
+                });
+            });
+            
+            console.log(lessonProgressList);
+            // วนลูปข้อมูล lessonProgress ที่ได้มาและเพิ่มจำนวนคนที่ทำเสร็จ
+            lessonProgressList.forEach(progress => {
+                const lessonId = progress.lesson._id.toString();
+                const isFinished = progress.progress == 100;
+
+                // ถ้า progress เท่ากับ 100 ให้เพิ่มจำนวนคนที่ทำเสร็จ
+                if (isFinished) {
+                    lessonMap.get(lessonId).lessonFinishedProgressAmount += 1;
                 }
             });
 
-        const totalLessons = latestSubject.lessonArray.length;
-        const studentAmount = latestSubject.students.length;
-        // สร้างตัวแปร array เพื่อเก็บผลลัพธ์
-        let lessonProgressArray = [];
-
-        // ใช้ Map เพื่อจัดกลุ่มตาม lesson._id
-        let lessonMap = new Map();
-
-        // ดึงข้อมูลบทเรียนทั้งหมดจาก subject (ตั้งค่าเริ่มต้นเป็น 0 สำหรับทุกบทเรียน)
-        latestSubject.lessonArray.forEach(lesson => {
-            const lessonId = lesson._id.toString();
-            const lessonName = lesson.LessonName;
-
-            // เพิ่มบทเรียนทั้งหมดเข้าไปใน Map และตั้งค่า lessonFinishedProgressAmount เป็น 0
-            lessonMap.set(lessonId, {
-                lessonName: lessonName,
-                lessonFinishedProgressAmount: 0 // เริ่มต้นที่ 0
+            // เปลี่ยนข้อมูลจาก Map เป็น array ของ object
+            lessonMap.forEach((value, key) => {
+                lessonProgressArray.push(value);
             });
-        });
 
-        // วนลูปข้อมูล lessonProgress ที่ได้มาและเพิ่มจำนวนคนที่ทำเสร็จ
-        lessonProgressList.forEach(progress => {
-            const lessonId = progress.lesson._id.toString();
-            const isFinished = progress.progress === 100;
+            // // return หรือส่งข้อมูลไปยังส่วนอื่น ๆ
+            // // res.json(lessonProgressArray);
+            let lessonLabels = [];
+            let progressData = [];
+            let lessonProgressPercentSummary = [];
+            lessonProgressArray.forEach(lesson => {
+                lessonLabels.push(lesson.lessonName);
+                progressData.push(lesson.lessonFinishedProgressAmount);
+                // สูตรคำนวณ (จำนวนที่ทำสำเร็จ / จำนวนนักศึกษาทั้งหมด) * 100
+                lessonProgressPercentSummary.push(
+                    ((lesson.lessonFinishedProgressAmount / studentAmount) * 100)
+                );
+            });
 
-            // ถ้า progress เท่ากับ 100 ให้เพิ่มจำนวนคนที่ทำเสร็จ
-            if (isFinished) {
-                lessonMap.get(lessonId).lessonFinishedProgressAmount += 1;
-            }
-        });
-
-        // เปลี่ยนข้อมูลจาก Map เป็น array ของ object
-        lessonMap.forEach((value, key) => {
-            lessonProgressArray.push(value);
-        });
-
-        // // return หรือส่งข้อมูลไปยังส่วนอื่น ๆ
-        // // res.json(lessonProgressArray);
-        let lessonLabels = [];
-        let progressData = [];
-        let lessonProgressPercentSummary = [];
-        lessonProgressArray.forEach(lesson => {
-            lessonLabels.push(lesson.lessonName);
-            progressData.push(lesson.lessonFinishedProgressAmount);
-            // สูตรคำนวณ (จำนวนที่ทำสำเร็จ / จำนวนนักศึกษาทั้งหมด) * 100
-            lessonProgressPercentSummary.push(
-                ((lesson.lessonFinishedProgressAmount / studentAmount) * 100)
-            );
-        });
-
-        const totalProgress = lessonProgressPercentSummary.reduce((sum, progress) => sum + progress, 0);
-        const totalMaxProgress = totalLessons * studentAmount; // ค่าที่คาดหวัง (100%)
-        const finalPercentage = (totalProgress / totalMaxProgress) * 100;
-        const finalPercentageTofixed = parseFloat(finalPercentage.toFixed(2))
-        let calculateTodayProgress = await countTodayLessonAccess(latestSubject._id)
-        // res.json(countToday);
-        // console.log(countToday);
-        console.log(lessonFinishedToday);
-        res.render('teacherDashboard', {
-            subjects,
-            latestSubject,
-            lessonLabels,
-            progressData,
-            studentAmount,
-            totalLessons,
-            lessonFinishedToday,
-            finalPercentageTofixed,
-            countToday: calculateTodayProgress.todayCount, // ส่งค่าจำนวนผู้เข้าถึงในวันนี้
-            yesterdayCount: calculateTodayProgress.yesterdayCount, // ส่งค่าจำนวนผู้เข้าถึงเมื่อวาน
-            percentChange: calculateTodayProgress.percentChange, // ส่งค่าเปอร์เซ็นต์การเปลี่ยนแปลง
-            message: calculateTodayProgress.resultMessage // ส่งข้อความสำหรับผลลัพธ์
-        })
+            const totalProgress = lessonProgressPercentSummary.reduce((sum, progress) => sum + progress, 0);
+            const totalMaxProgress = totalLessons * studentAmount; // ค่าที่คาดหวัง (100%)
+            const finalPercentage = (totalProgress / totalMaxProgress) * 100;
+            const finalPercentageTofixed = parseFloat(finalPercentage.toFixed(2))
+            let calculateTodayProgress = await countTodayLessonAccess(latestSubject._id)
+            // res.json(countToday);
+            // console.log(countToday);
+            // res.json(progressData);
+            res.render('teacherDashboard', {
+                subjects,
+                latestSubject,
+                lessonLabels,
+                progressData,
+                studentAmount,
+                totalLessons,
+                lessonFinishedToday,
+                finalPercentageTofixed,
+                countToday: calculateTodayProgress.todayCount, // ส่งค่าจำนวนผู้เข้าถึงในวันนี้
+                yesterdayCount: calculateTodayProgress.yesterdayCount, // ส่งค่าจำนวนผู้เข้าถึงเมื่อวาน
+                percentChange: calculateTodayProgress.percentChange, // ส่งค่าเปอร์เซ็นต์การเปลี่ยนแปลง
+                message: calculateTodayProgress.resultMessage // ส่งข้อความสำหรับผลลัพธ์
+            })
+        } else {
+            // res.json("subject no");
+            let subjects = [];
+            latestSubject = null;
+            let lessonLabels = [];
+            let progressData = [];
+            let studentAmount = [];
+            res.render('teacherDashboard', {latestSubject, subjects, lessonLabels, progressData, studentAmount});
+        }
 
 
         // res.json(latestSubject)
@@ -313,16 +321,16 @@ const moreDetailChart = async (req, res) => {
         }
         eachLessonProgress.forEach(userProgress => {
             // คำนวณเปอร์เซ็นต์ใหม่ โดยเอา userProgressSummary ไปหารกับจำนวนบทเรียนทั้งหมด
-            if(findSubjectStats) {
+            if (findSubjectStats) {
                 let newProgress =
-                (userProgress.userProgressSummary)
-                /
-                findSubjectStats.lessonArray.length;
+                    (userProgress.userProgressSummary)
+                    /
+                    findSubjectStats.lessonArray.length;
                 userProgress.userProgressSummary = newProgress;
 
             }
-            
-            
+
+
             // console.log(`User ${userProgress.userId} มี progress ใหม่คือ ${newProgress.toFixed(2)}% จากบทเรียนทั้งหมด`);
         });
         const paginateProgress = paginate(eachLessonProgress, pageSize, page);
@@ -368,7 +376,7 @@ const studentDetail = async (req, res) => {
         const studentId = req.query.studentId;
         const subjectId = req.query.subjectId;
         const subjects = await Subject.find(
-            {students:studentId}
+            { students: studentId }
         ).sort({ "createdAt": 1 });
 
         const findStudent = await Student.findOne(

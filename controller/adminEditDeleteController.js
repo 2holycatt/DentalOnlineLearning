@@ -5,11 +5,15 @@ const Layout3 = require("../models/Layout3");
 const Layout4 = require("../models/Layout4");
 const SchoolYear = require("../models/schoolYear");
 const Subject = require("../models/subjects");
+const PdfFile = require("../models/pdfFile");
 
 
 const fs = require('fs');
+const util = require('util');
+const unlinkFile = util.promisify(fs.unlink);
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
+const path = require('path');
 
 const deleteLesson = async (req, res) => {
   const getLesson_id = req.query.lessonId;
@@ -22,11 +26,28 @@ const deleteLesson = async (req, res) => {
   const deleteLayout02 = getLesson.LayOut2ArrayObject;
   const deleteLayout03 = getLesson.LayOut3ArrayObject;
   const deleteLayout04 = getLesson.LayOut4ArrayObject;
+  const deletePdfFiles = getLesson.PdfFiles;
 
   async function deleteLayouts(deleteLayouts, Layout) {
     if (deleteLayouts.length > 0) {
+      
       for (const layoutId of deleteLayouts) {
-        const deletedLayout = await Layout.findByIdAndDelete(layoutId);
+        let findLayout =  await Layout.findById(layoutId);
+        if (findLayout) {
+          if (findLayout.name == 'Layout01') {
+            var layoutFile = findLayout.AboutImage[0].file;
+            console.log(layoutFile);
+
+            var filePath = path.join(__dirname, '../uploads', layoutFile); // สร้าง path ของไฟล์
+            unlinkFile(filePath);
+          } else if (findLayout.name == 'pdfFiles') {
+            var layoutFile = findLayout.file;
+            var filePath = path.join(__dirname, '../uploads', layoutFile); // สร้าง path ของไฟล์
+            unlinkFile(filePath);
+          }
+          const deletedLayout = await Layout.findByIdAndDelete(layoutId);
+        }
+       
       }
     }
   }
@@ -35,6 +56,7 @@ const deleteLesson = async (req, res) => {
   await deleteLayouts(deleteLayout02, Layout2);
   await deleteLayouts(deleteLayout03, Layout3);
   await deleteLayouts(deleteLayout04, Layout4);
+  await deleteLayouts(deletePdfFiles, PdfFile);
 
   await Subject.findOneAndUpdate(
     { _id: subject_Id},
@@ -55,50 +77,19 @@ const deleteLesson = async (req, res) => {
 }
 
 const editLesson = async function (req, res, next) {
-  const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
-  const lessonId = req.query.lesson;
-  const lesson = await Lesson.findById(lessonId).populate("schoolYear");
-  const layout01 = lesson.LayOut1ArrayObject;
-  const layout02 = lesson.LayOut2ArrayObject;
-  const layout03 = lesson.LayOut3ArrayObject;
-  const layout04 = lesson.LayOut4ArrayObject;
+  try {
+    const lessonId = req.query.lessonId;
+    const subjectId = req.query.subjectId;
+    const findSubject = await Subject.findById(subjectId);
+    const findLesson = await Lesson.findById(lessonId);
 
-  const foundLayouts = [];
-  async function findLayoutsAndStoreData(deleteLayouts, Layout) {
 
-    if (deleteLayouts.length > 0) {
-      for (const layoutId of deleteLayouts) {
-        const foundLayout = await Layout.findById(layoutId);
-        if (foundLayout) {
-          foundLayouts.push(foundLayout);
-        }
-      }
-    }
+    // res.json(findLessons);
+    res.render("editLesson", { mytitle: "editLesson", findSubject, findLesson });
 
-    return foundLayouts;
+  } catch (err) {
+    console.log(err);
   }
-
-  const foundLayouts1 = await findLayoutsAndStoreData(layout01, Layout1);
-  const foundLayouts2 = await findLayoutsAndStoreData(layout02, Layout2);
-  const foundLayouts3 = await findLayoutsAndStoreData(layout03, Layout3);
-  const foundLayouts4 = await findLayoutsAndStoreData(layout04, Layout4);
-
-  foundLayouts.sort((a, b) => {
-    const dateA = new Date(a.createdAt);
-    const dateB = new Date(b.createdAt);
-
-    if (dateA < dateB) {
-      return -1;
-    } else if (dateA > dateB) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-
-
-  // res.json(foundLayouts);
-  res.render("adminEdit", { mytitle: "adminEdit", lesson, lessons, foundLayouts });
 
 }
 

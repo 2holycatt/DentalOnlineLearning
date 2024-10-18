@@ -5,6 +5,9 @@ async function calculateAndUpdateSubjectStats(subjectId) {
     try {
         const subject = await Subject.findById(subjectId).populate('lessonArray');
         
+        // คำนวณข้อมูล
+        let totalLayouts = 0;
+        let totalPdfFiles = 0;
 
         subject.lessonArray.forEach(lesson => {
             totalLayouts += lesson.LayOut1ArrayObject.length +

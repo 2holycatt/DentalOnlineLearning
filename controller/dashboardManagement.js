@@ -41,7 +41,8 @@ async function calculateProgress(userId, lessonId) {
 
 
 const updateLessonProgress = async (req, res) => {
-    const { layoutId, layoutType, lessonId, timeSpent } = req.body; // เพิ่ม lessonId ใน body ถ้ายังไม่ได้ส่ง
+    const { layoutId, layoutType, lessonId, timeSpent,subjectId } = req.body; // เพิ่ม lessonId ใน body ถ้ายังไม่ได้ส่ง
+    console.log(subjectId);
     const userId = req.session.userId; // สมมติว่ามีการตรวจสอบผู้ใช้แล้ว
 
     try {
@@ -63,7 +64,8 @@ const updateLessonProgress = async (req, res) => {
             const newLessonProgress = new LessonProgress({
                 user: userId,
                 lesson: lessonId,
-                timeSpentInSeconds: timeSpent
+                timeSpentInSeconds: timeSpent,
+                subjectMongooseId:subjectId
             });
             await newLessonProgress.save();
 
@@ -162,6 +164,7 @@ const updateLessonProgress = async (req, res) => {
 
             // อัปเดต field progress ใน lessonProgressSchema
             isExistLessonProgress.progress = progress;
+            isExistLessonProgress.subjectMongooseId = subjectId;
             await isExistLessonProgress.save();
             res.status(200).json({ success: true, progress: isExistLessonProgress.progress });
 

@@ -512,7 +512,7 @@
                 </a>
               </div>
             </div>
-            <form action="/adminIndex/addEndQuestionChapter" method="post">
+            <form action="/adminIndex/addEndQuestionChapter" method="post" enctype="multipart/form-data">
               <input type="text" class="d-none" name="lessonId" value="<%=lesson._id%>">
               <div class="questionForm">
                 <div class="mt-1">
@@ -520,6 +520,13 @@
                     <div class="col-12 d-flex align-items-center">
                       <i class="bi text-primary bi-dot fs-2"></i>
                       <textarea class="form-control p-2 question1" name="question1" rows="1"></textarea>
+                      <div class="comment-image">
+                        <div class="d-flex align-items-center justify ms-2">
+                          <input type="file" class="form-control d-none file-input" name="file" accept="image/*,video/*" multiple>
+                          <i class="bi bi-camera-fill p-2 btn btn-primary icon-click"></i>
+                          <p class="file-name"></p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -528,7 +535,7 @@
                 <button onclick="addQuestion()" class="add-button btn btn-primary p-2" type="button" style="height: fit-content !important;">
                   เพิ่มคำถาม<i class="bi bi-plus-circle-fill mx-2"></i>
                 </button>
-                <button type="submit" class="btn add-button btn-success p-2 mx-2" style="height: fit-content !important;">
+                <button type="submit" class="btn add-button btn-success p-2 ms-2" style="height: fit-content !important;">
                   บันทึก<i class="bi bi-pencil-square mx-2"></i>
                 </button>
                 <!-- <a href="/adminIndex/editLesson?lesson=<%=lesson._id%>" class="btn add-button btn-success p-2 mx-2" style="height: fit-content !important;">
@@ -543,28 +550,51 @@
     </div>
   </div>
   <%- include("./partials/footer.ejs")%>
-  <script src="/js/two-way.js"></script>
   <script>
+    const iconClicks = document.querySelectorAll('.icon-click');
+    const fileInputs = document.querySelectorAll('.file-input');
+    const fileNames = document.querySelectorAll('.file-name');
+
+    iconClicks.forEach((icon, index) => {
+      icon.addEventListener('click', function() {
+        fileInputs[index].click();
+      });
+
+      // fileInputs[index].addEventListener('change', function() {
+      //   const files = Array.from(fileInputs[index].files)
+      //     .map(file => file.name)
+      //     .join(', ');
+      //   fileNames[index].textContent = files || 'No file selected';
+      // });
+    });
+
     function addQuestion() {
       // หา form ที่จะเพิ่มข้อมูลใหม่
       const form = document.querySelector('.questionForm');
 
       // นับจำนวนคำถามที่มีอยู่แล้ว
       const questionCount = form.querySelectorAll('textarea').length + 1; // เริ่มต้นที่ 2 เนื่องจากมี default อยู่แล้ว
- 
+
       const defaultQuestionHTML = `
       <div class="mt-1 question-block">
         <div class="mb-1 row">
             <div class="col-12 d-flex align-items-center">
                 <i class="bi text-primary bi-dot fs-2"></i>
                 <textarea class="form-control p-2 question${questionCount}" name="question${questionCount}" rows="1"></textarea>
+                <div class="comment-image">
+                 <div class="d-flex align-items-center justify ms-2">
+  <input type="file" class="form-control d-none file-input" accept="image/*,video/*" multiple>
+  <i class="bi bi-camera-fill p-2 btn btn-primary icon-click"></i>
+  <p class="file-name"></p>
+</div>
+                </div>
             </div>
         </div>
       </div>
     `;
 
-    form.insertAdjacentHTML('beforeend', defaultQuestionHTML);
-
+      form.insertAdjacentHTML('beforeend', defaultQuestionHTML);
+      callToCheck();
     }
 
     function resetQuestions() {
@@ -589,6 +619,27 @@
       // เพิ่มคำถาม question1 ลงใน form
       form.insertAdjacentHTML('beforeend', defaultQuestionHTML);
     }
+
+    function callToCheck() {
+      const iconClicks = document.querySelectorAll('.icon-click');
+      const fileInputs = document.querySelectorAll('.file-input');
+      const fileNames = document.querySelectorAll('.file-name');
+
+      iconClicks.forEach((icon, index) => {
+        icon.addEventListener('click', function() {
+          fileInputs[index].click();
+        });
+
+        // fileInputs[index].addEventListener('change', function() {
+        //   const files = Array.from(fileInputs[index].files)
+        //     .map(file => file.name)
+        //     .join(', ');
+        //   fileNames[index].textContent = files || 'No file selected';
+        // });
+      });
+    }
+
+    // เรียกใช้เมื่อหน้าเว็บโหลดเสร็จ
   </script>
   <!-- <script src="http://localhost:9000/javascripts/bundle.js"></script>
     <script src="/javascripts/bundle.js"></script> -->

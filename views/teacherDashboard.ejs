@@ -312,10 +312,10 @@
         <div class="d-flex justify-content-center" style="align-items: center;">
           <label class="mx-2" for="dashboardSelector">แดชบอร์ดของ: </label>
           <select id="dashboardSelector">
-            <option value="/adminIndex/adminDashboard" selected>
+            <!-- <option value="/adminIndex/adminDashboard" selected>
               ทั้งหมด
               </a>
-            </option>
+            </option> -->
             <option value="/adminIndex">
               บทเรียน
             </option>
@@ -337,10 +337,11 @@
             <span class="">(Overview of Lessons)</span>
           </p>
         </div>
+        <% if (latestSubject != null) {%>
         <div class="d-flex mb-3" style="align-items: center;">
           <div class="">
             <label class="quiz-label" for="dashboardSelector">รายวิชา: </label>
-            <% if (subjects) { %>
+            <% if (subjects.length > 0) { %>
             <select class="sectionSelector" onchange="submitSubjectId(this.value)">
               <% subjects.forEach(subject => { %>
               <option value="<%= subject._id %>" <%= subject._id.equals(latestSubject._id) ? 'selected' : '' %>>
@@ -352,26 +353,26 @@
             <% } %>
           </div>
           <!-- <div class="mx-2">
-            <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
-            <select class="sectionSelector">
-              <option value="allLessons" selected>
-                ทั้งหมด
-                </a>
-              </option>
-              <option value="JavaScript">
-                1
-              </option>
-              <option value="Python">
-                2
-              </option>
-              <option value="PHP">
-                10
-              </option>
-              <option value="HTML">
-                11
-              </option>
-            </select>
-          </div> -->
+              <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
+              <select class="sectionSelector">
+                <option value="allLessons" selected>
+                  ทั้งหมด
+                  </a>
+                </option>
+                <option value="JavaScript">
+                  1
+                </option>
+                <option value="Python">
+                  2
+                </option>
+                <option value="PHP">
+                  10
+                </option>
+                <option value="HTML">
+                  11
+                </option>
+              </select>
+            </div> -->
         </div>
 
         <% if (lessonLabels.length > 0) { %>
@@ -469,38 +470,38 @@
                       </li>
                       <% });%>
                       <!-- <li class="my-2">
-                          <small>
-                            08:46 - ก้องกังวาลย์ ทำบทเรียนที่ 1 สำเร็จแล้ว
-                          </small>
-                        </li>
-                        <li class="my-2">
-                          <small>
-                            08:41 - อริญชวุธ ทำบทเรียนที่ 2 สำเร็จแล้ว
-                          </small>
-                        </li>
-                        <li class="my-2">
-                          <small>
-                            02:22 - ภูเบศ ทำบทเรียนที่ 2 สำเร็จแล้ว
-                          </small>
-                        </li>
-                        <li class="my-2">
-                          <small>
-                            01:31 - กมลวรรณ ทำบทเรียนที่ 3 สำเร็จแล้ว
-                          </small>
-                        </li>
-                        <li class="my-2">
-                          <small>
-                            00:11 - ปภินวิทย์ ทำบทเรียนที่ 5 สำเร็จแล้ว
-                          </small>
-                        </li>
-                        <li class="my-2">
-                          <._doc.finishedProgresssmall>
-                            00:10 - พลอธิป ทำบทเรียนที่ 5 สำเร็จแล้ว
-                          </._doc.finishedProgresssmall>
-                        </li> -->
+                            <small>
+                              08:46 - ก้องกังวาลย์ ทำบทเรียนที่ 1 สำเร็จแล้ว
+                            </small>
+                          </li>
+                          <li class="my-2">
+                            <small>
+                              08:41 - อริญชวุธ ทำบทเรียนที่ 2 สำเร็จแล้ว
+                            </small>
+                          </li>
+                          <li class="my-2">
+                            <small>
+                              02:22 - ภูเบศ ทำบทเรียนที่ 2 สำเร็จแล้ว
+                            </small>
+                          </li>
+                          <li class="my-2">
+                            <small>
+                              01:31 - กมลวรรณ ทำบทเรียนที่ 3 สำเร็จแล้ว
+                            </small>
+                          </li>
+                          <li class="my-2">
+                            <small>
+                              00:11 - ปภินวิทย์ ทำบทเรียนที่ 5 สำเร็จแล้ว
+                            </small>
+                          </li>
+                          <li class="my-2">
+                            <._doc.finishedProgresssmall>
+                              00:10 - พลอธิป ทำบทเรียนที่ 5 สำเร็จแล้ว
+                            </._doc.finishedProgresssmall>
+                          </li> -->
                     </ul>
                     <% } else { %>
-                      <small>ไม่มีความคืบหน้าในวันนี้</small>
+                    <small>ไม่มีความคืบหน้าในวันนี้</small>
                     <% } %>
                   </div>
                 </div>
@@ -509,16 +510,24 @@
           </div>
 
         </div>
-        <% } else {%>
+        <% } else { %>
         <div class="row">
           <p class="">
             ไม่สามารถสรุปภาพรวมข้อมูลของบทเรียนกับนักศึกษาได้ เนื่องจากรายวิชานี้ยังไม่มีข้อมูลบทเรียน
           </p>
         </div>
         <% } %>
+        <% } else {%>
 
+        <div class="row">
+          <p class="">
+            ไม่สามารถสรุปภาพรวมข้อมูลของแต่ละรายวิชาได้ เนื่องจากยังไม่ได้มีรายวิชาใด ๆ ในฐานข้อมูล
+          </p>
+        </div>
+        <% } %>
         <!-- <script type="module" src="dimensions.js"></script> -->
       </div>
+
 
       <div class="lesson-content p-4 bg-white w-100 my-4">
         <div style="border-bottom: 1px solid #EAEFF4;" class="mb-3">
@@ -1021,7 +1030,7 @@
           minute: '2-digit'
         });
         element.textContent = `${hoursAndMinutes}`;
-      } 
+      }
     });
 
     function submitSubjectId(subjectId) {
@@ -1032,11 +1041,19 @@
 
     const labels = `<%= lessonLabels %>`;
     const splitLabels = labels.split(",");
-
+    const truncatedLabels = splitLabels.map(label => {
+      if (label.length > 10) {
+        return label.slice(0, 10) + '...';
+      }
+      return label;
+    });
     const studentAmount = '<%= studentAmount%>';
     const parsintStdAmount = parseInt(studentAmount, 10);
     const data = `<%= progressData %>`;
     const splitData = data.split(",");
+    // const splitData = [10, 2, 0, 5, 4, 12];
+
+    // console.log(data);
 
     const predefinedColors = [
       'rgba(255, 99, 132)', // แดงชมพู
@@ -1090,7 +1107,7 @@
     const myChart = new Chart(ctx, {
       type: 'bar', // ประเภทของแผนภูมิ เช่น 'bar', 'line', 'pie', 'doughnut' ฯลฯ
       data: {
-        labels: splitLabels, // ป้ายจาก EJS
+        labels: truncatedLabels, // ป้ายจาก EJS
         datasets: [{
           label: 'บทเรียน',
           data: splitData, // ข้อมูลจาก EJS
@@ -1145,7 +1162,7 @@
     const myChart2 = new Chart(ctx2, {
       type: 'pie', // ประเภทของแผนภูมิเปลี่ยนเป็น 'pie'
       data: {
-        labels: splitLabels, // ป้ายของข้อมูล
+        labels: truncatedLabels, // ป้ายของข้อมูล
         datasets: [{
           label: 'บทเรียน',
           data: splitData,
@@ -1182,7 +1199,6 @@
         }
       }
     });
-    // window.chartData2 = `<%= (latestSubject._id) %>`;
   </script>
   <!-- <script src="/js/chart.js"></script> -->
 

@@ -567,6 +567,12 @@ const uploadedForm = async (req, res) => {
       })
       await newStudent.save();
 
+      const updateStudentIdToUser = await User.findByIdAndUpdate(
+        {_id:newUser._id},
+        { $push: { student: newStudent._id } },
+        { new: true }
+      )
+
     } else {
       externalStudent = true;
       let newUser = new User({
@@ -584,6 +590,12 @@ const uploadedForm = async (req, res) => {
         user: newUser._id
       })
       await newStudent.save();
+
+      const updateStudentIdToUser = await User.findByIdAndUpdate(
+        {_id:newUser._id},
+        { $push: { student: newStudent._id } },
+        { new: true }
+      )
     }
 
     // console.log(major);
@@ -624,7 +636,6 @@ const studentInformationAccount = async (req, res) => {
           path: 'submitAssign'
         }
       });
-
 
     // res.json(findStudent);
     const studentSubject = findStudent.subjects;

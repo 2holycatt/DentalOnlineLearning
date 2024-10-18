@@ -101,19 +101,16 @@
           <div class="mb-3 row col-8">
             <p>ไฟล์ที่เกี่ยวข้อง:</p>
             <div class="row">
-              <% if (assignment.files.length < 1) {%>
+              <% if (getSubmitDetail.files.length < 1) {%>
               <p class="mx-1" style="font-size: small;"> - ไม่มีไฟล์ที่ถูกอัปโหลด</p>
-              <% } else if (assignment.files.length > 0) {%>
-              <% let files = assignment.files; %>
+              <% } else if (getSubmitDetail.files.length > 0) {%>
+              <% let files = getSubmitDetail.files; %>
               <% files.forEach((file, index) => { %>
               <div class="row">
                 <div class="col-7">
-                  <a class="file-a-2 mb-1" href="/adminIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
+                  <a class="file-a-2 mb-1" href="/studentIndex/showFileArray?id=<%=getSubmitDetail._id%>&index=<%=index%>">
                   <%=index+1%>. <%=file.file.slice(25)%>
                   </a>
-                </div>
-                <div class="col-2 d-flex justify-content-center">
-                  <a href="/adminIndex/delFile?assignId=<%=assignment._id%>&fileIndex=<%=index%>" class="text-danger fs-6 delFile">ลบ</a>
                 </div>
               </div>
               <% }) %>

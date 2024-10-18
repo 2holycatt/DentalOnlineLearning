@@ -76,53 +76,46 @@ const submitAssignment = async (req, res) => {
             const remainingHours = diffInHours % 24;
             const remainingMinutes = diffInMinutes % 60;
 
-            const status = getSendDate > getDeadline ? "ส่งช้า" : "ส่งตรงเวลา"; // กำหนดสถานะตามเงื่อนไข
+            const status = "ส่งช้า"; // กำหนดสถานะตามเงื่อนไข
 
             const day = Math.abs(diffInDays); // ใช้ค่าที่เป็นบวกในการแสดงผล
             const hour = remainingHours;
             const minute = remainingMinutes;
 
-            console.log(`${status} ${day} วัน ${hour} ชั่วโมง ${minute} นาที`);
+            // console.log(`${status} ${day} วัน ${hour} ชั่วโมง ${minute} นาที`);
             if (files) {
                 for (const i of fileData) {
-                    const updatedAssign = await submitAssign.findByIdAndUpdate(
+                    const updatedAssign1 = await submitAssign.findByIdAndUpdate(
                         saveSubmit._id,
                         {
                             $push:
                             {
                                 files: i,
-                                sendStatus: {
-                                    status: status,
-                                    day: day,
-                                    hour: hour,
-                                    minute: minute
-
-                                }
-                            },
-                        },
-                        { new: true }
-                    );
-                }
-            } else {
-                for (const i of fileData) {
-                    const updatedAssign = await submitAssign.findByIdAndUpdate(
-                        saveSubmit._id,
-                        {
-                            $push:
-                            {
-                                sendStatus: {
-                                    status: status,
-                                    day: day,
-                                    hour: hour,
-                                    minute: minute
-
-                                }
                             },
                         },
                         { new: true }
                     );
                 }
             }
+
+            const updatedAssign2 = await submitAssign.findByIdAndUpdate(
+                saveSubmit._id,
+                {
+                    $push:
+                    {
+                        sendStatus: {
+                            status: status,
+                            day: day,
+                            hour: hour,
+                            minute: minute
+
+                        }
+                    },
+                },
+                { new: true }
+            );
+
+
             const pushSubmitId = await Assignments.findByIdAndUpdate(
                 getAssignId,
                 {
@@ -136,7 +129,7 @@ const submitAssignment = async (req, res) => {
             const status = "ส่งตรงเวลา"
             if (files) {
                 for (const i of fileData) {
-                    const updatedAssign = await submitAssign.findByIdAndUpdate(
+                    const updatedAssign3 = await submitAssign.findByIdAndUpdate(
                         saveSubmit._id,
                         {
                             $push:
@@ -151,23 +144,21 @@ const submitAssignment = async (req, res) => {
                         { new: true }
                     );
                 }
-            } else {
-                for (const i of fileData) {
-                    const updatedAssign = await submitAssign.findByIdAndUpdate(
-                        saveSubmit._id,
-                        {
-                            $push:
-                            {
-                                sendStatus: {
-                                    status: status,
-                                }
-                            },
-                        },
-
-                        { new: true }
-                    );
-                }
             }
+
+            const updatedAssign4 = await submitAssign.findByIdAndUpdate(
+                saveSubmit._id,
+                {
+                    $push:
+                    {
+                        sendStatus: {
+                            status: status,
+                        }
+                    },
+                },
+                { new: true }
+            );
+
 
             const pushSubmitId = await Assignments.findByIdAndUpdate(
                 getAssignId,

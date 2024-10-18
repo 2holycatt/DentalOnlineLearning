@@ -155,13 +155,21 @@
       display: none !important;
     }
 
-    .center {
+    #cancelQuestionLink,
+    #cancelEditQuestionLink,
+    #sendQuestionLink,
+    .studentAnswer,
+    .editAnswer,
+    #sendEditQuestionLink {
+      display: none;
+    }
+
+    /* .center {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: ฟ;
-      /* ทำให้สูงเต็มหน้าจอ */
-    }
+      height: ;
+    } */
 
     video {
       border-radius: 0.5em;
@@ -312,6 +320,52 @@
       border: none;
     }
 
+    @keyframes fadeInScale {
+
+      /* กำหนด animation ใหม่ */
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -40%) scale(0.7);
+        /* เริ่มด้วยขนาดเล็กและต่ำกว่ากึ่งกลาง */
+      }
+
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        /* ขยายเต็มขนาดและอยู่กึ่งกลาง */
+      }
+    }
+
+    .editCommentForm {
+      position: fixed;
+      /* แก้ไขจาก absolute เป็น fixed */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      /* z-index สูงเพื่ออยู่ด้านบน */
+      display: none;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.205);
+      animation: fadeInScale 0.5s ease forwards;
+      /* เพิ่ม animation */
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.13);
+      /* ทำให้พื้นหลังมืด */
+      z-index: 999;
+      display: none;
+
+      /* ซ่อน overlay เมื่อ popup ยังไม่เปิด */
+    }
 
     /* .spn-comment {
       font-size:xx-small !important;
@@ -533,6 +587,72 @@
             </nav>
           </div>
         </div>
+        <% if (studentAnswer == []) {%>
+
+        <div class="lesson-content bg-white w-100 p-4 my-4 addQuestion">
+          <div class="row d-flex align-items-center">
+            <div class="col">
+              <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">คำถามท้ายบท
+                <i class="bi bi-question-circle mx-2 text-primary"></i>
+              </p>
+            </div>
+            <div class="col d-flex justify-content-end">
+              <a href="#" class="text-primary" id="cancelEditQuestionLink">ยกเลิก</a>
+            </div>
+          </div>
+
+          <form action="/studentEditAnswerEndChapter" method="post">
+            <input type="text" class="d-none" name="lessonId" value="<%=lesson._id%>">
+            <input type="text" class="d-none" name="studentAnswerId" value="<%=studentAnswer._id%>">
+            <div class="m-2">
+              <ol class="list-group list-group-numbered">
+                <% studentAnswer.Questions.forEach((question, index) => {%>
+                <li class="list-group-item border border-0"><%=lessonQuestions.Questions[index].questionText%></li>
+                <textarea class="editAnswer form-control my-1 p-2 question<%=question.questionNo%>" name="question<%=question.questionNo%>" rows="1"><%=question.questionText%></textarea>
+                <p class="pb-2"><span class="text-primary">คำตอบ: </span><%=question.questionText%></p>
+                <% }) %>
+              </ol>
+            </div>
+            <div class="col d-flex justify-content-end">
+              <a href="#" class="btn answer-button btn-warning p-2" id="editQuestionLink">แก้ไข</a>
+              <button type="submit" class="btn answer-button btn-success p-2" id="sendEditQuestionLink">ส่งคำตอบ</button>
+            </div>
+          </form>
+        </div>
+
+        <% } else if (studentAnswer != []) {%>
+        <% if (lessonQuestions != null) { %>
+        <div class="lesson-content bg-white w-100 p-4 my-4 addQuestion">
+          <div class="row d-flex align-items-center">
+            <div class="col">
+              <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">คำถามท้ายบท
+                <i class="bi bi-question-circle mx-2 text-primary"></i>
+              </p>
+            </div>
+            <div class="col d-flex justify-content-end">
+              <a href="#" class="text-primary" id="cancelQuestionLink">ยกเลิก</a>
+            </div>
+          </div>
+
+          <form action="/studentAnswerEndChapterQuestions" method="post">
+            <input type="text" class="d-none" name="lessonId" value="<%=lesson._id%>">
+            <input type="text" class="d-none" name="lessonQuestionId" value="<%=lessonQuestions._id%>">
+            <div class="m-2">
+              <ol class="list-group list-group-numbered">
+                <% lessonQuestions.Questions.forEach(question => {%>
+                <li class="list-group-item border border-0"><%=question.questionText%></li>
+                <textarea class="studentAnswer form-control my-1 p-2 question<%=question.questionNo%>" name="question<%=question.questionNo%>" rows="1"></textarea>
+                <% }) %>
+              </ol>
+            </div>
+            <div class="col d-flex justify-content-end">
+              <a href="#" class="btn answer-button btn-primary p-2" id="answerQuestionLink">ตอบ</a>
+              <button type="submit" class="btn answer-button btn-success p-2" id="sendQuestionLink">ส่งคำตอบ</button>
+            </div>
+          </form>
+        </div>
+        <% } %>
+        <% } %>
         <div class="lesson-content bg-white w-100 p-4 my-4">
           <div class="d-flex">
             <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">แสดงความคิดเห็น
@@ -591,16 +711,19 @@
                     <div class="content d-flex">
                       <img src="<%=comment.user.img%>" alt="รูปโปรไฟล์ผู้ใช้">
                       <div>
-                        <p class="fw-bold" class="username-comment"><%=comment.user.fname%> <%=comment.user.lname%>
+                        <p class="fw-bold" class="username-comment"><%=comment.user.name%>
                           <span class="fw-normal" style="font-size: small;">
                             | <%= comment.createdAtFormatted %>
                           </span>
                           <span class="fw-normal" style="font-size: small;">
                             |
                             <% if (String(userDataId) == String(userCommentId)) { %>
-                            <a href="/studentIndex/editCommentStudent?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment">แก้ไข</a>
+                            <a href="/studentIndex/editCommentStudent?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment ">แก้ไข</a>
                             <a href="/studentIndex/deleteComment?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
                             <% } %>
+                            <a class="text-primary mx-1" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                              ตอบกลับ
+                            </a>
                           </span>
                         </p>
                         <p class="comment-color"><%=comment.comment%></p>
@@ -628,7 +751,7 @@
               </tr>
               <% if (comment.files.length > 0) { %>
               <tr>
-                <td colspan="3" style="padding-bottom: 1em !important">
+                <td colspan="3" class="" style="padding:0 !important;">
                   <p class="mb-2 fw-bold">รูปภาพหรือวิดีโอที่แนบ: </p>
                   <div class="d-flex" id="gallery">
                     <% comment.files.forEach((file, index) => { %>
@@ -647,7 +770,124 @@
                     <% }); %>
                   </div>
                 </td>
+
               </tr>
+              <tr>
+                <form action="/replyComment" method="post">
+                  <input type="text" value="<%=comment._id%>" name="commentId" class="d-none">
+                  <input type="text" value="<%=lesson._id%>" name="lessonId" class="d-none">
+
+                  <td colspan="2" style="padding:0 !important;">
+                    <div class="collapse mt-3" id="collapseExample">
+                      <div class="card card-body">
+                        <div class="row">
+                          <div class="col-11">
+                            <textarea name="replyMainComment" class="form-control p-3 w-100" id=""></textarea>
+                          </div>
+                          <div class="col-1">
+                            <button class="btn btn-primary w-100 h-100"><i class="bi bi-send-fill"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </form>
+              </tr>
+              <% if ((comment.replies) && (comment.replies.length > 0 )){ %>
+              <tr>
+                <td colspan="2" style="padding-top: 0 !important">
+                  <div class="mt-2">
+                    <small>คอมเมนต์ที่ตอบกลับ
+                      <span class="text-primary fw-bold">
+                        <%=comment.user.name%>
+                      </span>
+                    </small>
+                  </div>
+                </td>
+              </tr>
+              <% comment.replies.forEach(reply => { %>
+              <tr>
+                <td style="border-top: 1px solid #ced4daa0; padding-bottom:1em !important;">
+
+                  <div class="comment">
+                    <div class="content d-flex align-items-center">
+                      <i class="bi bi-dash-lg"></i>
+                      <img class="ms-2" src="<%=reply.user.img%>" alt="รูปโปรไฟล์ผู้ใช้">
+                      <div>
+                        <p class="fw-bold" class="username-comment"><%=reply.user.name%>
+                          <span class="fw-normal" style="font-size: small;">
+                            | <%= reply.createdAtFormatted %>
+                          </span>
+                          <span class="fw-normal" style="font-size: small;">
+                            |
+                            <% if (String(userDataId) == String(reply.user._id)) { %>
+                            <a href="#" class="openPopupLink mx-1 fw-normal text-primary optionComment"  data-content-text="<%=reply.content%>" data-comment-id="<%=comment._id%>" data-user-id="<%=reply.user._id%>">แก้ไข</a>
+                            <a href="/studentIndex/deleteComment?replyUserId=<%=reply.user._id%>&commentId=<%=comment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
+                            <% }  %>
+
+                          </span>
+                        </p>
+                        <p class="comment-color"><%=reply.content%></p>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td style="border-top: 1px solid #ced4daa0;">
+                  <p class="comment-color"><%=reply.timeSince%></p>
+                </td>
+              </tr>
+              <% }); %>
+
+              <% } %>
+
+              <% } else { %>
+              <% if ((comment.replies) && (comment.replies.length > 0 )){ %>
+              <tr>
+                <td colspan="2" style="padding-top: 0 !important">
+                  <div class="">
+                    <small>คอมเมนต์ที่ตอบกลับ
+                      <span class="text-primary fw-bold">
+                        <%=comment.user.name%>
+                      </span>
+                    </small>
+                  </div>
+                </td>
+              </tr>
+              <% comment.replies.forEach(reply => { %>
+              <tr>
+                <td style="border-top: 1px solid #ced4daa0; padding-bottom:1em !important;">
+
+                  <div class="comment">
+                    <div class="content d-flex align-items-center">
+                      <i class="bi bi-dash-lg"></i>
+                      <img class="ms-2" src="<%=reply.user.img%>" alt="รูปโปรไฟล์ผู้ใช้">
+                      <div>
+                        <p class="fw-bold" class="username-comment"><%=reply.user.name%>
+                          <span class="fw-normal" style="font-size: small;">
+                            | <%= reply.createdAtFormatted %>
+                          </span>
+                          <span class="fw-normal" style="font-size: small;">
+                            |
+                            <% if (String(userDataId) == String(reply.user._id)) { %>
+                            <a href="#" class="openPopupLink mx-1 fw-normal text-primary optionComment"  data-content-text="<%=reply.content%>" data-comment-id="<%=comment._id%>" data-user-id="<%=reply.user._id%>">แก้ไข</a>
+                            <a href="/studentIndex/deleteComment?replyUserId=<%=reply.user._id%>&commentId=<%=comment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
+                            <% }  %>
+
+                          </span>
+                        </p>
+                        <p class="comment-color content"><%=reply.content%></p>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td style="border-top: 1px solid #ced4daa0;">
+                  <p class="comment-color"><%=reply.timeSince%></p>
+                </td>
+              </tr>
+              <% }); %>
+
+              <% } %>
               <% } %>
               <!-- <tr>
                 <td colspan="3" style="padding-bottom: 1em !important;">
@@ -670,6 +910,7 @@
                   </form>
                 </td>
               </tr> -->
+
               <% }); %>
               <!-- <tr>
                   <td>
@@ -719,10 +960,133 @@
     </div>
   </div>
   </div>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="editCommentForm p-3" id="popupForm" style="width: 600px; max-width:600px">
+    <p class="fw-bold fs-4 mb-3">แก้ไขการตอบกลับ</p>
+    <form id="editCommentForm" action="/editReplyComment" method="post">
+      <input type="hidden" id="commentIdInput" name="commentId">
+      <input type="hidden" id="userIdInput" name="userId">
+      <input type="hidden" id="lessonId" name="lessonId" value="<%=lesson._id%>">
+      <input type="hidden" id="oldContent" name="oldCOntent" >
+
+      <textarea class="form-control my-1 p-2" row="1" id="commentContent" name="commentContent"></textarea>
+      <div class="d-flex justify-content-end mt-3">
+        <a class="btn btn-secondary p-2 me-2 closePopupLink" href="#">ปิด</a>
+        <button class="btn btn-primary p-2" type="submit">แก้ไข</button>
+      </div>
+    </form>
+
+  </div>
+
   <%- include("./partials/footer.ejs")%>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', (event) => {
+
+      document.querySelectorAll('.openPopupLink').forEach(function(link) {
+        link.addEventListener('click', function(event) {
+          event.preventDefault();
+
+          // ดึงค่า commentId และ userId จากลิงก์ที่ถูกคลิก
+          const commentId = this.getAttribute('data-comment-id');
+          const userId = this.getAttribute('data-user-id');
+          const content = this.getAttribute('data-content-text');
+          // const date = this.getAttribute('data-date');
+         
+          // นำค่าไปใส่ใน input field ของฟอร์ม
+          document.getElementById('commentIdInput').value = commentId;
+          document.getElementById('userIdInput').value = userId;
+          document.getElementById('commentContent').value = content;
+          document.getElementById('oldContent').value = content;
+
+          // แสดง popup และ overlay
+          document.getElementById('popupForm').style.display = 'block';
+          document.getElementById('overlay').style.display = 'block';
+        });
+      });
+
+      document.querySelector('.closePopupLink').addEventListener('click', function(event) {
+        event.preventDefault();
+
+        // ซ่อน popup และ overlay
+        document.getElementById('popupForm').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+      });
+
+      // ถ้าคลิกที่ overlay ให้ปิด popup ด้วย
+      document.getElementById('overlay').addEventListener('click', function() {
+        document.getElementById('popupForm').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+      });
+
+      const studentAnswers = document.querySelectorAll('.studentAnswer');
+
+      const editAnswers = document.querySelectorAll('.editAnswer');
+      const cancelQuestionLink = document.getElementById('cancelQuestionLink');
+      const cancelEditQuestionLink = document.getElementById('cancelEditQuestionLink');
+
+      const sendQuestionLink = document.getElementById('sendQuestionLink');
+
+      const sendEditQuestionLink = document.getElementById('sendEditQuestionLink');
+
+      const editQuestionLink = document.getElementById('editQuestionLink');
+
+      const answerQuestionLink = document.getElementById('answerQuestionLink');
+
+      if (answerQuestionLink) {
+        // เมื่อคลิกที่ answerQuestionLink
+        answerQuestionLink.addEventListener('click', function(event) {
+          event.preventDefault(); // ป้องกันการทำงานปกติของลิงก์
+
+          // แสดงผล studentAnswer, #cancelQuestionLink และ #sendQuestionLink
+          studentAnswers.forEach(answer => answer.style.display = 'block');
+          cancelQuestionLink.style.display = 'block';
+          sendQuestionLink.style.display = 'block';
+
+          // ซ่อนตัวเอง (answerQuestionLink)
+          answerQuestionLink.style.display = 'none';
+        });
+
+        // เมื่อคลิกที่ cancelQuestionLink
+        cancelQuestionLink.addEventListener('click', function(event) {
+          event.preventDefault(); // ป้องกันการทำงานปกติของลิงก์
+
+          // ซ่อน studentAnswer, #cancelQuestionLink และ #sendQuestionLink
+          studentAnswers.forEach(answer => answer.style.display = 'none');
+          cancelQuestionLink.style.display = 'none';
+          sendQuestionLink.style.display = 'none';
+
+          // แสดงผล answerQuestionLink อีกครั้ง
+          answerQuestionLink.style.display = 'block';
+        });
+      }
+
+      if (editQuestionLink) {
+        editQuestionLink.addEventListener('click', function(event) {
+          event.preventDefault(); // ป้องกันการทำงานปกติของลิงก์
+
+          // แสดงผล studentAnswer, #cancelQuestionLink และ #sendQuestionLink
+          editAnswers.forEach(answer => answer.style.display = 'block');
+          sendEditQuestionLink.style.display = 'block';
+          cancelEditQuestionLink.style.display = 'block';
+          // ซ่อนตัวเอง (answerQuestionLink)
+          editQuestionLink.style.display = 'none';
+        });
+
+        cancelEditQuestionLink.addEventListener('click', function(event) {
+          event.preventDefault(); // ป้องกันการทำงานปกติของลิงก์
+
+          // ซ่อน studentAnswer, #cancelQuestionLink และ #sendQuestionLink
+          editAnswers.forEach(answer => answer.style.display = 'none');
+          sendEditQuestionLink.style.display = 'none';
+          cancelEditQuestionLink.style.display = 'none';
+
+          // แสดงผล answerQuestionLink อีกครั้ง
+          editQuestionLink.style.display = 'block';
+        });
+      }
+
 
       let startTime; // เก็บเวลาที่เริ่มต้นเข้าใช้งานหน้าเว็บ
       let timeSpent = 0; // เก็บเวลาที่ใช้ไป
@@ -744,7 +1108,7 @@
       let completedLayouts = new Set(); // ใช้ Set เพื่อหลีกเลี่ยงการส่งซ้ำ
 
       // ประกาศ throttledUpdateCompletedLayout ก่อนการใช้งาน
-      const throttledUpdateCompletedLayout = _.throttle(function(layoutId, layoutType, lessonId) {
+      const throttledUpdateCompletedLayout = _.throttle(function(layoutId, layoutType, lessonId, subjectId) {
         // console.log(completedLayouts);
         // if (completedLayouts.has(layoutId)) {
         //   return; // ถ้าส่งไปแล้ว ให้หยุดการทำงาน
@@ -762,6 +1126,7 @@
               layoutId,
               layoutType,
               lessonId,
+              subjectId
             })
           })
           .then(response => response.json())
@@ -802,9 +1167,9 @@
             const layoutId = layout.getAttribute('data-id'); // ดึงค่า _id
             const layoutType = layout.getAttribute('data-type'); // ดึงค่า layout type
             const lessonId = '<%= lesson._id %>'; // เพิ่ม lessonId ที่เกี่ยวข้อง
-
+            const subjectId = '<%= lesson.subject.subjectMongooseId._id %>'
             // เรียกใช้ฟังก์ชัน throttledUpdateCompletedLayout แทนการเรียกตรงๆ
-            throttledUpdateCompletedLayout(layoutId, layoutType, lessonId);
+            throttledUpdateCompletedLayout(layoutId, layoutType, lessonId, subjectId);
           }
         });
       });

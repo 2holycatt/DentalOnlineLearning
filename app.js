@@ -19,7 +19,7 @@ const cors = require('cors');
 const passport = require('passport');
 // const LessonProgress = require('./models/lessonsProgress'); // นำเข้ารุ่น (model) LessonProgress
 const PORT = process.env.PORT || 4000;
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/Elearning";
 
 // const MongoStore = require('connect-mongo');
 // const authRouter = require('./routes/auth');

@@ -12,7 +12,7 @@ const util = require('util');
 const unlinkFile = util.promisify(fs.unlink);
 const SchoolYear = require("../models/schoolYear");
 const { sendEmail } = require('../service/notification');
-const IronPdf = require('@ironsoftware/ironpdf');
+// const IronPdf = require('@ironsoftware/ironpdf');
 
 
 const assignmentIndex = async (req, res) => {
@@ -316,7 +316,9 @@ const delAssign = async (req, res) => {
   const files = assign.files;
   // res.json(files);
   for (const i of files) {
-    unlinkFile(i.file)
+    var filePath = path.join(__dirname, '../uploads', i.file); // สร้าง path ของไฟล์
+
+    unlinkFile(filePath)
       .then(() => {
         return Assignments.findByIdAndUpdate(getAssignId, {
           $pull: {

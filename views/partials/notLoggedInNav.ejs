@@ -2,7 +2,6 @@
 <link rel="stylesheet" href="/css/globals.css">
 <style>
   .loginBtn {
-    margin: auto 2em !important;
     border: 1px solid #bcc2c5;
     border-radius: 0.25em;
     color: black !important;
@@ -169,16 +168,31 @@
       <li class="li-a a-li"><a href="/login" class="a-li">แจ้งเตือน</a></li>
     </ul>
   </div>
-  <div class="in-sub-div-2 d-flex justify-content-end">
-    <a href="/auth/google" class="loginBtn px-2 py-2">
-      เข้าสู่ระบบด้วย 
-      <span>
-        KKU Account
-        <img class="img-fluid" style="max-width: 50px;" src="https://upload.wikimedia.org/wikipedia/th/thumb/d/d9/KKU_SLA_Logo.svg/250px-KKU_SLA_Logo.svg.png" alt="KKU Logo">
-      </span>
-    </a>
-    <!-- <a href="/logoutGoogle" class="loginBtn btn px-2 py-1">
+  <div class="in-sub-div-2">
+
+    <div class="d-flex justify-content-end">
+     <div class="d-flex align-items-center">
+      <p class="mx-2">
+        เข้าสู่ระบบ
+      </p>
+      <a href="/auth/google" class="ms-2 loginBtn px-2 py-2">
+        <span>
+          KKU Account
+          <img class="img-fluid" style="max-width: 50px;" src="https://upload.wikimedia.org/wikipedia/th/thumb/d/d9/KKU_SLA_Logo.svg/250px-KKU_SLA_Logo.svg.png" alt="KKU Logo">
+        </span>
+      </a>
+      <a href="/auth/google" class="ms-2 loginBtn px-2 py-2">
+        <span>
+          Google Account
+          <img class="img-fluid" style="max-width: 50px;" src="/images/indexMed/Google_2015_logo.svg.webp" alt="Google Logo">
+        </span>
+      </a>
+     </div>
+    </div>
+
+  </div>
+  <!-- <a href="/logoutGoogle" class="loginBtn btn px-2 py-1">
       ออกจากระบบ
     </a> -->
-  </div>
+</div>
 </div>

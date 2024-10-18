@@ -12,6 +12,13 @@
 
   <%- include("./partials/header.ejs")%>
   <style>
+    .pdf-iframe {
+      width: 100%;
+      height: calc(100vh - 50px);
+      /* Adjust height based on toolbar */
+      border: none;
+    }
+
     .disbled-a {
       background-color: #999999 !important;
       border: 1px solid #999999 !important;
@@ -388,10 +395,9 @@
                 <p class="fw-bold w-auto fs-6 lesson-bar">แก้ไขเนื้อหา</p>
                 <p class="fw-normal w-auto fs-6" style="margin-left: 0.5em !important;">บทเรียน:
                   <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;"><%=lesson.LessonName%></span>
-                  ปีการศึกษา:
-                  <span class="fw-normal fs-6 text-primary"><%=lesson.schoolYear.schoolYear%></span>
+
                 </p>
-                <a href="/adminIndex/eachLessons?lessonId=<%=lesson._id%>" class="edit-a text-dark px-2" style="border-left: 1px solid #ced4daa0 ;margin:0em 1em !important; font-size: small;">แก้ไขชื่อและรูปปก<i class="bi bi-pencil mx-2"></i>
+                <a href="/adminIndex/editLesson?lessonId=<%=lesson._id%>&subjectId=<%=subject._id%>" class="edit-a text-dark px-2" style="border-left: 1px solid #ced4daa0 ;margin:0em 1em !important; font-size: small;">แก้ไขชื่อและรูปปก<i class="bi bi-pencil mx-2"></i>
                 </a>
               </div>
               <div class="d-flex w-25 justify-content-end" style="align-items: center; margin-top: 0.5 !important;">
@@ -399,6 +405,7 @@
                 </a>
               </div>
             </div>
+            <% const questions = lesson.lessonQuestion %>
             <div class="d-flex">
               <div class="d-flex w-50">
                 <a href="/adminIndex/getMoreAddContent?lesson=<%=lesson._id%>" class="add-button btn btn-primary my-2 p-2" style="height: fit-content !important;">
@@ -407,6 +414,15 @@
                 <button href="/adminIndex/editLesson?lesson=<%=lesson._id%>" disabled class="btn add-button btn-warning my-2 p-2 mx-2" style="height: fit-content !important;">
                   แก้ไขเนื้อหาภายในบทเรียน<i class="bi bi-pencil-square mx-2"></i>
                 </button>
+                <% if (questions) {%>
+                <button class="btn add-button btn-info my-2 p-2" style="height: fit-content !important;" disabled>
+                  เพิ่มคำถามท้ายบท<i class="bi bi-question-circle mx-2"></i>
+                </button>
+                <% } else { %>
+                <a href="/adminIndex/addEndChapterQuestion?lesson=<%=lesson._id%>" class="btn add-button btn-info my-2 p-2" style="height: fit-content !important;">
+                  เพิ่มคำถามท้ายบท<i class="bi bi-question-circle mx-2"></i>
+                </a>
+                <% } %>
               </div>
               <div class="d-flex w-50 justify-content-end">
                 <a href="/adminIndex/deleteLesson?lessonId=<%=lesson._id%>" class="btn add-button btn-danger my-2 p-2 mx-2" style="height: fit-content !important;">
@@ -455,8 +471,8 @@
               ลบบทเรียน<i class="bi bi-eraser-fill mx-2"></i>
             </a>
           </div> -->
-          <% if (foundLayouts.length > 0) { %>
-          <% foundLayouts.forEach(Layout => {%>
+          <% if (paginatedLayouts.length > 0) { %>
+          <% paginatedLayouts.forEach(Layout => {%>
           <% if (Layout.name == "Layout01") {%>
           <div class="hide-layout-11 lesson-content py-2 bg-white my-1">
             <div class="d-flex mx-4">
@@ -826,10 +842,69 @@
               </div>
             </form>
           </div>
+          <% } else if (Layout.name == "pdfFiles") { %>
+          <div class="lesson-content py-2 bg-white my-4">
+            <div class="d-flex mx-4">
+              <p class="fw-bold fs-4 my-3 setpBorder">แก้ไขเนื้อหา รูปแบบที่ 4</p>
+
+            </div>
+            <div class="mx-4">
+              <form action="/adminIndex/uploadPdfToLesson" method="post" enctype="multipart/form-data">
+                <input type="hidden" value="<%= Layout._id %>">
+                <p class="my-1"><span class="text-primary">ไฟล์เดิม:</span> <%=Layout.file%></p>
+                <iframe class="pdf-iframe" src="/<%=Layout.file%>" frameborder="0"></iframe>
+                <div class="mx-2 my-2">
+                  <input type="file" name="pdf-file" id="pdf-file" accept="application/pdf" multiple>
+                  <button class="btn btn-primary p-1" type="submit">อัปโหลดไฟล์เพื่อแก้ไข</button>
+                </div>
+              </form>
+            </div>
+
+          </div>
           <% } %>
           <% }); %>
+          <div class="row">
+            <div class="col-12 d-flex justify-content-center">
+              <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                  <% if (currentPage > 1) { %>
+                  <li class="page-item">
+                    <a class="page-link px-2" href="/adminIndex/editLessonContent?lesson=<%= lesson._id %>&page=<%= currentPage - 1 %>">ก่อนหน้า</a>
+                  </li>
+                  <% } else { %>
+                  <li class="page-item disabled">
+                    <a class="page-link px-2" href="#">ก่อนหน้า</a>
+                  </li>
+                  <% } %>
+  
+                  <% for (let i = 1; i <= totalPages; i++) { %>
+                  <% if (i === currentPage) { %>
+                  <li class="page-item active">
+                    <a class="page-link px-2" href="#"><%= i %></a>
+                  </li>
+                  <% } else { %>
+                  <li class="page-item">
+                    <a class="page-link px-2" href="/adminIndex/editLessonContent?lesson=<%= lesson._id %>&page=<%= i %>"><%= i %></a>
+                  </li>
+                  <% } %>
+                  <% } %>
+  
+                  <% if (currentPage < totalPages) { %>
+                  <li class="page-item">
+                    <a class="page-link px-2" href="/adminIndex/editLessonContent?lesson=<%= lesson._id %>&page=<%= currentPage + 1 %>">ถัดไป</a>
+                  </li>
+                  <% } else { %>
+                  <li class="page-item disabled">
+                    <a class="page-link px-2" href="#">ถัดไป</a>
+                  </li>
+                  <% } %>
+                </ul>
+              </nav>
+            </div>
+          </div>
           <% } %>
         </div>
+        
       </div>
     </div>
   </div>

@@ -2,13 +2,6 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
 const lessonQuestionchema = new Schema({
-    // name: {
-    //     type: 'string',
-    //     default: 'pdfFiles'
-    // },
-    // contentType: {
-    //     type: String,
-    // },
     Questions:[ {
         questionNo: {
             type: String, 

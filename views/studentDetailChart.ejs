@@ -622,6 +622,13 @@
     const timeSpent = `<%= timeSpent %>`;
     const splitTimeSpent = timeSpent.split(",");
 
+    const truncatedLabels = splitLabels.map(label => {
+      if (label.length > 10) {
+        return label.slice(0, 10) + '...';
+      }
+      return label;
+    });
+
     const predefinedColors = [
       'rgba(255, 99, 132)', // แดงชมพู
       'rgba(54, 162, 235)', // น้ำเงินสด
@@ -673,7 +680,7 @@
     const studentChart = new Chart(ctxStudent1, {
       type: 'bar', // ประเภทของแผนภูมิ เช่น 'bar', 'line', 'pie', 'doughnut' ฯลฯ
       data: {
-        labels: splitLabels, // ป้ายของข้อมูล
+        labels: truncatedLabels, // ป้ายของข้อมูล
         datasets: [{
           label: 'บทเรียน',
           data: splitData,
@@ -746,7 +753,7 @@
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: splitLabels,
+        labels: truncatedLabels,
         datasets: [{
           label: 'เวลาที่ใช้ (นาที)',
           data: splitTimeSpent,
