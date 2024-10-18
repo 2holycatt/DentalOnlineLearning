@@ -129,9 +129,9 @@ const adminDashboard = async (req, res) => {
         if (subjectId) {
             latestSubject = await Subject.findOne({ _id: subjectId }).populate("lessonArray");
         } else {
-            latestSubject = await Subject.findOne({ _id: "66a5b280abf2f346ab789a54" }).populate("lessonArray");
+            // latestSubject = await Subject.findOne({ _id: "66a5b280abf2f346ab789a54" }).populate("lessonArray");
 
-            // latestSubject = await Subject.findOne().populate("lessonArray").sort({ createdAt: -1 });
+            latestSubject = await Subject.findOne().populate("lessonArray").sort({ createdAt: -1 });
         }
 
         if (latestSubject != null) {
