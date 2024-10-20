@@ -360,7 +360,7 @@
             <div class="graph-container shadow-sm rounded">
               <div class="p-3 graph-label">
                 <div class="">
-                  <p class="fw-bold">กราฟแท่งแสดงความสำเร็จแต่ละบทเรียนในรายวิชา</p>
+                  <p class="fw-bold">กราฟแท่งแสดงความสำเร็จแต่ละบทเรียน</p>
                   <small>จำนวนความสำเร็จของบทเรียนที่นักศึกษาทำเสร็จสิ้นไป</small>
                 </div>
               </div>
@@ -377,7 +377,7 @@
               <div class="p-3 graph-label">
                 <div class="mb-2">
                   <p class="fw-bold">กราฟวงกลมแสดงสัดส่วนความสำเร็จแต่ละบทเรียนในรายวิชา</p>
-                  <small>แสดงสัดส่วนความแตกต่างของแต่ละบทเรียนที่นักศึกษาเรียนเสร็จแล้ว</small>
+                  <small>แสดงสัดส่วนความแตกต่างของบทเรียนที่นักศึกษาสำเร็จบทเรียนในแต่ละบท</small>
                 </div>
 
               </div>
@@ -448,36 +448,7 @@
                         </small>
                       </li>
                       <% });%>
-                      <!-- <li class="my-2">
-                            <small>
-                              08:46 - ก้องกังวาลย์ ทำบทเรียนที่ 1 สำเร็จแล้ว
-                            </small>
-                          </li>
-                          <li class="my-2">
-                            <small>
-                              08:41 - อริญชวุธ ทำบทเรียนที่ 2 สำเร็จแล้ว
-                            </small>
-                          </li>
-                          <li class="my-2">
-                            <small>
-                              02:22 - ภูเบศ ทำบทเรียนที่ 2 สำเร็จแล้ว
-                            </small>
-                          </li>
-                          <li class="my-2">
-                            <small>
-                              01:31 - กมลวรรณ ทำบทเรียนที่ 3 สำเร็จแล้ว
-                            </small>
-                          </li>
-                          <li class="my-2">
-                            <small>
-                              00:11 - ปภินวิทย์ ทำบทเรียนที่ 5 สำเร็จแล้ว
-                            </small>
-                          </li>
-                          <li class="my-2">
-                            <._doc.finishedProgresssmall>
-                              00:10 - พลอธิป ทำบทเรียนที่ 5 สำเร็จแล้ว
-                            </._doc.finishedProgresssmall>
-                          </li> -->
+                    
                     </ul>
                     <% } else { %>
                     <small>ไม่มีความคืบหน้าในวันนี้</small>
@@ -489,7 +460,7 @@
           </div>
 
         </div>
-        <% } else if ((latestSubject == null) || (lessonLabels == null) || (progressData == null) || (Number.isNaN(finalPercentageTofixed)) )  { %>
+        <% } else if ((latestSubject == null) || (lessonLabels == null) || (progressData == null) ) { %>
           <div class="d-flex mb-3" style="align-items: center;">
             <div class="">
               <label class="quiz-label" for="dashboardSelector">รายวิชา: </label>
@@ -511,7 +482,7 @@
           </p>
         </div>
         <% } %>
-        <% } else if(!latestSubject || Number.isNan(finalPercentageTofixed)) {%>
+        <% } else {%>
           <div class="d-flex mb-3" style="align-items: center;">
             <div class="">
               <label class="quiz-label" for="dashboardSelector">รายวิชา: </label>
@@ -533,7 +504,6 @@
           </p>
         </div>
         <% } %>
-        <!-- <script type="module" src="dimensions.js"></script> -->
       </div>
 
 
