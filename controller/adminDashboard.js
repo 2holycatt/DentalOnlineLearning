@@ -204,7 +204,7 @@ const adminDashboard = async (req, res) => {
                     ((lesson.lessonFinishedProgressAmount / studentAmount))
                 );
             });
-            console.log(lessonProgressPercentSummary);
+            // console.log(lessonProgressPercentSummary);
 
             const totalProgress = lessonProgressPercentSummary.reduce((sum, progress) => sum + progress, 0);
             const totalMaxProgress = totalLessons * studentAmount; // ค่าที่คาดหวัง (100%)
@@ -214,7 +214,7 @@ const adminDashboard = async (req, res) => {
             // res.json(countToday);
             // console.log(countToday);
             // res.json(progressData)
-
+            console.log(lessonLabels);
             res.render('teacherDashboard', {
                 subjects,
                 latestSubject,
@@ -244,6 +244,7 @@ const adminDashboard = async (req, res) => {
 
         // res.json(latestSubject)
     } catch (err) {
+        console.log(err);
         // console.log(err);
         const subjects = await Subject.find().sort({ "createdAt": 1 });
         latestSubject = null;

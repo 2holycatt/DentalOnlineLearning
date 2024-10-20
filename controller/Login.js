@@ -8,15 +8,14 @@ const Lesson = require("../models/Lessons");
 var SchoolYear = require('../models/schoolYear')
 const logger = require('../logs/logger');
 const axios = require('axios');
-// const YOUR_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-// const YOUR_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-// // const YOUR_REDIRECT_URL = 'http://localhost:4000/auth/google/callback'
-// const YOUR_REDIRECT_URL = 'https://rpd-dt.onrender.com/auth/google/callback'
+const YOUR_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const YOUR_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const YOUR_REDIRECT_URL = 'https://rpd-dt.onrender.com/auth/google/callback'
 
 
-const YOUR_CLIENT_ID = "95141771976-u1v2rj3o8ulagvqsrkgondmq8m4lou9t.apps.googleusercontent.com";
-const YOUR_CLIENT_SECRET = "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";
-const YOUR_REDIRECT_URL = 'http://localhost:4000/auth/google/callback'
+// const YOUR_CLIENT_ID = "95141771976-u1v2rj3o8ulagvqsrkgondmq8m4lou9t.apps.googleusercontent.com";
+// const YOUR_CLIENT_SECRET = "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";
+// const YOUR_REDIRECT_URL = 'http://localhost:4000/auth/google/callback'
 
 
 const authGoogle = async (req, res) => {
