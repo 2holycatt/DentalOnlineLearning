@@ -352,27 +352,6 @@
             </select>
             <% } %>
           </div>
-          <!-- <div class="mx-2">
-              <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
-              <select class="sectionSelector">
-                <option value="allLessons" selected>
-                  ทั้งหมด
-                  </a>
-                </option>
-                <option value="JavaScript">
-                  1
-                </option>
-                <option value="Python">
-                  2
-                </option>
-                <option value="PHP">
-                  10
-                </option>
-                <option value="HTML">
-                  11
-                </option>
-              </select>
-            </div> -->
         </div>
 
         <% if (lessonLabels.length > 0) { %>
@@ -381,7 +360,7 @@
             <div class="graph-container shadow-sm rounded">
               <div class="p-3 graph-label">
                 <div class="">
-                  <p class="fw-bold">กราฟแท่งแสดงความสำเร็จแต่ละบทเรียน</p>
+                  <p class="fw-bold">กราฟแท่งแสดงความสำเร็จแต่ละบทเรียนในรายวิชา</p>
                   <small>จำนวนความสำเร็จของบทเรียนที่นักศึกษาทำเสร็จสิ้นไป</small>
                 </div>
               </div>
@@ -397,8 +376,8 @@
             <div class="graph-container shadow-sm rounded">
               <div class="p-3 graph-label">
                 <div class="mb-2">
-                  <p class="fw-bold">กราฟวงกลมแสดงความสำเร็จแต่ละบทเรียน</p>
-                  <small>เปอร์เซ็นความสำเร็จของบทเรียนที่นักศึกษาทำเสร็จสิ้นไป</small>
+                  <p class="fw-bold">กราฟวงกลมแสดงสัดส่วนความสำเร็จแต่ละบทเรียนในรายวิชา</p>
+                  <small>แสดงสัดส่วนความแตกต่างของแต่ละบทเรียนที่นักศึกษาเรียนเสร็จแล้ว</small>
                 </div>
 
               </div>
@@ -431,12 +410,12 @@
                     <% if (countToday < yesterdayCount) {%>
                     <i class="bi bi-graph-down-arrow text-danger"></i>
                     <span class="mx-1">
-                      <%=message%> <%=percentChange%>%
+                      <%=message%>
                     </span>
                     <% } else if (countToday > yesterdayCount ) {%>
                     <i class="bi bi-graph-up-arrow text-success"></i>
                     <span class="mx-1">
-                      <%=message%> <%=percentChange%>%
+                      <%=message%>
                     </span>
                     <% } else if (countToday == yesterdayCount) {%>
                     <i class="bi bi-graph-up text-primary"></i>
@@ -510,18 +489,47 @@
           </div>
 
         </div>
-        <% } else { %>
+        <% } else if ((latestSubject == null) || (lessonLabels == null) || (progressData == null) || (Number.isNaN(finalPercentageTofixed)) )  { %>
+          <div class="d-flex mb-3" style="align-items: center;">
+            <div class="">
+              <label class="quiz-label" for="dashboardSelector">รายวิชา: </label>
+              <% if (subjects.length > 0) { %>
+              <select class="sectionSelector" onchange="submitSubjectId(this.value)">
+                <% subjects.forEach(subject => { %>
+                <option value="<%= subject._id %>">
+                  <%= subject.subjectId %> <%= subject.subjectName %>
+                  ปีการศึกษา: <%= subject.semester %> กลุ่ม: <%= subject.section %>
+                </option>
+                <% }) %>
+              </select>
+              <% } %>
+            </div>
+          </div>
         <div class="row">
           <p class="">
-            ไม่สามารถสรุปภาพรวมข้อมูลของบทเรียนกับนักศึกษาได้ เนื่องจากรายวิชานี้ยังไม่มีข้อมูลบทเรียน
+            ไม่สามารถสรุปภาพรวมข้อมูลของรายวิชาได้ เนื่องจากยังขาดข้อมูลความคืบหน้าของบทเรียนจากนักศึกษา
           </p>
         </div>
         <% } %>
-        <% } else {%>
-
+        <% } else if(!latestSubject || Number.isNan(finalPercentageTofixed)) {%>
+          <div class="d-flex mb-3" style="align-items: center;">
+            <div class="">
+              <label class="quiz-label" for="dashboardSelector">รายวิชา: </label>
+              <% if (subjects.length > 0) { %>
+              <select class="sectionSelector" onchange="submitSubjectId(this.value)">
+                <% subjects.forEach(subject => { %>
+                  <option value="<%= subject._id %>">
+                    <%= subject.subjectId %> <%= subject.subjectName %>
+                  ปีการศึกษา: <%= subject.semester %> กลุ่ม: <%= subject.section %>
+                </option>
+                <% }) %>
+              </select>
+              <% } %>
+            </div>
+          </div>
         <div class="row">
           <p class="">
-            ไม่สามารถสรุปภาพรวมข้อมูลของแต่ละรายวิชาได้ เนื่องจากยังไม่ได้มีรายวิชาใด ๆ ในฐานข้อมูล
+            ไม่สามารถสรุปภาพรวมข้อมูลของรายวิชาได้ เนื่องจากยังขาดข้อมูลความคืบหน้าของบทเรียนจากนักศึกษา
           </p>
         </div>
         <% } %>
@@ -529,7 +537,7 @@
       </div>
 
 
-      <div class="lesson-content p-4 bg-white w-100 my-4">
+      <!-- <div class="lesson-content p-4 bg-white w-100 my-4">
         <div style="border-bottom: 1px solid #EAEFF4;" class="mb-3">
           <p class="fs-4 fw-bold mb-2 text-primary">
             <i class="bi bi-pie-chart-fill"></i>
@@ -549,7 +557,7 @@
                   <div>
                     <label class="quiz-label" for="dashboardSelector">แบบทดสอบเรื่อง: </label>
                     <select class="sectionSelector" id="LessonSelector">
-                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="all">ทั้งหมด</option>
                       <option value="allLessons" selected>
                         ทั้งหมด
                         </a>
@@ -571,7 +579,7 @@
                   <div class="mx-2">
                     <label class="quiz-label" for="dashboardSelector">ปีการศึกษา: </label>
                     <select class="sectionSelector">
-                      <!-- <option value="all">ทั้งหมด</option> -->
+                       <option value="all">ทั้งหมด</option> 
                       <option value="allLessons" selected>
                         ทั้งหมด
                         </a>
@@ -593,7 +601,7 @@
                   <div class="mx-2">
                     <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
                     <select class="sectionSelector">
-                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="all">ทั้งหมด</option> 
                       <option value="allLessons" selected>
                         ทั้งหมด
                         </a>
@@ -636,7 +644,7 @@
                   <div class="">
                     <label class="quiz-label" for="dashboardSelector">ปีการศึกษา: </label>
                     <select class="sectionSelector">
-                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <<option value="all">ทั้งหมด</option> 
                       <option value="allLessons" selected>
                         ทั้งหมด
                         </a>
@@ -658,7 +666,7 @@
                   <div class="mx-2">
                     <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
                     <select class="sectionSelector">
-                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="all">ทั้งหมด</option>
                       <option value="allLessons" selected>
                         ทั้งหมด
                         </a>
@@ -713,7 +721,7 @@
                       ภาพรวมของคะแนนแบบทดสอบ
                     </p>
                     <select class="sectionSelector ms-auto" id="LessonSelector">
-                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="all">ทั้งหมด</option>
                       <option value="allLessons" selected>
                         ทั้งหมด
                       </option>
@@ -821,9 +829,9 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
-      <div class="lesson-content p-4 bg-white w-100 my-4">
+      <!-- <div class="lesson-content p-4 bg-white w-100 my-4">
         <div style="border-bottom: 1px solid #EAEFF4;" class="mb-3">
           <p class="fs-4 fw-bold mb-2 text-primary">
             <i class="bi bi-pie-chart-fill"></i>
@@ -843,7 +851,7 @@
                   <div class="">
                     <label class="quiz-label" for="dashboardSelector">ปีการศึกษา: </label>
                     <select class="sectionSelector">
-                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <option value="all">ทั้งหมด</option> 
                       <option value="allLessons" selected>
                         ทั้งหมด
                         </a>
@@ -865,7 +873,7 @@
                   <div class="mx-2">
                     <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
                     <select class="sectionSelector">
-                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <<option value="all">ทั้งหมด</option>
                       <option value="allLessons" selected>
                         ทั้งหมด
                         </a>
@@ -907,7 +915,7 @@
                   <div class="">
                     <label class="quiz-label" for="dashboardSelector">ปีการศึกษา: </label>
                     <select class="sectionSelector">
-                      <!-- <option value="all">ทั้งหมด</option> -->
+                      <<option value="all">ทั้งหมด</option> 
                       <option value="allLessons" selected>
                         ทั้งหมด
                         </a>
@@ -929,7 +937,7 @@
                   <div class="mx-2">
                     <label class="quiz-label" for="dashboardSelector">นักศึกษากลุ่มที่: </label>
                     <select class="sectionSelector">
-                      <!-- <option value="all">ทั้งหมด</option> -->
+                       <option value="all">ทั้งหมด</option> 
                       <option value="allLessons" selected>
                         ทั้งหมด
                         </a>
@@ -1009,8 +1017,7 @@
 
         </div>
 
-        <!-- <script type="module" src="dimensions.js"></script> -->
-      </div>
+      </div> -->
     </div>
   </div>
   <%- include("./partials/footer.ejs")%>

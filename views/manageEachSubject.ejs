@@ -331,7 +331,7 @@
 
       <div class="lesson-content p-4 bg-white w-100 my-4">
         <div class="row">
-          <div class="set-border-bottom col-12">
+          <div class="set-border-bottom col-12 d-flex align-items-center">
             <p class="fw-bold fs-5 my-1">
               วิชา:
               <span class="text-primary fw-normal">
@@ -350,6 +350,11 @@
                 <%=subject.section%>
               </span>
             </p>
+            <div class="flex-grow-1 d-flex justify-content-end">
+              <a class="float-end px-1 btn btn-primary" href="/adminIndex/adminDashboard?subjectId=<%=subject._id%>">
+                แดชบอร์ด <i class="mx-1 bi bi-pie-chart-fill"></i>
+              </a>
+            </div>
           </div>
           <div class="col-12 mt-2 row">
             <div class="col">
@@ -391,7 +396,7 @@
                   </div>
                   <div class="card-body-1">
                     <%const image = lesson.file%>
-                    <img src="/<%=image%>" alt="รูปภาพประกอบบทเรียน" class="card-img" alt="รูปของบทเรียน" style="width: 100%; height: 20%; max-width: 15.125em; max-height: 8.8125em; border-radius: 0.5em;">
+                    <img src="<%=image%>" alt="รูปภาพประกอบบทเรียน" class="card-img" alt="รูปของบทเรียน" style="width: 100%; height: 20%; max-width: 15.125em; max-height: 8.8125em; border-radius: 0.5em;">
                     <!-- /* <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของบทเรียน" style="height: 100%; width: 50%; object-fit: cover;"> */ -->
                   </div>
                 </div>

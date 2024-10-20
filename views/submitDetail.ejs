@@ -108,8 +108,12 @@
               <% files.forEach((file, index) => { %>
               <div class="row">
                 <div class="col-7">
-                  <a class="file-a-2 mb-1" href="/studentIndex/showFileArray?id=<%=getSubmitDetail._id%>&index=<%=index%>">
-                  <%=index+1%>. <%=file.file.slice(25)%>
+                  <a class="file-a" href="/studentIndex/showFileArray2?id=<%=getSubmitDetail._id%>&index=<%=index%>">
+                    <%=index+1%>. <%=file.file.slice(67)%>
+                  </a>
+
+                  <!-- <a href="/adminIndex/delFile?assignId=<%=getSubmitDetail._id%>&fileIndex=<%=index%>" class="text-danger fs-6 delFile">ลบ</a> -->
+                 
                   </a>
                 </div>
               </div>

@@ -13,7 +13,9 @@ const unlinkFile = util.promisify(fs.unlink);
 const SchoolYear = require("../models/schoolYear");
 const { sendEmail } = require('../service/notification');
 // const IronPdf = require('@ironsoftware/ironpdf');
+const fetch = require('node-fetch');
 
+const { deleteFileFromS3 } = require('../utils/s3Utils');
 
 const assignmentIndex = async (req, res) => {
   try {
@@ -111,7 +113,8 @@ const uploadAssignments = asyncWrapper(async (req, res) => {
 
     const fileData = files.map(files => {
       return {
-        file: files.filename,
+        // file: files.filename,
+        file: files.location,
         contentType: files.mimetype
       };
     });
@@ -164,7 +167,8 @@ const showFileArray = async (req, res) => {
     const contentType = getFiles.contentType;
     const fileName = getFiles.file
     const getFilePath = assignment.files[fileIndex].file;
-    const filePath = path.join(__dirname, `../uploads/${getFilePath}`); // เส้นทางไฟล์
+    // const filePath = path.join(__dirname, `../uploads/${getFilePath}`); // เส้นทางไฟล์
+    // const filePath = path.join(__dirname, `../uploads/${getFilePath}`); // เส้นทางไฟล์
     // const fileName = getFilePath.slice(33);
 
     // if (contentType == "application/pdf") {
@@ -191,25 +195,69 @@ const showFileArray = async (req, res) => {
 
     if ((contentType === "application/pdf") ||
       (contentType === "video/mp4") ||
-      (contentType === "image/jpeg")) 
-    {
+      (contentType === "image/jpeg")) {
       if (userData.role == "teacher") {
         res.render('viewFilesAdmin', { fileName, contentType });
       } else if (userData.role == "student") {
         res.render('viewsFileStudent', { fileName, contentType });
       }
     } else {
-      // Set content type header
-      res.setHeader('Content-Type', `${contentType}`);
 
-      const fileName = getFilePath.slice(25);
-      // res.attachment(fileName);
+      res.redirect(getFilePath);
+    }
 
-      res.setHeader('Content-Disposition', 'inline; filename=' + fileName);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error retrieving file');
+  }
+}
 
-      // Send the file directly
-      res.sendFile(filePath);
-      // fs.createReadStream(filePath).pipe(res);
+const showFileArray2 = async (req, res) => {
+  try {
+    const assignId = req.query.id;
+    const fileIndex = req.query.index;
+    const assignment = await submitAssign.findById(assignId);
+    const getFiles = assignment.files[fileIndex];
+    const contentType = getFiles.contentType;
+    const fileName = getFiles.file
+    const getFilePath = assignment.files[fileIndex].file;
+    // const filePath = path.join(__dirname, `../uploads/${getFilePath}`); // เส้นทางไฟล์
+    // const filePath = path.join(__dirname, `../uploads/${getFilePath}`); // เส้นทางไฟล์
+    // const fileName = getFilePath.slice(33);
+
+    // if (contentType == "application/pdf") {
+    //   const pdfDocument = await IronPdf.PdfDocument.fromFile(filePath);
+    //   const pdfBytes = await pdfDocument.toBuffer();
+    //   res.setHeader('Content-Disposition', 'inline; filename=' + fileName);
+    //   res.setHeader('Content-Type', 'application/pdf');
+
+    //   res.sendFile(filePath);
+    // } else {
+    //   // Set content type header
+    //   res.setHeader('Content-Type', `${contentType}`);
+
+    //   const fileName = getFilePath.slice(33);
+    //   // res.attachment(fileName);
+
+    //   res.setHeader('Content-Disposition', 'inline; filename=' + fileName);
+
+    //   // Send the file directly
+    //   res.sendFile(filePath);
+    //   // fs.createReadStream(filePath).pipe(res);
+    // }
+    const userData = await User.findById(req.session.userId);
+
+    if ((contentType === "application/pdf") ||
+      (contentType === "video/mp4") ||
+      (contentType === "image/jpeg")) {
+      if (userData.role == "teacher") {
+        res.render('viewFilesAdmin', { fileName, contentType });
+      } else if (userData.role == "student") {
+        res.render('viewsFileStudent', { fileName, contentType });
+      }
+    } else {
+
+      res.redirect(getFilePath);
     }
 
   } catch (error) {
@@ -222,7 +270,7 @@ const delFile = async (req, res) => {
   try {
     const getAssignId = req.query.assignId;
     const getIndex = req.query.fileIndex;
-    const uploadsDir = path.resolve(__dirname, '..', 'uploads')
+    // const uploadsDir = path.resolve(__dirname, '..', 'uploads')
 
     const assign = await Assignments.findById(getAssignId);
     // const schoolYearId = assign.schoolYear._id;
@@ -230,11 +278,12 @@ const delFile = async (req, res) => {
     // const filePath = fileNameToDelete;
     const deletedFileId = assign.files[getIndex]._id;
     // const assignId = assign._id
-    const filePath = path.join(uploadsDir, fileNameToDelete); // รวมเส้นทางโฟลเดอร์
+    // const filePath = path.join(uploadsDir, fileNameToDelete); // รวมเส้นทางโฟลเดอร์
 
-    console.log(filePath);
+    // console.log(filePath);
     // ลบไฟล์
-    unlinkFile(filePath)
+    // unlinkFile(filePath)
+    await deleteFileFromS3(fileNameToDelete)
       .then(() => {
         console.log('File deleted successfully');
         return Assignments.findByIdAndUpdate(getAssignId, {
@@ -259,6 +308,50 @@ const delFile = async (req, res) => {
     res.status(500).send('Error retrieving file');
   }
 }
+
+const delFileStudent = async (req, res) => {
+  try {
+    const getAssignId = req.query.assignId;
+    const getIndex = req.query.fileIndex;
+    // const uploadsDir = path.resolve(__dirname, '..', 'uploads')
+
+    const assign = await submitAssign.findById(getAssignId);
+    // const schoolYearId = assign.schoolYear._id;
+    const fileNameToDelete = assign.files[getIndex].file;
+    // const filePath = fileNameToDelete;
+    const deletedFileId = assign.files[getIndex]._id;
+    // const assignId = assign._id
+    // const filePath = path.join(uploadsDir, fileNameToDelete); // รวมเส้นทางโฟลเดอร์
+
+    // console.log(filePath);
+    // ลบไฟล์
+    // unlinkFile(filePath)
+    await deleteFileFromS3(fileNameToDelete)
+      .then(() => {
+        console.log('File deleted successfully');
+        return submitAssign.findByIdAndUpdate(getAssignId, {
+          $pull: {
+            files: { _id: deletedFileId }
+          }
+        });
+      })
+      .then(() => {
+        console.log('File object deleted from MongoDB successfully');
+        res.redirect('/studentAssignDetail?id=' + assign.assignment);
+        // ทำ process อื่น ๆ ต่อไปที่คุณต้องการ
+
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error deleting file');
+      });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error retrieving file');
+  }
+}
+
 
 const editAssign = async (req, res) => {
   try {
@@ -287,7 +380,7 @@ const editAssign = async (req, res) => {
 
     const fileData = getFiles.map(files => {
       return {
-        file: files.filename,
+        file: files.location,
         contentType: files.mimetype
       };
     });
@@ -316,9 +409,10 @@ const delAssign = async (req, res) => {
   const files = assign.files;
   // res.json(files);
   for (const i of files) {
-    var filePath = path.join(__dirname, '../uploads', i.file); // สร้าง path ของไฟล์
+    // var filePath = path.join(__dirname, '../uploads', i.file); // สร้าง path ของไฟล์
 
-    unlinkFile(filePath)
+    // unlinkFile(filePath)
+    await deleteFileFromS3(i.file)
       .then(() => {
         return Assignments.findByIdAndUpdate(getAssignId, {
           $pull: {
@@ -343,7 +437,7 @@ const submitDetail = async (req, res) => {
     const schoolYear = await SchoolYear.find();
     const updatedFiles = assignment.files.map(filePath => {
       const { file } = filePath;
-      const fileName = file.slice(33); // นำ string ตั้งแต่ตำแหน่งที่ 33 เป็นต้นไป
+      const fileName = file.slice(67); // นำ string ตั้งแต่ตำแหน่งที่ 33 เป็นต้นไป
       return fileName;
     });
 
@@ -434,5 +528,7 @@ module.exports = {
   submitDetail,
   checkAssignment,
   checkEditAssignment,
-  viewfiles
+  viewfiles,
+  delFileStudent,
+  showFileArray2
 }

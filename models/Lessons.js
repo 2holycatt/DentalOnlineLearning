@@ -43,6 +43,11 @@ const lessonSchema = new Schema({
         ref: 'pdfFile',
         default: []
     }],
+    TextEditors: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'TextEditor',
+        default: []
+    }],
     schoolYear: {
         type: mongoose.Schema.ObjectId,
         ref: 'schoolYear'

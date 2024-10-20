@@ -484,8 +484,8 @@
             <form class="addLayout01Form" action="/adminIndex/makeEdit" method="post" enctype="multipart/form-data">
               <input class="d-none" type="text" name="_id" value="<%= lesson._id %>">
               <input class="d-none" type="text" name="layoutId" value="<%= Layout._id %>">
-              <div class="form-grid px-4 py-1">
-                <div class="underForm-1">
+              <div class="row px-4 py-1">
+                <div class="underForm-1 col-6">
                   <div class="my-1 mb-3">
                     <label for="Topic" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 1 >> </span>หัวข้อ: </label>
                     <input type="text" class="form-control p-3 w-75 layout-1-topic" name="Topic" id="topicInput" value="<%=Layout.Topic%>" required>
@@ -507,12 +507,12 @@
                     <input type="file" class="w-75 img-input" id="topicInput5" style="background-color: white !important;" name="Url" accept="image/*,video/*">
                     <p class="fw-bold fs-6" style="margin-top: 1em !important;">รูปภาพ/วิดีโอ เดิมที่ใช้: </p>
                     <div class="w-100">
-                      <% const file = Layout.AboutImage[0].file.slice(8) %>
+                      <% const file = Layout.AboutImage[0].file %>
                       <% if (Layout.AboutImage[0].contentType.startsWith("image/")) { %>
-                      <img class="ImageFile w-75 h-75 my-4 shadow rounded" src="" alt="รูปภาพประกอบการเรียน">
+                      <img class="ImageFile w-75 h-75 my-4 shadow rounded" src="<%=file%>" alt="รูปภาพประกอบการเรียน">
                       <%} else if (Layout.AboutImage[0].contentType.startsWith("video/")) {%>
                       <video class="w-75 h-75 my-4" controls autoplay>
-                        <source src="/<%=file%>" type="<%=Layout.AboutImage[0].contentType%>">
+                        <source src="<%=file%>" type="<%=Layout.AboutImage[0].contentType%>">
                         Your browser does not support the video tag.
                       </video>
                       <% } %>
@@ -523,69 +523,17 @@
                     <textarea class="form-control w-75 p-3" name="ImageDescription" id="topicInput6" style="height: 100px;"><%=Layout.AboutImage[0].ImageDescription%></textarea>
                   </div>
                 </div>
-                <div class="underForm-2">
-                  <!-- <a href="#img1">
-                    <img src="/images/indexMed/example-1.png" class="img-fluid my-2 example-pic1" alt="">
-                  </a> -->
-                  <p class="fw-normal text-secondary my-1" style="font-size: small;"><i class="bi bi-info-circle text-primary" style="margin-right: 0.25em !important;"></i>
-                    สามารถกรอกข้อมูลต่าง ๆ พร้อมกับดูรูปแบบที่และหน้าตาที่จะได้ในเวลาพร้อมกัน
-                  </p>
-                  <p class="fw-bold text-dark my-1" style="font-size: small;">คำอธิบาย: <span class="fw-normal text-secondary">ตัวเลขใช้แทนส่วนต่าง ๆ เมื่อกรอกข้อมูลลงไป</span></p>
-
-                  <div class="layout-1-typing my-2">
-                    <!-- <p class="fs-2 layout-1-topic-p w-auto h-auto"> -->
-                    <p class="fs-5 fw-bold layout-1-topic-p w-auto h-auto mx-3" id="outputParagraph">
-                      <i class="bi fs-6 bi-1-circle-fill text-primary"></i><span class="fw-normal fs-6 text-secondary exaple-text mx-2"></span>
-                    </p>
-                    <p class="fs-6 layout-1-MainDescription-p w-auto h-auto" id="outputParagraph2">
-                      <i class="bi fs-6 bi-2-circle-fill text-primary"></i>
-                    </p>
-                    <div class="py-3 px-2 content-1 h-auto">
-                      <p class="fs-6 layout-1-MainDescription-p w-auto h-auto" id="outputParagraph3">
-                        <i class="bi fs-6 bi-3-circle-fill text-primary"></i>
-                      </p>
-                      <div class="w-100 set-grid" style="margin-top: 1em !important;">
-                        <div class="">
-                          <div class="d-flex justify-content-center">
-                            <div class="p-1 set-border-title w-75">
-                              <p class="text-center" id="outputParagraph4">
-                                <i class="fs-6 bi bi-4-circle-fill text-primary "></i>
-                              </p>
-                            </div>
-                          </div>
-                          <div id="imagePlaceholder" class="d-flex justify-content-center" style="margin-top: 0.5em !important;">
-                            <div class="p-3 set-border-title-2 w-75">
-                              <p class="fs-6 text-center">
-                                <i class="bi bi-5-circle-fill text-primary"></i>
-                              </p>
-                              <p class="fs-6 text-center">
-                                รูปภาพ
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="h-auto ImageScript p-2">
-                          <p class="fs-6" id="outputParagraph6">
-                            <i class="bi bi-6-circle-fill text-primary "></i>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                
+                <div class="d-flex col-12 row">
+                  <div class="col-6">
+                    <button type="submit" class="setRadius submitBtn btn btn-success my-3 p-2 shadow-sm w-25">บันทึก
+                      <i class="bi bi-save-fill mx-2"></i>
+                    </button>
+                    <a href="/adminIndex/deleteLayout?layoutId=<%=Layout._id%>&whatLayout=1&lessonId=<%=lesson._id%>" type="button" class="cancelBtn1 setRadius submitBtn btn btn-danger my-3 p-2 shadow-sm w-25 mx-3">ลบ
+                      <!-- <i class="bi bi-save-fill mx-2"></i> -->
+                      <i class="bi bi-eraser-fill mx-2"></i>
+                    </a>
                   </div>
-                  <div>
-                    <p class="fw-bold text-center text-dark my-2">
-                      รูปแบบที่ได้เมื่อกรอกข้อมูล
-                    </p>
-                  </div>
-                </div>
-                <div class="d-flex">
-                  <button type="submit" class="setRadius submitBtn btn btn-success my-3 p-2 shadow-sm w-25">บันทึก
-                    <i class="bi bi-save-fill mx-2"></i>
-                  </button>
-                  <a href="/adminIndex/deleteLayout?layoutId=<%=Layout._id%>&whatLayout=1&lessonId=<%=lesson._id%>" type="button" class="cancelBtn1 setRadius submitBtn btn btn-danger my-3 p-2 shadow-sm w-25 mx-3">ลบ
-                    <!-- <i class="bi bi-save-fill mx-2"></i> -->
-                    <i class="bi bi-eraser-fill mx-2"></i>
-                  </a>
                 </div>
               </div>
             </form>
@@ -599,8 +547,8 @@
               <input class="d-none" type="text" name="_id" value="<%= lesson._id %>">
               <input class="d-none" type="text" name="layoutId" value="<%= Layout._id %>">
 
-              <div class="form-grid px-4 py-1">
-                <div class="underForm-1">
+              <div class="row px-4 py-1">
+                <div class="underForm-1 col-12">
                   <div class="my-1">
                     <label for="Topic" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 1 >> </span>หัวข้อ: </label>
                     <input type="text" class="form-control p-3 w-75" id="topicInput7" name="Topic" value="<%=Layout.Topic%>" placeholder="ส่วนประกอบฟั..." required>
@@ -621,57 +569,7 @@
                     <textarea class="form-control w-75 p-3" name="TextArea3" id="topicInput10" style="height: 100px;" placeholder=""><%=Layout.TextArea3%></textarea>
                   </div>
                 </div>
-                <div class="underForm-2">
-                  <p class="fw-normal text-secondary my-1" style="font-size: small;"><i class="bi bi-info-circle text-primary" style="margin-right: 0.25em !important;"></i>
-                    สามารถกรอกข้อมูลต่าง ๆ พร้อมกับดูรูปแบบที่และหน้าตาที่จะได้ในเวลาพร้อมกัน
-                  </p>
-                  <p class="fw-bold text-dark my-1" style="font-size: small;">คำอธิบาย: <span class="fw-normal text-secondary">ตัวเลขใช้แทนส่วนต่าง ๆ เมื่อกรอกข้อมูลลงไป</span></p>
-
-                  <div class="layout-2-typing my-2">
-                    <!-- <p class="fs-2 layout-1-topic-p w-auto h-auto"> -->
-                    <p class="fs-5 fw-bold layout-1-topic-p w-auto h-auto mx-3" id="outputParagraph7">
-                      <i class="bi fs-6 bi-1-circle-fill text-primary"></i><span class="fw-normal fs-6 text-secondary example-text-2 mx-2">
-                      </span>
-                    </p>
-                    <div class="exampleLayout-2 mx-3" style="border-top: 0.125em solid #007bff;">
-                      <div class="d-grid" style="grid-template-columns: 1fr 1fr; margin: 1em !important;">
-                        <div class="w-100" style="max-width: 10em;">
-                          <p class="fs-6 layout-1-MainDescription-p2 h-auto" id="outputParagraph8">
-                            <i class="bi fs-6 bi-2-circle-fill text-primary"></i>
-
-                          </p>
-                        </div>
-                        <div class="w-100" style="max-width: 10em;">
-                          <p class="fs-6 layout-1-MainDescription-p2 w-auto h-auto" id="outputParagraph9">
-                            <i class="bi fs-6 bi-3-circle-fill text-primary"></i>
-                          </p>
-                        </div>
-                      </div>
-                      <div class="w-100 px-1">
-                        <div class="" style="border-top: 1px solid #ced4da ;margin: 0 auto !important; width: 90%; height: 1px !important;">
-                          &nbsp;
-                        </div>
-                        <p class="fs-6 layout-1-MainDescription-p3 w-auto h-auto" id="outputParagraph10">
-                          <i class="bi fs-6 bi-4-circle-fill text-primary" style="font-size:medium !important;"></i>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <p class="fw-bold text-center text-dark my-2">
-                      รูปแบบที่ได้เมื่อกรอกข้อมูล
-                    </p>
-                  </div>
-                </div>
-                <!-- <div class="underForm-2">
-                  
-                  <p class="fw-bold text-primary my-1">ตัวอย่าง: <span class="text-dark fw-light">ตัวหนังสือที่เป็นสี<span class="text-primary fw-bold"> "น้ำเงิน" </span>ดังในรูปภาพ คือส่วนที่ใช้บอกว่าแต่ละส่วนนั้นอยู่ที่ไหน หากเพิ่มข้อมูลลงไปแล้วจะมีหน้าตาเป็นอย่างไร</span></p>
-                  <a data-caption="ภาพตัวอย่างของรูปแบบที่ 2" data-fancybox="gallery" href="/images/indexMed/example-1.png">
-                    <img title="กดที่รูปภาพเพื่อขยาย" src="/images/indexMed/example-1.png" class="img-fluid my-2 example-pic1" alt="Image">
-                  </a>
-                  <p class="text-center fs-6 my-3">ภาพตัวอย่างของรูปแบบที่ 2</p>
-                </div> -->
-                <div class="d-flex">
+                <div class="d-flex col-12">
                   <button type="submit" class="setRadius submitBtn btn btn-success my-3 p-2 shadow-sm w-25">บันทึก
                     <i class="bi bi-save-fill mx-2"></i>
                   </button>
@@ -845,15 +743,15 @@
           <% } else if (Layout.name == "pdfFiles") { %>
           <div class="lesson-content py-2 bg-white my-4">
             <div class="d-flex mx-4">
-              <p class="fw-bold fs-4 my-3 setpBorder">แก้ไขเนื้อหา รูปแบบที่ 4</p>
+              <p class="fw-bold fs-4 my-3 setpBorder">แก้ไขไฟล์ PDF</p>
 
             </div>
             <div class="mx-4">
               <form action="/adminIndex/uploadPdfToLesson" method="post" enctype="multipart/form-data">
                 <input type="hidden" value="<%= Layout._id %>">
-                <p class="my-1"><span class="text-primary">ไฟล์เดิม:</span> <%=Layout.file%></p>
-                <iframe class="pdf-iframe" src="/<%=Layout.file%>" frameborder="0"></iframe>
-                <div class="mx-2 my-2">
+                <p class="my-1"><span class="text-primary">ไฟล์เดิม:</span> <%=Layout.file.slice(53)%></p>
+                <iframe class="pdf-iframe" src="<%=Layout.file%>" frameborder="0"></iframe>
+                <div class="my-2 me-3">
                   <input type="file" name="pdf-file" id="pdf-file" accept="application/pdf" multiple>
                   <button class="btn btn-primary p-1" type="submit">อัปโหลดไฟล์เพื่อแก้ไข</button>
                 </div>

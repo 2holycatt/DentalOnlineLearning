@@ -86,6 +86,8 @@ app.use(express.urlencoded({ extended: true, charset: 'utf-8' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.static(path.join(__dirname, 'uploads')))
+app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
+
 app.use(loadNotificationsMiddleware);
 
 app.use('/pdfs', express.static('uploads'));

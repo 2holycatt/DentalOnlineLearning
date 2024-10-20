@@ -24,7 +24,7 @@ const lessonProgressSchema = new Schema({
         },
         type: {
             type: String,
-            enum: ['Layout1s', 'Layout2s', 'Layout3s', 'Layout4s', 'Layout5s', 'pdfFile'], // ระบุชนิดของ layout หรือ PDF
+            enum: ['Layout1s', 'Layout2s', 'Layout3s', 'Layout4s', 'Layout5s', 'pdfFile', 'TextEditor'], // ระบุชนิดของ layout หรือ PDF
             required: true
         },
     }],

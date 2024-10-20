@@ -42,7 +42,7 @@ async function calculateProgress(userId, lessonId) {
 
 const updateLessonProgress = async (req, res) => {
     const { layoutId, layoutType, lessonId, timeSpent,subjectId } = req.body; // เพิ่ม lessonId ใน body ถ้ายังไม่ได้ส่ง
-    console.log(subjectId);
+    // console.log(subjectId);
     const userId = req.session.userId; // สมมติว่ามีการตรวจสอบผู้ใช้แล้ว
 
     try {
@@ -216,7 +216,7 @@ const calculateTimeSpent = async (req, res, next) => {
                 const currentDate = new Date();
                 const finishedProgress = {
                     checkFinished: true,
-                    message: user.name + " ทำบทเรียน " + lesson.LessonName + " สำเร็จแล้ว",
+                    message: user.name + " เรียนบทเรียน " + lesson.LessonName + "ครบแล้ว",
                     finishehDate: currentDate
                 }
 

@@ -19,6 +19,9 @@ const { logs } = require('../controller/LogsFile');
 const PDFDocument = require('pdfkit');
 const lessonQuestion = require("../models/LessonQuestion");
 const StudentAnswer = require("../models/StudentAnswerEndChapQuestion");
+const TextEditor = require("../models/TextEditor");
+
+const { deleteFileFromS3 } = require('../utils/s3Utils');
 
 // const atob = require('atob');
 const fontPath = path.join(__dirname, 'THSarabunNew.ttf'); // ระบุที่อยู่ของไฟล์ฟอนต์ THSarabun.ttf
@@ -345,16 +348,17 @@ const updateLesson = async (req, res) => {
     const findLesson = await Lesson.findById(lessonId);
 
     if (findLesson.file && req.file) {
-      var filePath = path.join(__dirname, '../uploads', findLesson.file); // สร้าง path ของไฟล์
-      var fileToUpdate = req.file.filename;
-      unlinkFile(filePath)
+      const result = await deleteFileFromS3(findLesson.file);
+      // var filePath = path.join(__dirname, '../uploads', findLesson.file); // สร้าง path ของไฟล์
+      var fileToUpdate = req.file.location;
+
 
       findLesson.LessonName = lessonName;
       findLesson.file = fileToUpdate;
       findLesson.save();
-     
+
     } else if (!findLesson.file && req.file) {
-      var fileToUpdate = req.file.filename;
+      var fileToUpdate = req.file.location;
       findLesson.LessonName = lessonName;
       findLesson.file = fileToUpdate;
       findLesson.save();
@@ -365,9 +369,9 @@ const updateLesson = async (req, res) => {
       findLesson.LessonName = lessonName;
       findLesson.save();
     }
-    
+
     res.redirect(`/adminIndex/editLesson?lessonId=${lessonId}&subjectId=${findLesson.subject.subjectMongooseId}`);
-   
+
   } catch (err) {
     console.error(err);
   }
@@ -399,7 +403,7 @@ const createLayout = async function (req, res, next) {
   try {
     const userData = await User.findById(req.session.userId);
     const { subjectDbId, subjectId } = req.body
-    const username = userData.name;
+    // const username = userData.name;
     // const checkExists = await SchoolYear.findOne({ schoolYear });
     const users = await User.find();
     const whatCome = "มีบทเรียนเรื่อง";
@@ -417,7 +421,7 @@ const createLayout = async function (req, res, next) {
     // };
 
     if (req.file) {
-      const file = req.file.filename;
+      const file = req.file.location;
       // const uploadedFile = req.files.LessonImage;
       const lessonCreate = new Lesson({
         LessonName: name,
@@ -647,13 +651,15 @@ const eachLessons = async (req, res) => {
     const layout04 = lesson.LayOut4ArrayObject;
     const layout05 = lesson.LayOut5ArrayObject;
     const pdfFiles = lesson.PdfFiles;
+    const textEditor = lesson.TextEditors;
 
     const lessonComment = await Lesson.findById(lessonId)
       .populate({
         path: "comments",
-        populate: {
-          path: "user",
-        }
+        populate: [
+          { path: "user" },
+          { path: "replies.user" }
+      ]
       });
 
     // ฟังก์ชันสำหรับจัดรูปแบบวันที่
@@ -693,9 +699,13 @@ const eachLessons = async (req, res) => {
     lessonComment.comments = lessonComment.comments.map((comment) => {
       comment.createdAtFormatted = formatDate(comment.createdAt);
       comment.timeSince = timeSince(comment.createdAt);
+      comment.replies = comment.replies.map((reply) => {
+        reply.createdAtFormatted = formatDate(reply.createdAt);
+        reply.timeSince = timeSince(reply.createdAt);
+        return reply;
+      });
       return comment;
     });
-
     // let pdfLists = [];
     // for (const id of layout05) {
     //   const findLayout = await Layout5.findById(id);
@@ -722,6 +732,7 @@ const eachLessons = async (req, res) => {
     const foundLayouts4 = await findLayoutsAndStoreData(layout04, Layout4);
     const foundLayouts5 = await findLayoutsAndStoreData(layout05, Layout5);
     const foundPdfFiles = await findLayoutsAndStoreData(pdfFiles, PdfFile);
+    const foundPdfTextEditor = await findLayoutsAndStoreData(textEditor, TextEditor);
 
     foundLayouts.sort((a, b) => {
       const dateA = new Date(a.createdAt);
@@ -802,6 +813,8 @@ const eachLessonStudent = async (req, res) => {
     const layout04 = lesson.LayOut4ArrayObject;
     const layout05 = lesson.LayOut5ArrayObject;
     const pdfFiles = lesson.PdfFiles;
+    const textEditor = lesson.TextEditors;
+
 
     const lessonComment = await Lesson.findById(lessonId)
       .populate({
@@ -884,6 +897,7 @@ const eachLessonStudent = async (req, res) => {
     const foundLayouts4 = await findLayoutsAndStoreData(layout04, Layout4);
     const foundLayouts5 = await findLayoutsAndStoreData(layout05, Layout5);
     const foundPdfFiles = await findLayoutsAndStoreData(pdfFiles, PdfFile);
+    const foundTextEditor = await findLayoutsAndStoreData(textEditor, TextEditor);
 
     // console.log(foundLayouts5);
 
@@ -1073,7 +1087,7 @@ const createComment = async (req, res) => {
     // console.log(files);
     const fileData = files.map(files => {
       return {
-        file: files.filename,
+        file: files.location,
         contentType: files.mimetype
       };
     });
@@ -1245,14 +1259,19 @@ const makeEditComment = async (req, res,) => {
     });
 
     // ลบไฟล์จากโฟลเดอร์ uploads
-    filesToDelete.forEach(file => {
-      const filePath = path.join(__dirname, '..', 'uploads', file);
-      fs.unlink(filePath, err => {
-        if (err) {
-          console.error(`Error deleting file ${file}: `, err);
-        }
-      });
-    });
+    for (i of filesToDelete) {
+      let deleteFile = await deleteFileFromS3(i);
+
+    }
+    // filesToDelete.forEach(file => {
+    //   let deleteFile = await deleteFileFromS3(file);
+    //   const filePath = path.join(__dirname, '..', 'uploads', file);
+    //   fs.unlink(filePath, err => {
+    //     if (err) {
+    //       console.error(`Error deleting file ${file}: `, err);
+    //     }
+    //   });
+    // });
 
     // อัปเดตเอกสารในฐานข้อมูล
     updateComment.comment = comment;
@@ -1261,7 +1280,7 @@ const makeEditComment = async (req, res,) => {
 
     const fileData = files.map(files => {
       return {
-        file: files.filename,
+        file: files.location,
         contentType: files.mimetype
       };
     });
@@ -1291,15 +1310,18 @@ const deleteComment = async (req, res) => {
     const comment = await Comment.findById(commentId);
     const userData = await User.findById(req.session.userId);
 
-
-    comment.files.forEach(file => {
-      const filePath = path.join(__dirname, '..', 'uploads', file.file);
-      fs.unlink(filePath, err => {
-        if (err) {
-          console.error(`Error deleting file ${file.file}: `, err);
-        }
-      });
-    });
+    const file =  comment.files;
+    for (i of file) {
+      let deleteFile = await deleteFileFromS3(i.file);
+    }
+    // comment.files.forEach(file => {
+    //   const filePath = path.join(__dirname, '..', 'uploads', file.file);
+    //   fs.unlink(filePath, err => {
+    //     if (err) {
+    //       console.error(`Error deleting file ${file.file}: `, err);
+    //     }
+    //   });
+    // });
 
     await Comment.findByIdAndDelete(commentId);
 
@@ -1677,7 +1699,7 @@ const replyComment = async (req, res) => {
     )
 
     if (findUser.role == 'teacher') {
-      res.redirect(`/adminIndex/eachLesson?lessonId=${lessonId}`)
+      res.redirect(`/adminIndex/eachLessons?lessonId=${lessonId}`)
 
     } else if (findUser.role == 'student') {
       res.redirect(`/studentIndex/eachLessonStudent?lessonId=${lessonId}`)
@@ -1690,22 +1712,27 @@ const replyComment = async (req, res) => {
 
 const editReplyComment = async (req, res) => {
   try {
-    const { commentId, userId, lessonId, commentContent, oldCOntent } = req.body;
+    const { commentId, userId, lessonId, commentContent, oldCOntent, date } = req.body;
+    // console.log(req.body);
     // const setNewDate = new Date(createdAt);
     // console.log(createdAt);
     // console.log(typeof createdAt);
     // console.log(setNewDate);
     // console.log(typeof setNewDate);
+    // console.log(date);
+    const startOfDay = new Date(date);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
 
+    // const comments = await Comment.find({
+    //   "replies.createdAt": { $gte: startOfDay, $lte: endOfDay }
+    // }).populate('user'); // Populate ข้อมูลผู้ใช้
+
+    // res.json(comments);
     const updatedComment = await Comment.findOneAndUpdate(
       {
         _id: commentId,
-        replies: {
-          $elemMatch: {
-            user: userId,
-            content: oldCOntent // เปรียบเทียบวันที่
-          }
-        }
+        "replies.createdAt": { $gte: startOfDay, $lte: endOfDay }
       },
       {
         $set: {
@@ -1715,12 +1742,12 @@ const editReplyComment = async (req, res) => {
       { new: true } // คืนค่าใหม่หลังอัปเดตสำเร็จ
     );
 
-    console.log(updatedComment);
+    // console.log(updatedComment);
     // console.log(commentId);
     const findUser = await User.findOne({ _id: userId });
     //    console.log(findUser);
     if (findUser.role == 'teacher') {
-      res.redirect(`/adminIndex/eachLesson?lessonId=${lessonId}`)
+      res.redirect(`/adminIndex/eachLessons?lessonId=${lessonId}`)
 
     } else if (findUser.role == 'student') {
       res.redirect(`/studentIndex/eachLessonStudent?lessonId=${lessonId}`)
@@ -1743,7 +1770,7 @@ const editLessonContent = async (req, res) => {
     const layout04 = lesson.LayOut4ArrayObject;
     const layout05 = lesson.LayOut5ArrayObject;
     const pdfFiles = lesson.PdfFiles;
-
+    const textEditor = lesson.TextEditors;
     const foundLayouts = [];
     async function findLayoutsAndStoreData(deleteLayouts, Layout) {
 
@@ -1765,6 +1792,8 @@ const editLessonContent = async (req, res) => {
     const foundLayouts4 = await findLayoutsAndStoreData(layout04, Layout4);
     const foundLayouts5 = await findLayoutsAndStoreData(layout05, Layout5);
     const foundPdfFiles = await findLayoutsAndStoreData(pdfFiles, PdfFile);
+    const foundtextEditor = await findLayoutsAndStoreData(textEditor, TextEditor);
+
 
     foundLayouts.sort((a, b) => {
       const dateA = new Date(a.createdAt);
@@ -1803,6 +1832,60 @@ const editLessonContent = async (req, res) => {
     console.log(err);
   }
 }
+
+const deleteReplyComment = async (req, res) => {
+  try {
+    const { _id, date, lessonId, userId } = req.query;
+
+    // console.log('Comment ID:', _id);
+    // console.log('Date:', date);
+    // console.log('Lesson ID:', lessonId);
+
+    // แปลงวันที่ให้เป็น ISO เพื่อป้องกันปัญหาช่วงเวลา
+    const startOfDay = new Date(new Date(date).toISOString().slice(0, 10));
+    const endOfDay = new Date(startOfDay);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // console.log('Start of Day:', startOfDay);
+    // console.log('End of Day:', endOfDay);
+
+    const result = await Comment.updateOne(
+      {
+        _id, // ID ของคอมเมนต์
+        'replies.createdAt': { $gte: startOfDay, $lt: endOfDay },
+        'replies.user': userId, // ตรวจสอบว่า userId ตรงกัน
+      },
+      {
+        $pull: {
+          replies: {
+            createdAt: { $gte: startOfDay, $lt: endOfDay },
+            user: userId, // ลบเฉพาะ reply ที่มี userId ตรงกัน
+          },
+        },
+      }
+    );
+
+
+    // console.log('Update Result:', result);
+
+    if (result.modifiedCount > 0) {
+      const findUser = await User.findOne({ _id: req.session.userId });
+
+      if (findUser.role === 'teacher') {
+        res.redirect(`/adminIndex/eachLessons?lessonId=${lessonId}`);
+      } else if (findUser.role === 'student') {
+        res.redirect(`/studentIndex/eachLessonStudent?lessonId=${lessonId}`);
+      }
+    } else {
+      res.status(404).json({ message: 'No replies found for the given date' });
+    }
+
+  } catch (err) {
+    console.log('Error:', err);
+    res.status(500).json({ message: 'An error occurred' });
+  }
+};
+
 module.exports = {
   adminIndex,
   adminLessonIndex,
@@ -1848,5 +1931,6 @@ module.exports = {
   editSubject,
   updateSubject,
   updateLesson,
-  editLessonContent
+  editLessonContent,
+  deleteReplyComment
 }

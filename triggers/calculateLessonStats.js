@@ -7,10 +7,16 @@ async function calculateLessonStats(lessonId) {
         .populate('LayOut2ArrayObject')
         .populate('LayOut3ArrayObject')
         .populate('LayOut4ArrayObject')
+        .populate('TextEditors')
         .populate('PdfFiles');
 
     // นับจำนวน Layouts และ PdfFiles ทั้งหมด
-    const totalLayouts = lesson.LayOut1ArrayObject.length + lesson.LayOut2ArrayObject.length + lesson.LayOut3ArrayObject.length + lesson.LayOut4ArrayObject.length;
+    const totalLayouts = lesson.LayOut1ArrayObject.length
+    + lesson.LayOut2ArrayObject.length 
+    + lesson.LayOut3ArrayObject.length 
+    + lesson.LayOut4ArrayObject.length
+    + lesson.TextEditors.length;
+
     const totalPdfFiles = lesson.PdfFiles.length;
 
     // คำนวณสัดส่วน (%) ของ Layouts และ PDFs
@@ -34,6 +40,7 @@ async function calculateLessonStats(lessonId) {
         ...lesson.LayOut3ArrayObject.map(layout => ({ layoutId: layout._id, type: 'Layout3s' })),
         ...lesson.LayOut4ArrayObject.map(layout => ({ layoutId: layout._id, type: 'Layout4s' })),
         ...lesson.LayOut5ArrayObject.map(layout => ({ layoutId: layout._id, type: 'Layout5s' })),
+        ...lesson.TextEditors.map(layout => ({ layoutId: layout._id, type: 'TextEditor' })),
         ...lesson.PdfFiles.map(pdf => ({ layoutId: pdf._id, type: 'pdfFile' }))
     ];
 

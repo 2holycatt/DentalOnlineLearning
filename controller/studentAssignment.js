@@ -9,6 +9,8 @@ const fs = require('fs');
 const util = require('util');
 const unlinkFile = util.promisify(fs.unlink);
 
+const { deleteFileFromS3 } = require('../utils/s3Utils');
+
 const moment = require('moment');
 
 const studentAssignDetail = async (req, res) => {
@@ -21,9 +23,9 @@ const studentAssignDetail = async (req, res) => {
         const schoolYear = await SchoolYear.find();
 
         const userSubmit = await submitAssign.findOne({ user: req.session.userId, assignment: getAssignId });
-        console.log(req.session.userId);
-        console.log(getAssignId);
-        console.log(userSubmit);
+        // console.log(req.session.userId);
+        // console.log(getAssignId);
+        // console.log(userSubmit);
         res.render('studentAssignDetail', { schoolYear, assignment, formattedStartDate, formattedDeadline, userData, userSubmit });
 
     } catch (error) {
@@ -50,7 +52,8 @@ const submitAssignment = async (req, res) => {
 
         const fileData = files.map(files => {
             return {
-                file: files.filename,
+                // file: files.filename,
+                file: files.location,
                 contentType: files.mimetype
             };
         });
@@ -135,9 +138,6 @@ const submitAssignment = async (req, res) => {
                             $push:
                             {
                                 files: i,
-                                sendStatus: {
-                                    status: status,
-                                }
                             },
                         },
 
@@ -193,7 +193,7 @@ const studentEditAssignment = async (req, res) => {
 
         const fileData = files.map(files => {
             return {
-                file: files.filename,
+                file: files.location,
                 contentType: files.mimetype
             };
         });
@@ -224,9 +224,11 @@ const delStudentFile = async (req, res) => {
         const filePath = fileNameToDelete;
         const deletedFileId = getSubmitAssign.files[getIndex]._id;
         const assignId = getSubmitAssign.assignment._id
+    //    await deleteFileFromS3(filePath)
 
         // ลบไฟล์
-        unlinkFile(filePath)
+        // unlinkFile(filePath)
+        await deleteFileFromS3(filePath)
             .then(() => {
                 console.log('File deleted successfully');
                 return submitAssign.findByIdAndUpdate(submitAssignId, {
@@ -294,6 +296,16 @@ const studentCancelAssign = async (req, res) => {
             },
             { new: true }
         );
+
+        // await deleteFileFromS3(filePath)
+
+        const findSubmitAssign = await submitAssign.findById(submitId);
+        const fileArray = findSubmitAssign.files;
+        console.log(findSubmitAssign);
+
+        for (i of fileArray) {
+            await deleteFileFromS3(i.file)
+        }
 
         await submitAssign.findByIdAndDelete(
             submitId

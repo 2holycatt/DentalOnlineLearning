@@ -309,9 +309,9 @@
       transition: 0.3s;
     }
 
-    .reply-comment {
+    /* .reply-comment {
       display: none;
-    }
+    } */
 
     .pdf-iframe {
       width: 100%;
@@ -442,9 +442,9 @@
                 <div class="w-100 text-center">
                   <% const file = Img.file %>
                   <% if (Img.contentType.startsWith("image/")) { %>
-                  <img class="ImageFile w-75 h-75 my-4 shadow rounded" src="/<%=Img.file%>" alt="รูปภาพประกอบการเรียน">
+                  <img class="ImageFile w-75 h-75 my-4 shadow rounded" src="<%=Img.file%>" alt="รูปภาพประกอบการเรียน">
                   <% } else { %>
-                  <video class="ImageFile w-75 h-75 object-fit-cover my-4" src="/<%=Img.file%>" controls autoplay></video>
+                  <video class="ImageFile w-75 h-75 object-fit-cover my-4" src="<%=Img.file%>" controls autoplay></video>
                   <% } %>
                 </div>
               </div>
@@ -495,9 +495,9 @@
             <div class="setMargin py-2 px-4 bg-white w-100">
               <div class="Layout2Contents w-100 p-3 d-flex justify-content-center">
                 <% if (Layout.contentType == "image/png") { %>
-                <img class="ImageFile h-auto w-100 mx-auto my-2 shadow rounded" style="max-height: 750px;" src="/<%=Layout.file%>" alt="รูปภาพประกอบการเรียน">
+                <img class="ImageFile h-auto w-100 mx-auto my-2 shadow rounded" style="max-height: 750px;" src="<%=Layout.file%>" alt="รูปภาพประกอบการเรียน">
                 <% } else if (Layout.contentType == "video/mp4") {%>
-                <video class="w-100 h-auto object-fit-cover" src="/<%=Layout.file%>" controls autoplay></video>
+                <video class="w-100 h-auto object-fit-cover" src="<%=Layout.file%>" controls autoplay></video>
                 <% } %>
               </div>
             </div>
@@ -537,7 +537,16 @@
           <% } else if (Layout.name === "pdfFiles") { %>
           <div class="lesson-content py-2 bg-white my-4 layoutDetected" data-id="<%= Layout._id %>" data-type="pdfFile">
             <input class="d-none" type="text" name="_id" value="<%= Layout._id %>">
-            <iframe class="pdf-iframe" src="/<%=Layout.file%>" frameborder="0"></iframe>
+            <iframe class="pdf-iframe" src="<%=Layout.file%>" frameborder="0"></iframe>
+          </div>
+          <% } else if (Layout.name === "TextEditor") {%>
+          <!-- <div class="layout" style="display: none;"></div> -->
+
+          <div class="rounded shadow-sm bg-white my-4 py-2 layoutDetected" data-id="<%= Layout._id %>" data-type="TextEditor">
+            <input class="d-none" type="text" name="_id" value="<%= Layout._id %>">
+            <div class="px-3">
+              <%-Layout.body%>
+            </div>
           </div>
           <% } %>
           <% }); %>
@@ -554,7 +563,7 @@
               <ul class="pagination">
                 <% if (currentPage > 1) { %>
                 <li class="page-item">
-                  <a class="page-link px-2" href="/studentIndex/eachLessonStudent?lessonId=<%= lesson._id %>&page=<%= currentPage - 1 %>">Previous</a>
+                  <a class="page-link px-2" href="/studentIndex/eachLessonStudent?lessonId=<%= lesson._id %>&page=<%= currentPage - 1 %>">ก่อนหน้า</a>
                 </li>
                 <% } else { %>
                 <li class="page-item disabled">
@@ -576,7 +585,7 @@
 
                 <% if (currentPage < totalPages) { %>
                 <li class="page-item">
-                  <a class="page-link px-2" href="/studentIndex/eachLessonStudent?lessonId=<%= lesson._id %>&page=<%= currentPage + 1 %>">Next</a>
+                  <a class="page-link px-2" href="/studentIndex/eachLessonStudent?lessonId=<%= lesson._id %>&page=<%= currentPage + 1 %>">ถัดไป</a>
                 </li>
                 <% } else { %>
                 <li class="page-item disabled">
@@ -719,9 +728,9 @@
                             |
                             <% if (String(userDataId) == String(userCommentId)) { %>
                             <a href="/studentIndex/editCommentStudent?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment ">แก้ไข</a>
-                            <a href="/studentIndex/deleteComment?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
+                            <a href="/deleteComment?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
                             <% } %>
-                            <a class="text-primary mx-1" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            <a class="text-primary mx-1" data-bs-toggle="collapse" href="#collapseExample_<%= comment._id %>" role="button" aria-expanded="false" aria-controls="collapseExample_<%= comment._id %>">
                               ตอบกลับ
                             </a>
                           </span>
@@ -756,13 +765,13 @@
                   <div class="d-flex" id="gallery">
                     <% comment.files.forEach((file, index) => { %>
                     <% if (file.contentType.startsWith("image")) { %>
-                    <a href="/<%= file.file %>" class="a-fancyBox">
-                      <img class="comment-files" src="/<%= file.file %>" alt="ไฟล์รูปภาพ">
+                    <a href="<%= file.file %>" class="a-fancyBox">
+                      <img class="comment-files" src="<%= file.file %>" alt="ไฟล์รูปภาพ">
                     </a>
                     <% } else if (file.contentType.startsWith("video/")) {%>
-                    <a href="/<%= file.file %>" class="a-fancyBox">
+                    <a href="<%= file.file %>" class="a-fancyBox">
                       <video class="comment-files object-fit-cover" controls autoplay>
-                        <source src="/<%= file.file %>" type="<%= file.contentType%>">
+                        <source src="<%= file.file %>" type="<%= file.contentType%>">
                         Your browser does not support the video tag.
                       </video>
                     </a>
@@ -773,27 +782,28 @@
 
               </tr>
               <tr>
-                <form action="/replyComment" method="post">
-                  <input type="text" value="<%=comment._id%>" name="commentId" class="d-none">
-                  <input type="text" value="<%=lesson._id%>" name="lessonId" class="d-none">
-
-                  <td colspan="2" style="padding:0 !important;">
-                    <div class="collapse mt-3" id="collapseExample">
+                <td style="padding: 0 !important;;" colspan="2">
+                  <form action="/replyComment" method="post">
+                    <input type="hidden" name="commentId" value="<%=comment._id%>">
+                    <input type="hidden" name="lessonId" value="<%=lesson._id%>">
+                    <div class="collapse" id="collapseExample_<%= comment._id %>">
                       <div class="card card-body">
                         <div class="row">
                           <div class="col-11">
-                            <textarea name="replyMainComment" class="form-control p-3 w-100" id=""></textarea>
+                            <textarea name="replyMainComment" class="form-control p-3 w-100"></textarea>
                           </div>
                           <div class="col-1">
-                            <button class="btn btn-primary w-100 h-100"><i class="bi bi-send-fill"></i>
+                            <button class="btn btn-primary w-100 h-100">
+                              <i class="bi bi-send-fill"></i>
                             </button>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </td>
-                </form>
+                  </form>
+                </td>
               </tr>
+
               <% if ((comment.replies) && (comment.replies.length > 0 )){ %>
               <tr>
                 <td colspan="2" style="padding-top: 0 !important">
@@ -822,8 +832,10 @@
                           <span class="fw-normal" style="font-size: small;">
                             |
                             <% if (String(userDataId) == String(reply.user._id)) { %>
-                            <a href="#" class="openPopupLink mx-1 fw-normal text-primary optionComment"  data-content-text="<%=reply.content%>" data-comment-id="<%=comment._id%>" data-user-id="<%=reply.user._id%>">แก้ไข</a>
-                            <a href="/studentIndex/deleteComment?replyUserId=<%=reply.user._id%>&commentId=<%=comment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
+                            <a href="#" class="openPopupLink mx-1 fw-normal text-primary optionComment" data-comment-id="<%= comment._id %>" data-user-id="<%= reply.user._id %>" data-content-text="<%- reply.content || 'ทดสอบ' %>" data-date="<%=reply.createdAt%>">
+                              แก้ไข
+                            </a>
+                            <a href="/deleteReplyComment?userId=<%=reply.user._id%>&_id=<%=comment._id%>&date=<%=reply.createdAt%>&lessonId=<%=lesson._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
                             <% }  %>
 
                           </span>
@@ -842,6 +854,29 @@
               <% } %>
 
               <% } else { %>
+              <tr>
+                <td style="padding: 0 !important;;" colspan="2">
+                  <form action="/replyComment" method="post">
+                    <input type="hidden" name="commentId" value="<%=comment._id%>">
+                    <input type="hidden" name="lessonId" value="<%=lesson._id%>">
+
+                    <div class="collapse" id="collapseExample_<%= comment._id %>">
+                      <div class="card card-body">
+                        <div class="row">
+                          <div class="col-11">
+                            <textarea name="replyMainComment" class="form-control p-3 w-100"></textarea>
+                          </div>
+                          <div class="col-1">
+                            <button class="btn btn-primary w-100 h-100">
+                              <i class="bi bi-send-fill"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </td>
+              </tr>
               <% if ((comment.replies) && (comment.replies.length > 0 )){ %>
               <tr>
                 <td colspan="2" style="padding-top: 0 !important">
@@ -870,8 +905,10 @@
                           <span class="fw-normal" style="font-size: small;">
                             |
                             <% if (String(userDataId) == String(reply.user._id)) { %>
-                            <a href="#" class="openPopupLink mx-1 fw-normal text-primary optionComment"  data-content-text="<%=reply.content%>" data-comment-id="<%=comment._id%>" data-user-id="<%=reply.user._id%>">แก้ไข</a>
-                            <a href="/studentIndex/deleteComment?replyUserId=<%=reply.user._id%>&commentId=<%=comment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
+                            <a href="#" class="openPopupLink mx-1 fw-normal text-primary optionComment" data-comment-id="<%= comment._id %>" data-user-id="<%= reply.user._id %>" data-content-text="<%- reply.content || 'ทดสอบ' %>" data-date="<%=reply.createdAt%>">
+                              แก้ไข
+                            </a>
+                            <a href="/deleteReplyComment?userId=<%=reply.user._id%>&_id=<%=comment._id%>&date=<%=reply.createdAt%>&lessonId=<%=lesson._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
                             <% }  %>
 
                           </span>
@@ -889,71 +926,13 @@
 
               <% } %>
               <% } %>
-              <!-- <tr>
-                <td colspan="3" style="padding-bottom: 1em !important;">
-                  <div class="d-flex">
-                    <% if (String(userDataId) == String(userCommentId)) { %>
-                    <a href="" class="text-primary optionComment">แก้ไข</a>
-                    <a href="" class="mx-2 text-primary optionComment">ลบ</a>
-                    <% } %>
-                  </div>
-                </td>
-              </tr> -->
-              <!-- <tr id="reply-comment" style="width: 1980px !important;">
-                <td colspan="3" style="padding-bottom: 1em !important;">
-                  <form action="/adminIndex/replyComment" method="post" enctype="multipart/form-data">
-                    <input type="text" class="d-none" name="lessonId" value="<%= lesson._id %>">
-                    <textarea class="form-control p-3 w-100 mb-3" name="replyComment" id="comment" placeholder="ตอบกลับความคิดเห็น"></textarea>
-                    <div class="d-flex justify-content-end">
-                      <button class="btn btn-primary p-2" type="submit">ตอบกลับความคิดเห็น</button>
-                    </div>
-                  </form>
-                </td>
-              </tr> -->
+
 
               <% }); %>
-              <!-- <tr>
-                  <td>
-                    <div class="comment">
-                      <div class="content d-flex">
-                        <img src="data:image/jpeg;base64,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" alt="รูปโปรไฟล์ผู้ใช้">
-                        <div>
-                          <p class="fw-bold">Jungkook
-                            <span class="fw-normal" style="font-size: small;">
-                              / 29 พฤษภาคม 2567 19:30
-                            </span>
-                          </p>
-                          <p class="comment-color">ชอบการสอนของคุณ มาร้องเพลงด้วยกันนะ</p>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <p class="comment-color">3 วันที่แล้ว</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="comment">
-                      <div class="content d-flex">
-                        <img src="https://today-obs.line-scdn.net/0hdGyibs2gO2hEECnrz1ZEP3xGNxl3diFhZiUmCTIYNlFsPHs5cHBoCzFEY0Q6JX1pZCZ9BzESNgg7cn5qKA/w644" alt="รูปโปรไฟล์ผู้ใช้">
-                        <div>
-                          <p class="fw-bold">Cha Eun Woo
-                            <span class="fw-normal" style="font-size: small;">
-                              / 29 พฤษภาคม 2567 19:30
-                            </span>
-                          </p>
-                          <p class="comment-color">สอนดีมาก ๆ เลยครับ</p>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <p class="comment-color">3 วันที่แล้ว</p>
-                  </td>
-                </tr> -->
+
             </table>
           </div>
+
         </div>
         <% } %>
       </div>
@@ -963,20 +942,22 @@
 
   <div class="overlay" id="overlay"></div>
   <div class="editCommentForm p-3" id="popupForm" style="width: 600px; max-width:600px">
-    <p class="fw-bold fs-4 mb-3">แก้ไขการตอบกลับ</p>
+    <p class="fw-bold fs-4 mb-3 pb-2 border-bottom">แก้ไขการตอบกลับ</p>
     <form id="editCommentForm" action="/editReplyComment" method="post">
       <input type="hidden" id="commentIdInput" name="commentId">
       <input type="hidden" id="userIdInput" name="userId">
-      <input type="hidden" id="lessonId" name="lessonId" value="<%=lesson._id%>">
-      <input type="hidden" id="oldContent" name="oldCOntent" >
+      <input type="hidden" name="lessonId" value="<%=lesson._id%>">
+      <input type="hidden" id="oldContent" name="oldContent" value="">
+      <input type="hidden" id="date" name="date" value="">
+      <textarea class="form-control my-1 p-2" row="1" id="commentContent" name="commentContent"></textarea><br>
+      <div class="d-flex justi">
+        <button class="btn btn-primary p-2 me-2" type="submit">บันทึกการแก้ไข</button>
+        <a href="#" class="closePopupLink btn btn-danger p-2">ปิดหน้าต่าง</a>
 
-      <textarea class="form-control my-1 p-2" row="1" id="commentContent" name="commentContent"></textarea>
-      <div class="d-flex justify-content-end mt-3">
-        <a class="btn btn-secondary p-2 me-2 closePopupLink" href="#">ปิด</a>
-        <button class="btn btn-primary p-2" type="submit">แก้ไข</button>
       </div>
     </form>
 
+    <!-- <a href="#" class="closePopupLink">ปิด Popup</a> -->
   </div>
 
   <%- include("./partials/footer.ejs")%>
@@ -992,13 +973,20 @@
           const commentId = this.getAttribute('data-comment-id');
           const userId = this.getAttribute('data-user-id');
           const content = this.getAttribute('data-content-text');
+          const date = this.getAttribute('data-date');
+
           // const date = this.getAttribute('data-date');
-         
+
           // นำค่าไปใส่ใน input field ของฟอร์ม
           document.getElementById('commentIdInput').value = commentId;
           document.getElementById('userIdInput').value = userId;
           document.getElementById('commentContent').value = content;
           document.getElementById('oldContent').value = content;
+          document.getElementById('date').value = date;
+
+          // const oldCon = document.getElementById('oldContent');
+          // console.log(content);
+          // console.log(oldCon.value);
 
           // แสดง popup และ overlay
           document.getElementById('popupForm').style.display = 'block';
@@ -1196,15 +1184,15 @@
           });
       });
 
-      document.querySelectorAll('.ReplyOptionComment').forEach(link => {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
+      // document.querySelectorAll('.ReplyOptionComment').forEach(link => {
+      //   link.addEventListener('click', function(e) {
+      //     e.preventDefault();
 
-          // Show the reply-comment row
-          document.getElementById('reply-comment').style.display = 'flex';
+      //     // Show the reply-comment row
+      //     document.getElementById('reply-comment').style.display = 'flex';
 
-        });
-      });
+      //   });
+      // });
     });
 
     Fancybox.bind("#gallery a", {

@@ -7,6 +7,7 @@ const SchoolYear = require("../models/schoolYear");
 const Subject = require("../models/subjects");
 const PdfFile = require("../models/pdfFile");
 
+const { deleteFileFromS3 } = require('../utils/s3Utils');
 
 const fs = require('fs');
 const util = require('util');
@@ -36,14 +37,18 @@ const deleteLesson = async (req, res) => {
         if (findLayout) {
           if (findLayout.name == 'Layout01') {
             var layoutFile = findLayout.AboutImage[0].file;
-            console.log(layoutFile);
+            // console.log(layoutFile);
 
-            var filePath = path.join(__dirname, '../uploads', layoutFile); // สร้าง path ของไฟล์
-            unlinkFile(filePath);
+            // var filePath = path.join(__dirname, '../uploads', layoutFile); // สร้าง path ของไฟล์
+            // unlinkFile(filePath);
+
+            var deleteFile = await deleteFileFromS3(layoutFile);
           } else if (findLayout.name == 'pdfFiles') {
             var layoutFile = findLayout.file;
-            var filePath = path.join(__dirname, '../uploads', layoutFile); // สร้าง path ของไฟล์
-            unlinkFile(filePath);
+            // var filePath = path.join(__dirname, '../uploads', layoutFile); // สร้าง path ของไฟล์
+            // unlinkFile(filePath);
+            var deleteFile = await deleteFileFromS3(layoutFile);
+
           }
           const deletedLayout = await Layout.findByIdAndDelete(layoutId);
         }

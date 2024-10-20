@@ -43,8 +43,6 @@ async function countTodayLessonAccess(subjectId) {
         // กำหนดช่วงเวลาสำหรับเมื่อวาน
         const startOfYesterday = moment().subtract(1, 'days').startOf('day').toDate();
         const endOfYesterday = moment().subtract(1, 'days').endOf('day').toDate();
-        // const startOfYesterday = moment().subtract(5, 'seconds').toDate();
-        // const endOfYesterday = moment().toDate();
 
         // ค้นหาจำนวนผู้เข้าถึงบทเรียนในวันนี้
         const todayUsers = await lessonProgress.aggregate([
@@ -86,40 +84,31 @@ async function countTodayLessonAccess(subjectId) {
         const todayCount = todayUsers.length > 0 ? todayUsers[0].uniqueUserCount : 0;
         const yesterdayCount = yesterdayUsers.length > 0 ? yesterdayUsers[0].uniqueUserCount : 0;
 
-        // คำนวณเปอร์เซ็นต์การเปลี่ยนแปลง
-        let percentChange = 0;
-        if (yesterdayCount > 0) {
-            percentChange = ((todayCount - yesterdayCount) / yesterdayCount) * 100;
-        }
-
-        // console.log(todayCount);
-        // console.log(yesterdayCount);
+        // คำนวณความแตกต่างของจำนวนผู้ใช้งาน
+        const difference = todayCount - yesterdayCount;
 
         // กำหนดข้อความสำหรับผลลัพธ์
         let resultMessage = "";
-        if (todayCount > yesterdayCount) {
-            resultMessage += ` เพิ่มขึ้นจากเมื่อวาน`;
-        } else if (todayCount < yesterdayCount) {
-            resultMessage += ` ลดลงจากเมื่อวาน`;
-        } else if (todayCount == 0) {
-            resultMessage += ` เท่ากับเมื่อวาน`;
+        if (difference > 0) {
+            resultMessage = `เพิ่มขึ้น ${difference} คนจากเมื่อวาน`;
+        } else if (difference < 0) {
+            resultMessage = `ลดลง ${Math.abs(difference)} คนจากเมื่อวาน`;
+        } else {
+            resultMessage = `จำนวนผู้เข้าถึงเท่ากับเมื่อวาน`;
         }
 
         return {
             todayCount,
             yesterdayCount,
-            percentChange,
+            difference,
             resultMessage
         };
 
     } catch (error) {
         console.error(error);
         return 0; // คืนค่า 0 หากเกิดข้อผิดพลาด
-
     }
 }
-
-
 
 const adminDashboard = async (req, res) => {
     try {
@@ -130,7 +119,6 @@ const adminDashboard = async (req, res) => {
             latestSubject = await Subject.findOne({ _id: subjectId }).populate("lessonArray");
         } else {
             // latestSubject = await Subject.findOne({ _id: "66a5b280abf2f346ab789a54" }).populate("lessonArray");
-
             latestSubject = await Subject.findOne().populate("lessonArray").sort({ createdAt: -1 });
         }
 
@@ -156,6 +144,7 @@ const adminDashboard = async (req, res) => {
 
             const totalLessons = latestSubject.lessonArray.length;
             const studentAmount = latestSubject.students.length;
+
             // สร้างตัวแปร array เพื่อเก็บผลลัพธ์
             let lessonProgressArray = [];
 
@@ -174,7 +163,6 @@ const adminDashboard = async (req, res) => {
                 });
             });
             
-            console.log(lessonProgressList);
             // วนลูปข้อมูล lessonProgress ที่ได้มาและเพิ่มจำนวนคนที่ทำเสร็จ
             lessonProgressList.forEach(progress => {
                 const lessonId = progress.lesson._id.toString();
@@ -191,19 +179,32 @@ const adminDashboard = async (req, res) => {
                 lessonProgressArray.push(value);
             });
 
+            // console.log(lessonProgressArray);
+            // [
+            //     { lessonName: 'JavaScript', lessonFinishedProgressAmount: 1 },
+            //     { lessonName: 'React.js', lessonFinishedProgressAmount: 1 }
+            //   ]
+
+
             // // return หรือส่งข้อมูลไปยังส่วนอื่น ๆ
             // // res.json(lessonProgressArray);
             let lessonLabels = [];
             let progressData = [];
             let lessonProgressPercentSummary = [];
+
+            
+
             lessonProgressArray.forEach(lesson => {
                 lessonLabels.push(lesson.lessonName);
                 progressData.push(lesson.lessonFinishedProgressAmount);
-                // สูตรคำนวณ (จำนวนที่ทำสำเร็จ / จำนวนนักศึกษาทั้งหมด) * 100
+                
+                //หา ว่าบทเรียนนั้นมีกี่คนที่สำเร็จ 100 เปอร์เซ็น 
+                // สูตร (จำนวนคนที่ทำสำเร็จ / จำนวนคนทั้งหมด) = lessonFinishedProgressAmount / studentAmount 
                 lessonProgressPercentSummary.push(
-                    ((lesson.lessonFinishedProgressAmount / studentAmount) * 100)
+                    ((lesson.lessonFinishedProgressAmount / studentAmount))
                 );
             });
+            console.log(lessonProgressPercentSummary);
 
             const totalProgress = lessonProgressPercentSummary.reduce((sum, progress) => sum + progress, 0);
             const totalMaxProgress = totalLessons * studentAmount; // ค่าที่คาดหวัง (100%)
@@ -212,7 +213,8 @@ const adminDashboard = async (req, res) => {
             let calculateTodayProgress = await countTodayLessonAccess(latestSubject._id)
             // res.json(countToday);
             // console.log(countToday);
-            // res.json(progressData);
+            // res.json(progressData)
+
             res.render('teacherDashboard', {
                 subjects,
                 latestSubject,
@@ -224,12 +226,14 @@ const adminDashboard = async (req, res) => {
                 finalPercentageTofixed,
                 countToday: calculateTodayProgress.todayCount, // ส่งค่าจำนวนผู้เข้าถึงในวันนี้
                 yesterdayCount: calculateTodayProgress.yesterdayCount, // ส่งค่าจำนวนผู้เข้าถึงเมื่อวาน
-                percentChange: calculateTodayProgress.percentChange, // ส่งค่าเปอร์เซ็นต์การเปลี่ยนแปลง
+                difference: calculateTodayProgress.difference, // ส่งค่าเปอร์เซ็นต์การเปลี่ยนแปลง
                 message: calculateTodayProgress.resultMessage // ส่งข้อความสำหรับผลลัพธ์
             })
         } else {
+            const subjects = await Subject.find().sort({ "createdAt": 1 });
+
             // res.json("subject no");
-            let subjects = [];
+            // let subjects = [];
             latestSubject = null;
             let lessonLabels = [];
             let progressData = [];
@@ -240,7 +244,14 @@ const adminDashboard = async (req, res) => {
 
         // res.json(latestSubject)
     } catch (err) {
-        console.log(err);
+        // console.log(err);
+        const subjects = await Subject.find().sort({ "createdAt": 1 });
+        latestSubject = null;
+        let lessonLabels = [];
+        let progressData = [];
+        let studentAmount = [];
+        res.render('teacherDashboard', {latestSubject, subjects, lessonLabels, progressData, studentAmount});
+
     }
 }
 

@@ -266,14 +266,14 @@
               <% lessons.forEach(lesson => { %>
               <% if (lesson.file) { %>
 
-              <a href="//studentIndex/eachLessonStudent?lessonId=<%= lesson._id %>">
+              <a href="/studentIndex/eachLessonStudent?lessonId=<%= lesson._id %>">
                 <div class="card-1 text-bg-white mb-3" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
                   <div class="card-header bg-white px-2 py-1 fw-bold text-primary" style="width: fit-content; border-bottom-right-radius:0.5em; position: absolute;">
                     <p class="text-break" style="font-size: small;"><%= lesson.LessonName %></p>
                   </div>
                   <div class="card-body-1">
                     <%const image = lesson.file%>
-                    <img src="/<%=image%>" alt="รูปภาพประกอบบทเรียน" class="card-img" alt="รูปของบทเรียน" style="width: 100%; height: 20%; max-width: 15.125em; max-height: 8.8125em; border-radius: 0.5em;">
+                    <img src="<%=image%>" alt="รูปภาพประกอบบทเรียน" class="card-img" alt="รูปของบทเรียน" style="width: 100%; height: 20%; max-width: 15.125em; max-height: 8.8125em; border-radius: 0.5em;">
                     <!-- /* <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของบทเรียน" style="height: 100%; width: 50%; object-fit: cover;"> */ -->
                   </div>
                 </div>

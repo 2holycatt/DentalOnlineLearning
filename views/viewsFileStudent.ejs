@@ -155,9 +155,9 @@
           </div>
         </div>
         <% if (contentType == "application/pdf" || contentType == "video/mp4") { %>
-        <iframe id="pdfIframe" class="pdf-iframe" src="/<%= fileName %>"></iframe>
+        <iframe id="pdfIframe" class="pdf-iframe" src="<%= fileName %>"></iframe>
         <% } else if (contentType == "image/jpeg") {%>
-        <img id="pdfIframe" class="pdf-iframe w-100 h-auto" src="/<%= fileName %>"></img>
+        <img id="pdfIframe" class="pdf-iframe w-100 h-auto" src="<%= fileName %>"></img>
         <% } %>
       </div>
     </div>

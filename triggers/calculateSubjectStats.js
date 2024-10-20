@@ -14,7 +14,8 @@ async function calculateAndUpdateSubjectStats(subjectId) {
                             lesson.LayOut2ArrayObject.length +
                             lesson.LayOut3ArrayObject.length +
                             lesson.LayOut4ArrayObject.length +
-                            lesson.LayOut5ArrayObject.length;
+                            lesson.LayOut5ArrayObject.length +
+                            lesson.TextEditors.length;
 
             totalPdfFiles += lesson.PdfFiles.length;
         });

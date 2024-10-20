@@ -116,7 +116,7 @@
                 <% files.forEach((file, index) => { %>
                 <a class="file-a" href="/studentIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
                   <span class=""><%=index+1%>. </span>
-                  <%=file.file.slice(25)%>
+                  <%=file.file.slice(67)%>
                 </a>
                 <br>
                 <% }); %>
@@ -194,12 +194,12 @@
                   <% files.forEach((file, index) => { %>
                   <div class="row">
                     <div class="col-7">
-                      <a class="file-a-2 mb-1" href="/adminIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
-                        <%=index+1%>. <%=file.file.slice(25)%>
+                      <a class="file-a-2 mb-1" href="/studentIndex/showFileArray2?id=<%=userSubmit._id%>&index=<%=index%>">
+                        <%=index+1%>. <%=file.file.slice(67)%>
                       </a>
                     </div>
                     <div class="col-2 d-flex justify-content-center">
-                      <a href="/adminIndex/delFile?assignId=<%=assignment._id%>&fileIndex=<%=index%>" class="text-danger fs-6 delFile">ลบ</a>
+                      <a href="/studentIndex/delFile?assignId=<%=userSubmit._id%>&fileIndex=<%=index%>" class="text-danger fs-6 delFile">ลบ</a>
                     </div>
                   </div>
                   <% }) %>

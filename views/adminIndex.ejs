@@ -398,16 +398,7 @@
         </div>
       </div>
     </div>
-    <div>
-      <p><%=userData.email%></p><br>
-      <p><%=userData._id%></p><br>
-      <p><%=userData.teacher.tel%></p>
-    </div>
-    <form action="/uploadFileApp" method="POST" enctype="multipart/form-data">
-      <input type="file" name="file" accept="image/*" required>
-      <button type="submit">อัปโหลด</button>
-    </form>
-    <img src="/processed-human-teeth-3d-model-993d4ecf89.jpeg" class="w-50 h-auto" alt="">
+  
   </div>
   <%- include("./partials/footer.ejs") %>
   <!-- <div class="row">
