@@ -20,7 +20,7 @@ const PDFDocument = require('pdfkit');
 const lessonQuestion = require("../models/LessonQuestion");
 const StudentAnswer = require("../models/StudentAnswerEndChapQuestion");
 const TextEditor = require("../models/TextEditor");
-
+const Assignment = require("../models/Assignments");
 const { deleteFileFromS3 } = require('../utils/s3Utils');
 
 // const atob = require('atob');
@@ -659,7 +659,7 @@ const eachLessons = async (req, res) => {
         populate: [
           { path: "user" },
           { path: "replies.user" }
-      ]
+        ]
       });
 
     // ฟังก์ชันสำหรับจัดรูปแบบวันที่
@@ -1310,7 +1310,7 @@ const deleteComment = async (req, res) => {
     const comment = await Comment.findById(commentId);
     const userData = await User.findById(req.session.userId);
 
-    const file =  comment.files;
+    const file = comment.files;
     for (i of file) {
       let deleteFile = await deleteFileFromS3(i.file);
     }
@@ -1434,10 +1434,94 @@ const deleteStudentFromSubjectPage = async (req, res) => {
 const deleteSubject = async (req, res) => {
   try {
     const subjectId = req.query.subjectId;
+
+    await Student.updateMany(
+      { 'subjects.subjectMongooseId': subjectId },  // เงื่อนไขในการค้นหา
+      { $pull: { subjects: { subjectMongooseId: subjectId } } }  // ลบ subject ออกจาก array
+    );
+    
+    const lessons = await Lesson.find({ 'subject.subjectMongooseId': subjectId });
+
+    for (i of lessons) {
+      const deleteLayout01 = i.LayOut1ArrayObject;
+      const deleteLayout02 = i.LayOut2ArrayObject;
+      const deleteLayout03 = i.LayOut3ArrayObject;
+      const deleteLayout04 = i.LayOut4ArrayObject;
+      const deletePdfFiles = i.PdfFiles;
+      const textEditors = i.TextEditors;
+
+      async function deleteLayouts(deleteLayouts, Layout) {
+        if (deleteLayouts.length > 0) {
+
+          for (const layoutId of deleteLayouts) {
+            let findLayout = await Layout.findById(layoutId);
+            if (findLayout) {
+              if (findLayout.name == 'Layout01') {
+                var layoutFile = findLayout.AboutImage[0].file;
+                // console.log(layoutFile);
+
+                // var filePath = path.join(__dirname, '../uploads', layoutFile); // สร้าง path ของไฟล์
+                // unlinkFile(filePath);
+
+                var deleteFile = await deleteFileFromS3(layoutFile);
+              } else if (findLayout.name == 'pdfFiles') {
+                var layoutFile = findLayout.file;
+                // var filePath = path.join(__dirname, '../uploads', layoutFile); // สร้าง path ของไฟล์
+                // unlinkFile(filePath);
+                var deleteFile = await deleteFileFromS3(layoutFile);
+
+              }
+              const deletedLayout = await Layout.findByIdAndDelete(layoutId);
+            }
+
+          }
+        }
+      }
+      // เรียกใช้ฟังก์ชั่น deleteLayouts สำหรับแต่ละประเภทของ Layout
+      await deleteLayouts(deleteLayout01, Layout1);
+      await deleteLayouts(deleteLayout02, Layout2);
+      await deleteLayouts(deleteLayout03, Layout3);
+      await deleteLayouts(deleteLayout04, Layout4);
+      await deleteLayouts(deletePdfFiles, PdfFile);
+      await deleteLayouts(textEditors, TextEditor);
+
+    }
+
+    await Lesson.deleteMany(
+      { 'subject.subjectMongooseId': subjectId },
+    );
+
+    const assignments = await Assignment.find({ subject: subjectId });
+
+    for (x of assignments) {
+      const assign = await Assignment.findById(x._id);
+
+      const files = assign.files;
+      // res.json(files);
+      for (const i of files) {
+        // var filePath = path.join(__dirname, '../uploads', i.file); // สร้าง path ของไฟล์
+
+        // unlinkFile(filePath)
+        await deleteFileFromS3(i.file)
+          .then(() => {
+            return Assignment.findByIdAndUpdate(getAssignId, {
+              $pull: {
+                files: { _id: i._id }
+              }
+            });
+          })
+      }
+    }
+
+    await Assignment.deleteMany(
+      { subject: subjectId },
+    );
+    
     await Subject.deleteOne({ _id: subjectId });
+
     res.redirect('/adminIndex/adminLessonIndex');
-  } catch {
-    console.log();
+  } catch (err){
+    console.log(err);
   }
 }
 

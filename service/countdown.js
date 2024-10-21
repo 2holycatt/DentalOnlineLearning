@@ -1,86 +1,98 @@
-// const nodeCron = require('node-cron');
-// const nodemailer = require('nodemailer');
+const nodeCron = require('node-cron');
+const nodemailer = require('nodemailer');
 // const Assignments = require("../models/Assignments");
+const Assignments = require('../models/Assignments'); // Assignment model
+const SubmitAssign = require('../models/submitAssignDetail'); // submitAssign model
+const User = require('../models/user.model'); // User model
+const Subject = require('../models/subjects');
+const Student = require('../models/student.model');
+const moment = require('moment-timezone');
 
-// // ตั้งค่า Nodemailer
-// // const transporter = nodemailer.createTransport({
-// //     service: 'gmail',
-// //     auth: {
-// //         user: 'papinwit.s@kkumail.com',
-// //         pass: 'akid mrnc zrey xzrd'
-// //     }
-// // });
+const formatDeadline = (timestamp) => {
+    return moment(timestamp).tz('Asia/Bangkok').format('dddd, DD/MM/YYYY HH:mm:ss');
+};
 
-// // async function sendDeadlineReminders() {
-// //     try {
-// //         // หา Assignment ที่กำหนดส่งในอีก 3 วันหรือ 1 วัน
-// //         const today = new Date();
-// //         const threeDaysLater = new Date(today);
-// //         const oneDayLater = new Date(today);
-        
-// //         threeDaysLater.setDate(today.getDate() + 3);
-// //         oneDayLater.setDate(today.getDate() + 1);
+// const User = require('../models/user.model'); // User model
+// ตั้งค่า Nodemailer
+// ตั้งค่า Nodemailer
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'papinwit.s@kkumail.com',
+        pass: 'akid mrnc zrey xzrd'
+    }
+});
 
-// //         const assignments = await Assignments.find({
-// //             Deadline: {
-// //                 $in: [threeDaysLater, oneDayLater]
-// //             }
-// //         }).populate({
-// //             path: 'subject',
-// //             populate: {
-// //                 path: 'students',
-// //                 populate: {
-// //                     path: 'user', // สมมติว่า student มี field ชื่อ 'user' ที่อ้างอิงไปยังโมเดล User
-// //                 }
-// //             }
-// //         });
+const sendEmail = (email, assignmentName, deadline) => {
+    const mailOptions = {
+        from: 'papinwit.s@kkumail.com',
+        to: email,
+        subject: `แจ้งเตือนเวลาหมดเขตส่งงานที่มอบหมาย: ${assignmentName}`,
+        text: `คุณมีงานที่มอบหมาย กำลังจะครบกำหนดในไม่ช้า ในวัน ${deadline} กรุณาตรวจสอบและส่งงานทันที`,
+    };
 
-// //         for (const assignment of assignments) {
-// //             const subject = assignment.subject;
-// //             const students = subject.students;
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+        } else {
+            console.log('Email sent:', info.response);
+        }
+    });
+};
 
-// //             for (const student of students) {
-// //                 const email = student.user.email;
-// //                 const studentInfo = student.user;
-// //                 const daysLeft = (assignment.Deadline.toDateString() === threeDaysLater.toDateString()) ? 3 : 1;
+const sendDeadlineReminders = async () => {
+    try {
+        const now = new Date();
+        // const oneDayInMs = 24 * 60 * 60 * 1000; // 1 วันในมิลลิวินาที
+        // หา assignments ที่ใกล้หมดกำหนด
 
-// //                 if (email.includes('@')) {
-// //                     // ส่งอีเมลแจ้งเตือน
-// //                     let info = await transporter.sendMail({
-// //                         from: 'papinwit.s@kkumail.com',
-// //                         to: email,
-// //                         subject: `Reminder: ${assignment.name} is due in ${daysLeft} day(s)`,
-// //                         html: `
-// //                             <p>Dear ${studentInfo.name},</p>
-// //                             <p>This is a reminder that the assignment <strong>${assignment.name}</strong> is due in ${daysLeft} day(s).</p>
-// //                             <p>Please make sure to submit it on time.</p>
-// //                         `
-// //                     });
+        // const threeDaysInMs = 3 * 24 * 60 * 60 * 1000; // 3 วันในมิลลิวินาที
+        // if (timeLeft <= oneDayInMs && timeLeft > oneDayInMs - (2 * 60 * 60 * 1000))
+        // if (timeLeft <= threeDaysInMs && timeLeft > threeDaysInMs - (2 * 60 * 60 * 1000))
 
-// //                     console.log('Reminder sent to %s: %s', email, info.messageId);
-// //                 }
-// //             }
-// //         }
-// //     } catch (error) {
-// //         console.error('Error sending reminders:', error);
-// //     }
-// // }
+        // const fifteenMinutesInMs = 15 * 60 * 1000; // 15 นาที
+        // const fiveMinutesInMs = 5 * 60 * 1000; // 5 นาที
 
-// // async function sendDeadlineReminders() {
-// //     console.log('Cron job started'); // เพิ่มการแจ้งเตือนนี้
-// //     try {
-// //         // โค้ดเดิม...
-// //     } catch (error) {
-// //         console.error('Error sending reminders:', error);
-// //     }
-// // }
 
-// // ตั้ง cron job เพื่อรันฟังก์ชันนี้ทุกวันตอนเที่ยงคืน
+        const assignments = await Assignments.find({
+            Deadline: { $gte: now },
+        }).populate('subject');
 
-// nodeCron.schedule('*/1 * * * *', () => {
-//     console.log('Cron job is working every 1 minutes');
-// });
+        for (const assignment of assignments) {
+            const deadline = new Date(assignment.Deadline);
+            const timeLeft = (deadline - now) / (1000 * 60); // เหลือเวลากี่นาที
 
-// // nodeCron.schedule('3 16 * * *', sendDeadlineReminders);
+            if (timeLeft <= 15 || timeLeft <= 5) {
+                // หา subject ที่เชื่อมโยงกับ assignment
+                const subject = await Subject.findById(assignment.subject).populate('students');
 
-// module.exports = { sendDeadlineReminders };
+                for (const studentRef of subject.students) {
+                    const student = await Student.findById(studentRef).populate('user');
+                    const user = student.user;
+
+                    // ตรวจสอบว่ามีการส่งงานหรือยัง
+                    const submitted = await SubmitAssign.findOne({
+                        assignment: assignment._id,
+                        user: user._id,
+                    });
+
+                    const deadline = assignment.Deadline;
+                    if (!submitted) {
+                        console.log(`นักศึกษายังไม่ส่งงาน ${assignment.name}. เหลือเวลา: ${timeLeft} นาที`);
+
+                        sendEmail(user.email, assignment.name, formatDeadline(deadline));
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error checking assignments:', error);
+    }
+};
+
+// nodeCron.schedule('* * * * *', sendDeadlineReminders);
+nodeCron.schedule('0 0 * * *', sendDeadlineReminders, {
+    timezone: 'Asia/Bangkok',
+});
+
+module.exports = { sendDeadlineReminders };

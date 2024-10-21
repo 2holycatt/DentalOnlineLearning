@@ -414,6 +414,7 @@ const studentDetail = async (req, res) => {
         let lessonLabels = [];
         let progressData = [];
         let timeSpent = [];
+
         subjectHasLessons.lessonArray.forEach((eachLesson, index) => {
             const lessonId = eachLesson._id.toString();
             const foundLessonProgress = allLessonProgress.some(progress => progress.lesson._id.toString() === lessonId);

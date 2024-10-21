@@ -111,6 +111,9 @@ router.route('/adminIndex/editAssign').post(upload.array("file"), editAssign);
 
 //Admin Layout Manangement
 const { createLayout_01, createLayout03, uploadPdfToLesson } = require("../controller/adminManageLayouts");
+const { makeEdit, makeEdit3, makeEditPdfiles } = require("../controller/adminEditDeleteController");
+
+
 router.route('/adminIndex/createLayout_01').post(upload.single("file"), createLayout_01);
 router.route('/adminIndex/uploadPdfToLesson').post(upload.array("pdf-file"), uploadPdfToLesson);
 router.route('/adminIndex/createLayout_03').post(upload.single("img-file"), createLayout03);
@@ -123,9 +126,14 @@ router.get('/adminIndex/getMoreAddContent', teacherMiddleware, adminManageLayout
 router.post('/adminIndex/copyLessons', adminManageLayouts.copyLessons);
 router.get('/adminIndex/deleteLesson', teacherMiddleware, adminEditDelete.deleteLesson);
 router.get('/adminIndex/editLesson', teacherMiddleware, adminEditDelete.editLesson)
-router.post('/adminIndex/makeEdit', adminEditDelete.makeEdit)
+// router.post('/adminIndex/makeEdit', adminEditDelete.makeEdit)
+router.route('/adminIndex/makeEdit').post(upload.single("Url"), makeEdit);
+router.route('/adminIndex/makeEdit3').post(upload.single("img-file"), makeEdit3);
+router.route('/adminIndex/makeEditPdfiles').post(upload.single("pdf-file"), makeEditPdfiles);
+
 router.post('/adminIndex/makeEdit2', adminEditDelete.makeEdit2)
-router.post('/adminIndex/makeEdit3', adminEditDelete.makeEdit3)
+router.post('/adminIndex/makeEdittextEditor', adminEditDelete.makeEdittextEditor)
+
 router.get('/adminIndex/deleteLayout', teacherMiddleware, adminEditDelete.deleteLayout)
 // router.post('/adminIndex/addEndQuestionChapter', adminManageLayouts.addEndQuestionChapter)
 

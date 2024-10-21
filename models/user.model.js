@@ -20,7 +20,7 @@ const userSchema = new Schema({
     },
     img: {
         type: String,
-        default: 'https://secure.gravatar.com/avatar/0d36b4ae4b9c67a2b162710923f792ed?s=35&amp;d=identicon'
+        default: 'https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_1280.png'
     },
     note: {
         type: String,

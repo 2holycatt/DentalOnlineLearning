@@ -9,9 +9,130 @@
   <link rel="stylesheet" href="/css/getMoreAddContent.css">
   <link rel="stylesheet" href="/css/animation.css">
   <link rel="stylesheet" href="/css/sweet.css">
-
+  <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.1/css/boxicons.min.css">
   <%- include("./partials/header.ejs")%>
   <style>
+     .toolbar {
+      padding: 16px;
+      background: #eee;
+    }
+
+    .toolbar .head {
+      display: flex;
+      grid-gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar .head>input {
+      max-width: 100px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 2px solid #ddd;
+      outline: none;
+    }
+
+    .toolbar .head select {
+      background: #fff;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .toolbar .head .color {
+      background: #fff;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      outline: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      grid-gap: 6px;
+      padding: 0 10px;
+    }
+
+    .toolbar .head .color span {
+      font-size: 14px;
+    }
+
+    .toolbar .head .color input {
+      border: none;
+      padding: 0;
+      width: 26px;
+      height: 26px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .toolbar .head .color input::-moz-color-swatch {
+      width: 20px;
+      height: 20px;
+      border: none;
+      border-radius: 50%;
+    }
+
+    .toolbar .btn-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      grid-gap: 10px;
+    }
+
+    .toolbar .btn-toolbar button {
+      background: #fff;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .toolbar .btn-toolbar button:hover {
+      background: #f3f3f3;
+    }
+
+    #content {
+      padding: 16px;
+      outline: none;
+      max-height: 50vh;
+      overflow: auto;
+    }
+
+    #show-code[data-active="true"] {
+      background: #eee;
+    }
+
+    .choose-layout {
+      border: 3px solid #0062cb;
+      height: 250px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 0.5em;
+    }
+
+    .choose-layout:hover>p {
+      font-size: xx-large !important;
+      transition: 0.3s;
+    }
+
+    .choose-layout>p {
+      transition-duration: 0.3s !important;
+    }
+
+    .drop-zone {
+      background-color: #F0F0F0;
+      border: 1px dashed #CCC;
+      padding: 10px;
+      text-align: center;
+      vertical-align: middle;
+    }
     .pdf-iframe {
       width: 100%;
       height: calc(100vh - 50px);
@@ -494,10 +615,17 @@
                     <label for="MainDescription" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 2 >> </span>คำอธิบายเพิ่มเติม: </label>
                     <textarea class="form-control w-75 p-3" name="MainDescription" id="topicInput2" style="height: 100px;"><%=Layout.MainDescription%></textarea>
                   </div>
-                  <div class="form my-1 mb-3 mb-3">
+                  <div class="form my-1 mb-3">
                     <label for="subDescription" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 3 >> </span>คำอธิบายเนื้อหาหลัก: </label>
-                    <textarea class="form-control w-75 p-3" name="subDescription" id="topicInput3" style="height: 100px;"><%=Layout.SubDescription%></textarea>
+                    <textarea class="form-control w-75 p-3" name="SubDescription" id="topicInput3" style="height: 100px;"><%=Layout.SubDescription%></textarea>
                   </div>
+                  
+                  <div class="form my-1 mb-3">
+                    <label for="ImageDescription" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 6 >> </span>คำอธิบายเกี่ยวกับรูปภาพ: </label>
+                    <textarea class="form-control w-75 p-3" name="ImageDescription" id="topicInput6" style="height: 100px;"><%=Layout.AboutImage[0].ImageDescription%></textarea>
+                  </div>
+                </div>
+                <div class="underForm-1 col-6">
                   <div class="form my-1 mb-3">
                     <label for="title" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 4 >> </span>ชื่อรูปภาพ: </label>
                     <input type="text" class="form-control p-3 w-75" name="title" id="topicInput4" value="<%=Layout.AboutImage[0].title %>" required>
@@ -505,7 +633,7 @@
                   <div class="my-1 mb-3">
                     <label for="Url" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 5 >> </span>รูปภาพ: </label><br>
                     <input type="file" class="w-75 img-input" id="topicInput5" style="background-color: white !important;" name="Url" accept="image/*,video/*">
-                    <p class="fw-bold fs-6" style="margin-top: 1em !important;">รูปภาพ/วิดีโอ เดิมที่ใช้: </p>
+                    <p class="fw-bold fs-6" style="margin-top: 1em !important;">รูปภาพหรือวิดีโอ เดิมที่ใช้: </p>
                     <div class="w-100">
                       <% const file = Layout.AboutImage[0].file %>
                       <% if (Layout.AboutImage[0].contentType.startsWith("image/")) { %>
@@ -518,12 +646,8 @@
                       <% } %>
                     </div>
                   </div>
-                  <div class="form my-1 mb-3">
-                    <label for="ImageDescription" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 6 >> </span>คำอธิบายเกี่ยวกับรูปภาพ: </label>
-                    <textarea class="form-control w-75 p-3" name="ImageDescription" id="topicInput6" style="height: 100px;"><%=Layout.AboutImage[0].ImageDescription%></textarea>
-                  </div>
                 </div>
-                
+
                 <div class="d-flex col-12 row">
                   <div class="col-6">
                     <button type="submit" class="setRadius submitBtn btn btn-success my-3 p-2 shadow-sm w-25">บันทึก
@@ -627,8 +751,8 @@
             <form class="addLayout01Form" action="/adminIndex/makeEdit3" method="post" enctype="multipart/form-data">
               <input class="d-none" type="text" name="_id" value="<%= lesson._id %>">
               <input class="d-none" type="text" name="layoutId" value="<%= Layout._id %>">
-              <div class="form-grid px-4 py-1">
-                <div class="underForm-1">
+              <div class="row px-4 py-1">
+                <div class="underForm-1 col-6">
                   <div class="my-1 mb-3">
                     <label for="Description" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 1 >> </span>คำอธิบาย: </label>
                     <input type="text" class="form-control p-3 w-75" id="topicInput11" name="Description" value="<%=Layout.Description%>" required>
@@ -637,9 +761,16 @@
                   <div class="my-1 mb-3">
                     <label for="FileForm" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 2 >> </span>รูปภาพ: </label><br>
                     <input type="file" class="w-75 img-input" id="topicInput12" style="background-color: white !important;" name="FileForm" accept="image/*,video/*,application/pdf">
-                    <p class="fw-bold fs-6" style="margin-top: 1em !important;">รูปภาพเดิมที่ใช้: </p>
+                    <p class="fw-bold fs-6" style="margin-top: 1em !important;">รูปภาพหรือวิดีโอเดิมที่ใช้: </p>
                     <div class="w-75">
-                      <img class="ImageFile h-75 w-100 mx-auto my-2" src="data:image/<%= Layout.File.contentType %>;base64,<%= Layout.File.data.toString('base64') %>" alt="รูปภาพประกอบการเรียน">
+                      <% if (Layout.contentType.startsWith("image/")) { %>
+                        <img class="ImageFile h-75 w-100 mx-auto my-2" src="<%=Layout.file%>" alt="รูปภาพประกอบการเรียน">
+                        <%} else if (Layout.contentType.startsWith("video/")) {%>
+                        <video class="w-75 h-75 my-4" controls autoplay>
+                          <source src="<%=Layout.file%>" type="<%=Layout.contenType%>">
+                          Your browser does not support the video tag.
+                        </video>
+                        <% } %>
                     </div>
 
                     <!-- <div id="emailHelp" class="form-text my-1">*ไม่ต้องทำการอัปโหลดรูปภาพ หากไม่มีรูปภาพที่ต้องการใช้</div> -->
@@ -654,54 +785,24 @@
                     </a>
                   </div>
                 </div>
-                <div class="underForm-2">
-                  <p class="fw-normal text-secondary my-1" style="font-size: small;"><i class="bi bi-info-circle text-primary" style="margin-right: 0.25em !important;"></i>
-                    สามารถกรอกข้อมูลต่าง ๆ พร้อมกับดูรูปแบบที่และหน้าตาที่จะได้ในเวลาพร้อมกัน
-                  </p>
-                  <p class="fw-bold text-dark my-1" style="font-size: small;">คำอธิบาย: <span class="fw-normal text-secondary">ตัวเลขใช้แทนส่วนต่าง ๆ เมื่อกรอกข้อมูลลงไป</span></p>
-
-                  <div class="layout-3-typing my-2">
-                    <!-- <p class="fs-2 layout-1-topic-p w-auto h-auto"> -->
-                    <p class="fs-5 fw-bold layout-1-topic-p w-auto h-auto mx-3" id="outputParagraph11">
-                      <i class="bi fs-6 bi-1-circle-fill text-primary"></i><span class="fw-normal fs-6 text-secondary example-text-3 mx-2">
-                      </span>
-                    </p>
-                    <div class="exampleLayout-3 mx-3">
-                      <div id="imagePlaceholder2" class="d-flex justify-content-center" style="margin-top: 0.5em !important;">
-                        <div class="p-2 set-border-title-2 w-100 my-1">
-                          <p class="fs-6 text-center">
-                            <i class="bi bi-2-circle-fill text-primary"></i>
-                          </p>
-                          <p class="fs-6 text-center">
-                            รูปภาพ
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <p class="fw-bold text-center text-dark my-2">
-                      รูปแบบที่ได้เมื่อกรอกข้อมูล
-                    </p>
-                  </div>
-                </div>
+                
               </div>
             </form>
 
           </div>
           <% } else if (Layout.name == "Layout04") {%>
-          <div class="lesson-content py-2 bg-white my-4">
-            <form class="addLayout01Form" action="/adminIndex/makeEdit4" method="post" enctype="multipart/form-data">
+          <div class="lesson-content bg-white my-4">
+            <form action="/adminIndex/makeEdit4" method="post" enctype="multipart/form-data">
               <input class="d-none" type="text" name="_id" value="<%= lesson._id %>">
               <div class="IandMain d-grid">
-                <input class="input-mainDes form-control mx-4 p-3 h-auto" name="Topic" value="<%= Layout.Topic%>" required>
+                <input class="input-mainDes form-control mx-4 px-3 mt-4 h-auto" name="Topic" value="<%= Layout.Topic%>" required>
                 <div class="d-none">
                   <button type="button" class="cancelIcon4 layout-1-a mx-4">
                     <i class="bi bi-x-lg"></i>
                   </button>
                 </div>
               </div>
-              <div class="setMargin py-4 px-4 bg-white w-100">
+              <div class="setMargin py-2 px-4 bg-white w-100">
                 <div class="Layout2Contents w-100 p-3">
                   <textarea class="teaxtAreaLayout4_1" name="Description" class="w-100 h-25"><%= Layout.Description%></textarea>
                   <div class="columnGrid">
@@ -710,25 +811,14 @@
                       <% let finalCountImg; %>
                       <% List.forEach((list, index) => { %>
                       <% let countImg = index +1 %>
-                      <input type="text" name="list<%=countImg%>" class="setBorder w-75" value="<%= list.list %>">
+                      <input type="text" name="list<%=countImg%>" class="form-control w-75 p-1 mb-2" value="<%= list.list %>">
                       <% finalCountImg = countImg; %>
                       <input type="text" class="d-none" name="finalCountImg" value="<%=finalCountImg%>">
                       <% }); %>
                     </div>
                   </div>
                 </div>
-                <!-- <div class="add-button-1 w-50 d-flex justify-content-start">
-                  <button type="button" class="addAndMinus addAnd bg-white my-3">
-                    <i class="bi bi-plus-square text-success fs-4"><span class="fs-6"> เพิ่มรายการ</span></i>
-                    <i class="bi bi-plus-square-fill text-success fs-4" style="display: none;"><span class="fs-6"> เพิ่มรายการ</span></i>
-                  </button>
-                  </button>
-                  <button type="button" class="addAndMinus minusAnd bg-white my-3">
-                    <i class="bi bi-dash-square text-danger fs-4"><span class="fs-6"> ลดรายการ</span></i>
-                    <i class="bi bi-dash-square-fill text-danger fs-4" style="display: none;"><span class="fs-6"> ลดรายการ</span></i>
-                  </button>
-                </div> -->
-                <div class="add-button-2 w-50 d-flex justify-content-end">
+                <div class="d-flex justify-content-start w-50 mt-2">
                   <button type="submit" class="setRadius submitBtn btn btn-success my-3 p-2 shadow-sm w-25">บันทึก
                     <i class="bi bi-save-fill mx-2"></i>
                   </button>
@@ -747,18 +837,106 @@
 
             </div>
             <div class="mx-4">
-              <form action="/adminIndex/uploadPdfToLesson" method="post" enctype="multipart/form-data">
-                <input type="hidden" value="<%= Layout._id %>">
+              <form action="/adminIndex/makeEditPdfiles" method="post" enctype="multipart/form-data">
+                <input class="d-none" type="text" name="_id" value="<%= lesson._id %>">
+                <input class="d-none" type="text" name="layoutId" value="<%= Layout._id %>">                
                 <p class="my-1"><span class="text-primary">ไฟล์เดิม:</span> <%=Layout.file.slice(53)%></p>
                 <iframe class="pdf-iframe" src="<%=Layout.file%>" frameborder="0"></iframe>
-                <div class="my-2 me-3">
-                  <input type="file" name="pdf-file" id="pdf-file" accept="application/pdf" multiple>
-                  <button class="btn btn-primary p-1" type="submit">อัปโหลดไฟล์เพื่อแก้ไข</button>
-                </div>
+                  <div class="my-2 me-3">
+                    <input type="file" name="pdf-file" id="pdf-file" accept="application/pdf" multiple>
+                    <button class="btn btn-primary p-1" type="submit">อัปโหลดไฟล์เพื่อแก้ไข</button>
+                  </div>
+                 <div class="w-50">
+                  <a href="/adminIndex/deleteLayout?layoutId=<%=Layout._id%>&whatLayout=5&lessonId=<%=lesson._id%>" type="button" class="cancelBtn1 setRadius submitBtn btn btn-danger mb-2 p-2 shadow-sm w-25">ลบ
+                    <!-- <i class="bi bi-save-fill mx-2"></i> -->
+                    <i class="bi bi-eraser-fill mx-2"></i>
+                  </a>
+                 </div>
               </form>
             </div>
 
           </div>
+          <% } else if (Layout.name == "TextEditor"){ %>
+            <div class="lesson-content p-4 my-4 bg-white w-100 h-auto">
+              <!-- <div class="add-content-header">
+                <p class="fw-bold fs-4 my-2 mx-2">เพิ่มเนื้อหา: <span class="text-primary">ปรับแต่งข้อความ</span> </p>
+              </div>
+              <p class="discription-layout-1 mx-2 my-2">
+                <span class="fw-bold text-dark">คำอธิบาย: </span>
+                กรอกข้อความและทำการเลือกเครื่องมือเพื่อปรับแต่งหรือออกแบบข้อความได้ตามความต้องการ
+              </p> -->
+              <div class="toolbar p-2 rounded">
+                <div class="head mb-2">
+                  <input class="p-1 w-auto" type="text" placeholder="Filename" value="ไม่มีหัวข้อ" id="filename">
+                  <input type="hidden" value="<%=lesson._id%>" id="_id">
+                  <input type="hidden" value="<%=Layout._id%>" id="layoutId">
+
+                  <select class="p-1" onchange="fileHandle(this.value); this.selectedIndex=0">
+                    <option value="" selected="" hidden="" disabled="">ไฟล์</option>
+                    <option value="new">ไฟล์ใหม่</option>
+                    <option value="txt">บันทึกเป็น .txt</option>
+                    <option value="pdf">บันทึกเป็น .pdf</option>
+                  </select>
+                  <select class="p-1" onchange="formatDoc('formatBlock', this.value); this.selectedIndex=0;">
+                    <option value="" selected="" hidden="" disabled="">Format</option>
+                    <option value="h1">Heading 1</option>
+                    <option value="h2">Heading 2</option>
+                    <option value="h3">Heading 3</option>
+                    <option value="h4">Heading 4</option>
+                    <option value="h5">Heading 5</option>
+                    <option value="h6">Heading 6</option>
+                    <option value="p">Paragraph</option>
+                  </select>
+                  <select class="p-1" onchange="formatDoc('fontSize', this.value); this.selectedIndex=0;">
+                    <option value="" selected="" hidden="" disabled="">Font size</option>
+                    <option value="1">Extra small</option>
+                    <option value="2">Small</option>
+                    <option value="3">Regular</option>
+                    <option value="4">Medium</option>
+                    <option value="5">Large</option>
+                    <option value="6">Extra Large</option>
+                    <option value="7">Big</option>
+                  </select>
+                  <div class="color">
+                    <span>Color</span>
+                    <input type="color" oninput="formatDoc('foreColor', this.value); this.value='#000000';">
+                  </div>
+                  <div class="color">
+                    <span>Background</span>
+                    <input type="color" oninput="formatDoc('hiliteColor', this.value); this.value='#000000';">
+                  </div>
+
+                </div>
+                <div class="btn-toolbar">
+                  <button onclick="formatDoc('undo')"><i class='bx bx-undo'></i></button>
+                  <button onclick="formatDoc('redo')"><i class='bx bx-redo'></i></button>
+                  <button onclick="formatDoc('bold')"><i class='bx bx-bold'></i></button>
+                  <button onclick="formatDoc('underline')"><i class='bx bx-underline'></i></button>
+                  <button onclick="formatDoc('italic')"><i class='bx bx-italic'></i></button>
+                  <button onclick="formatDoc('strikeThrough')"><i class='bx bx-strikethrough'></i></button>
+                  <button onclick="formatDoc('justifyLeft')"><i class='bx bx-align-left'></i></button>
+                  <button onclick="formatDoc('justifyCenter')"><i class='bx bx-align-middle'></i></button>
+                  <button onclick="formatDoc('justifyRight')"><i class='bx bx-align-right'></i></button>
+                  <button onclick="formatDoc('justifyFull')"><i class='bx bx-align-justify'></i></button>
+                  <button onclick="formatDoc('insertOrderedList')"><i class='bx bx-list-ol'></i></button>
+                  <button onclick="formatDoc('insertUnorderedList')"><i class='bx bx-list-ul'></i></button>
+                  <button onclick="addLink()"><i class='bx bx-link'></i></button>
+                  <button onclick="formatDoc('unlink')"><i class='bx bx-unlink'></i></button>
+                  <button id="show-code" data-active="false">&lt;/&gt;</button>
+                  
+                </div>
+              </div>
+              <div class="mt-2" id="content" contenteditable="true" spellcheck="false">
+              <%-Layout.body%>
+              </div>
+              <div class="d-flex justify-content-end border-top mt-2 pt-3">
+                <button  class="btn btn-success p-2 shadow-sm" onclick="saveContent()">บันทึก<i class="bi bi-save-fill mx-2"></i></button>
+              </div>
+              <!-- <button type="submit" class="setRadius submitBtn4 btn btn-success my-3 p-2 shadow-sm w-25">บันทึก
+                <i class="bi bi-save-fill mx-2"></i>
+              </button> -->
+
+            </div>
           <% } %>
           <% }); %>
           <div class="row">
@@ -807,19 +985,121 @@
     </div>
   </div>
   <%- include("./partials/footer.ejs")%>
-  <script src="/js/two-way-2.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   <script>
-    document.getElementById("topicInput5").addEventListener("change", function(event) {
-      if (event.target.files.length > 0) {
-        var file = event.target.files[0];
-        var imageUrl = URL.createObjectURL(file);
-        // console.log(imageUrl);
-        document.getElementById("imagePlaceholder").innerHTML = `
-          <div class="w-auto d-flex justify-content-center">
-          <img src="${imageUrl}" alt="รูปภาพ" class="img-fluid img222">
-          </div>`;
+     function formatDoc(command, value = null) {
+        document.execCommand(command, false, value);
       }
-    });
+
+      async function saveContent() {
+        const title = document.getElementById('filename').value;
+        const _id = document.getElementById('_id').value;
+        const layoutId = document.getElementById('layoutId').value;
+
+        const body = document.getElementById('content').innerHTML;
+
+        const response = await fetch('/adminIndex/makeEdittextEditor', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title,
+            body,
+            layoutId,
+            _id
+          }),
+        });
+
+        if (response.ok) {
+          // alert('Content saved successfully!');
+          window.location.href = `/adminIndex/editLessonContent?lesson=${_id}`;
+          // res.redirect(`/adminIndex/getMoreAddContent?lesson=${_id}`);
+        } else {
+          console.log(response);
+          alert('Error saving content.');
+        }
+      }
+
+      function formatDoc(cmd, value = null) {
+        if (value) {
+          document.execCommand(cmd, false, value);
+        } else {
+          document.execCommand(cmd);
+        }
+      }
+
+      function addLink() {
+        const url = prompt('Insert url');
+        formatDoc('createLink', url);
+      }
+
+
+
+
+      const content = document.getElementById('content');
+
+      content.addEventListener('mouseenter', function() {
+        const a = content.querySelectorAll('a');
+        a.forEach(item => {
+          item.addEventListener('mouseenter', function() {
+            content.setAttribute('contenteditable', false);
+            item.target = '_blank';
+          })
+          item.addEventListener('mouseleave', function() {
+            content.setAttribute('contenteditable', true);
+          })
+        })
+      })
+
+
+      const showCode = document.getElementById('show-code');
+      let active = false;
+
+      showCode.addEventListener('click', function() {
+        showCode.dataset.active = !active;
+        active = !active
+        if (active) {
+          content.textContent = content.innerHTML;
+          content.setAttribute('contenteditable', false);
+        } else {
+          content.innerHTML = content.textContent;
+          content.setAttribute('contenteditable', true);
+        }
+      })
+
+
+
+      const filename = document.getElementById('filename');
+
+      function fileHandle(value) {
+        if (value === 'new') {
+          content.innerHTML = '';
+          filename.value = 'ไม่มีหัวข้อ';
+        } else if (value === 'txt') {
+          const blob = new Blob([content.innerText])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${filename.value}.txt`;
+          link.click();
+        } else if (value === 'pdf') {
+          html2pdf(content).save(filename.value);
+        }
+      }
+
+    // document.getElementById("topicInput5").addEventListener("change", function(event) {
+    //   if (event.target.files.length > 0) {
+    //     var file = event.target.files[0];
+    //     var imageUrl = URL.createObjectURL(file);
+    //     // console.log(imageUrl);
+    //     document.getElementById("imagePlaceholder").innerHTML = `
+    //       <div class="w-auto d-flex justify-content-center">
+    //       <img src="${imageUrl}" alt="รูปภาพ" class="img-fluid img222">
+    //       </div>`;
+    //   }
+    // });
 
     document.getElementById("topicInput12").addEventListener("change", function(event) {
       if (event.target.files.length > 0) {

@@ -23,7 +23,7 @@ const LessonTriggers = (schema) => {
 
     schema.post('findOneAndUpdate', function (doc) {
         console.log('FindOneAndUpdate trigger activated');
-        console.log('doc Id: '+ doc._id);
+        // console.log('doc Id: '+ doc._id);
         // console.log(doc);
         if (doc) {
             calculateLessonStats(doc._id);

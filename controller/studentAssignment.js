@@ -224,7 +224,7 @@ const delStudentFile = async (req, res) => {
         const filePath = fileNameToDelete;
         const deletedFileId = getSubmitAssign.files[getIndex]._id;
         const assignId = getSubmitAssign.assignment._id
-    //    await deleteFileFromS3(filePath)
+        //    await deleteFileFromS3(filePath)
 
         // ลบไฟล์
         // unlinkFile(filePath)
@@ -257,23 +257,19 @@ const historyAssignment = async (req, res) => {
     try {
         const userData = await User.findById(req.session.userId)
             .populate({
-                path: "student",
+                path: 'submitAssign',
                 populate: {
-                    path: "schoolYear",
-                    populate: {
-                        path: "Assignments"
-                    }
+                    path: 'assignment', // ดึง Assignment ที่เชื่อมกับ submitAssign
                 }
-            });
-        const historyAssignment = await User.findById(req.session.userId);
+            })
+            .populate('student'); // ถ้าต้องการข้อมูล student ด้วย
 
-        const assignmentArray = [];
-        const getAssignment = historyAssignment.submitAssign;
+        const assignmentArray = userData.submitAssign;
 
-        for (const i of getAssignment) {
-            const getSubmitDetails = await submitAssign.findById(i).populate('assignment');
-            assignmentArray.push(getSubmitDetails);
-        }
+        // for (const i of getAssignment) {
+        //     const getSubmitDetails = await submitAssign.findById(i).populate('assignment');
+        //     assignmentArray.push(getSubmitDetails);
+        // }
         // const getUserLessons = userData.student.schoolYear.lessonArray;
         res.render("historyAssignment", { userData, assignmentArray });
     } catch (error) {
