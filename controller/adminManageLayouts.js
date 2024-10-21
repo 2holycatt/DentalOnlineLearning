@@ -412,6 +412,7 @@ const copyLessons = async function (req, res, next) {
             if (lesson.PdfFiles.length > 0) {
                 const pdfFiles = lesson.PdfFiles;
                 for (b of pdfFiles) {
+                    console.log(b);
                     let findPdfFile = await pdfFile.findOne({ _id: b });
                     const pdfData = findPdfFile.toObject();
                     // const pdfData = pdfFiles[i].toObject(); 
