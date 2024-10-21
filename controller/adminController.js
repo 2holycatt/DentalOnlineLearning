@@ -390,7 +390,7 @@ const copyLessons = async (req, res) => {
     // const schoolYears = await SchoolYear.find().sort({ schoolYear: 0 });
     // const findYear = null;
 
-    res.render("copyLessons", { mytitle: "copyLessons", subjectWithLessons, subjectToCopy });
+    res.render("copylessons", { mytitle: "copyLessons", subjectWithLessons, subjectToCopy });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
