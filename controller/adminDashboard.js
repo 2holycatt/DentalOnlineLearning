@@ -210,7 +210,7 @@ const adminDashboard = async (req, res) => {
             const totalProgress = lessonProgressPercentSummary.reduce((sum, progress) => sum + progress, 0);
            
             
-            const totalMaxProgress = totalProgress * 100; // ค่าที่คาดหวัง (100%)
+            const totalMaxProgress = (totalProgress / subjects.lessonArray.length ) * 100; // ค่าที่คาดหวัง (100%)
             
             // const finalPercentage = (totalProgress / totalMaxProgress) * 100;
             const finalPercentageTofixed = parseFloat(totalMaxProgress.toFixed(2))
