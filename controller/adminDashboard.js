@@ -206,10 +206,14 @@ const adminDashboard = async (req, res) => {
             });
             // console.log(lessonProgressPercentSummary);
 
+            // totalProgress ผลรวมจำนวนนักเรียนคนที่เสร็จบทเรียนในแต่ละบท 
             const totalProgress = lessonProgressPercentSummary.reduce((sum, progress) => sum + progress, 0);
-            const totalMaxProgress = totalLessons * studentAmount; // ค่าที่คาดหวัง (100%)
-            const finalPercentage = (totalProgress / totalMaxProgress) * 100;
-            const finalPercentageTofixed = parseFloat(finalPercentage.toFixed(2))
+           
+            
+            const totalMaxProgress = totalProgress * 100; // ค่าที่คาดหวัง (100%)
+            
+            // const finalPercentage = (totalProgress / totalMaxProgress) * 100;
+            const finalPercentageTofixed = parseFloat(totalMaxProgress.toFixed(2))
             let calculateTodayProgress = await countTodayLessonAccess(latestSubject._id)
             // res.json(countToday);
             // console.log(countToday);
