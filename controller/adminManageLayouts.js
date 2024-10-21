@@ -573,53 +573,49 @@ const uploadPdfToLesson = async (req, res) => {
 }
 
 const addEndQuestionChapter = async (req, res) => {
-    // เข้าถึงทุกคำถามในฟอร์ม
-    // const body = req.body;
-    // const files = req.files;
-    res.json(req.files);
-    // const reqQuestions = Object.keys(req.body)
-    //     .filter(key => key.startsWith('question'))
-    //     .map(key => req.body[key]);
+    
+    const reqQuestions = Object.keys(req.body)
+        .filter(key => key.startsWith('question'))
+        .map(key => req.body[key]);
 
-    // // ทำสิ่งที่ต้องการกับคำถามเหล่านี้
-    // // res.send(questions);
-    // const lessonId = req.body.lessonId;
-    // const QuestionsArray = [];
+    // res.send(questions);
+    const lessonId = req.body.lessonId;
+    const QuestionsArray = [];
 
-    // reqQuestions.forEach((question, index) => {
-    //     let eachQuestion = {
-    //         questionNo: index + 1,
-    //         questionText: question
-    //     }
-    //     QuestionsArray.push(eachQuestion);
+    reqQuestions.forEach((question, index ) => {
+        let eachQuestion = {
+            questionNo: index+1,
+            questionText: question
+        }
+        QuestionsArray.push(eachQuestion);
+        
+    });
 
-    // });
+    const newQuestions = new lessonQuestion({
+        Questions:QuestionsArray
+    });
+    await newQuestions.save();
 
-    // const newQuestions = new lessonQuestion({
-    //     Questions: QuestionsArray
-    // });
-    // await newQuestions.save();
+    const addLessonIdToQuestion = await lessonQuestion.findByIdAndUpdate(
+        newQuestions._id,
+        { $push : { Lesson: lessonId} },
+        { new: true}
+    )
+    
+    const addQuestionIdToLesson = await Lesson.findByIdAndUpdate(
+        {_id:lessonId},
+        { $push : { lessonQuestion: newQuestions._id}},
+        { new: true}
+    )
 
-    // const addLessonIdToQuestion = await lessonQuestion.findByIdAndUpdate(
-    //     newQuestions._id,
-    //     { $push: { Lesson: lessonId } },
-    //     { new: true }
-    // )
+    // const findQuestions = await lessonQuestion.find().exec();
 
-    // const addQuestionIdToLesson = await Lesson.findByIdAndUpdate(
-    //     { _id: lessonId },
-    //     { $push: { lessonQuestion: newQuestions._id } },
-    //     { new: true }
-    // )
-
-    // // const findQuestions = await lessonQuestion.find().exec();
-
-    // // if (findQuestions) {
-    // //     res.send(findQuestions);
-    // // } else {
-    // //     res.send("Not found any questions")
-    // // }
-    // res.redirect(`/adminIndex/eachLessons?lessonId=${lessonId}`);
+    // if (findQuestions) {
+    //     res.send(findQuestions);
+    // } else {
+    //     res.send("Not found any questions")
+    // }
+    res.redirect(`/adminIndex/eachLessons?lessonId=${lessonId}`);
     // res.send("Add Questions Success");
 
 }

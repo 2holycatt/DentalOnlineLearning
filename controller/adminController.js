@@ -942,6 +942,7 @@ const eachLessonStudent = async (req, res) => {
     // res.json(foundLayouts)
     // res.json(lay01_contents)
     // res.json(studentAnswer);
+    console.log(studentAnswer);
     res.render("eachLessonStudent", {
       mytitle: "eachLessonStudent",
       lesson,
@@ -1665,6 +1666,7 @@ const studentAnswerEndChapterQuestions = async (req, res) => {
   try {
     const lessonQuestionId = req.body.lessonQuestionId;
     const lessonId = req.body.lessonId;
+    
     let lessonQuestionData = await lessonQuestion.findById(lessonQuestionId);
 
     if (!lessonQuestionData) {
@@ -1698,7 +1700,7 @@ const studentAnswerEndChapterQuestions = async (req, res) => {
       }
 
     } else if (!checkExist) {
-      let newStudentAnswer = new StudentAnswer({
+      const newStudentAnswer = new StudentAnswer({
         lessonQuestion: lessonQuestionId,
         user: req.session.userId
       })
@@ -1713,7 +1715,7 @@ const studentAnswerEndChapterQuestions = async (req, res) => {
 
           let question = {
             questionNo: questionNo,
-            questionText: req.body[`question1${questionNo}`]
+            questionText: req.body[`question${questionNo}`]
           }
           // ถ้าถูกทำเครื่องหมายให้ลบ ก็ให้ลบคำถามนี้ออกจาก database โดยใช้ pull
           await StudentAnswer.updateOne(

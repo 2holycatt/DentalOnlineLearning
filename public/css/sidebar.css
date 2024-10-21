@@ -1,0 +1,346 @@
+/* Sidebar.css */
+
+/* พื้นฐานของ Sidebar */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #fff; /* พื้นหลังของ Sidebar */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    transform: translateX(-100%);
+    z-index: 1000;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebar_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #f1f1f1; /* พื้นหลังของ Header */
+}
+
+.sidebar_nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar_nav li {
+    padding: 10px 15px;
+}
+
+.sidebar_nav li a {
+    text-decoration: none;
+    color:  var(--secondary-color);
+    display: block;
+}
+
+/* สไตล์สำหรับธีม light */
+.sidebar  {
+    background-color: var(--bg-color);;
+    color:  var(--secondary-color);
+}
+
+
+.sidebar  .sidebar_nav li a {
+    color:  var(--secondary-color);
+}
+
+.sidebar .sidebar_nav li a:hover {
+    color: #8A2BE2 !important;
+   
+}
+
+/* สไตล์สำหรับธีม dark */
+/* สำหรับธีม Dark */
+/* สำหรับธีม Light */
+body.light .sidebar {
+    background-color: #fff;
+    color:  var(--secondary-color);
+}
+body.light .sidebar .sidebar_header{
+    background-color: #fff;
+}
+/* สำหรับธีม Dark */
+body.dark .sidebar {
+    background-color:  var(--secondary-color);
+    color: #fff;
+}
+
+/* ปรับสีของ Header ในธีม Dark */
+body.dark .sidebar .sidebar_header {
+    background-color:  var(--secondary-color);
+}
+
+/* ปรับสีของเมนูซ้าย ในธีม Dark */
+body.dark .sidebar .sidebar_nav li a {
+    color: lightgray;
+}
+
+/* ปรับสีพื้นหลังเมนูเมื่อ hover ในธีม Dark */
+body.dark .sidebar .sidebar_nav li a:hover {
+   
+    color: #8A2BE2 !important;
+}
+
+
+/* ซ่อนไอคอนปิด */
+.close-btn {
+    font-size: 24px;
+    cursor: pointer;
+}
+.topic_sidebar{
+    color:#8A2BE2 ;
+}
+
+.switch_theme_sidebar {
+    position: relative;
+    width: 60px;
+    /* กำหนดความกว้างของ switch */
+    height: 30px;
+    /* กำหนดความสูงของ switch */
+    display: inline-block;
+    background-color: var(--dark);
+    border-radius: 50px;
+    cursor: pointer;
+    margin-right: 1rem;
+    /* ลดระยะห่างขวาของ switch */
+}
+
+.switch_theme_sidebar input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch_theme_sidebar .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--dark);
+    border-radius: 50px;
+    transition: 0.3s;
+}
+
+.switch_theme_sidebar .slider::before {
+    content: "\f185";
+    /* ไอคอนพระอาทิตย์ (FontAwesome) */
+    font-family: "FontAwesome";
+    position: absolute;
+    top: 3px;
+    /* ปรับตำแหน่งด้านบน */
+    left: 3px;
+    /* ปรับตำแหน่งด้านซ้าย */
+    width: 24px;
+    /* ขนาดของไอคอน */
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--light);
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.switch_theme_sidebar input:checked+.slider {
+    background-color: var(--light);
+}
+
+.switch_theme_sidebar input:checked+.slider::before {
+    content: "\f186";
+    color: white;
+    /* ไอคอนพระจันทร์ (FontAwesome) */
+    transform: translateX(30px);
+    /* ปรับการเคลื่อนที่ของลูกกลมเมื่อ checked */
+    background-color: var(--dark);
+    box-shadow: none;
+}
+body.light {
+    --bg-color: #f4f4f9;
+    --text-color: #000000;
+}
+
+body.dark {
+    --bg-color: #212121;
+    --text-color: #ffffff;
+}
+
+/* ใช้ตัวแปร CSS เพื่อเปลี่ยนแปลงสีตามธีม */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 62px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #E0E0E0;
+    /* Default for light theme */
+    transition: .4s;
+    border-radius: 20px;
+}
+
+body.dark .slider {
+    background-color: #444444;
+    /* For dark theme */
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #8A2BE2;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked+.slider {
+    background-color: #444444;
+    /* Default for checked state in light theme */
+}
+
+body.dark input:checked+.slider {
+    background-color: #E0E0E0;
+    /* Checked state for dark theme */
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+.slider .icon-light,
+.slider .icon-dark {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 8px;
+    font-size: 1.5rem;
+    color: #FFD700;
+}
+
+.slider .icon-dark {
+    left: auto;
+    right: 8px;
+    color: #87CEEB;
+}
+
+.icon-light {
+    display: inline;
+    /* Default display state */
+}
+
+body.dark .icon-light {
+    display: none;
+    /* Hide in dark theme */
+}
+
+.icon-dark {
+    display: none;
+    /* Default display state */
+}
+
+body.dark .icon-dark {
+    display: inline;
+    /* Show in dark theme */
+}
+
+.above-nav-status {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border-right: 1px solid #EAEFF4;
+    /* position: fixed; */
+    height: auto !important;
+    overflow-y: auto !important;
+    scrollbar-width: thin !important;
+}
+
+.bold-menus {
+    border-left: 0.25em solid #8A2BE2;
+    padding-left: 0.75em !important;
+    color: var(--text-color);
+}
+
+.submenu,
+.a-list-1,
+.a-list-2,
+.a-list-3,
+.a-list-4,
+.a-list-5,
+.a-list-6,
+.a-list-7 {
+    text-decoration: none;
+    color: #5A6A85;
+    transition-duration: 0.3s;
+}
+
+.submenu:hover {
+    color: #8A2BE2 !important;
+    transition: 0.3s;
+}
+
+.submenu .a:hover {
+    color: #8A2BE2 !important;
+    transition: 0.3s;
+}
+
+.sidebar_nav {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar_nav li {
+    margin-bottom: 0.4rem !important;
+    /* Adjusted for spacing */
+}
+
+.sidebar_nav a {
+    display: block;
+    padding: 0.5em 0.75em;
+    color: inherit;
+}
+
+.sidebar_nav a:hover {
+    background-color: #f8f9fa;
+    color: #8A2BE2 !important;
+}
+
+body.light .sidebar_nav a:hover {
+    background-color: #f1f1f1;
+}
+
+body.dark .sidebar_nav a:hover {
+    background-color: #444;
+}

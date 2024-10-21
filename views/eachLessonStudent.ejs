@@ -596,8 +596,7 @@
             </nav>
           </div>
         </div>
-        <% if (studentAnswer == []) {%>
-
+        <% if (studentAnswer != null) {%>
         <div class="lesson-content bg-white w-100 p-4 my-4 addQuestion">
           <div class="row d-flex align-items-center">
             <div class="col">
@@ -629,8 +628,8 @@
           </form>
         </div>
 
-        <% } else if (studentAnswer != []) {%>
-        <% if (lessonQuestions != null) { %>
+        <% } else if (studentAnswer == null) {%>
+        <% if (lessonQuestions == null) { %>
         <div class="lesson-content bg-white w-100 p-4 my-4 addQuestion">
           <div class="row d-flex align-items-center">
             <div class="col">

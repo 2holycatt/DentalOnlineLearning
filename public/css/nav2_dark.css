@@ -1,0 +1,92 @@
+/* theme.css */
+
+body.light {
+    --bg-color: #f4f4f9;
+    --text-color: #000000;
+}
+
+body.dark {
+    --bg-color: #212121 ;
+    --secondary-color:#444;
+    --text-color: #ffffff;
+}
+
+/* ใช้ตัวแปร CSS เพื่อเปลี่ยนแปลงสีตามธีม */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+
+
+/* .header_search input {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--text-color);
+} */
+
+
+/* สำหรับธีม dark */
+body.dark .li-a {
+    color: #FFFFFF; /* สีขาว */
+}
+
+/* ตัวเลือกอื่น ๆ ในธีม dark */
+body.dark .header {
+    background-color: #444; /* สีพื้นหลังเข้ม */
+    color: white; /* สีตัวอักษรขาว */
+    border-bottom: 1px solid #494949;
+}
+
+body.dark .header_search {
+    background-color: #515151; /* สีพื้นหลังของแถบค้นหาเข้ม */
+    color: white;
+}
+
+body.dark .header_search input::placeholder {
+    color: #aaa; /* สี placeholder ให้เข้มขึ้น */
+}
+
+body.dark .a-li {
+    color: rgb(231, 231, 231) !important;
+}
+body.dark .a-li:hover {
+    color: #9146ff !important;
+    transform: scale(1.1);
+}
+
+body.dark .ul{
+    background-color: #494949;
+}
+body.dark .dropdown {
+    background-color: #444 !important;
+    border-bottom: 1px solid #EAEFF4;
+}
+
+
+body.dark .sub-menu {
+    background-color: #444; /* สีพื้นหลังของเมนูย่อย */
+    border-bottom: 1px solid #EAEFF4;
+}
+
+body.dark .sub-menu-link {
+    color: #ccc; /* สีของลิงก์ในเมนูย่อย */
+}
+body.dark .sub-menu-link:hover {
+    color: #ccc; /* สีของลิงก์ในเมนูย่อย */
+    background-color: #444 ;
+    color: #9146ff;
+}
+
+
+body.dark .sub-menu-link:hover p {
+    color: #9146ff; /* สีของลิงก์เมื่อ hover ในเมนูย่อย */
+}
+.search-input {
+    color: var(--input-text-color);
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    height: 40px;
+}
