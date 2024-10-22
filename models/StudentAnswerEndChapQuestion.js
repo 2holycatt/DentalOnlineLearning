@@ -17,6 +17,17 @@ const studentAnswerEndChapterQuestionsSchema = new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    checked: {
+        type: Boolean,
+        default: false
+    },
+    Score: {
+        type: Number,
+        default: 0
+    },
+    note: {
+        type: String,
     }
 
 }, { timestamps: true });

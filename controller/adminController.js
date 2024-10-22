@@ -806,7 +806,7 @@ const eachLessonStudent = async (req, res) => {
       );
       if (findStudentAnswer) {
         studentAnswer = findStudentAnswer;
-      } 
+      }
     }
 
     const layout01 = lesson.LayOut1ArrayObject;
@@ -1442,7 +1442,7 @@ const deleteSubject = async (req, res) => {
       { 'subjects.subjectMongooseId': subjectId },  // เงื่อนไขในการค้นหา
       { $pull: { subjects: { subjectMongooseId: subjectId } } }  // ลบ subject ออกจาก array
     );
-    
+
     const lessons = await Lesson.find({ 'subject.subjectMongooseId': subjectId });
 
     for (i of lessons) {
@@ -1519,11 +1519,11 @@ const deleteSubject = async (req, res) => {
     await Assignment.deleteMany(
       { subject: subjectId },
     );
-    
+
     await Subject.deleteOne({ _id: subjectId });
 
     res.redirect('/adminIndex/adminLessonIndex');
-  } catch (err){
+  } catch (err) {
     console.log(err);
   }
 }
@@ -1668,7 +1668,7 @@ const studentAnswerEndChapterQuestions = async (req, res) => {
   try {
     const lessonQuestionId = req.body.lessonQuestionId;
     const lessonId = req.body.lessonId;
-    
+
     let lessonQuestionData = await lessonQuestion.findById(lessonQuestionId);
 
     if (!lessonQuestionData) {
@@ -1974,7 +1974,75 @@ const deleteReplyComment = async (req, res) => {
   }
 };
 
+const studentAnswerLists = async (req, res) => {
+  try {
+    const questionId = req.query.questionId;
+    const StudentAnswers = await StudentAnswer.find({ lessonQuestion: questionId })
+      .populate({
+        path: 'user',
+        populate: {
+          path: 'student', // Populate นักเรียนที่อยู่ในฟิลด์ student ของ user
+          model: 'Student'
+        }
+      });
+
+    // เปลี่ยนรูปแบบวันที่ createdAt ใน StudentAnswers
+    const formattedAnswers = StudentAnswers.map(answer => ({
+      ...answer._doc,
+      createdAt: moment(answer.createdAt).format('DD/MM/YYYY HH:mm:ss')
+    }));
+    // res.json(formattedAnswers)
+    // StudentAnswer
+    res.render('studentAnswerLists', {formattedAnswers });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+const showStdAnswerDetail = async (req, res) => {
+  try {
+    const studentAnswersId = req.query.studentAnswerId;
+    const getStudentAnswer = await StudentAnswer.findById(studentAnswersId)
+    .populate({
+      path: 'user',
+      populate: {
+        path: 'student', // Populate นักเรียนที่อยู่ในฟิลด์ student ของ user
+        model: 'Student'
+      }
+    }).populate('lessonQuestion');
+    // res.json(getStudent);
+    
+    res.render('studentAnswerDetail', {getStudentAnswer});
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+const checkEndAnswer = async (req, res) => {
+  try {
+    const {answerId, Score, teacherComment } = req.body;
+    const findStudentAnswer = await StudentAnswer.findById(answerId).populate('lessonQuestion');;
+    const updateStudentAnswer = await StudentAnswer.findByIdAndUpdate(
+      {_id:answerId},
+      {
+        $set: {
+          Score: Score,
+          note: teacherComment,
+          checked: true
+        }
+      },
+      {
+        new:true
+      }
+    )
+    res.redirect('/adminIndex/studentAnswerLists?questionId='+findStudentAnswer._id)
+  } catch (err) {
+    console.log(err);
+  }
+}
 module.exports = {
+  showStdAnswerDetail,
+  studentAnswerLists,
   adminIndex,
   adminLessonIndex,
   adminExamsIndex,
@@ -2020,5 +2088,6 @@ module.exports = {
   updateSubject,
   updateLesson,
   editLessonContent,
-  deleteReplyComment
+  deleteReplyComment,
+  checkEndAnswer
 }

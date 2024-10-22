@@ -87,6 +87,9 @@ router.post('/editReplyComment', adminController.editReplyComment);
 router.post('/adminIndex/updateSubject', adminController.updateSubject);
 router.get('/adminIndex/editLessonContent', teacherMiddleware, adminController.editLessonContent);
 router.get('/deleteReplyComment', teacherMiddleware, adminController.deleteReplyComment);
+router.get('/adminIndex/studentAnswerLists', teacherMiddleware, adminController.studentAnswerLists);
+router.get('/adminIndex/showStdAnswerDetail', teacherMiddleware, adminController.showStdAnswerDetail);
+router.post('/adminIndex/checkEndAnswer', teacherMiddleware, adminController.checkEndAnswer);
 
 
 
