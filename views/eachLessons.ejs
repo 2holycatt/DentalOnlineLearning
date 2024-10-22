@@ -621,9 +621,12 @@
         <% if (questions) { %>
         <div class="lesson-content bg-white w-100 p-4 my-4 addQuestion">
           <div class="row d-flex align-items-center">
-            <div class="col">
+            <div class="col d-flex align-items-center">
               <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">คำถามท้ายบท
                 <i class="bi bi-question-circle mx-2 text-primary"></i>
+              </p>
+              <p class="fw-bold fs-6">
+              <span class="text-primary">คะแนนเต็ม</span>: <%=questions.maxScore%>
               </p>
             </div>
             <div class="col d-flex justify-content-end">

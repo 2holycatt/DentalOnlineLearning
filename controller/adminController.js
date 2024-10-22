@@ -2035,7 +2035,7 @@ const checkEndAnswer = async (req, res) => {
         new:true
       }
     )
-    res.redirect('/adminIndex/studentAnswerLists?questionId='+findStudentAnswer._id)
+    res.redirect('/adminIndex/studentAnswerLists?questionId='+findStudentAnswer.lessonQuestion._id)
   } catch (err) {
     console.log(err);
   }

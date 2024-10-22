@@ -581,6 +581,7 @@ const addEndQuestionChapter = async (req, res) => {
 
     // res.send(questions);
     const lessonId = req.body.lessonId;
+    const maxScore = req.body.maxScore;
     const QuestionsArray = [];
 
     reqQuestions.forEach((question, index ) => {
@@ -593,7 +594,8 @@ const addEndQuestionChapter = async (req, res) => {
     });
 
     const newQuestions = new lessonQuestion({
-        Questions:QuestionsArray
+        Questions:QuestionsArray,
+        maxScore:maxScore
     });
     await newQuestions.save();
 

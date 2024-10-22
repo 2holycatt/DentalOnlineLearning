@@ -514,7 +514,7 @@
             </div>
             <form action="/adminIndex/addEndQuestionChapter" method="post" enctype="multipart/form-data">
               <input type="text" class="d-none" name="lessonId" value="<%=lesson._id%>">
-              <div class="questionForm">
+              <div class="questionForm mb-2">
                 <div class="mt-1">
                   <div class="mb-1 row">
                     <div class="col-12 d-flex align-items-center">
@@ -531,17 +531,27 @@
                   </div>
                 </div>
               </div>
-              <div class="d-flex justify-content-end mt-2">
-                <button onclick="addQuestion()" class="add-button btn btn-primary p-2" type="button" style="height: fit-content !important;">
-                  เพิ่มคำถาม<i class="bi bi-plus-circle-fill mx-2"></i>
-                </button>
-                <button type="submit" class="btn add-button btn-success p-2 ms-2" style="height: fit-content !important;">
-                  บันทึก<i class="bi bi-pencil-square mx-2"></i>
-                </button>
-                <!-- <a href="/adminIndex/editLesson?lesson=<%=lesson._id%>" class="btn add-button btn-success p-2 mx-2" style="height: fit-content !important;">
-                  บันทึก<i class="bi bi-pencil-square mx-2"></i>
-                </a> -->
+              <div class="row">
+                <div class="col d-flex align-items-center">
+                  <!-- <i class="bi-arrow-right-short fs-2"></i> -->
+                  <!-- <i class="bi bi-arrow-right-short"></i> -->
+                  <label for="maxScore">คะแนนสูงสุด: </label>
+                  <input type="text" class="form-control w-25 ms-2 p-1" min="0" name="maxScore" placeholder="0" required>
+                  <!-- <textarea class="form-control " name="maxScore" id=""></textarea> -->
+                </div>
+                <div class="col d-flex justify-content-end mt-2">
+                  <button onclick="addQuestion()" class="add-button btn btn-primary p-2" type="button" style="height: fit-content !important;">
+                    เพิ่มคำถาม<i class="bi bi-plus-circle-fill mx-2"></i>
+                  </button>
+                  <button type="submit" class="btn add-button btn-success p-2 ms-2" style="height: fit-content !important;">
+                    บันทึก<i class="bi bi-pencil-square mx-2"></i>
+                  </button>
+                  <!-- <a href="/adminIndex/editLesson?lesson=<%=lesson._id%>" class="btn add-button btn-success p-2 mx-2" style="height: fit-content !important;">
+                    บันทึก<i class="bi bi-pencil-square mx-2"></i>
+                  </a> -->
+                </div>
               </div>
+              
             </form>
           </div>
         </div>

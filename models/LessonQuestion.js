@@ -13,6 +13,9 @@ const lessonQuestionchema = new Schema({
     Lesson: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'lessons'
+    },
+    maxScore: {
+        type:Number
     }
 
 }, { timestamps: true });

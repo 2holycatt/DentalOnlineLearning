@@ -597,11 +597,40 @@
           </div>
         </div>
         <% if (studentAnswer != null) {%>
+        <% if (studentAnswer.checked == true) { %>
+        <div class="lesson-content bg-white w-100 p-4 my-4" style="height: fit-content;">
+          <div class="d-flex align-items-center">
+            <p class="fs-5 fw-bold"><i class="bi bi-info-circle-fill text-primary "></i>
+              รายละเอียดการตรวจคำถามท้ายบท
+            </p>
+            <p class="mx-1">
+              |
+            </p>
+            <p class="fs-6">
+              <span class="fw-bold text-primary">
+                คะแนนเต็ม
+              </span>
+              : <%=lessonQuestions.maxScore%>
+            </p>
+          </div>
+          <div class="py-1" style="border-bottom: 1px solid #EAEFF4;">
+            <p class="text-primary">คะแนนที่ได้: <span class="text-dark"><%=studentAnswer.Score%></span></p>
+            <p class="text-primary w-75">ความคิดเห็นจากผู้ตรวจ: <span class="text-dark"><%=studentAnswer.note%></span></p>
+          
+          </div>
+          <div class="my-1">
+            <p class="fw-bold">โดย: <span class="fw-normal">ดร. สุรัชธัยณโยธิน วงศ์สวัสดิ</span></p>
+          </div>
+        </div>
+        <% } else if (studentAnswer.checked == false) {%>
         <div class="lesson-content bg-white w-100 p-4 my-4 addQuestion">
           <div class="row d-flex align-items-center">
-            <div class="col">
+            <div class="col d-flex align-items-center">
               <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">คำถามท้ายบท
                 <i class="bi bi-question-circle mx-2 text-primary"></i>
+              </p>
+              <p class="fw-bold fs-6">
+                <span class="text-primary">คะแนนเต็ม</span>: <%=lessonQuestions.maxScore%>
               </p>
             </div>
             <div class="col d-flex justify-content-end">
@@ -628,13 +657,18 @@
           </form>
         </div>
 
+        <% } %>
+
         <% } else if (studentAnswer == null) {%>
         <% if (lessonQuestions != null) { %>
         <div class="lesson-content bg-white w-100 p-4 my-4 addQuestion">
           <div class="row d-flex align-items-center">
-            <div class="col">
+            <div class="col d-flex align-items-center">
               <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">คำถามท้ายบท
                 <i class="bi bi-question-circle mx-2 text-primary"></i>
+              </p>
+              <p class="fw-bold fs-6">
+                <span class="text-primary">คะแนนเต็ม</span>: <%=lessonQuestions.maxScore%>
               </p>
             </div>
             <div class="col d-flex justify-content-end">
@@ -742,7 +776,7 @@
                 <td style="border-top: 1px solid #ced4daa0;">
                   <p class="comment-color"><%=comment.timeSince%></p>
                 </td>
-               
+
               </tr>
               <% if (comment.files.length > 0) { %>
               <tr>
@@ -1111,7 +1145,9 @@
             console.error('Error:', error);
           });
 
-      }, 2000); // ปรับเวลาให้ throttled ที่ 1 วินาที
+      }, 2000); //ควรปรับเวลาให้ detected มากว่า 5
+
+
 
       // ฟังก์ชันเช็คว่า layout อยู่ใน viewport หรือไม่
       function isInViewport(element) {
@@ -1147,6 +1183,7 @@
           }
         });
       });
+
       window.addEventListener('beforeunload', () => {
         calculateTimeSpent();
 

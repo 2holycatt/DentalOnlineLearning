@@ -147,7 +147,8 @@
               </div>
               <div class="col-12 my-1 mb-3">
                 <label for="Score" class="form-label fs-bold">คะแนนที่ได้:</label>
-                <input type="number" min="0" class="form-control p-3 w-25" name="Score" placeholder="0">
+                <input type="number" min="0" class="form-control p-3 w-25" name="Score" min="0" max="<%=getStudentAnswer.lessonQuestion.maxScore%>" placeholder="0">
+                <small class="mt-1"><span class="text-primary">สูงสุด:</span> <%=getStudentAnswer.lessonQuestion.maxScore%></small>
               </div>
             </div>
             <div class="col-12 d-flex justify-content-start pt-4" style="border-top: 1px solid #28a745;">
