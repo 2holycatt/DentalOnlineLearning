@@ -804,7 +804,9 @@ const eachLessonStudent = async (req, res) => {
           user: userData._id
         }
       );
-      studentAnswer = findStudentAnswer;
+      if (findStudentAnswer) {
+        studentAnswer = findStudentAnswer;
+      } 
     }
 
     const layout01 = lesson.LayOut1ArrayObject;

@@ -143,7 +143,7 @@ const deleteLayout = async (req, res) => {
       { new: true } // ลบ lessonId ออกจาก lessonArray
     );
 
-    await Layout2.findByIdAndDelete(getLayout_id);
+    await Layout4.findByIdAndDelete(getLayout_id);
 
   } else if (getWhatLayout === "5") {
     const pdf = await PdfFile.findById(getLayout_id);
