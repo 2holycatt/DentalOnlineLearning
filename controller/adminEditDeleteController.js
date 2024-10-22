@@ -118,7 +118,7 @@ const deleteLayout = async (req, res) => {
 
     await Lesson.findOneAndUpdate(
       { _id: deleteLayout2.LessonArrayObject[0].LessonId },
-      { $pull: { LayOut1ArrayObject: getLayout_id } },
+      { $pull: { LayOut2ArrayObject: getLayout_id } },
       { new: true } // ลบ lessonId ออกจาก lessonArray
     );
 
@@ -129,7 +129,7 @@ const deleteLayout = async (req, res) => {
     await deleteFileFromS3(deleteLayout3.file);
     await Lesson.findOneAndUpdate(
       { _id: deleteLayout3.LessonArrayObject[0].LessonId },
-      { $pull: { LayOut1ArrayObject: getLayout_id } },
+      { $pull: { LayOut3ArrayObject: getLayout_id } },
       { new: true } // ลบ lessonId ออกจาก lessonArray
     );
     await Layout3.findByIdAndDelete(getLayout_id);
@@ -139,7 +139,7 @@ const deleteLayout = async (req, res) => {
 
     await Lesson.findOneAndUpdate(
       { _id: deleteLayout4.LessonArrayObject[0].LessonId },
-      { $pull: { LayOut1ArrayObject: getLayout_id } },
+      { $pull: { LayOut4ArrayObject: getLayout_id } },
       { new: true } // ลบ lessonId ออกจาก lessonArray
     );
 
@@ -150,7 +150,7 @@ const deleteLayout = async (req, res) => {
     await deleteFileFromS3(pdf.file);
     await Lesson.findOneAndUpdate(
       { _id: pdf.LessonArrayObject[0].LessonId },
-      { $pull: { LayOut1ArrayObject: getLayout_id } },
+      { $pull: { PdfFiles: getLayout_id } },
       { new: true } // ลบ lessonId ออกจาก lessonArray
     );
     await PdfFile.findByIdAndDelete(getLayout_id);

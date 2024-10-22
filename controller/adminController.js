@@ -803,7 +803,7 @@ const eachLessonStudent = async (req, res) => {
           lessonQuestion: lesson.lessonQuestion._id,
           user: userData._id
         }
-      ) || [];
+      );
       studentAnswer = findStudentAnswer;
     }
 
