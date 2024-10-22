@@ -314,11 +314,11 @@
               <div style="margin-right: 1em !important;">
                 <div class="">
                   <a href="/<%= file.file %>" class="a-fancyBox">
-                    <img class="comment-files" style="margin: 0 auto !important;" src="/<%= file.file %>" alt="ไฟล์รูปภาพ">
+                    <img class="comment-files" style="margin: 0 auto !important;" src="<%= file.file %>" alt="ไฟล์รูปภาพ">
                   </a>
                 </div>
                 <div class="mt-2 d-flex justify-content-center">
-                  <input type="checkbox" id="file<%=index%>" name="file<%=index%>" value="<%=file.file %>">
+                  <input type="checkbox" id="file<%=index%>" name="file<%=index%>" value="<%= file.file %>">
                 </div>
               </div>
               <% } else if (file.contentType.startsWith("video/")) {%>
@@ -326,7 +326,7 @@
                 <div class="">
                   <a href="/<%= file.file %>" class="a-fancyBox">
                     <video class="comment-files object-fit-cover" style="margin: 0 auto !important;" controls autoplay>
-                      <source src="/<%= file.file %>" type="<%= file.contentType%>">
+                      <source src="<%= file.file %>" type="<%= file.contentType%>">
                       Your browser does not support the video tag.
                     </video>
                   </a>

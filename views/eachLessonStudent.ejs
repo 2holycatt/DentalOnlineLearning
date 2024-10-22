@@ -727,7 +727,7 @@
                             |
                             <% if (String(userDataId) == String(userCommentId)) { %>
                             <a href="/studentIndex/editCommentStudent?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment ">แก้ไข</a>
-                            <a href="/deleteComment?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
+                            <a href="/deleteCommentStudent?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
                             <% } %>
                             <a class="text-primary mx-1" data-bs-toggle="collapse" href="#collapseExample_<%= comment._id %>" role="button" aria-expanded="false" aria-controls="collapseExample_<%= comment._id %>">
                               ตอบกลับ

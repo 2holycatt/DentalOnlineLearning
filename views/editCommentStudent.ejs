@@ -295,7 +295,7 @@
       <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
         <p class="fw-bold fs-3 lesson-bar">แก้ไขความคิดเห็น</p>
         <div>
-          <a href="/adminIndex/eachLessons?lessonId=<%=lessonId%>" class="btn btn-primary m-0 p-2">
+          <a href="/studentIndex/eachLessonStudent?lessonId=<%=lessonId%>" class="btn btn-primary m-0 p-2">
             ย้อนกลับ
           </a>
           <!-- <a href="/adminIndex/copyLessons" class="btn btn-dark m-0 p-2">
@@ -317,7 +317,7 @@
                   <div style="margin-right: 1em !important;">
                     <div class="">
                       <a href="/<%= file.file %>" class="a-fancyBox">
-                        <img class="comment-files" style="margin: 0 auto !important;" src="/<%= file.file %>" alt="ไฟล์รูปภาพ">
+                        <img class="comment-files" style="margin: 0 auto !important;" src="<%= file.file %>" alt="ไฟล์รูปภาพ">
                       </a>                    
                     </div>
                     <div class="mt-2 d-flex justify-content-center">
@@ -329,7 +329,7 @@
                     <div class="">
                       <a href="/<%= file.file %>" class="a-fancyBox">
                         <video class="comment-files object-fit-cover" style="margin: 0 auto !important;" controls autoplay>
-                          <source src="/<%= file.file %>" type="<%= file.contentType%>">
+                          <source src="<%= file.file %>" type="<%= file.contentType%>">
                           Your browser does not support the video tag.
                         </video>
                       </a>                    

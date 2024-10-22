@@ -69,8 +69,8 @@ router.route('/adminIndex/comment').post(upload.array("files"), createComment);
 router.route('/studentIndex/comment').post(upload.array("files"), createComment);
 router.get('/adminIndex/editComment', teacherMiddleware, adminController.editComment)
 router.get('/studentIndex/editCommentStudent', studentMiddleware, adminController.editCommentStudent)
-router.get('/adminIndex/deleteComment', teacherMiddleware, adminController.deleteComment)
-router.get('/studentIndex/deleteComment', studentMiddleware, adminController.deleteComment)
+router.get('/deleteCommentTeacher', teacherMiddleware, adminController.deleteComment)
+router.get('/deleteCommentStudent', studentMiddleware, adminController.deleteComment)
 router.route('/adminIndex/makeEditComment').post(upload.array("files"), makeEditComment);
 router.route('/studentIndex/makeEditComment').post(upload.array("files"), makeEditComment);
 router.get('/studentIndex/eachLessonStudent', studentMiddleware, adminController.eachLessonStudent)

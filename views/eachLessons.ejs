@@ -760,8 +760,8 @@
                           <span class="fw-normal" style="font-size: small;">
                             |
                             <% if (String(userDataId) == String(userCommentId)) { %>
-                            <a href="/studentIndex/editCommentStudent?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment ">แก้ไข</a>
-                            <a href="/studentIndex/deleteComment?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
+                            <a href="/adminIndex/editComment?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment ">แก้ไข</a>
+                            <a href="/deleteCommentTeacher?commentId=<%=comment._id%>&lessonId=<%=lessonComment._id%>" class="mx-1 fw-normal text-primary optionComment">ลบ</a>
                             <% } %>
                             <a class="text-primary mx-1" data-bs-toggle="collapse" href="#collapseExample_<%= comment._id %>" role="button" aria-expanded="false" aria-controls="collapseExample_<%= comment._id %>">
                               ตอบกลับ
