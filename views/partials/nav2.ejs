@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/nav2.css">
+    <link rel="stylesheet" href="/css/nav2_dark.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!-- Material Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <title>Header</title>
+    <style>
+        :root {
+            --light: #d8dbe0;
+            --dark: #28292c;
+            --link: rgb(27, 129, 112);
+            --link-hover: rgb(24, 94, 82);
+        }
+
+        .switch_theme {
+            position: relative;
+            width: 60px;
+            /* กำหนดความกว้างของ switch */
+            height: 30px;
+            /* กำหนดความสูงของ switch */
+            display: inline-block;
+            background-color: var(--dark);
+            border-radius: 50px;
+            cursor: pointer;
+            margin-right: 1rem;
+            /* ลดระยะห่างขวาของ switch */
+        }
+
+        .switch_theme input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .switch_theme .slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--dark);
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+
+        .switch_theme .slider::before {
+            content: "\f185";
+            /* ไอคอนพระอาทิตย์ (FontAwesome) */
+            font-family: "FontAwesome";
+            position: absolute;
+            top: 3px;
+            /* ปรับตำแหน่งด้านบน */
+            left: 3px;
+            /* ปรับตำแหน่งด้านซ้าย */
+            width: 24px;
+            /* ขนาดของไอคอน */
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--light);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .switch_theme input:checked+.slider {
+            background-color: var(--light);
+        }
+
+        .switch_theme input:checked+.slider::before {
+            content: "\f186";
+            /* ไอคอนพระจันทร์ (FontAwesome) */
+            transform: translateX(30px);
+            /* ปรับการเคลื่อนที่ของลูกกลมเมื่อ checked */
+            background-color: var(--dark);
+            box-shadow: none;
+        }
+
+
+
+        /* ปรับปรุงปุ่ม toggleMenu */
+        .sub-menu-wrap {
+            position: absolute;
+            right: 0;
+            top: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .sub-menu-wrap.open-menu {
+            display: block;
+        }
+
+        .sub-menu {
+            padding: 4rem;
+        }
+
+        .sub-menu-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--secondary-color);
+            transition: background 0.3s;
+        }
+
+        .sub-menu-link i {
+            margin-right: 10px;
+        }
+
+        .sub-menu-link:hover {
+            background: #f0f0f0;
+        }
+
+        .user-info {
+            margin-bottom: 10px;
+        }
+
+        .user-info h5 {
+            margin: 0;
+        }
+
+        .search_button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            font-size: 1rem;
+            color: var(--icon-color);
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body class="<%= theme === 'dark' ? 'dark' : 'light' %>"> <!-- ใช้ class ของ theme -->
+
+    <header class="header">
+        <button onclick="toggleSidebar()" class="menu-btn">
+            <% if (theme==='light' ) { %>
+                <i class="bi bi-list"></i> <!-- Icon menu for light theme -->
+                <% } else { %>
+                    <i class="bi bi-list" style="color: white;"></i> <!-- Icon menu for dark theme -->
+                    <% } %>
+        </button>
+        <div class="header_info">
+            <a href="/adminIndex" class="logo-a d-flex justify-content-between">
+                <img class="h-auto mx-4  logo-dent" src="/images/indexMed/Ellipse9.png" style="width: 3.5rem; 
+                max-width: 100px;" alt="ตราสัญลักษณ์ คณะทันตแพทย์ศาตร์">
+            </a>
+            <ul class="ul-nav">
+                <li class="li-a">
+                    <a href="/adminIndex" class="a-li">หน้าหลัก </a>
+                </li>
+                <li class="li-a show-drop">
+                    <a href="/adminIndex/adminClassroom" class="a-li d-flex">
+                        ห้องเรียน &nbsp; <i class="bi bi-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown">
+                        <li class="drop-li my-1"><a class="a-li" href="/adminIndex/adminLessonIndex">บทเรียน</a></li>
+                        <li class="drop-li my-1"><a class="a-li" href="/adminIndex/assignmentIndex">งานที่มอบหมาย</a>
+                        </li>
+                        <li class="drop-li my-1"><a class="a-li" href="/adminIndex/adminExamsIndex">แบบทดสอบ</a></li>
+                    </ul>
+                </li>
+                <li class="li-a show-drop">
+                    <a href="/adminIndex/manageStudent" class="a-li d-flex">
+                        จัดการข้อมูลนักศึกษา &nbsp; <i class="bi bi-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown">
+                        <li class="drop-li my-1"><a class="a-li" href="#">แดชบอร์ด (Dashboard)</a></li>
+                        <li class="drop-li my-1"><a class="a-li" href="/adminIndex/uploadStudent">รายชื่อนักศึกษา</a>
+                        </li>
+                        <li class="drop-li my-1"><a class="a-li" href="/adminIndex/logsFile">การเข้าใช้งาน (Logs
+                                file)</a></li>
+                        <li class="drop-li my-1"><a class="a-li" href="#">การกำหนดสิทธิ์</a></li>
+                    </ul>
+                </li>
+                <li class="li-a">
+                    <a href="#" class="a-li">แจ้งเตือน </a>
+                </li>
+            </ul>
+        </div>
+        <div class="header_search">
+            <button class="search_button" onclick="searchQuiz()">
+                <% if (theme==='light' ) { %>
+                    <i class="bi bi-search m-2"></i>
+                    <% } else { %>
+                        <i class="bi bi-search m-2" style="color: white;"></i>
+                        <% } %>
+            </button>
+            <input id="searchInput" class="search-input" type="search" name="search" placeholder="ค้นหา" />
+        </div>
+
+
+        <div class="header_right">
+            <!-- Theme Toggle Switch -->
+            <label class="switch_theme">
+                <input type="checkbox" class="theme_toggle" onchange="toggleTheme()" <%=theme==='dark' ? 'checked' : ''
+                    %>>
+                <span class="slider round"></span>
+            </label>
+
+            <!-- Profile Button -->
+            <button onclick="toggleMenu()" class="profile_button">
+                <img src="/<%= userData.img %>" alt="Profile Image" class="profile-icon mx-4 my-3"
+                    style="height: 40px;">
+            </button>
+            <div class="sub-menu-wrap" id="subMenu">
+                <div class="sub-menu">
+                    <div class="user-info">
+                        <h5>
+                            <%= userData.fname %>
+                                <%= userData.lname %>
+                        </h5>
+                    </div>
+                    <hr />
+                    <a href="/profile" class="sub-menu-link">
+                        <i class="bi bi-person-fill"></i>&nbsp;โปรไฟล์
+                    </a>
+                    <a href="/logoutGoogle" class="sub-menu-link"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="bi bi-box-arrow-right"></i>&nbsp;ออกจากระบบ
+                    </a>
+                    <form id="logout-form" action="/logoutGoogle" method="post" style="display: none;">
+                        <!-- สร้าง form ซ่อนไว้สำหรับส่ง POST request ไปยัง /logout -->
+                        <!-- สามารถเพิ่ม CSRF token หรือ headers อื่น ๆ ตามความเหมาะสม -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Component -->
+    <%- include('Sidebar', { isOpen: isSidebarOpen, theme: theme }) %> <!-- รวม Sidebar component -->
+
+        <script>
+            // ฟังก์ชัน JavaScript สำหรับการจัดการ Sidebar และธีม
+            function toggleSidebar() {
+                var sidebar = document.querySelector('.sidebar'); // เปลี่ยนการค้นหาด้วย class
+                if (sidebar) {
+                    sidebar.classList.toggle('open');
+                    // บันทึกสถานะ Sidebar ใน localStorage
+                    var isOpen = sidebar.classList.contains('open');
+                    localStorage.setItem('isSidebarOpen', isOpen ? 'true' : 'false');
+                }
+            }
+
+            function toggleTheme() {
+                // ตรวจสอบธีมปัจจุบันจาก class ของ body
+                var currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+                var newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+                // ลบ class ของธีมปัจจุบันและเพิ่ม class ของธีมใหม่
+                document.body.classList.remove(currentTheme);
+                document.body.classList.add(newTheme);
+
+                // บันทึกสถานะธีมใหม่ลงใน localStorage
+                localStorage.setItem('theme', newTheme);
+
+                // ตั้งค่าการ checked ของสวิตช์ toggle
+                document.querySelector('.theme_toggle').checked = (newTheme === 'dark');
+            }
+
+            function toggleMenu() {
+                var subMenu = document.getElementById('subMenu');
+                if (subMenu) {
+                    subMenu.classList.toggle('open-menu');
+                }
+            }
+
+            // Initialize theme from localStorage
+            (function () {
+                // ตรวจสอบธีมที่ถูกบันทึกใน localStorage, ถ้าไม่มีให้ใช้ 'light' เป็นค่าเริ่มต้น
+                var savedTheme = localStorage.getItem('theme') || 'light';
+
+                // เพิ่ม class ของธีมที่ถูกบันทึกใน body
+                document.body.classList.add(savedTheme);
+
+                // ตั้งค่าการ checked ของสวิตช์ toggle ตามธีมที่ถูกบันทึก
+                document.querySelector('.theme_toggle').checked = (savedTheme === 'dark');
+
+                // ตรวจสอบสถานะการเปิด/ปิดของ Sidebar จาก localStorage
+                var savedSidebarState = localStorage.getItem('isSidebarOpen') === 'true';
+                var sidebar = document.querySelector('.sidebar');
+                if (sidebar && savedSidebarState) {
+                    sidebar.classList.add('open');
+                }
+            })();
+
+            document.getElementById('searchInput').addEventListener('keypress', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();  
+                    searchQuiz();  
+                }
+            });
+
+            function searchQuiz() {
+                const searchQuery = document.getElementById('searchInput').value.trim(); 
+                const userRole = '<%= userData.role %>';  // สมมติว่า role ถูกส่งจาก EJS
+
+                if (searchQuery.length > 0) {
+                    let searchPath = '';
+                    if (userRole === 'teacher') {
+                        searchPath = `/adminIndex/search=${encodeURIComponent(searchQuery)}`;
+                    } else if (userRole === 'student') {
+                        searchPath = `/studentIndex/search=${encodeURIComponent(searchQuery)}`;
+                    } else {
+                        alert('ไม่สามารถค้นหาได้ กรุณาลองใหม่');
+                        return;
+                    }
+                    window.location.href = searchPath;
+                } else {
+                    alert('กรุณากรอกคำค้นหา');
+                }
+            }
+
+        </script>
+</body>
+
+</html>

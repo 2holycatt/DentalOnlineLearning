@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/quiz_nav.css">
+    <link rel="stylesheet" href="/css/nav2_dark.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!-- Material Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <title>Header</title>
+    <style>
+        :root {
+            --light: #d8dbe0;
+            --dark: #28292c;
+            --link: rgb(27, 129, 112);
+            --link-hover: rgb(24, 94, 82);
+        }
+
+        .header {
+            padding: 0.3rem 0 !important;
+            position: fixed !important;
+        }
+
+        .switch_theme {
+            position: relative;
+            width: 60px;
+            /* กำหนดความกว้างของ switch */
+            height: 30px;
+            /* กำหนดความสูงของ switch */
+            display: inline-block;
+            background-color: var(--dark);
+            border-radius: 50px;
+            cursor: pointer;
+            margin-right: 1rem;
+            /* ลดระยะห่างขวาของ switch */
+        }
+
+        .switch_theme input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .switch_theme .slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--dark);
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+
+        .switch_theme .slider::before {
+            content: "\f185";
+            /* ไอคอนพระอาทิตย์ (FontAwesome) */
+            font-family: "FontAwesome";
+            position: absolute;
+            top: 3px;
+            /* ปรับตำแหน่งด้านบน */
+            left: 3px;
+            /* ปรับตำแหน่งด้านซ้าย */
+            width: 24px;
+            /* ขนาดของไอคอน */
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--light);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .switch_theme input:checked+.slider {
+            background-color: var(--light);
+        }
+
+        .switch_theme input:checked+.slider::before {
+            content: "\f186";
+            /* ไอคอนพระจันทร์ (FontAwesome) */
+            transform: translateX(30px);
+            /* ปรับการเคลื่อนที่ของลูกกลมเมื่อ checked */
+            background-color: var(--dark);
+            box-shadow: none;
+        }
+
+
+
+        /* ปรับปรุงปุ่ม toggleMenu */
+        .sub-menu-wrap {
+            position: absolute;
+            right: 0;
+            top: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .sub-menu-wrap.open-menu {
+            display: block;
+        }
+
+        .sub-menu {
+            padding: 4rem;
+        }
+
+        .sub-menu-link {
+            display: flex;
+            align-items: center;
+
+            text-decoration: none;
+            color: var(--secondary-color);
+            transition: background 0.3s;
+        }
+
+        .sub-menu-link i {
+            margin-right: 10px;
+        }
+
+        .sub-menu-link:hover {
+            background: #f0f0f0;
+        }
+
+        .user-info {
+            margin-bottom: 10px;
+        }
+
+        .user-info h5 {
+            margin: 0;
+        }
+
+        .search_button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            font-size: 1rem;
+            color: var(--icon-color);
+        }
+
+        .quiz_nav_name {
+            border: none;
+            outline: none;
+            padding-right: 0.6rem;
+
+            /* border-bottom: 1px lightgray solid; */
+        }
+
+        .dark .quiz_nav_name {
+            background-color: #444 !important;
+            color: white;
+            /* border-bottom: 1px #444 solid; */
+        }
+
+        .quiz_nav_name:focus,
+        .dark .quiz_nav_name:focus {
+            border-bottom: 2px solid rgb(103, 58, 183) !important;
+
+        }
+
+        .bi-clock:hover {
+            cursor: default;
+        }
+
+        @media screen and (max-width: 768px) {
+
+            .theme_toggle {
+                display: block !important;
+
+            }
+
+            .quiz_nav_name {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="<%= theme === 'dark' ? 'dark' : 'light' %>"> <!-- ใช้ class ของ theme -->
+
+    <header class="header">
+
+        <div class="header_info">
+
+            <span class="fw-normal fs-5  my-4" style="margin-left: 7rem;"> <%=quiz.quizname%></span>
+
+        </div>
+
+        <div class="header_right">
+            <!-- Theme Toggle Switch -->
+            <!-- <label class="switch_theme">
+                <input type="checkbox" class="theme_toggle" onchange="toggleTheme()" <%=theme==='dark' ? 'checked' : ''
+                    %>>
+                <span class="slider round"></span>
+            </label> -->
+
+            <!-- Profile Button -->
+
+            <div class="py-4 pe-1 mx-4">
+                <i class="bi bi-clock" style="color: #8A2BE2;"></i>
+                <span id="countdownTimer" class="grey ps-2 pe-4">
+                    <%= timeLimitFormatted %>
+                    
+                </span>
+            </div>
+            <div class="pe-4 ">
+                <button type="button" class="btn btn-primary px-4"
+                style="background-color: #8A2BE2; border: 1px solid #8A2BE2;"
+                 onclick="confirmSubmitQuiz('<%= quiz._id %>')">
+                  <!-- onclick="goToResultPage('<%= quiz._id %>')"> -->
+               
+              
+                ส่ง
+            </button>
+        </div>
+
+        </div>
+    </header>
+
+    <!-- Sidebar Component -->
+
+    <script>
+        // ฟังก์ชัน JavaScript สำหรับการจัดการ Sidebar และธีม
+
+
+        function toggleTheme() {
+            // ตรวจสอบธีมปัจจุบันจาก class ของ body
+            var currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+            var newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            // ลบ class ของธีมปัจจุบันและเพิ่ม class ของธีมใหม่
+            document.body.classList.remove(currentTheme);
+            document.body.classList.add(newTheme);
+
+            // บันทึกสถานะธีมใหม่ลงใน localStorage
+            localStorage.setItem('theme', newTheme);
+
+            // ตั้งค่าการ checked ของสวิตช์ toggle
+            document.querySelector('.theme_toggle').checked = (newTheme === 'dark');
+        }
+
+        function toggleMenu() {
+            var subMenu = document.getElementById('subMenu');
+            if (subMenu) {
+                subMenu.classList.toggle('open-menu');
+            }
+        }
+
+        // Initialize theme from localStorage
+        (function () {
+            // ตรวจสอบธีมที่ถูกบันทึกใน localStorage, ถ้าไม่มีให้ใช้ 'light' เป็นค่าเริ่มต้น
+            var savedTheme = localStorage.getItem('theme') || 'light';
+
+            // เพิ่ม class ของธีมที่ถูกบันทึกใน body
+            document.body.classList.add(savedTheme);
+
+            // ตั้งค่าการ checked ของสวิตช์ toggle ตามธีมที่ถูกบันทึก
+            document.querySelector('.theme_toggle').checked = (savedTheme === 'dark');
+
+            // ตรวจสอบสถานะการเปิด/ปิดของ Sidebar จาก localStorage
+            var savedSidebarState = localStorage.getItem('isSidebarOpen') === 'true';
+            var sidebar = document.querySelector('.sidebar');
+            if (sidebar && savedSidebarState) {
+                sidebar.classList.add('open');
+            }
+        })();
+
+        let timeLimit = <%= timeLimitMilliseconds / 1000 %>; // รับค่า milliseconds จาก backend
+        let countdownElement = document.getElementById("countdownTimer");
+
+        function formatTime(milliseconds) {
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            // แสดงผลเป็น 2 หลักเสมอ
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function startCountdown() {
+            let interval = setInterval(function () {
+                if (timeLimit <= 0) {
+                    clearInterval(interval);
+                    countdownElement.innerHTML = "Time's up!";
+                } else {
+                    countdownElement.innerHTML = formatTime(timeLimit);
+                    timeLimit -= 1000; // ลดลงทีละวินาที
+                }
+            }, 1000); // อัปเดตทุกวินาที
+        }
+
+        // เริ่มนับถอยหลังหลังจากโหลดหน้าเสร็จ
+        window.onload = function () {
+            if (timeLimit > 0) {
+                startCountdown();
+            } else {
+                countdownElement.innerHTML = "Time's up!";
+            }
+        };
+
+
+    </script>
+</body>
+
+</html>

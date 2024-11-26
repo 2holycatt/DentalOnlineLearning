@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <%- include("./partials/header.ejs")%>
+    <style>
+      .grey {
+        color: gray !important;
+      }
+      .dark .grey{
+        color: lightgray !important
+      }
+
+      /* CSS */
+      .button-edit {
+        background-color: #ffc107;
+        border-radius: 8px;
+        border-style: none;
+        box-sizing: border-box;
+        color: #FFFFFF;
+        cursor: pointer;
+        display: inline-block;
+        font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        height: 40px;
+        line-height: 20px;
+        list-style: none;
+        margin: 0;
+        outline: none;
+        padding: 10px 16px !important;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        transition: color 100ms;
+        vertical-align: baseline;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+
+      .button-edit:hover,
+      .button-edit:focus {
+        background-color: rgb(255, 193, 7);
+      }
+
+      .label {
+        display: inline-block;
+        width: 10rem;
+        /* กำหนดความกว้างตามต้องการ */
+      }
+
+      .text-right {
+        display: inline-block;
+        color: gray;
+
+      }
+
+      .dark .text-right {
+        color: lightgray;
+      }
+      
+      .profile-img {
+                border-radius: 50%;
+                object-fit: cover;
+                max-width: 310px;
+                max-height: 320px;
+                min-width: 310px;
+                min-height: 320px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                /* border: 1px solid lightgray; */
+            }
+    </style>
+</head>
+<% if (userData.role === 'teacher') { %>
+  <%- include("./partials/nav2.ejs", { theme: theme, isSidebarOpen: isSidebarOpen }) %>
+<% } else if (userData.role === 'student') { %>
+  <%- include("./partials/studentNav.ejs", { theme: theme, isSidebarOpen: isSidebarOpen }) %>
+<% } %>
+
+
+  <body class="<%= theme === 'dark' ? 'dark' : 'light' %>">
+    <br><br><br><br><br>
+    <div class="container-my-4 px-4">
+      <div class="row m-xl-0 p-xl-0">
+        <div class="col-sm-12 col-lg-8 p-xl-0 ">
+          <div class="card-body m-3 m-3 mx-lg-2 my-lg-0 px-5 pt-4 pb-4 rounded-4 shadow-lg">
+            <div class="row m-xl-0 p-xl-0">
+              <div class="col-lg-6">
+                <div class="profile-image text-center">
+                  <img src="/<%= userData.img %>" id="img" alt="Profile Image"  class="img-fluid mx-auto profile-img" width="310" height="350"
+                  style="max-width: 310px;max-height: 320px; min-width: 310px; min-height: 320px;">
+                  
+                </div>
+                <br>
+              </div>
+              <div class="col-lg-6 ">
+                <div class="my-3">
+                  <div class="mb-3">
+                    <h3>
+                      <%= userData.fname %>
+                        <%= userData.lname %>
+                    </h3>
+                  </div>
+                  <hr class="mb-3">
+                  <div class="mb-5">
+                    <div class="mb-1">
+                        <% if (userData.role === 'teacher') { %>
+                            <b class="label">รหัส:</b>
+                        <% } else { %>
+                            <b class="label">รหัสนักศึกษา:</b>
+                        <% } %>
+                        <span class="text-right"><%= userData.studentId || '643021096-4' %></span>
+                    </div>
+                    <div class="mb-1">
+                        <b class="label">ชื่อเล่น:</b>
+                        <span class="text-right"> <%= userData.nickname %></span>
+                    </div>
+                    <div class="mb-1">
+                        <b class="label">คณะ:</b>
+                        <span class="text-right">CP</span>
+                    </div>
+                    <% if (userData.role === 'teacher') { %>
+                        <div class="mb-1">
+                            <b class="label">อาจารย์จาก:</b>
+                            <span class="text-right">มหาวิทยาลัยขอนแก่น</span>
+                        </div>
+                    <% } else { %>
+                        <div class="mb-1">
+                            <b class="label">นักศึกษาจาก:</b>
+                            <span class="text-right">มหาวิทยาลัยขอนแก่น</span>
+                        </div>
+                    <% } %>
+                    <div class="mb-1">
+                        <b class="label">หมายเหตุ:</b>
+                        <span class="text-right"> <%= userData.notes %></span>
+                    </div>
+                </div>
+                
+
+
+
+                </div>
+
+                <div class="mt-auto text-end">
+                  <a href="/profile/edit" class="button-edit btn-warning" role="button">แก้ไข <i
+                      class="bi bi-pencil-fill"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card-body m-3 mx-lg-2 my-lg-0 px-5 pt-3 pb-4 rounded-4 shadow-lg" max-width="200px">
+            <p>
+            <div>@email:</div>
+            <div>
+              <div class='grey'>
+                <%= userData.email %>
+              </div>
+            </div>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+  <br>
+  <%- include("./partials/footer.ejs")%>
+
+</html>

@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizs Result</title>
+    <!-- <link rel="stylesheet" href="/css/event.css"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/getMoreAddContent.css">
+
+    <%- include("./partials/header.ejs")%>
+        <style>
+            * {
+                box-sizing: border-box !important;
+            }
+            body.dark {
+        background-color: #212121 !important;
+      }
+            .card-1,
+            .card-body-1 {
+                border: none !important;
+            }
+
+            .descp {
+                text-indent: 2em;
+                margin: 0 2em;
+            }
+
+            .rectangle-141 {
+                background-color: white;
+                border-radius: 0.75em;
+                box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+                height: 14.6875em;
+                width: 75%;
+                margin: 2em 2em;
+            }
+
+            .home-div,
+            .a-home {
+                color: #999999 !important;
+            }
+
+            .above-nav-status {
+                background-color: white !important;
+                /* border-bottom: 1px solid #999999; */
+            }
+
+            .dark .above-nav-status {
+                background-color: #444 !important;
+                border-right: 1px solid #494949;
+            }
+
+            .status-a {
+                color: #404258 !important;
+            }
+
+            .list-lesson-p {
+                color: #8A2BE2;
+            }
+
+            .list-lesson-p-span {
+                color: #4B0082;
+            }
+
+            .each-lesson {
+                border-top: 0.1em solid #8A2BE2;
+            }
+
+            .aside-right {
+                background-color: var(--bg-color) !important;
+                height: 100%;
+            }
+
+            .manange-bar {
+                border-radius: 0.5em;
+                justify-content: space-between !important;
+
+            }
+
+
+            .lesson-content {
+                height: fit-content !important;
+                border-radius: 1em !important;
+                justify-content: center !important;
+            }
+
+            .dark .manange-bar,
+            .dark .lesson-content {
+                background-color: #444 !important;
+            }
+
+            .lesson-nothing {
+                margin: 25% 0 !important;
+                padding: 0 !important;
+            }
+
+            .each-lesson-a {
+                text-decoration: none !important;
+            }
+
+            .each-lesson-a:hover .each-lesson {
+                border-left: 0.2em solid #8A2BE2 !important;
+            }
+
+            .card-img-top {
+                box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+            }
+
+            .setColumn {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr 1fr !important;
+            }
+
+            .card-a {
+                text-decoration: none !important;
+            }
+
+            .card-a:hover,
+            .card-a:hover .p-lesson-name {
+                color: #007bff !important;
+                transition: 0.5s;
+            }
+
+            .card-a:hover .bi-book {
+                color: #007bff !important;
+                transition: color 0.5s;
+            }
+
+            .bi-book-fill {
+                display: none;
+            }
+
+            .card-a:hover .bi-book-fill {
+                display: inline-block !important;
+                transition: 0.5s;
+            }
+
+            .card-a:hover .bi-book {
+                display: none;
+                transition: 0.5s;
+            }
+
+            .manange-bar,
+            .lesson-content {
+                box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+                border-radius: 0.5em;
+            }
+
+            .card-1 {
+                width: 90% !important;
+                height: fit-content !important;
+                transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+                cursor: pointer;
+                border-radius: 0.5em;
+                box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+            }
+
+            .dark .card-1 {
+                box-shadow: lightgray 0px 2px 5px -1px !important;
+            }
+
+            .card-1:hover {
+                transform: scale(1.05);
+            }
+
+            .card-header {
+                border-right: 1px solid #EAEFF4;
+                border-bottom: 1px solid #EAEFF4;
+            }
+
+
+
+
+            #yearSelector {
+                border-color: #EAEFF4;
+                border-radius: 0.5em;
+                background-color: white !important;
+                font-size: smaller;
+                padding: 0.5em !important;
+            }
+
+            #yearSelector option {
+                color: #404258;
+                background-color: white !important;
+
+            }
+
+            /* .set-border {
+      border-bottom: 1px solid #EAEFF4;
+      padding-bottom: 1em !important;
+
+    } */
+
+            .set-border-bottom {
+                border-bottom: 1px solid #EAEFF4;
+                margin-bottom: 1em !important;
+
+            }
+
+            .lesson-bar {
+                border-left: 0.25em solid #007bff !important;
+                padding-left: 0.5em !important;
+                margin-right: 0.5em !important;
+
+            }
+
+            .a-add {
+                color: #007bff !important;
+            }
+
+            .a-add:hover {
+                color: #0053ac !important;
+            }
+
+            .descp {
+                text-indent: 2em;
+                margin: 0 2em;
+            }
+
+            .rectangle-141 {
+                background-color: white;
+                border-radius: 0.75em;
+                box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+                height: 14.6875em;
+                left: 4.6875em;
+                top: 37.3125em;
+                width: 39.125em;
+                width: 75%;
+                margin: 2em 2em;
+            }
+
+            .home-div,
+            .a-home {
+                color: #999999 !important;
+            }
+
+
+            .status-a {
+                color: #404258 !important;
+            }
+
+            .list-lesson-p {
+                color: #8A2BE2;
+
+            }
+
+            .list-lesson-p-span {
+                color: #4B0082;
+            }
+
+            .each-lesson {
+                border-top: 0.1em solid #8A2BE2;
+
+            }
+
+            .aside-right {
+                background-color: #dde6ed1a;
+                height: 100%;
+            }
+
+            .manange-bar {
+                border-radius: 1em;
+                /* grid-template-columns: 1fr 1fr; */
+                /* justify-content: space-between !important; */
+
+            }
+
+
+            .main-content {
+                height: 100%;
+            }
+
+            .lesson-content {
+                height: 100%;
+                border-radius: 1em !important;
+
+                justify-content: center !important;
+                border-top: 0.5em solid #8A2BE2;
+            }
+
+            .lesson-nothing {
+                /* margin: 25% 0 !important; */
+                padding: 0 !important;
+            }
+
+            .add-lesson-btn {
+                float: right;
+                width: auto;
+            }
+
+
+            .show-layout-2 {
+                display: block;
+                opacity: 1;
+                /* สิ้นสุดที่ความทึบ 1 */
+                transition: opacity 0.5s ease;
+                /* กำหนดการเปลี่ยนแปลงที่ต้องการ */
+            }
+
+            .layout01-mainDes {
+
+                font-size: xx-large !important;
+                font-weight: bolder !important;
+
+            }
+
+            /* .input-mainSubDes,
+    .input-mainDes,
+    .input-mainSubDes2 {
+      white-space: pre-wrap !important;
+      overflow: auto !important;
+    } */
+
+            .subDes,
+            .subDesNumber2 {
+                border: none !important;
+            }
+
+            .layout1-contents {
+                background-color: #dde6ed1a;
+                width: 85%;
+
+            }
+
+            .layout01_gird {
+                display: grid;
+                grid-template-columns: 0.75fr 1.25fr;
+            }
+
+
+            .Topic1 {
+                background-color: #8A2BE2 !important;
+                color: white !important;
+                border-radius: 1em !important;
+                width: 70% !important;
+            }
+
+            .Topic1::placeholder {
+                color: white !important;
+                font-size: xx-large;
+                font-weight: bolder;
+                text-align: center !important;
+            }
+
+            #file-input {
+                display: none !important;
+            }
+
+            .center {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: ฟ;
+                /* ทำให้สูงเต็มหน้าจอ */
+            }
+
+            video {
+                border-radius: 0.5em;
+                box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+
+            }
+
+            .file-icon {
+                font-size: 7em;
+            }
+
+            .content-2 {
+                border-top: 0.5em solid #8A2BE2;
+                border-radius: 1em !important;
+                height: 100% !important;
+                background-color: #dde6ed1a !important;
+                box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+            }
+
+            .main-content-long-text {
+                color: #8A2BE2 !important;
+                border: none !important;
+
+            }
+
+            .text-areas-indent {
+                text-indent: 2em;
+            }
+
+            .main-content-long-text::placeholder {
+                color: #8A2BE2 !important;
+                /* text-indent: 2em !important; */
+            }
+
+            .setEdge1,
+            .setEdge2 {
+                border-right: 1px solid #8A2BE2 !important;
+                border-bottom-width: 50% !important;
+                box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset !important;
+            }
+
+            .add-button-2 {
+                float: right;
+
+            }
+
+            .layout01_gird {
+                display: grid;
+                grid-template-columns: 0.75fr 1.25fr;
+            }
+
+            .allCOntent {
+                height: fit-content;
+            }
+
+            .subLayout2Contents2 div {
+                height: fit-content !important;
+            }
+
+            .setborder {
+                border-radius: 0.5em !important;
+            }
+
+            .addContent-a {
+                text-decoration: none !important;
+                transition-duration: 0.3s;
+            }
+
+            .addContent-a:hover {
+                color: #0d57d6 !important;
+                transition: 0.3s;
+            }
+
+            .lesson-bar {
+                border-left: 0.25em solid #387bef !important;
+                padding-left: 0.5em !important;
+            }
+
+            .comment-table tr th {
+                padding-top: 1em !important;
+                padding-bottom: 1em !important;
+                border-bottom: 1px solid #ced4daa0;
+                color: #5a6a85 !important;
+
+            }
+
+            .comment-table tr td {
+                padding-top: 1em !important;
+                /* padding-bottom: 1em !important; */
+                /* border-bottom: 1px solid #ced4daa0; */
+
+            }
+
+            .comment {
+                display: flex;
+                align-items: center;
+                padding: 15px;
+                max-height: 104px;
+            }
+
+            .comment img {
+                width: 50px;
+                height: 50px;
+                border-radius: 25%;
+                margin-right: 1em !important;
+                object-fit: cover;
+
+            }
+
+            /* .comment .content {
+      flex-grow: 1;
+    } */
+
+            .comment-color {
+                color: #7C8FAC !important;
+            }
+
+            .fancyBox {
+                width: 10%;
+                height: auto;
+            }
+
+            .comment-files {
+                width: 125px;
+                height: 125px;
+                margin-right: 1em !important;
+                border-radius: 10%;
+            }
+
+            .commentOption {
+                position: absolute;
+
+            }
+
+            .optionComment:hover {
+                color: #003ba1 !important;
+                transition: 0.3s;
+            }
+
+            .reply-comment {
+                display: none;
+            }
+
+            .btn {
+                border: none;
+            }
+
+            .grey {
+                color: gray !important;
+            }
+
+            .swal-container {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                text-align: center !important;
+
+            }
+
+            .swal-title {
+                font-size: 1.5em !important;
+                font-weight: bold !important;
+            }
+
+            .swal-text {
+                margin: 1em 0 !important;
+            }
+
+            .swal-icon {
+
+                margin: 2em auto !important;
+            }
+
+            .swal-confirm-button,
+            .swal-cancel-button,
+            .swal-launch-button {
+                margin: 2em 1em !important;
+            }
+
+            .swal-confirm-button {
+                background-color: #d33;
+                border-color: #d33;
+                padding: 0.75rem !important;
+            }
+
+            .swal-launch-button {
+                background-color: #0d6efd;
+                border-color: #0d6efd;
+                padding: 0.75rem !important;
+            }
+
+            .swal-cancel-button {
+                background-color: gray;
+                border-color: gray;
+                padding: 0.75rem !important;
+            }
+
+            /* .spn-comment {
+      font-size:xx-small !important;
+      border: 2px solid white;
+      padding: 0.25em !important;
+      border-radius: 0.25em;
+    } */
+            @media screen and (max-width: 768px) {
+                .above-nav-status {
+                    display: none;
+                }
+            }
+        </style>
+</head>
+
+<body>
+
+    <%- include("./partials/studentNav.ejs")%>
+        <!-- <div class="above-nav d-flex px-4 py-3">
+    <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
+      <i class="bi bi-house mx-2"></i>
+      <a href="/adminIndex" class="a-home">
+        <p class="m-0">หน้าหลัก &nbsp;&nbsp;></p>
+      </a>
+    </div>
+
+    <a href="#" class="status-a mx-2 my-0 align-middle">
+      <p class="m-0">บทเรียน</p>
+    </a>
+
+  </div> -->
+        <!-- อยากเพิ่มปุ่ม ปล่อยแบบทดสอบ -->
+        <div class="main-content d-flex w-100 h-auto">
+            <%- include("./partials/studentAside.ejs")%>
+                <div class="row allCOntent  m-3" style="width: 80% !important;">
+                    <div class="col-12 aside-right px-4 py-4 bg-white" style="width: 100% !important;">
+                        <div class="manange-bar p-4 bg-white w-100">
+                            <p class="fw-normal fs-6 lesson-bar ms-2">แบบทดสอบ</p>
+                            <br>
+                            <p class="fw-normal fs-3 ms-2 ">
+                                <%=quiz.quizname%>
+                            </p>
+                            <p class="fs-6 mx-2 mt-1" style="color: gray;">
+                                <%=quiz.quizdescription%>
+
+                            </p><br>
+
+                            <p class="fw-normal w-auto fs-6 " style="margin-left: 0.5em !important;">
+                                เวลาในการทำแบบทดสอบ:
+                                <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;">
+                                    <%=quiz.timeLimit.display%>
+                                </span>
+                                จำนวนครั้งที่เข้าทำได้:
+
+
+                                <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;">
+                                    <%=quiz.attemptLimit%> ครั้ง
+                                </span>
+                                จำนวนข้อ:
+                                <span class="fw-normal fs-6 text-primary " style="margin-right: 1em !important;">
+                                    <%= questions.length %> ข้อ
+                                </span>
+
+                            </p>
+                            <div>
+
+                                <br>
+                                <hr><br>
+                                <p class="fw-normal w-auto fs-6 mx-2">สถานะ:
+                                    <span class="fw-normal fs-6  text-success style=" margin-right: 1em
+                                        !important;">ทำแล้ว</span>
+                                    <!-- ถ้าattemptCount มากกว่า 1 ให้เป็น ทำแล้ว -->
+                                    <% if (quiz.releaseWhen) { %>
+
+                                        <label class="ms-2">ถูกปล่อยเมื่อ: </label>
+                                        <span class="grey" style="margin-right: 1em !important;" ;>
+                                            <%= releaseWhenLocal ? releaseWhenLocal : 'ยังไม่มีการตั้งเวลาปล่อย' %>
+                                        </span>
+
+                                        <% } %>
+
+                                            <% if (quiz.deadline) { %>
+                                                <label>หมดเขต: </label>
+                                                <span style="color: rgba(255, 255, 255, 0.6);">
+                                                    <%= deadlineLocal ? deadlineLocal : 'ยังไม่มีการตั้งเวลาหมดเขต' %>
+                                                </span>
+                                                <% } %>
+
+                                </p>
+                                </p>
+                            </div>
+
+                            <br>
+
+                            <div class="d-flex justify-content-center">
+                                <div class="score-display text-center mx-2">
+                                    <p>คะแนนที่ทำได้: <br><br>
+                                    <h2>
+                                        <%= studentScore %>/<%= totalPoints %>  <span class="fs-4">(<%=
+                                                        percentage.toFixed(0) %>%)
+                                                        <a class="fs-6 " href="/studentIndex/eachQuiz?quizId=<%= quiz._id %>/rdetail"  target="_blank">ดูรายละเอียด</a>
+
+                                                </span>
+                                    </h2>
+
+                                    </p>
+
+                                </div>
+                            </div>
+                            <br />
+                            <div class="d-flex justify-content-center my-2">
+                                <a href="javascript:void(0)" onclick="confirmStartQuiz('<%= quiz._id %>')"
+                                    class="add-button btn btn-secondary"
+                                    style="background-color: #8A2BE2 !important; padding: 0.8rem !important;">
+                                    ทำแบบทดสอบอีกครั้ง
+                                </a>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+        </div>
+        <%- include("./partials/footer_st.ejs")%>
+
+
+</body>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function confirmStartQuiz(quizId) {
+        Swal.fire({
+            title: 'คุณแน่ใจหรือไม่?',
+            text: "คุณต้องการเริ่มทำแบบทดสอบนี้หรือไม่?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'ใช่, เริ่มเลย!',
+            cancelButtonText: 'ยกเลิก',
+            customClass: {
+                container: 'swal-container',
+                icon: 'swal-icon',
+                confirmButton: 'swal-confirm-button',
+                cancelButton: 'swal-cancel-button'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // ถ้าผู้ใช้กด "ใช่" จะเปลี่ยนเส้นทางไปยังแบบทดสอบ
+                window.location.href = '/studentIndex/eachQuiz?quizId=' + quizId + '/test';
+            }
+        });
+    }
+</script>
+
+</html>

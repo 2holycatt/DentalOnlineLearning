@@ -1,0 +1,242 @@
+.header {
+    position: absolute;
+    margin: 0 auto;
+    padding: 0 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.899);
+    backdrop-filter: blur(1em);
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid #EAEFF4;
+    z-index: 1000;
+    top: 0;
+}
+
+.header_info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-a {
+    margin-right: 1rem; /* ลดระยะห่างระหว่าง logo กับ ul-nav */
+}
+.header_right {
+    display: flex;
+    align-items: center;
+}
+
+.header_search {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #f4f4f9;
+    width: 400px;
+    height: 45px;
+    border-radius: 5px;
+    margin-right: 1rem; /* ปรับระยะห่างขวาของ header_search */
+}
+
+.header_search > input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: calc(100% - 40px); /* ปรับกว้างของ input search */
+    height: 40px;
+    padding-left: 10px; /* ปรับการจัดชิดซ้ายของข้อความใน input */
+}
+
+.img-lo {
+    margin-left: 2em !important;
+}
+
+.ul-nav {
+    display: flex;
+    align-items: center !important;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    gap: 1rem;
+}
+
+.li-a {
+    margin-right: 0.5em !important; /* ลดระยะห่างระหว่างรายการ */
+}
+
+.a-li {
+    text-decoration: none;
+    color: #5A6A85 !important;
+    padding: 0.5em 0.75em; /* ปรับระยะห่างภายในลิงก์ */
+    transition: color 0.3s, transform 0.3s;
+}
+
+body.light .a-li:hover {
+    color: #8A2BE2 !important;
+    transform: scale(1.1);
+}
+.dropdown {
+    display: none;
+  }
+
+  .show-drop:hover .dropdown {
+    display: block;
+    position: absolute;
+    list-style: none;
+    text-decoration: none !important;
+    border-radius: 0.5em;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+    background-color: white;
+    padding: 0.5em 1em !important;
+  }
+ body.light .sub-menu{
+    
+        border-bottom: 1px solid lightgray;
+ }
+
+.sub-menu-wrap {
+    position: absolute;
+    top: 100%;
+    right: 1%;
+    width: 300px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s;
+}
+
+.sub-menu-wrap.open-menu {
+    max-height: 400px;
+}
+
+.sub-menu {
+    background-color: white;
+    padding: 1rem !important;
+    margin: 0 10px !important;
+    /* border-bottom: 0.1px solid #ccc; */
+    border-radius: 1em;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.sub-menu-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-top: 12px  !important;
+    color: #5A6A85;
+}
+
+.sub-menu-link p {
+    width: 100%;
+}
+
+.sub-menu-link:hover ,body.dark .sub-menu-link:hover{
+    /* font-weight: 550; */
+    color: #8A2BE2;
+}
+
+.bi:hover {
+    cursor: pointer;
+}
+
+
+
+.search-input::placeholder {
+    color: #5A6A85;
+}
+
+.IoMoon{
+    color: #8A2BE2;
+}
+.menu-btn {
+    display: none !important;
+  }
+.switch_theme {
+    display: flex;
+    align-items: center;
+    margin-right: 2rem;
+}
+
+.search_button{
+    border: none;
+}
+.profile_button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    color: var(--icon-color);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    border-radius: 50%;
+    padding: 10px;
+    align-items: center; 
+    justify-content: center; 
+}
+
+.profile_button:hover {
+    transform: scale(1.1);
+}
+
+.profile_button i {
+   
+        font-size: 2.6rem !important; 
+        transition: color 0.2s ease;
+}
+
+
+
+
+
+/* Breakpoints */
+@media screen and (max-width: 768px) {
+    .ul-nav {
+        display: none;
+    }
+
+    .menu-btn {
+        display: block !important;
+        margin-right: 10px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        font-size: 1.5rem;
+        color: var(--icon-color);
+    }
+    .theme_toggle
+    {
+        display: none !important;
+        transition: 'background-color 0.3s'
+    }
+    .switch_theme{
+        display: none !important;
+    }
+    .ul-nav {
+        display: none;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .li-a {
+        margin-right: 0.5em !important; /* ปรับระยะห่างระหว่างรายการ */
+    }
+    
+    .a-li {
+        text-decoration: none;
+        color: #5A6A85 !important;
+        padding: 0.5em 0.75em; /* ปรับระยะห่างภายในลิงก์ */
+        transition: color 0.3s, transform 0.3s;
+    }
+    
+    .a-li:hover {
+        color: #8A2BE2 !important;
+        transform: scale(1.1);
+    }
+    
+}

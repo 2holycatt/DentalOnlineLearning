@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/sidebar.css">
+</head>
+
+<body class="<%= theme === 'dark' ? 'dark' : 'light' %>">
+    <div class="sidebar p-4 <%= isOpen ? 'open' : '' %>">
+        <div class="sidebar_header">
+            <h3></h3>
+            <i class="close-btn" onclick="toggleSidebar()">&#x2715;</i> <!-- Icon close (X) -->
+        </div>
+        <ul class="sidebar_nav">
+            <li><a class="bi-2 bi pb-2" href="/adminIndex" onclick="toggleSidebar()">หน้าหลัก</a></li>
+            <li>
+                <p class="fs-6 fw-bold bold-menus" style="margin-bottom: 1em !important;">
+                    ห้องเรียน
+                </p>
+                <ul class="submenu">
+                    <li><a class="bi-1" href="/adminIndex/adminLessonIndex"
+                            onclick="toggleSidebar()"><i class="bi-1 bi bi-book-half mx-2"></i>บทเรียน</a></li>
+                    <li><a class="bi-2" href="/adminIndex/assignmentIndex"
+                            onclick="toggleSidebar()"><i class="bi-2 bi bi-list-task mx-2"></i>งานที่มอบหมาย</a></li>
+                    <li><a class="bi-3" href="/adminIndex/adminExamsIndex"
+                            onclick="toggleSidebar()"><i class="bi-3 bi bi-pencil-square mx-2"></i>แบบทดสอบ</a></li>
+                </ul>
+            </li>
+            <li>
+                <p class="fs-6 fw-bold bold-menus" style="margin-bottom: 1em !important;">
+                    จัดการข้อมูลนักศึกษา
+                </p>
+                <ul class="submenu">
+                    <li><a href="/adminIndex/adminLessonIndex"
+                            onclick="toggleSidebar()"><i class="bi-4 bi-bar-chart mx-2"></i>แดชบอร์ด (Dashboard)</a></li>
+                    <li><a href="/adminIndex/uploadStudent"
+                            onclick="toggleSidebar()"><i class="bi-5 bi-person-lines-fill mx-2"></i>รายชื่อนักศึกษา</a></li>
+                    <li><a href="#" onclick="toggleSidebar()"><i class="bi-6 bi-clock-history mx-2"></i>การเข้าใช้งาน (Logs
+                            file)</a></li>
+                    <li><a href="#" onclick="toggleSidebar()"> <i class="bi-7 bi-bar-chart mx-2"></i>การกำหนดสิทธิ์</a></li>
+                </ul>
+            </li>
+            <li><a class="bi-2 bi pb-2" href="#"  onclick="toggleSidebar()">แจ้งเตือน</a></li>
+
+            <br>
+            <li class="theme-toggle">
+                <label class="switch_theme_sidebar">
+                    <input type="checkbox" class="theme-toggle" onchange="toggleTheme()" <%=theme==='' ? 'checked'
+                        : 'dark' %>>
+                    <span class="slider round"></span>
+                </label>
+            </li>
+        </ul>
+    </div>
+<!-- เพิ่มแจ้งเตือน -->
+
+    <script>
+        // Function to toggle the sidebar
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('open');
+            }
+        }
+
+        // Function to toggle the theme
+        function toggleTheme() {
+                // ตรวจสอบธีมปัจจุบันจาก class ของ body
+                var currentTheme = document.body.classList.contains('light') ? 'light' : 'dark';
+                var newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+                // ลบ class ของธีมปัจจุบันและเพิ่ม class ของธีมใหม่
+                document.body.classList.remove(currentTheme);
+                document.body.classList.add(newTheme);
+
+                // บันทึกสถานะธีมใหม่ลงใน localStorage
+                localStorage.setItem('theme', newTheme);
+
+                // ตั้งค่าการ checked ของสวิตช์ toggle
+                document.querySelector('.theme_toggle').checked = (newTheme === 'dark');
+            }
+        // Initialize theme from localStorage
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(savedTheme);
+            const themeToggle = document.querySelector('.theme-toggle input');
+            if (themeToggle) {
+                themeToggle.checked = savedTheme === 'dark';
+            }
+
+            // Update theme switch icon visibility
+            const lightIcon = document.querySelector('.icon-light');
+            const darkIcon = document.querySelector('.icon-dark');
+            if (lightIcon && darkIcon) {
+                lightIcon.style.display = savedTheme === 'light' ? 'inline' : 'none';
+                darkIcon.style.display = savedTheme === 'dark' ? 'inline' : 'none';
+            }
+        })();
+    </script>
+
+   
+</body>
+
+</html>
