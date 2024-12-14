@@ -130,9 +130,36 @@ const adminDashboard = async (req, res) => {
 
             const today = new Date();
             // กำหนดช่วงเวลาของวันที่ปัจจุบัน ตั้งแต่ 00:00:00 ถึง 23:59:59
-            const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-            const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+            // const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+            // const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+            // สร้างเวลาต้นวัน (00:00:00) ในเขตเวลา 'Asia/Bangkok'
+            const startOfDay = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Bangkok',
+                hour12: false,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            }).format(new Date(today.setHours(0, 0, 0, 0)));
 
+            console.log('Start of day:', startOfDay);
+
+            // สร้างเวลาสิ้นวัน (23:59:59) ในเขตเวลา 'Asia/Bangkok'
+            const endOfDay = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Bangkok',
+                hour12: false,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            }).format(new Date(today.setHours(23, 59, 59, 999)));
+
+            // const options = { timeZone: 'Asia/Bangkok', hour12: false };
+            // const currentDate = new Intl.DateTimeFormat('en-GB', options).format(new Date())
             const lessonFinishedToday = await lessonProgress.find(
                 {
                     subjectMongooseId: latestSubject._id,
@@ -141,7 +168,7 @@ const adminDashboard = async (req, res) => {
                         $lte: endOfDay   // สิ้นสุดที่ 23:59:59
                     }
                 });
-
+            console.log(lessonFinishedToday);
             const totalLessons = latestSubject.lessonArray.length;
             const studentAmount = latestSubject.students.length;
 
@@ -162,7 +189,7 @@ const adminDashboard = async (req, res) => {
                     lessonFinishedProgressAmount: 0 // เริ่มต้นที่ 0
                 });
             });
-            
+
             // วนลูปข้อมูล lessonProgress ที่ได้มาและเพิ่มจำนวนคนที่ทำเสร็จ
             lessonProgressList.forEach(progress => {
                 const lessonId = progress.lesson._id.toString();
@@ -192,12 +219,12 @@ const adminDashboard = async (req, res) => {
             let progressData = [];
             let lessonProgressPercentSummary = [];
 
-            
+
 
             lessonProgressArray.forEach(lesson => {
                 lessonLabels.push(lesson.lessonName);
                 progressData.push(lesson.lessonFinishedProgressAmount);
-                
+
                 //หา ว่าบทเรียนนั้นมีกี่คนที่สำเร็จ 100 เปอร์เซ็น 
                 // สูตร (จำนวนคนที่ทำสำเร็จ / จำนวนคนทั้งหมด) = lessonFinishedProgressAmount / studentAmount 
                 lessonProgressPercentSummary.push(
@@ -208,10 +235,10 @@ const adminDashboard = async (req, res) => {
 
             // totalProgress ผลรวมจำนวนนักเรียนคนที่เสร็จบทเรียนในแต่ละบท 
             const totalProgress = lessonProgressPercentSummary.reduce((sum, progress) => sum + progress, 0);
-           
-            
-            const totalMaxProgress = (totalProgress / totalLessons ) * 100; // ค่าที่คาดหวัง (100%)
-            
+
+
+            const totalMaxProgress = (totalProgress / totalLessons) * 100; // ค่าที่คาดหวัง (100%)
+
             // const finalPercentage = (totalProgress / totalMaxProgress) * 100;
             const finalPercentageTofixed = parseFloat(totalMaxProgress.toFixed(2))
             let calculateTodayProgress = await countTodayLessonAccess(latestSubject._id)
@@ -242,7 +269,7 @@ const adminDashboard = async (req, res) => {
             let lessonLabels = [];
             let progressData = [];
             let studentAmount = [];
-            res.render('teacherDashboard', {latestSubject, subjects, lessonLabels, progressData, studentAmount});
+            res.render('teacherDashboard', { latestSubject, subjects, lessonLabels, progressData, studentAmount });
         }
 
 
@@ -255,7 +282,7 @@ const adminDashboard = async (req, res) => {
         let lessonLabels = [];
         let progressData = [];
         let studentAmount = [];
-        res.render('teacherDashboard', {latestSubject, subjects, lessonLabels, progressData, studentAmount});
+        res.render('teacherDashboard', { latestSubject, subjects, lessonLabels, progressData, studentAmount });
 
     }
 }

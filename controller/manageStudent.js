@@ -568,7 +568,7 @@ const uploadedForm = async (req, res) => {
       await newStudent.save();
 
       const updateStudentIdToUser = await User.findByIdAndUpdate(
-        {_id:newUser._id},
+        { _id: newUser._id },
         { $push: { student: newStudent._id } },
         { new: true }
       )
@@ -592,7 +592,7 @@ const uploadedForm = async (req, res) => {
       await newStudent.save();
 
       const updateStudentIdToUser = await User.findByIdAndUpdate(
-        {_id:newUser._id},
+        { _id: newUser._id },
         { $push: { student: newStudent._id } },
         { new: true }
       )
@@ -638,11 +638,26 @@ const studentInformationAccount = async (req, res) => {
       });
 
     // res.json(findStudent);
-    const studentSubject = findStudent.subjects;
     const studentUser = findStudent.user;
     const studentSubmitAssign = findStudent.user.submitAssign;
 
-    res.render("studentInformationAccount", { findStudent, studentSubject, studentUser, studentSubmitAssign });
+    let studentSubject = findStudent.subjects;
+
+    let studentSubjectCalculate= [];
+    for (let subject of studentSubject) {
+      var calculateTotalScore = 0;
+      
+      // คำนวณคะแนนรวมจาก weeks
+      for (let week of subject.weeks) {
+        calculateTotalScore += week.scorePerWeek;
+      }
+
+      studentSubjectCalculate.push(calculateTotalScore);
+    }
+
+    // res.json(studentSubjectCalculate);
+
+    res.render("studentInformationAccount", { findStudent, studentSubject, studentUser, studentSubmitAssign, studentSubjectCalculate });
     // res.render("editStudentAccount", { mytitle: "editStudentAccount", lesson, lessons, foundLayouts });
 
   } catch (error) {

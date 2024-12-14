@@ -141,7 +141,7 @@ router.get('/adminIndex/deleteLayout', teacherMiddleware, adminEditDelete.delete
 // router.post('/adminIndex/addEndQuestionChapter', adminManageLayouts.addEndQuestionChapter)
 
 const { createLayout_05, addEndQuestionChapter } = require("../controller/adminManageLayouts");
-router.route('/adminIndex/addEndQuestionChapter').post(upload.array("file"), addEndQuestionChapter);
+router.route('/adminIndex/addEndQuestionChapter').post(upload.any(), addEndQuestionChapter);
 router.route('/adminIndex/createLayout_05').post(upload.single("file"), createLayout_05);
 
 //Admin Dashboard

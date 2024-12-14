@@ -41,7 +41,7 @@ async function calculateProgress(userId, lessonId) {
 
 
 const updateLessonProgress = async (req, res) => {
-    const { layoutId, layoutType, lessonId, timeSpent,subjectId } = req.body; // เพิ่ม lessonId ใน body ถ้ายังไม่ได้ส่ง
+    const { layoutId, layoutType, lessonId, timeSpent, subjectId } = req.body; // เพิ่ม lessonId ใน body ถ้ายังไม่ได้ส่ง
     // console.log(subjectId);
     const userId = req.session.userId; // สมมติว่ามีการตรวจสอบผู้ใช้แล้ว
 
@@ -65,7 +65,7 @@ const updateLessonProgress = async (req, res) => {
                 user: userId,
                 lesson: lessonId,
                 timeSpentInSeconds: timeSpent,
-                subjectMongooseId:subjectId
+                subjectMongooseId: subjectId
             });
             await newLessonProgress.save();
 
@@ -214,10 +214,13 @@ const calculateTimeSpent = async (req, res, next) => {
                 (lessonProgress.progress < 100 && lessonProgress.finishedProgress.checkFinished == true)
             ) {
                 const currentDate = new Date();
+               
+                console.log(currentDate);
+
                 const finishedProgress = {
                     checkFinished: true,
                     message: user.name + " เรียนบทเรียน " + lesson.LessonName + "ครบแล้ว",
-                    finishehDate: currentDate
+                    finishehDate: dateObject
                 }
 
                 const updateLessonProgress = await LessonProgress.findByIdAndUpdate(
