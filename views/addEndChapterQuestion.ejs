@@ -517,17 +517,21 @@
               <div class="questionForm mb-2">
                 <div class="mt-1">
                   <div class="mb-1 row">
-                    <div class="col-12 d-flex align-items-center">
+                    <div class="col-12 d-flex align-items-center file-set-1">
                       <i class="bi text-primary bi-dot fs-2"></i>
                       <textarea class="form-control p-2 question1" name="question1" rows="1"></textarea>
                       <div class="comment-image">
                         <div class="d-flex align-items-center justify ms-2">
-                          <input type="file" class="form-control d-none file-input" name="file" accept="image/*,video/*" multiple>
+                          <input type="file" class="form-control d-none file-input" name="file1" accept="image/*,video/*">
                           <i class="bi bi-camera-fill p-2 btn btn-primary icon-click"></i>
                           <p class="file-name"></p>
                         </div>
                       </div>
                     </div>
+                    <!-- <div class="col-12 d-flex align-items-center">
+                      <p class="ms-2 my-2">ชื่อไฟล์: <span class="file-name-1"></span>
+                      </p>
+                    </div> -->
                   </div>
                 </div>
               </div>
@@ -551,7 +555,7 @@
                   </a> -->
                 </div>
               </div>
-              
+
             </form>
           </div>
         </div>
@@ -585,27 +589,72 @@
       // นับจำนวนคำถามที่มีอยู่แล้ว
       const questionCount = form.querySelectorAll('textarea').length + 1; // เริ่มต้นที่ 2 เนื่องจากมี default อยู่แล้ว
 
-      const defaultQuestionHTML = `
-      <div class="mt-1 question-block">
-        <div class="mb-1 row">
-            <div class="col-12 d-flex align-items-center">
-                <i class="bi text-primary bi-dot fs-2"></i>
-                <textarea class="form-control p-2 question${questionCount}" name="question${questionCount}" rows="1"></textarea>
-                <div class="comment-image">
-                 <div class="d-flex align-items-center justify ms-2">
-  <input type="file" class="form-control d-none file-input" accept="image/*,video/*" multiple>
-  <i class="bi bi-camera-fill p-2 btn btn-primary icon-click"></i>
-  <p class="file-name"></p>
-</div>
-                </div>
-            </div>
-        </div>
-      </div>
-    `;
+      // หา input file ตัวสุดท้ายที่มี name="fileX" เพื่อดึงเลข X ออกมา
+      const lastFileInput = form.querySelector('.file-input:last-of-type');
+      // let fileNumber = 1; // ค่าเริ่มต้นหากไม่มี file-input ตัวก่อนหน้า
 
+      // if (lastFileInput && lastFileInput.name) {
+      //   // ดึงเลขจากชื่อ attribute name="fileX" ของ file-input ตัวสุดท้าย
+      //   const match = lastFileInput.name.match(/file(\d+)$/);
+      //   if (match) {
+      //     fileNumber = parseInt(match[1]) + 1; // บวกเพิ่มอีก 1
+      //   }
+      // }
+
+      const defaultQuestionHTML = `
+    <div class="mt-1 question-block">
+      <div class="mb-1 row">
+          <div class="col-12 d-flex align-items-center file-set-${questionCount}">
+              <i class="bi text-primary bi-dot fs-2"></i>
+              <textarea class="form-control p-2 question${questionCount}" name="question${questionCount}" rows="1"></textarea>
+              <div class="comment-image">
+                <div class="d-flex align-items-center justify ms-2">
+                  <input type="file" class="form-control d-none file-input" name="file${questionCount}" accept="image/*,video/*">
+                  <i class="bi bi-camera-fill p-2 btn btn-primary icon-click"></i>
+                  <p class="file-name"></p>
+                </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  `;
+
+      // แทรก HTML ของคำถามใหม่ลงใน form
       form.insertAdjacentHTML('beforeend', defaultQuestionHTML);
+
+      // เรียกใช้งานฟังก์ชันเพิ่มเติมถ้าจำเป็น
       callToCheck();
     }
+
+    // ฟังก์ชันสำหรับแสดงชื่อไฟล์หลังการเลือก
+    function attachFileNameDisplay(fileInput) {
+      const nameAttr = fileInput.getAttribute('name');
+      const match = nameAttr.match(/file(\d+)$/);
+      const fileNumber = parseInt(match[1]); // แปลงผลลัพธ์เป็นตัวเลข
+
+      fileInput.addEventListener('change', (event) => {
+        const files = event.target.files;
+        if (files.length > 0) {
+          const fileName = files[0].name;
+
+          // สร้าง div ที่จะแสดงชื่อไฟล์
+          const fileNameDisplay = document.createElement('div');
+          fileNameDisplay.classList.add('col-12', 'd-flex', 'align-items-center');
+          fileNameDisplay.innerHTML = `
+        <p class="ms-2 my-2">ชื่อไฟล์: <span class="file-name">${fileName}</span></p>
+      `;
+
+          // แทรก div แสดงชื่อไฟล์หลังจาก .comment-image
+          const fileSet = fileInput.closest(`.file-set-${fileNumber}`);
+          fileSet.insertAdjacentElement('afterend', fileNameDisplay);
+        }
+      });
+    }
+
+    // ให้ฟังก์ชัน attachFileNameDisplay เรียกใช้งานกับ input file ที่มีอยู่แล้ว (กรณีมี input file เริ่มต้น)
+    document.querySelectorAll('.file-input').forEach(fileInput => {
+      attachFileNameDisplay(fileInput);
+    });
 
     function resetQuestions() {
       // หา form ที่มีคำถามทั้งหมด

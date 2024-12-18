@@ -85,6 +85,8 @@ module.exports = upload;
 
 // module.exports = upload;
 
+
+// Code เดิมก่อนจะใช้อัปโหลดบน AWS
 // const multer = require("multer");
 // const iconv = require("iconv-lite");
 // const fs = require("fs");
