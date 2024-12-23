@@ -1,7 +1,7 @@
 * {
   /* font-family: "Prompt" !important; */
-  margin: 0;
-  padding: 0;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 a {
@@ -727,7 +727,6 @@ a {
 .add-button {
   border-radius: 0.5em !important;
   width: fit-content !important;
-  width: -moz-fit-content;
 
 }
 
@@ -805,7 +804,7 @@ a {
 
 
 .Topic1 {
-  /* background-color: #8A2BE2 !important; */
+  background-color: #8A2BE2 !important;
   color: white !important;
   border-radius: 1em !important;
   width: 70% !important;
@@ -835,7 +834,7 @@ a {
 }
 
 .content-2 {
-  border-top: 0.2em solid #007bff;
+  border-top: 0.2em solid #8A2BE2;
   border-radius: 0.7em !important;
   height: 100% !important;
   background-color: white !important;
@@ -953,3 +952,10 @@ a {
 /* .ImageFile{
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 } */
+@media (max-width: 1020px) {
+  .main-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

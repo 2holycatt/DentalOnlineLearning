@@ -5,8 +5,6 @@
     -o-box-sizing: border-box;
     -ms-box-sizing: border-box;
     box-sizing: border-box;
-    margin: 0 !important;
-    padding: 0 !important;
   }
 
   /* body {
@@ -30,6 +28,9 @@
     border-top: 1px solid #EAEFF4;
     position: sticky;
 
+  }
+  .dark #footer{
+    border-top: 1px solid #494949 !important;
   }
 
   #footer2 {
@@ -119,6 +120,9 @@
   .use-links li a:hover {
     color: #000;
   }
+  .dark .use-links li a:hover {
+    color: white;
+  }
 
   .address h2 {
     padding-bottom: 15px;
@@ -199,16 +203,37 @@
     transform: scale(1.1);
     transition: 0.3s;
   }
+  body.dark {
+    background-color: #121212; /* Dark background color */
+    color: #fff; /* Light text color */
+  }
+
+  .dark #footer {
+    background-color: #444; /* Dark footer background */
+    color: #fff; /* Light text color */
+  }
+
+  .dark .useful-link,
+  .dark .address {
+    border-color: #555; /* Darker border color */
+  }
+
+ 
+
+  
+  
+  /* Additional styles for dark mode */
+ 
 </style>
 <!-- footer section start -->
-<footer id="footer">
-  <div class="container p-4">
+<footer id="footer" class=" <%= theme === 'dark' ? 'dark' : 'light' %>">
+  <div class="container-fluid p-4" style="width: 100%">
     <div class="row">
       <div class="col-md-3">
         <div class="w-100 d-flex justify-content-center">
-            <div style="width: 50%;">
+            <div class="w-50 d-flex justify-content-center" style="flex-direction: column; align-items: center;">
                 <a href="/adminIndex" class="logo-footer">
-                    <img src="/images/indexMed/DENTISTRY_KKU.svg.png" alt="โลโก้" class="w-100 h-auto img-logo">
+                    <img src="/images/indexMed/DENTISTRY_KKU.svg.png" alt="โลโก้" class="img-logo" style="max-width: 150px;">
                 </a>
             </div>
         </div>
@@ -222,9 +247,9 @@
         <div class="useful-link">
           <p class="fw-bold fw-footer">ห้องเรียน</p>
           <div class="use-links mx-3">
-            <li><a href="index.html">บทเรียน</a></li>
-            <li><a href="index.html">งานที่มอบหมาย</a></li>
-            <li><a href="index.html">แบบทดสอบ</a></li>
+            <li><a href="/adminIndex/adminLessonIndex">บทเรียน</a></li>
+            <li><a href="/adminIndex/assignmentIndex">งานที่มอบหมาย</a></li>
+            <li><a href="/adminIndex/adminExamsIndex">แบบทดสอบ</a></li>
           </div>
         </div>
 
@@ -234,18 +259,17 @@
           <p class="fw-bold fw-footer">จัดการข้อมูลนักศึกษา</p>
           <div class="use-links mx-3">
             <li><a href="index.html">แดชบอร์ด (Dashboard)</a></li>
-            <li><a href="index.html">รายชื่อนักศึกษา</a></li>
-            <li><a href="index.html">การเข้าใช้งาน (Logs file)</a></li>
+            <li><a href="/adminIndex/uploadStudent">รายชื่อนักศึกษา</a></li>
+            <li><a href="/adminIndex/logsFile">การเข้าใช้งาน (Logs file)</a></li>
             <li><a href="index.html">การกำหนดสิทธิ์</a></li>
           </div>
         </div>
-
 
       </div>
       <div class="col-md-3 py-2 px-2">
         <div class="address">
             <p class="fw-bold fw-footer">ติดต่อเรา</p>
-          <div class="address-links mx-3">
+          <div class="address-links mx-3" style="overflow-wrap: break-word;">
             <li class="address1"></li>
             <li><a href="">094-517-2149</a></li>
             <li></i> papinwit.s@kkumail.com</li>
@@ -267,7 +291,6 @@
 
 </section>
 <!-- footer copy right section end -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/resizeTextarea.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.3/dist/sweetalert2.all.min.js"></script>
 

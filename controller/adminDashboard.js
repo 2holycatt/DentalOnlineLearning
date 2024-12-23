@@ -23,6 +23,7 @@ const lessonStats = require("../models/lessonStats");
 const subjectStats = require("../models/subjectStats");
 const moment = require('moment');
 const Student = require("../models/student.model");
+const User = require("../models/user.model");
 
 
 async function countTodayLessonAccess(subjectId) {
@@ -232,7 +233,9 @@ const adminDashboard = async (req, res) => {
                 );
             });
             // console.log(lessonProgressPercentSummary);
-
+            const userData = await User.findById(req.session.userId);
+            const theme = req.session.theme || 'light'; 
+            const isSidebarOpen = false; 
             // totalProgress ผลรวมจำนวนนักเรียนคนที่เสร็จบทเรียนในแต่ละบท 
             const totalProgress = lessonProgressPercentSummary.reduce((sum, progress) => sum + progress, 0);
 
@@ -255,6 +258,9 @@ const adminDashboard = async (req, res) => {
                 totalLessons,
                 lessonFinishedToday,
                 finalPercentageTofixed,
+                userData,
+                theme,
+                isSidebarOpen,
                 countToday: calculateTodayProgress.todayCount, // ส่งค่าจำนวนผู้เข้าถึงในวันนี้
                 yesterdayCount: calculateTodayProgress.yesterdayCount, // ส่งค่าจำนวนผู้เข้าถึงเมื่อวาน
                 difference: calculateTodayProgress.difference, // ส่งค่าเปอร์เซ็นต์การเปลี่ยนแปลง
@@ -262,14 +268,16 @@ const adminDashboard = async (req, res) => {
             })
         } else {
             const subjects = await Subject.find().sort({ "createdAt": 1 });
-
+            const userData = await User.findById(req.session.userId);
+            const theme = req.session.theme || 'light'; 
+            const isSidebarOpen = false; 
             // res.json("subject no");
             // let subjects = [];
             latestSubject = null;
             let lessonLabels = [];
             let progressData = [];
             let studentAmount = [];
-            res.render('teacherDashboard', { latestSubject, subjects, lessonLabels, progressData, studentAmount });
+            res.render('teacherDashboard', { latestSubject, subjects, lessonLabels, progressData, studentAmount,userData, theme, isSidebarOpen });
         }
 
 
@@ -278,11 +286,14 @@ const adminDashboard = async (req, res) => {
         console.log(err);
         // console.log(err);
         const subjects = await Subject.find().sort({ "createdAt": 1 });
+        const userData = await User.findById(req.session.userId);
+        const theme = req.session.theme || 'light'; 
+        const isSidebarOpen = false; 
         latestSubject = null;
         let lessonLabels = [];
         let progressData = [];
         let studentAmount = [];
-        res.render('teacherDashboard', { latestSubject, subjects, lessonLabels, progressData, studentAmount });
+        res.render('teacherDashboard', { latestSubject, subjects, lessonLabels, progressData, studentAmount,userData, theme, isSidebarOpen });
 
     }
 }

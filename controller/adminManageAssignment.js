@@ -19,6 +19,7 @@ const { deleteFileFromS3 } = require('../utils/s3Utils');
 
 const assignmentIndex = async (req, res) => {
   try {
+    const userData = await User.findById(req.session.userId);
     const subjects = await Subject.find().populate('Assignments').sort({ createdAt: 1 }).exec();
     // const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
     // const schoolYear = await SchoolYear.find();
@@ -38,6 +39,8 @@ const assignmentIndex = async (req, res) => {
     // };
     // const assignments = await Assignments.find().populate("schoolYear").sort({ createdAt: 1 }).exec();
     // const formattedAssignments = formatAssignmentDates(subeject.Assignments);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
     subjects.forEach(subject => {
       subject.Assignments.forEach(assignment => {
         assignment._doc.formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
@@ -49,7 +52,7 @@ const assignmentIndex = async (req, res) => {
     //ใช้ตอนแสดงผล
     // const getStartTimeMoment12h = moment(getStartTime).format('DD/MM/YYYY hh:mm A');
     // const getEndTimeMoment12h = moment(getendTime).format('DD/MM/YYYY hh:mm A');
-    res.render('assignmentIndex', { subjects });
+    res.render('assignmentIndex', { subjects,theme, isSidebarOpen , userData});
 
   } catch (error) {
     console.error(error);

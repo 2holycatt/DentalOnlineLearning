@@ -12,12 +12,12 @@
     * {
       box-sizing: border-box !important;
     }
-
+    body.dark {
+        background-color: #212121 !important;
+      }
     .card-1,
     .card-body-1 {
-
       border: none !important;
-
     }
 
     .descp {
@@ -25,15 +25,11 @@
       margin: 0 2em;
     }
 
-
     .rectangle-141 {
       background-color: white;
       border-radius: 0.75em;
       box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
       height: 14.6875em;
-      left: 4.6875em;
-      top: 37.3125em;
-      width: 39.125em;
       width: 75%;
       margin: 2em 2em;
     }
@@ -48,13 +44,17 @@
       border-bottom: 1px solid #999999;
     }
 
+    .dark .above-nav-status {
+      background-color:  var(--secondary-color) !important;
+      border-right:1px solid #494949 ;
+    }
+
     .status-a {
       color: #404258 !important;
     }
 
     .list-lesson-p {
       color: #8A2BE2;
-
     }
 
     .list-lesson-p-span {
@@ -65,33 +65,30 @@
       border-top: 0.1em solid #8A2BE2;
     }
 
-    /* .each-lesson-a {
-      border-top: 0.1em solid #8A2BE2;
-    } */
-
     .aside-right {
-      background-color: #dde6ed1a;
+      background-color: var(--bg-color) !important;
       height: 100%;
     }
 
     .manange-bar {
       border-radius: 0.5em;
       justify-content: space-between !important;
+      
     }
 
     .add-button {
       border-radius: 0.5em !important;
       width: 20% !important;
       height: auto !important;
-
     }
 
     .lesson-content {
       height: fit-content !important;
       border-radius: 1em !important;
-
       justify-content: center !important;
-      /* border-top: 0.5em solid #8A2BE2; */
+    }
+    .dark .manange-bar, .dark .lesson-content{
+      background-color: var(--secondary-color) !important;
     }
 
     .lesson-nothing {
@@ -105,7 +102,6 @@
 
     .each-lesson-a:hover .each-lesson {
       border-left: 0.2em solid #8A2BE2 !important;
-      /* background-color: #404258 !important; */
     }
 
     .card-img-top {
@@ -119,7 +115,6 @@
 
     .card-a {
       text-decoration: none !important;
-
     }
 
     .card-a:hover,
@@ -160,7 +155,9 @@
       cursor: pointer;
       border-radius: 0.5em;
       box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
-
+    }
+    .dark .card-1{
+      box-shadow: lightgray 0px 2px 5px -1px !important;
     }
 
     .card-1:hover {
@@ -170,19 +167,68 @@
     .card-header {
       border-right: 1px solid #EAEFF4;
       border-bottom: 1px solid #EAEFF4;
-
     }
 
-    .a-list-1 {
+    .a-list-3,
+    .bi-3 {
       color: #8A2BE2 !important;
     }
+
+
+
+    #yearSelector {
+      border-color: #EAEFF4;
+      border-radius: 0.5em;
+      background-color: white !important;
+      font-size: smaller;
+      padding: 0.5em !important;
+    }
+
+    #yearSelector option {
+      color: #404258;
+      background-color: white !important;
+
+    }
+
+    /* .set-border {
+      border-bottom: 1px solid #EAEFF4;
+      padding-bottom: 1em !important;
+
+    } */
+
+    .set-border-bottom {
+      border-bottom: 1px solid #EAEFF4;
+      margin-bottom: 1em !important;
+
+    }
+
+    .lesson-bar {
+      border-left: 0.25em solid #007bff !important;
+      padding-left: 0.5em !important;
+      margin-right: 0.5em !important;
+
+    }
+
+    .a-add{
+      color: #007bff !important;
+    }
+
+    .a-add:hover{
+      color: #0053ac !important;
+    }
+    @media screen and (max-width: 768px) {
+      .above-nav-status{
+        display: none;
+      }
+    }
   </style>
+
 </head>
 <body>
-  <%- include("./partials/nav.ejs")%>
+  <%- include("./partials/nav2.ejs", { theme: theme, isSidebarOpen: isSidebarOpen }) %>
   <div class="main-content d-flex">
   <%- include("./partials/lessonsList.ejs")%>
-  <div class="aside-right bg-white h-auto p-4" style="width: 80%;">
+  <div class="aside-right bg-white h-auto p-4 m-3" style="width: 80%;">
     <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
       <p class="fw-bold fs-3">จัดการแบบทดสอบ</p>
       <a href="/adminIndex/addQuiz" class="add-button btn btn-primary m-0 p-2">

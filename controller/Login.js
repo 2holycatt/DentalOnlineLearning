@@ -1,6 +1,6 @@
 
 var User = require('../models/user.model')
-// var bcrypt = require('bcrypt')
+var bcrypt = require('bcrypt')
 var Student = require('../models/student.model')
 var Teacher = require('../models/teacher.model')
 const Lesson = require("../models/Lessons");
@@ -10,6 +10,7 @@ const logger = require('../logs/logger');
 const axios = require('axios');
 // const YOUR_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 // const YOUR_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+// const YOUR_REDIRECT_URL = 'http://localhost:4000/auth/google/callback'
 // const YOUR_REDIRECT_URL = 'https://rpd-dt.onrender.com/auth/google/callback'
 
 
@@ -38,15 +39,15 @@ const authGoogleCallback = async (req, res) => {
             headers: { Authorization: `Bearer ${access_token}` },
         });
 
-        // const kkumailRegex = /@kkumail\.com$/;
-        // const gmailRegex = /@gmail\.com$/;
-        
+        const kkumailRegex = /@kkumail\.com$/;
+        const gmailRegex = /@gmail\.com$/;
         const getEmail = profile.email;
 
         const user = await User.findOne({ email: getEmail });
-        if (user && (user.permission == true)) {
+        if (user) {
             const getRole = user.role;
             req.session.userId = user.id;
+            req.session.isLoggedIn = true;
             //ตรวจสอบว่าโค้ดทั้งหมดที่เกี่ยวข้องกับการตั้งค่าและการใช้งาน session ทำงานถูกต้อง เช่น การเรียก req.session.save()
             //ในบางครั้ง session อาจไม่ถูกบันทึกถ้าหากมีการเปลี่ยนแปลง session object หลังจากที่ response ถูกส่งไปแล้ว
             req.session.save((err) => {
@@ -62,9 +63,36 @@ const authGoogleCallback = async (req, res) => {
                     return res.redirect('/studentIndex');
                 }
             });
-        } else if (!user || user.permission == false) {
-            res.redirect(`/?permission=no`)
-        } 
+        } else if (!user && gmailRegex.test(getEmail)) {
+            const createUser = new User({ email: getEmail, role: 'teacher' });
+            await createUser.save();
+            const createTeacher = new Teacher({ user: createUser._id });
+            await createTeacher.save();
+            await User.findByIdAndUpdate(createUser._id, { $push: { teacher: createTeacher._id } }, { new: true });
+
+            req.session.userId = createUser.id;
+            req.session.save((err) => {
+                if (err) {
+                    logger.error(`Session save error: ${err.message}`);
+                    return res.redirect('/');
+                }
+                logger.info(`New teacher created and logged in: ${getEmail}, IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
+                return res.redirect('/adminIndex');
+            });
+        } else if (!user && kkumailRegex.test(getEmail)) {
+            const createUser = new User({ email: getEmail, role: 'student' });
+            await createUser.save();
+
+            req.session.userId = createUser.id;
+            req.session.save((err) => {
+                if (err) {
+                    logger.error(`Session save error: ${err.message}`);
+                    return res.redirect('/');
+                }
+                logger.info(`New student created: ${getEmail}, IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
+                return res.render('studentInformation', { getUser: createUser });
+            });
+        }
 
     } catch (err) {
         logger.error(`Error during Google authentication: ${err.message}`);
@@ -72,23 +100,6 @@ const authGoogleCallback = async (req, res) => {
     }
 };
 
-
-// const logoutGoogle = async (req, res) => {
-//     try {
-//         // สร้าง URL สำหรับล็อกเอาท์ออกจากระบบ Google
-//         const logoutUrl = `https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=${YOUR_REDIRECT_URL}`;
-//         const user = await User.findById(req.session.userId);
-//         logger.info(`User logged out: ${user.email}, IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
-//         // ลิ้งค์ไปยัง URL สำหรับล็อกเอาท์
-//         req.session.destroy();
-//         // ทำการลบคุกกี้ที่เกี่ยวข้องกับการเข้าสู่ระบบด้วย Google (ถ้ามี)
-//         res.clearCookie('google_access_token');
-//         res.clearCookie('google_id_token');
-//         res.redirect(logoutUrl);
-//     } catch (error) {
-//         console.error(error)
-//     }
-// };
 
 const logoutGoogle = async (req, res) => {
     try {

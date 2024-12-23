@@ -1,0 +1,464 @@
+<!-- ในไฟล์ edit_profile.ejs -->
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/profile.css">
+    <%- include("./partials/header.ejs")%>
+        <title>Edit Profile</title>
+        <style>
+            .grey {
+                color: grey !important;
+            }
+
+            .button-save {
+                background-color: #54B435;
+                border-radius: 8px;
+                border-style: none;
+                box-sizing: border-box;
+                color: #FFFFFF;
+                cursor: pointer;
+                display: inline-block;
+                font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                font-size: 14px;
+                font-weight: 500;
+                height: 40px;
+                line-height: 20px;
+                list-style: none;
+                margin: 0;
+                outline: none;
+                padding: 10px 16px !important;
+                position: relative;
+                text-align: center;
+                text-decoration: none;
+                transition: color 100ms;
+                vertical-align: baseline;
+                user-select: none;
+                -webkit-user-select: none;
+                touch-action: manipulation;
+            }
+
+            .button-save:hover,
+            .button-save:focus {
+                background-color: #61cf3c;
+            }
+
+            .form {
+                /* border-radius: 20px; */
+                box-sizing: border-box;
+                height: 500px;
+                padding: 20px;
+                width: 320px;
+            }
+
+            .title {
+                color: #eee;
+                font-family: sans-serif;
+                font-size: 36px;
+                font-weight: 600;
+                margin-top: 30px;
+            }
+
+            .subtitle {
+                color: #eee;
+                font-family: sans-serif;
+                font-size: 16px;
+                font-weight: 600;
+                margin-top: 10px;
+            }
+
+            .input-container {
+                height: 50px;
+                position: relative;
+                width: 100%;
+            }
+
+            .ic1 {
+                margin-top: 40px;
+            }
+
+            .ic2 {
+                margin-top: 30px;
+            }
+
+            .input {
+                /* border-radius: 12px; */
+                border: 0;
+                box-sizing: border-box;
+                color: #eee;
+                font-size: 18px;
+                height: 100%;
+                outline: 0;
+                padding: 4px 20px 0;
+                width: 100%;
+            }
+
+            .cut {
+                background-color: #15172b;
+                /* border-radius: 10px; */
+                height: 20px;
+                left: 20px;
+                position: absolute;
+                top: -20px;
+                transform: translateY(0);
+                transition: transform 200ms;
+                width: 76px;
+            }
+
+            .cut-short {
+                width: 50px;
+            }
+
+            .input:focus~.cut,
+            .input:not(:placeholder-shown)~.cut {
+                transform: translateY(8px);
+            }
+
+            .placeholder {
+                color: #65657b;
+                font-family: sans-serif;
+                left: 20px;
+                line-height: 14px;
+                pointer-events: none;
+                position: absolute;
+                transform-origin: 0 50%;
+                transition: transform 200ms, color 200ms;
+                top: 20px;
+            }
+
+            .input:focus~.placeholder,
+            .input:not(:placeholder-shown)~.placeholder {
+                transform: translateY(-30px) translateX(10px) scale(0.75);
+            }
+
+            .input:not(:placeholder-shown)~.placeholder {
+                color: #808097;
+            }
+
+            .input:focus~.placeholder {
+                color: #dc2f55;
+            }
+
+            .submit {
+                background-color: #08d;
+                /* border-radius: 12px; */
+                border: 0;
+                box-sizing: border-box;
+                color: #eee;
+                cursor: pointer;
+                font-size: 18px;
+                height: 50px;
+                margin-top: 38px;
+                outline: 0;
+                text-align: center;
+                width: 100%;
+            }
+
+            .submit:active {
+                background-color: #06b;
+            }
+
+            .form-control {
+
+                border: 1px solid #ccc;
+                display: block;
+                width: 100%;
+                height: 30px;
+                padding: 0 15px !important;
+                font-family: muli-bold;
+                background: 0 0;
+                background-color: white;
+                color: black;
+            }
+
+            .dark .form-control:disabled {
+                background-color: #444;
+                color: white;
+                border: none;
+            }
+            .form-control:disabled {
+                background-color: white;
+                border: none;
+            }
+
+            input,
+            textarea,
+            select,
+            button {
+                font-family: muli-regular;
+                color: #333;
+            }
+
+            * {
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+            }
+
+            .form-group {
+                display: flex;
+            }
+
+            .form-group .form-wrapper:first-child {
+                margin-right: 20px;
+            }
+
+            .form-group .form-wrapper {
+                width: 50%;
+            }
+
+            .form-wrapper {
+                margin-bottom: 17px;
+                margin-right: 17px !important;
+            }
+
+            .card-body {
+                color: var(--text-color);
+            }
+
+            .dark .card-body {
+                background-color: #333;
+            }
+
+            .light .card-body {
+                background-color: #FCFCFD;
+            }
+
+            .label {
+                display: inline-block;
+                width: 10rem;
+                /* กำหนดความกว้างตามต้องการ */
+            }
+
+            .text-right {
+                display: inline-block;
+                color: gray;
+
+            }
+
+            .dark .text-right {
+                color: lightgray;
+            }
+
+            .grey {
+                color: gray !important;
+            }
+
+            .dark .grey {
+                color: lightgray !important
+            }
+
+            .profile-label {
+                position: relative;
+                display: block;
+            }
+
+            .profile-img {
+                border-radius: 50%;
+                object-fit: cover;
+                max-width: 310px;
+                max-height: 320px;
+                min-width: 310px;
+                min-height: 320px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                /* border: 1px solid lightgray; */
+            }
+
+            .profile-image:hover .profile-img {
+                opacity: 0.7;
+                /* ทำให้พื้นหลังจางลง */
+            }
+
+            .profile-image {
+    position: relative; /* ทำให้ edit-icon อยู่สัมพันธ์กับ profile-image */
+    display: inline-block;
+}
+
+
+.edit-icon {
+    position: absolute;
+    bottom: 12px; /* ระยะห่างจากด้านล่าง */
+    right: 13px; /* ระยะห่างจากด้านขวา */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #54B435;
+    opacity: 0.9;
+    color: white;
+    border: none;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer; /* ทำให้เมื่อ hover จะเป็นรูปมือ */
+}
+
+.profile-image:hover .edit-icon {
+    background-color: #3A9142; /* เปลี่ยนสีไอคอนเมื่อ hover */
+    opacity: 1; /* เพิ่มความชัดเจนของไอคอนเมื่อ hover */
+}
+
+.profile-image:hover img {
+    opacity: 0.7; /* ทำให้พื้นหลังของรูปจางลงเมื่อ hover */
+}
+
+@media screen and (max-width: 768px) {
+    .profile-img {
+justify-content: center;    }
+      }
+           
+        </style>
+
+</head>
+
+<body>
+    <% if (userData.role === 'teacher') { %>
+        <%- include("./partials/nav2.ejs", { theme: theme === 'dark' ? 'dark' : 'light' , isSidebarOpen: isSidebarOpen }) %>
+      <% } else if (userData.role === 'student') { %>
+        <%- include("./partials/studentNav.ejs", { theme: theme === 'dark' ? 'dark' : 'light' , isSidebarOpen: isSidebarOpen }) %>
+      <% } %>
+              <br><br><br><br><br>
+        <div class="container-my-4 px-4">
+            <div class="row m-xl-0 p-xl-0">
+                <div class="col-sm-12 col-lg-8 p-xl-0">
+                    <div class="card-body m-3 mx-lg-2 my-lg-0 px-5 pt-4 pb-4 rounded-4 shadow-lg">
+                        <div class="row m-xl-0 p-xl-0">
+                            <div class="col-lg-6 text-center">
+                                <form action="/profile/edit" method="POST" enctype="multipart/form-data" >
+                                    <div class="profile-image text-center position-relative">
+                                        <label for="profileImageInput" class="profile-label">
+                                            <img src="/<%=userData.img%>" id="img" alt="Profile Image"
+                                                class="img-fluid mx-auto profile-img" width="310" height="320"
+                                                
+                                                style="cursor: pointer;max-width: 310px;max-height: 320px; min-width: 310px; min-height: 320px;">
+                                            <div class="edit-icon">
+                                                🖉
+                                            </div>
+                                        </label>
+                                        <input type="file" id="profileImageInput" name="img"
+                                            accept="image/png, image/jpeg" style="display: none;">
+                                    </div>
+
+                                    <br><br>
+                                   
+                    
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <div class="form-wrapper">
+                                            <label for="fname">ชื่อ:</label>
+                                            <p id="fname" name="fname" class="mt-1 grey"><%= userData.fname %></p>
+
+                                        </div>
+                                        <div class="form-wrapper">
+                                            <label for="lname">นามสกุล:</label>
+                                            <input type="text" class="form-control " value="<%= userData.lname %>"
+                                                id="lname" name="lname" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="mb-3">
+                                <div class="mb-5">
+                                    <div class="mb-1">
+                                        <% if (userData.role === 'teacher') { %>
+                                            <b class="label">รหัส:</b>
+                                        <% } else { %>
+                                            <b class="label">รหัสนักศึกษา:</b>
+                                        <% } %>
+                                        <div class="text-right">
+                                            <input type="text" class="form-control grey" value="643021096-4" id="student_id"
+                                                name="student_id" placeholder="รหัสนักศึกษา" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="mb-1">
+                                        <b class="label">ชื่อเล่น:</b>
+                                        <div class="text-right">
+                                            <input type="text" class="form-control " value="<%= userData.nickname %>"
+                                                id="nickname" name="nickname" placeholder="ชื่อเล่น">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1">
+                                        <b class="label">คณะ:</b>
+                                        <div class="text-right">
+                                            <input type="text" class="form-control grey" value="CP" id="faculty"
+                                                name="faculty" placeholder="คณะ" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="mb-1">
+                                        <% if (userData.role === 'teacher') { %>
+                                                <b class="label">อาจารย์จาก:</b>
+                                        <% } else { %>
+                                                <b class="label">นักศึกษาจาก:</b>         
+                                        <% } %>
+                                        <div class="text-right">
+                                            <input type="text" class="form-control grey" value="มหาวิทยาลัยขอนแก่น"
+                                                id="student_where" name="student_where" placeholder="นักศึกษาจาก"
+                                                disabled>
+                                        </div>
+                                    </div>
+                                    <div class="mb-1">
+                                        <b class="label">หมายเหตุ:</b>
+                                  
+                                        <div class="text-right">
+                                                  <% if (userData.role === 'teacher') { %>
+                                            <input type="text" class="form-control" value="<%= userData.notes %>"
+                                                id="notes" name="notes" placeholder="หมายเหตุ">
+                                                <% } else { %>
+                                                    <input type="text" class="form-control grey" value="<%= userData.notes %>"
+                                                    id="notes" name="notes" placeholder="หมายเหตุ" disabled>
+                                                    <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="mt-auto text-end">
+                                <button type="submit" class="button-save">บันทึก <i
+                                        class="bi bi-floppy-fill"></i></button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-body m-3 mx-lg-2 my-lg-0 px-5 pt-3 pb-4 rounded-4 shadow-lg">
+                        <p>
+                        <div>@email:</div>
+                        <div class="grey">
+                            <%= userData.email %>
+                        </div>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+<script>
+    const img = document.getElementById('img');
+    const profileImageInput = document.getElementById('profileImageInput');
+
+    img.addEventListener('click', function () {
+        profileImageInput.click();
+    });
+
+    profileImageInput.addEventListener('change', function () {
+        const file = profileImageInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+</html>

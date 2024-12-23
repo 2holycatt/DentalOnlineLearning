@@ -7,11 +7,17 @@ const adminEditDelete = require("../controller/adminEditDeleteController");
 const adminManageLayouts = require("../controller/adminManageLayouts");
 const manageStudent = require("../controller/manageStudent");
 const assignmentsController = require("../controller/adminManageAssignment");
+const adminQuizController  = require('../controller/adminQuizController');
+const adminManageQuestions = require("../controller/adminManageQuestions");
+const adminEditDeleteQuizController = require("../controller/adminEditDeleteQuizController ");
 const studentController = require("../controller/studentController");
 const studentAssignment = require("../controller/studentAssignment");
 const notification = require("../controller/notificationController");
 const adminDashboard = require("../controller/adminDashboard");
 const dashboardManagement = require("../controller/dashboardManagement");
+const profileController = require('../controller/profileController');
+const studentQuizController = require('../controller/studentQuizController')
+
 
 // Middleware For Files Uploading
 const upload = require("../middleware/multer");
@@ -208,5 +214,47 @@ const { updateLessonProgress, eachLessonStudent } = require("../controller/admin
 
 // Middleware สำหรับอัปเดตความคืบหน้า
 router.use('/adminIndex/eachLessons', updateLessonProgress, eachLessonStudent);
+
+//Quiz
+router.get('/adminIndex/adminExamsIndex', teacherMiddleware,adminQuizController.adminExamsIndex);
+router.get('/adminIndex/addQuiz',teacherMiddleware, adminQuizController.addQuizPage);
+router.get('/adminIndex/eachQuiz',teacherMiddleware, adminQuizController.eachQuiz);
+router.post('/adminIndex/releaseQuiz/:quizId', teacherMiddleware, adminQuizController.releaseQuiz);
+router.post('/adminIndex/scheduleQuizRelease/:quizId', teacherMiddleware, adminQuizController.scheduleQuizRelease);
+
+
+router.get('/adminIndex/search=:query', adminQuizController.searchTeacher);
+router.get('/studentIndex/search=:query', adminQuizController.searchStudent);
+
+
+
+
+// router.get('/adminIndex/previewQuiz',teacherMiddleware, adminQuizController.previewQuiz);
+
+
+// router.get('/deleteQuiz', adminEditDelete.deleteQuiz);
+const { createQuiz } = require("../controller/adminQuizController");
+router.route('/adminIndex/createquiz').post(upload.single("file"), createQuiz);
+
+router.get('/getuploadquiz',teacherMiddleware,adminQuizController.getUploadquiz)
+router.get('/gethomequiz',teacherMiddleware,adminQuizController.getHomequiz)
+router.get('/seestudent',teacherMiddleware,adminQuizController.seeStudent)
+router.get('/adminIndex/deleteQuiz',adminEditDeleteQuizController.deleteQuiz)
+router.post('/uploadquiz',teacherMiddleware,adminQuizController.uploadQuiz)
+router.post('/updateQuiz',teacherMiddleware,adminEditDeleteQuizController.updateQuiz)
+
+
+// router.get('/getallquestion/:id',teacherMiddleware,adminManageQuestions.getAllQuestion)
+router.get('/getQuestions',teacherMiddleware, adminManageQuestions.getQuestions);
+router.post('/addQuestion',teacherMiddleware, adminManageQuestions.addQuestion);
+router.get('/deleteQuestion',teacherMiddleware, adminManageQuestions.deleteQuestion);
+router.post('/studentIndex/submitQuiz/:quizId', studentQuizController.submitQuiz);
+
+
+
+//Profile
+router.get('/profile',profileController.profileIndex);
+router.get('/profile/edit',profileController.profileIndex);
+router.route('/profile/edit').post(upload.single("img"), profileController.editProfile);
 
 module.exports = router;

@@ -48,8 +48,10 @@ const adminIndex = async (req, res) => {
     const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
     const getLessonId = req.query.lessonId;
     const lesson = await Lesson.findById(getLessonId);
-    // console.log(userData);
-    res.render("adminIndex", { lessons, lesson, userData });
+    console.log(userData);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
+    res.render("adminIndex", { lessons, lesson, userData, theme, isSidebarOpen });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -102,10 +104,13 @@ const uploadStudent = async (req, res) => {
     };
 
     const allStudents = await Student.paginate({}, options);
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
     // res.json(allStudents);
     // const findStudent = await User.findOne({email:"papinwit.s@kkumail.com"});
     // res.json(allStudents);
-    res.render("upload-excelAndmanual", { allStudents });
+    res.render("upload-excelAndmanual", { allStudents, theme, isSidebarOpen,userData });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -161,16 +166,19 @@ const editLessonName = async (req, res) => {
 
 const adminLessonIndex = async (req, res) => {
   try {
+    const userData = await User.findById(req.session.userId);
     const originPage = req.query.originPage;
     // const lessons = await Lesson.find().sort({ createdAt: 1 }).populate("subject");
     // console.log(lessons)
     const subject = await Subject.find().sort({ semester: 1 }).populate("lessonArray");
     // res.json(subject);
     // res.json(lessons);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
     const findSubject = null;
 
     // console.log(subject);
-    res.render("adminLessonIndex", { mytitle: "adminLessonIndex", originPage: originPage, subject, findSubject });
+    res.render("adminLessonIndex", { mytitle: "adminLessonIndex", originPage: originPage, subject, findSubject,userData,theme,isSidebarOpen });
 
   } catch (err) {
     console.error(err);
@@ -198,6 +206,9 @@ const schoolYearRender = async (req, res) => {
 
 const addLesson = async (req, res) => {
   try {
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
     const subjectDbId = req.query.subjectDbId;
     const subjectId = req.query.subjectId;
     const subjectName = req.query.subjectName;
@@ -206,7 +217,7 @@ const addLesson = async (req, res) => {
 
     const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
     // const schoolYears = await SchoolYear.find().sort({ schoolYear: 0 });
-    res.render("addLesson", { mytitle: "addLesson", lessons, subjectDbId, subjectId, subjectName, subjectSection, subjectSemester });
+    res.render("addLesson", { mytitle: "addLesson", lessons, subjectDbId, subjectId, subjectName, subjectSection, subjectSemester,theme,isSidebarOpen });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -267,9 +278,12 @@ const addSubject = async (req, res) => {
     // const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
 
     // console.log(filteredResult);
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
     const filteredResult = await getUniqueSubjectValues();
     // console.log(filteredResult);
-    res.render("addSubjects", { mytitle: "addSubject", filteredResult: filteredResult || [], formData: {}, error: null });
+    res.render("addSubjects", { mytitle: "addSubject", filteredResult: filteredResult || [], formData: {}, error: null ,theme,isSidebarOpen,userData});
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -1034,12 +1048,14 @@ const showFile = async (req, res) => {
 const logsFile = async (req, res) => {
   try {
     const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
 
     // ดึง logs
     logs(req, res, (data) => {
       // Render หน้า EJS พร้อมข้อมูล logs และข้อมูลผู้ใช้
       // console.log('Logs data:', data); // ตรวจสอบข้อมูลในคอนโซล
-      res.render('logsFile', { logs: data.logs, user: userData });
+      res.render('logsFile', { logs: data.logs, userData ,theme, isSidebarOpen});
     });
   } catch (err) {
     console.error(err);
@@ -1053,6 +1069,8 @@ const teacherNotification = async (req, res) => {
     const lessons = await Lesson.find().sort({ createdAt: -1 }).exec();
     const getLessonId = req.query.lessonId;
     const lesson = await Lesson.findById(getLessonId);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
     // const notifications = await Notification.find().sort({ createdAt: -1 }).exec();
 
     const { page = 1, limit = 1 } = req.query;
@@ -1065,7 +1083,7 @@ const teacherNotification = async (req, res) => {
 
     const notifications = await Notification.paginate({}, options);
 
-    res.render("teacherNoti", { lessons, lesson, userData, notifications });
+    res.render("teacherNoti", { lessons, lesson, userData, notifications, theme, isSidebarOpen });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -1369,8 +1387,12 @@ const updateLessonProgress = async (req, res, next) => {
 
 const manageSubject = async (req, res) => {
   try {
+    const userData = await User.findById(req.session);
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
     const subjectDbId = req.query.subjectDbId;
     const subject = await Subject.findById(subjectDbId)
+    
       .populate({
         path: 'students',
         populate: {
@@ -1382,7 +1404,7 @@ const manageSubject = async (req, res) => {
 
     // console.log(subject);
     // console.log(subject);
-    res.render("manageEachSubject", { subject });
+    res.render("manageEachSubject", { subject , userData, theme, isSidebarOpen});
     // res.json(subject);
   } catch (error) {
     console.log(error);
@@ -1574,6 +1596,9 @@ const setPermission = async (req, res) => {
   try {
     // const students = await Student.find().populate('user').sort({createdAt:1});
     const { page = 1, limit = 25 } = req.query;
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
 
     const options = {
       page: parseInt(page, 10),
@@ -1585,7 +1610,10 @@ const setPermission = async (req, res) => {
     const students = await Student.paginate({}, options);
     // res.json(studentsNotInSubject);
     res.render('adminSetPermission', {
-      students
+      students,
+      userData,
+      theme,
+      isSidebarOpen
     });
   } catch (err) {
     console.error(err);

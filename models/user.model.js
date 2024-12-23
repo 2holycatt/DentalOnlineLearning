@@ -8,9 +8,17 @@ const userSchema = new Schema({
         unique: true,
         required: [true, 'Please provide email']
     },
-    name: {
+    fname: {
         type: String,
+        default: "default",
     },
+    lname: {
+        type: String,
+        default: "default",
+    },
+    // name: {
+    //     type: String,
+    // },
     nickname: {
         type: String,
         default: null,
@@ -52,7 +60,11 @@ const userSchema = new Schema({
     studentFromKku: {
         type: Boolean,
         default: false
-    }
+    },
+    attempts: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'attemptEachQuiz' 
+    }],
 }, 
 { timestamps: true })
 

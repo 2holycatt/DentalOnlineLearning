@@ -209,44 +209,90 @@
     .lesson-content{
       height: fit-content !important;
     }
+    body.light {
+      background-color: #ffffff;
+      color: #000000;
+    }
+
+    body.dark {
+      background-color: #212121;
+      color: #ffffff;
+    }
+
+    .dark .bg-white {
+      background-color: #444 !important;
+      color: #ffffff !important;
+    }
+
+    .dark .text-dark {
+      color: #ffffff !important;
+    }
+
+    .dark .text-primary {
+      color: #bb86fc !important;
+    }
+
+    .dark .bg-primary {
+      background-color: #bb86fc !important;
+    }
+
+    /* Additional dark mode styles as needed */
+    .dark .classroom-p {
+      
+      color: white !important;
+    }
+
+    /* Override other styles for dark mode */
+    .dark .lesson-content {
+      background-color: #444 !important;
+    }
+
+    .dark .up-down-a:hover,
+    .dark .up-down-a:hover .bi {
+      color: #bb86fc !important;
+    }
+
+    .dark .setColumn-p {
+      border-bottom-color: #bb86fc;
+    }
+
+    .dark .setColumn-p-lesson {
+      border-bottom-color: #bb86fc;
+    }
+
+    .dark .a-link {
+      color: #bb86fc !important;
+    }
   </style>
 
 </head>
 
 <body>
   <nav>
-    <%- include("./partials/nav.ejs") %>
+    <%- include("./partials/nav2.ejs", { theme: theme, isSidebarOpen: isSidebarOpen }) %>
     <!-- <div class="element-student">
     </div> -->
   </nav>
   <div class="firstDiv row" style="margin-top: 5em !important; margin-bottom: 5em !important">
     <div class="setShadow">
-      <div class="inFirst row px-5 py-5">
-        <div class="col-4 d-flex justify-content-center">
-          <img class="w-75 h-auto logo-dent" src="/images/indexMed/Ellipse9.png" alt="ตราสัญลักษณ์ คณะทันตแพทย์ศาตร์">
+      <div class="inFirst row px-5 py-5 flex-column flex-md-row">
+        <div class="col-md-4 d-flex justify-content-center">
+          <img class="w-75 h-auto logo-dent" src="/images/indexMed/Ellipse9.png" alt="ตราสัญลักษณ์ คณะทันตแพทย์ศาตร์" style="height: auto; width: 100%; max-width: 35em; max-height: 23em; object-fit: contain;">
         </div>
-        <div class="col-8 d-flex text-white" style="align-items: center;">
+        <div class="col-md-8 d-flex text-white align-items-center mt-4 mt-md-0">
           <div>
             <p>
-              <span class="fs-3 ">สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม</span><br>
-              <span class="fs-4 ">Online Learning : Component Parts of Dental Prosthesis</span>
+              <span class="fs-3">สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม</span><br>
+              <span class="fs-4">Online Learning : Component Parts of Dental Prosthesis</span>
             </p>
             <img class="line img-fluid mb-3" src="images/indexMed/line-1.svg" />
             <p>
-              <span class="fs-4 ">คณะทันตแพทย์ศาสตร์ มหาวิทยาลัยขอนแก่น</span><br>
-              <span class="fs-4 ">Faculty of Dentistry Khon Kaen University</span>
+              <span class="fs-4">คณะทันตยแพทย์ศาสตร์ มหาวิทยาลัยขอนแก่น</span><br>
+              <span class="fs-4">Faculty of Dentistry Khon Kaen University</span>
             </p>
           </div>
         </div>
       </div>
-      <!-- <div class="classroomDiv2 col-12 w-100">
-        <div>
-          <p class="fw-bold fs-4 text-primary">ห้องเรียน</p>
-        </div>
-        <div>
-          <p class="fw-bold fs-4 text-primary">แบบทดสอบ</p>
-        </div>
-      </div> -->
     </div>
   </div>
   <div class="upDownDiv d-flex justify-content-center" style="margin-bottom: 10em !important;">

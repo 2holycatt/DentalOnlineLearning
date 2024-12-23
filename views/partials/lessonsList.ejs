@@ -67,8 +67,9 @@
   }
 
   .menues-sub,
+  .a-list,
   .a-list-1, .a-list-2, .a-list-3, .a-list-4,
-  .a-list-5, .a-list-6, .a-list-7{
+  .a-list-5, .a-list-6, .a-list-7,.a-list-8{
     text-decoration: none;
     color: #5A6A85;
     transition-duration: 0.3s;
@@ -78,9 +79,9 @@
     color: #8A2BE2 !important;
     transition: 0.3s;
   }
-  
+  .a-list:hover,
   .a-list-1:hover, .a-list-2:hover, .a-list-3:hover, .a-list-4:hover,
-  .a-list-5:hover, .a-list-6:hover, .a-list-7:hover {
+  .a-list-5:hover, .a-list-6:hover, .a-list-7:hover,.a-list-8:hover {
     color: #8A2BE2 !important;
     transition: 0.3s;
 
@@ -104,7 +105,7 @@
     <p class="menues-sub my-2">
       <!-- <i class="bi bi-database-add mx-2"></i> -->
       <i class="bi-3 bi bi-pencil-square mx-2"></i>
-      <a href="/adminIndex/adminExam" class="a-list-3">แบบทดสอบ</a>
+      <a href="/adminIndex/adminExamsIndex" class="a-list-3">แบบทดสอบ</a>
     </p>
   </div>
   <p class="fs-6 fw-bold bold-menus my-4" style="margin-bottom: 1em !important;">
@@ -130,5 +131,15 @@
       <a href="/adminIndex/setPermission" class="a-list-7">การกำหนดสิทธิ์</a>
     </p>
   </div>
-  
+  <% if (hasUnread) { %>
+    <li id="teacherNotification" >
+      <a href="/adminIndex/teacherNotification" class="a-list-8 bell-animatio"><span class="text-success">แจ้งเตือน</spanc>
+          <i class="bi-8 bi-bell-fill text-success mx-2"></i>
+      </a>
+
+      <% } else { %>
+    <li id="teacherNotification" >
+      <a href="/adminIndex/teacherNotification" class="a-list-8">แจ้งเตือน</a>
+    </li>
+    <% } %>
 </div>

@@ -2,6 +2,7 @@
     position: absolute;
     margin: 0 auto;
     padding: 0.6rem  !important;
+    padding-bottom: 0.82rem !important;
     display: flex;
     justify-content: space-between;
     align-items: center;

@@ -277,7 +277,7 @@ body.dark .icon-dark {
 }
 
 .above-nav-status {
-    background-color: var(--bg-color);
+    background-color: white;
     color: var(--text-color);
     border-right: 1px solid #EAEFF4;
     /* position: fixed; */
@@ -343,4 +343,18 @@ body.light .sidebar_nav a:hover {
 
 body.dark .sidebar_nav a:hover {
     background-color: #444;
+}
+
+@media screen and (max-width: 1020px) {
+    .above-nav-status {
+        display: none;
+    }
+
+    .scores {
+        gap: 0px;
+    }
+    .score-display {
+    padding: 18px 28px !important;
+    max-height: 80px;
+}
 }
