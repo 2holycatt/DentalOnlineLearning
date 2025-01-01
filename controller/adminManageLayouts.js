@@ -7,6 +7,7 @@ const Layout3 = require("../models/Layout3");
 const Layout4 = require("../models/Layout4");
 const Layout5 = require("../models/Layout5");
 const pdfFile = require("../models/pdfFile");
+const User = require("../models/user.model");
 
 const asyncWrapper = require("../middleware/asyncWrapper");
 const lessonQuestion = require("../models/LessonQuestion");
@@ -139,10 +140,13 @@ const createLayout_02 = async (req, res) => {
 
 const getMoreAddContent = async (req, res) => {
     try {
+        const userData = await User.findById(req.session.userId);
+        const theme = req.session.theme || 'light'; 
+        const isSidebarOpen = false; 
         const lessonId = req.query.lesson;
         const lesson = await Lesson.findById(lessonId).populate("schoolYear");
 
-        res.render("getMoreAddContent", { mytitle: "getMoreAddContent", lesson });
+        res.render("getMoreAddContent", { mytitle: "getMoreAddContent", lesson, userData, theme, isSidebarOpen });
         // res.json(lesson);
 
     } catch (err) {

@@ -17,12 +17,189 @@
       grid-template-columns: 1fr 1fr 1fr 1.25fr 0.75fr;
 
     }
+    * {
+        box-sizing: border-box !important;
+      }
+      body.dark {
+          background-color: #212121 !important;
+        }
+      .card-1,
+      .card-body-1 {
+        border: none !important;
+      }
+  
+      .descp {
+        text-indent: 2em;
+        margin: 0 2em;
+      }
+  
+      .rectangle-141 {
+        background-color: white;
+        border-radius: 0.75em;
+        box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+        height: 14.6875em;
+        width: 75%;
+        margin: 2em 2em;
+      }
+  
+      .home-div,
+      .a-home {
+        color: #999999 !important;
+      }
+  
+      .above-nav {
+        background-color: white !important;
+        border-bottom: 1px solid #999999;
+      }
+  
+      .dark .above-nav-status {
+        background-color:  var(--secondary-color) !important;
+        border-right:1px solid #494949 ;
+      }
+  
+      .status-a {
+        color: #404258 !important;
+      }
+  
+      .list-lesson-p {
+        color: #8A2BE2;
+      }
+  
+      .list-lesson-p-span {
+        color: #4B0082;
+      }
+  
+      .each-lesson {
+        border-top: 0.1em solid #8A2BE2;
+      }
+  
+      .aside-right {
+        background-color: var(--bg-color) !important;
+        height: 100%;
+      }
+  
+      .manange-bar {
+        border-radius: 0.5em;
+        justify-content: space-between !important;
+        
+      }
+  
+      .add-button {
+        border-radius: 0.5em !important;
+        width: 20% !important;
+        height: auto !important;
+      }
+  
+      .lesson-content {
+        height: fit-content !important;
+        border-radius: 1em !important;
+        justify-content: center !important;
+      }
+      .dark .manange-bar, .dark .lesson-content{
+        background-color:  var(--secondary-color) !important;
+      }
+  
+      .lesson-nothing {
+        margin: 25% 0 !important;
+        padding: 0 !important;
+      }
+  
+      .each-lesson-a {
+        text-decoration: none !important;
+      }
+  
+      .each-lesson-a:hover .each-lesson {
+        border-left: 0.2em solid #8A2BE2 !important;
+      }
+  
+      .card-img-top {
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+      }
+  
+      .setColumn {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr !important;
+      }
+  
+      .card-a {
+        text-decoration: none !important;
+      }
+  
+      .card-a:hover,
+      .card-a:hover .p-lesson-name {
+        color: #007bff !important;
+        transition: 0.5s;
+      }
+  
+      .card-a:hover .bi-book {
+        color: #007bff !important;
+        transition: color 0.5s;
+      }
+  
+      .bi-book-fill {
+        display: none;
+      }
+  
+      .card-a:hover .bi-book-fill {
+        display: inline-block !important;
+        transition: 0.5s;
+      }
+  
+      .card-a:hover .bi-book {
+        display: none;
+        transition: 0.5s;
+      }
+  
+      .manange-bar,
+      .lesson-content {
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+        border-radius: 0.5em;
+      }
+  
+      .card-1 {
+        width: 90% !important;
+        height: fit-content !important;
+        transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+        cursor: pointer;
+        border-radius: 0.5em;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+      }
+  
+      .card-1:hover {
+        transform: scale(1.05);
+      }
+  
+      .card-header {
+        border-right: 1px solid #EAEFF4;
+        border-bottom: 1px solid #EAEFF4;
+      }
+  
+      .a-list-2,
+      .bi-2 {
+        color: #8A2BE2 !important;
+        
+      }
+      .gray{
+        color: gray !important;
+      }
+      .dark .gray{
+        color: lightgray !important;
+      }
+      .dark .descriptionText {
+    background-color: #4444 !important;
+    color: white !important;
+  }
+      @media screen and (max-width: 768px) {
+        .above-nav-status{
+          display: none;
+        }
+      }
   </style>
 </head>
 
 <body>
   <div id="blur-container">
-    <%- include("./partials/nav.ejs")%>
+    <%- include("./partials/nav2.ejs", { theme: theme, isSidebarOpen: isSidebarOpen }) %>
     <!-- <div class="above-nav d-flex px-4 py-3">
       <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
         <i class="bi bi-house mx-2"></i>
@@ -57,7 +234,7 @@
               <p class="fs-5 fw-bold"><i class="bi bi-clipboard-fill text-primary fs-5"></i> <%=assignment.name%></p>
             </div>
             <div class="col-6 mb-3 d-flex justify-content-end">
-              <a href="#editForm" class="btn btn-warning py-1 px-3 mx-2">แก้ไข </a>
+              <a href="#editForm" class="btn btn-warning py-1 px-3 mx-2 text-white">แก้ไข </a>
               <a href="/adminIndex/delAssign?assignId=<%=assignment._id%>" class="btn btn-danger py-1 px-3">ลบ</a>
             </div>
           </div>
@@ -71,8 +248,8 @@
           </div>
         </div>
         <div class="row my-2 desDiv">
-          <p class="fs-6 fw-bold text-primary">คำอธิบาย: </p>
-          <textarea class="form-control w-100 descriptionText" name="Description" disabled><%=assignment.Description%></textarea>
+          <p class="fs-6 fw-bold text-primary ">คำอธิบาย: </p>
+          <textarea class="form-control w-100 descriptionText p-1" name="Description" disabled><%=assignment.Description%></textarea>
         </div>
         <div class="row">
           <div class="col-8">
@@ -148,7 +325,7 @@
         </div>
         <% const submitDetail = getSubmitDetail.submitDetail %>
         <% submitDetail.forEach(detail => { %>
-        <a href="/adminIndex/submitDetail?id=<%=assignment._id%>&submitId=<%=detail._id%>" class="data-a text-dark">
+        <a href="/adminIndex/submitDetail?id=<%=assignment._id%>&submitId=<%=detail._id%>" class="data-a ">
           <div class="list-div-data py-3">
             <p class="fs-6 fw-normal">
               <%=detail.user.student.studentId%>
@@ -199,7 +376,7 @@
               <div class="my-1 mb-3">
                 <label for="description" class="form-label fs-bold">คำอธิบาย:</label>
 
-                <textarea class="form-control setWidth70 p-3" name="Description" style="height: 100px;"><%=assignment.Description%></textarea>
+                <textarea class="form-control setWidth70 px-3 py-1" name="Description" style="height: 100px;"><%=assignment.Description%></textarea>
               </div>
               <div class="mb-3 row">
                 <p>ไฟล์ที่เกี่ยวข้อง:</p>
@@ -256,7 +433,7 @@
 
             </div>
             <div class="col-12 d-flex justify-content-start pt-4" style="border-top: 1px solid #387bef;">
-              <button class="btn btn-warning p-2" type="submit">บันทึกการแก้ไข <i class="bi bi-pencil-square text-dark"></i></button>
+              <button class="btn btn-warning p-2 text-white" type="submit">บันทึกการแก้ไข <i class="bi bi-pencil-square "></i></button>
             </div>
           </div>
         </form>

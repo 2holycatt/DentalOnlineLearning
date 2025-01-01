@@ -71,7 +71,15 @@
   .a-list-1, .a-list-2, .a-list-3, .a-list-4,
   .a-list-5, .a-list-6, .a-list-7,.a-list-8{
     text-decoration: none;
-    color: #5A6A85;
+    color: gray;
+    transition-duration: 0.3s;
+  }
+  .dark .menues-sub,
+  .dark .a-list,
+  .dark .a-list-1, .dark .a-list-2, .dark .a-list-3, .dark .a-list-4,
+  .dark .a-list-5, .dark .a-list-6, .dark .a-list-7,.dark .a-list-8{
+    text-decoration: none;
+    color: lightgray;
     transition-duration: 0.3s;
   }
 
@@ -114,11 +122,11 @@
   <div class="menues">
     <p class="menues-sub fs-6 my-2">
       <i class="bi-4 bi-bar-chart mx-2"></i>
-      <a href="/adminIndex/adminLessonIndex" class="a-list-4">แดชบอร์ด (Dashboard)</a>
+      <a href="/adminIndex/adminDashboard" class="a-list-4">แดชบอร์ด (Dashboard)</a>
     </p>
     <p class="menues-sub my-2">
       <i class="bi-5 bi-person-lines-fill mx-2" class="a-list-5"></i>
-      <a href="/adminIndex/adminAssignment" class="a-list-5">รายชื่อนักศึกษา</a>
+      <a href="/adminIndex/uploadStudent" class="a-list-5">รายชื่อนักศึกษา</a>
     </p>
     <p class="menues-sub my-2">
       <!-- <i class="bi bi-database-add mx-2"></i> -->

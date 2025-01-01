@@ -174,6 +174,12 @@
         color: #8A2BE2 !important;
         
       }
+      .gray{
+        color: gray !important;
+      }
+      .dark .gray{
+        color: lightgray !important;
+      }
       @media screen and (max-width: 768px) {
         .above-nav-status{
           display: none;
@@ -242,11 +248,11 @@
         <div class="mt-3 showYear show<%=subject.subjectId%>">
           <div class="set-border-bottom">
             <p class="my-2 fs-6 p-schoolYear">
-              <span class="text-dark fw-bold">วิชา:</span>
+              <span class=" fw-bold">วิชา:</span>
               <span class="text-primary me-1"> <%=subject.subjectId%> <%=subject.subjectName%></span>
-              <span class="text-dark fw-bold">ภาคการศึกษา:</span>
+              <span class=" fw-bold">ภาคการศึกษา:</span>
               <span class="text-primary me-1"> <%=subject.semester%></span>
-              <span class="text-dark fw-bold">กลุ่ม:</span>
+              <span class=" fw-bold">กลุ่ม:</span>
               <span class="text-primary"> <%=subject.section%></span>
             </p>
           </div>
@@ -272,7 +278,7 @@
         <% subject.Assignments.forEach(assign => { %>
         <a href="/adminIndex/assignmentDetail?id=<%= assign._doc._id %>" class="data-a">
           <div class="list-div-data py-3">
-            <p class="fs-6 fw-normal text-dark">
+            <p class="fs-6 fw-normal gray">
               <%= assign.name %>
             </p>
             <p class="fs-6 fw-normal text-success">
@@ -281,7 +287,7 @@
             <p class="fs-6 fw-normal text-danger">
               <%= assign._doc.formattedDeadline %>
             </p>
-            <p class="fs-6 fw-normal text-center">
+            <p class="fs-6 fw-normal text-center gray">
               <%= assign.sentCount %>
             </p>
             <p class="fs-6 fw-normal text-success text-center">

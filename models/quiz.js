@@ -49,6 +49,7 @@ const questionSchema = mongoose.Schema({
         type: Boolean,
         default: true
     }
+    
 });
 
 // เพิ่ม schema สำหรับเก็บข้อมูลจำนวนครั้งที่เข้าทำแบบทดสอบของนักเรียน
@@ -110,6 +111,16 @@ const quizSchema = mongoose.Schema({
         ref: 'schoolYear',
         default: null
     },
+     subject: {
+            subjectMongooseId: {
+                type: mongoose.Schema.ObjectId,
+                ref: 'subject'
+            }
+            ,
+            subjectId: {
+                type: String
+            }
+        },
     timeLimit: {
         value: {
             type: Number,

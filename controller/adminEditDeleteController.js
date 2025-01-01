@@ -8,6 +8,7 @@ const Subject = require("../models/subjects");
 const PdfFile = require("../models/pdfFile");
 const TextEditor = require("../models/TextEditor");
 const { deleteFileFromS3 } = require('../utils/s3Utils');
+const User = require("../models/user.model");
 
 const fs = require('fs');
 const util = require('util');
@@ -83,6 +84,9 @@ const deleteLesson = async (req, res) => {
 
 const editLesson = async function (req, res, next) {
   try {
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
     const lessonId = req.query.lessonId;
     const subjectId = req.query.subjectId;
     const findSubject = await Subject.findById(subjectId);
@@ -90,7 +94,7 @@ const editLesson = async function (req, res, next) {
 
 
     // res.json(findLessons);
-    res.render("editLesson", { mytitle: "editLesson", findSubject, findLesson });
+    res.render("editLesson", { mytitle: "editLesson", findSubject, findLesson , userData, theme, isSidebarOpen});
 
   } catch (err) {
     console.log(err);

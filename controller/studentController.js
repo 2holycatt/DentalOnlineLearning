@@ -14,10 +14,13 @@ const studentIndex = async (req, res) => {
                 }
             });
         const getUserLessons = userData
+        const theme = req.session.theme || 'light';
+        const isSidebarOpen = false;
+
         // console.log(getUserLessons);
 
         // res.json(userData);
-        res.render("studentIndex", { getUserLessons });
+        res.render("studentIndex", { getUserLessons, userData, theme, isSidebarOpen });
     } catch (err) {
         console.error(err);
         res.status(500).send("เกิดข้อผิดพลาด");
@@ -26,6 +29,12 @@ const studentIndex = async (req, res) => {
 
 const studentLesson = async (req, res) => {
     try {
+        const originPage = req.query.originPage;
+        const subject = await Subject.find().sort({ semester: 1 }).populate("lessonArray");
+        const theme = req.session.theme || 'light';
+        const isSidebarOpen = false;
+        const findSubject = null;
+
         const userData = await User.findById(req.session.userId)
             .populate({
                 path: "student",
@@ -37,7 +46,7 @@ const studentLesson = async (req, res) => {
                 }
             });
         // const getUserLessons = userData.student.schoolYear.lessonArray;
-        res.render("studentLessons", { userData });
+        res.render("studentLessons", { userData, theme, isSidebarOpen, subject, findSubject, originPage });
         // res.json(userData);
     } catch (error) {
         console.error(error);
@@ -91,7 +100,7 @@ const subjectDetail = async (req, res) => {
         // const studentSubmitAssign = findStudent.user.submitAssign;
         const totalScore = filterSubject[0].weeks.reduce((total, week) => total + week.scorePerWeek, 0);
 
-        res.render("subjectDatail", { totalScore, filterSubject, findUser,subjectId });
+        res.render("subjectDatail", { totalScore, filterSubject, findUser, subjectId });
     } catch (error) {
         console.log(error);
     }

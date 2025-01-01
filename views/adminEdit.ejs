@@ -487,13 +487,228 @@
     .img-input::placeholder {
       color: #ced4da !important;
     }
+    * {
+         box-sizing: border-box !important;
+       }
+       body.dark {
+           background-color: #212121 !important;
+         }
+       .card-1,
+       .card-body-1 {
+         border: none !important;
+       }
+   
+       .descp {
+         text-indent: 2em;
+         margin: 0 2em;
+       }
+   
+       .rectangle-141 {
+         background-color: white;
+         border-radius: 0.75em;
+         box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+         height: 14.6875em;
+         width: 75%;
+         margin: 2em 2em;
+       }
+   
+       .home-div,
+       .a-home {
+         color: #999999 !important;
+       }
+   
+       .above-nav {
+         background-color: white !important;
+         border-bottom: 1px solid #999999;
+       }
+   
+       .dark .above-nav-status {
+         background-color:  var(--secondary-color) !important;
+         border-right:1px solid #494949 ;
+       }
+   
+       .status-a {
+         color: #404258 !important;
+       }
+   
+       .list-lesson-p {
+         color: #8A2BE2;
+       }
+   
+       .list-lesson-p-span {
+         color: #4B0082;
+       }
+   
+       .each-lesson {
+         border-top: 0.1em solid #8A2BE2;
+       }
+   
+       .aside-right {
+         background-color: var(--bg-color) !important;
+         height: 100%;
+       }
+   
+       .manange-bar {
+         border-radius: 0.5em;
+         justify-content: space-between !important;
+         
+       }
+   
+       .add-button {
+         border-radius: 0.5em !important;
+         height: auto !important;
+       }
+   
+       .lesson-content {
+         height: fit-content !important;
+         border-radius: 1em !important;
+         justify-content: center !important;
+       }
+       .dark .manange-bar, .dark .lesson-content{
+         background-color:  var(--secondary-color) !important;
+       }
+   
+       .lesson-nothing {
+         margin: 25% 0 !important;
+         padding: 0 !important;
+       }
+   
+       .each-lesson-a {
+         text-decoration: none !important;
+       }
+   
+       .each-lesson-a:hover .each-lesson {
+         border-left: 0.2em solid #8A2BE2 !important;
+       }
+   
+       .card-img-top {
+         box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+       }
+   
+       .setColumn {
+         display: grid !important;
+         grid-template-columns: 1fr 1fr 1fr !important;
+       }
+   
+       .card-a {
+         text-decoration: none !important;
+       }
+   
+       .card-a:hover,
+       .card-a:hover .p-lesson-name {
+         color: #007bff !important;
+         transition: 0.5s;
+       }
+   
+       .card-a:hover .bi-book {
+         color: #007bff !important;
+         transition: color 0.5s;
+       }
+   
+       .bi-book-fill {
+         display: none;
+       }
+   
+       .card-a:hover .bi-book-fill {
+         display: inline-block !important;
+         transition: 0.5s;
+       }
+   
+       .card-a:hover .bi-book {
+         display: none;
+         transition: 0.5s;
+       }
+   
+       .manange-bar,
+       .lesson-content {
+         box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+         border-radius: 0.5em;
+       }
+   
+       .card-1 {
+         width: 90% !important;
+         height: fit-content !important;
+         transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+         cursor: pointer;
+         border-radius: 0.5em;
+         box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+       }
+       .dark .card-1{
+         box-shadow: lightgray 0px 2px 5px -1px !important;
+       }
+   
+       .card-1:hover {
+         transform: scale(1.05);
+       }
+   
+       .card-header {
+         border-right: 1px solid #EAEFF4;
+         border-bottom: 1px solid #EAEFF4;
+       }
+   
+      
+   
+   
+   
+       #yearSelector {
+         border-color: #EAEFF4;
+         border-radius: 0.5em;
+         background-color: white !important;
+         font-size: smaller;
+         padding: 0.5em !important;
+       }
+   
+       #yearSelector option {
+         color: #404258;
+         background-color: white !important;
+   
+       }
+   
+       /* .set-border {
+         border-bottom: 1px solid #EAEFF4;
+         padding-bottom: 1em !important;
+   
+       } */
+   
+       .set-border-bottom {
+         border-bottom: 1px solid #EAEFF4;
+         margin-bottom: 1em !important;
+   
+       }
+   
+       .lesson-bar {
+         border-left: 0.25em solid #007bff !important;
+         padding-left: 0.5em !important;
+         margin-right: 0.5em !important;
+   
+       }
+   
+       .a-add{
+         color: #007bff !important;
+       }
+   
+       .a-add:hover{
+         color: #0053ac !important;
+       }
+       .grey {
+            color: gray !important;
+        }
+
+        .dark .grey {
+            color: lightgray !important
+        }
+       @media screen and (max-width: 768px) {
+         .above-nav-status{
+           display: none;
+         }
+       }
   </style>
 
 </head>
 
 <body>
   <div id="blur-container">
-    <%- include("./partials/nav.ejs")%>
+    <%- include("./partials/nav2.ejs", { theme: theme, isSidebarOpen: isSidebarOpen }) %>
     <!-- <div class="above-nav d-flex px-4 py-3">
       <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
         <i class="bi bi-house mx-2"></i>
@@ -505,20 +720,20 @@
         <p class="m-0">บทเรียน</p>
       </a>
     </div> -->
-    <div class="main-content d-flex w-100 h-auto bg-white">
+    <div class="main-content d-flex w-100 h-auto ">
       <% const pageName = "adminEdit" %>
       <%- include("./partials/lessonsList.ejs", { pageName: pageName })%>
-      <div class="row allContent bg-white" style="width: 80%;">
-        <div class="col-12 oldContent bg-white aside-right px-4 py-4" style="width: 100% !important;">
-          <div class="manange-bar px-4 py-3 bg-white w-100" style="margin-bottom: 1.5em !important;">
+      <div class="row allContent " style="width: 80%;">
+        <div class="col-12 oldContent  aside-right px-4 py-4" style="width: 100% !important;">
+          <div class="manange-bar px-4 py-3  w-100" style="margin-bottom: 1.5em !important;">
             <div class="d-flex" style="border-bottom: 1px solid #ced4daa0; padding-bottom: 0.5em !important;">
               <div class="d-flex w-75" style="align-items: center; grid-template-columns: 0.5fr 1.5fr;">
                 <p class="fw-bold w-auto fs-6 lesson-bar">แก้ไขเนื้อหา</p>
                 <p class="fw-normal w-auto fs-6" style="margin-left: 0.5em !important;">บทเรียน:
-                  <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;"><%=lesson.LessonName%></span>
+                  <span class="fw-normal fs-6 grey" style="margin-right: 1em !important;"><%=lesson.LessonName%></span>
 
                 </p>
-                <a href="/adminIndex/editLesson?lessonId=<%=lesson._id%>&subjectId=<%=subject._id%>" class="edit-a text-dark px-2" style="border-left: 1px solid #ced4daa0 ;margin:0em 1em !important; font-size: small;">แก้ไขชื่อและรูปปก<i class="bi bi-pencil mx-2"></i>
+                <a href="/adminIndex/editLesson?lessonId=<%=lesson._id%>&subjectId=<%=subject._id%>" class="edit-a  px-2" style="border-left: 1px solid #ced4daa0 ;margin:0em 1em !important; font-size: small;">แก้ไขชื่อและรูปปก<i class="bi bi-pencil mx-2"></i>
                 </a>
               </div>
               <div class="d-flex w-25 justify-content-end" style="align-items: center; margin-top: 0.5 !important;">
@@ -532,15 +747,15 @@
                 <a href="/adminIndex/getMoreAddContent?lesson=<%=lesson._id%>" class="add-button btn btn-primary my-2 p-2" style="height: fit-content !important;">
                   เพิ่มเนื้อหา<i class="bi bi-plus-circle-fill mx-2"></i>
                 </a>
-                <button href="/adminIndex/editLesson?lesson=<%=lesson._id%>" disabled class="btn add-button btn-warning my-2 p-2 mx-2" style="height: fit-content !important;">
+                <button href="/adminIndex/editLesson?lesson=<%=lesson._id%>" disabled class="btn add-button btn-warning my-2 p-2 mx-2 text-white" style="height: fit-content !important;">
                   แก้ไขเนื้อหาภายในบทเรียน<i class="bi bi-pencil-square mx-2"></i>
                 </button>
                 <% if (questions) {%>
-                <button class="btn add-button btn-info my-2 p-2" style="height: fit-content !important;" disabled>
+                <button class="btn add-button btn-info my-2 p-2 text-white" style="height: fit-content !important;" disabled>
                   เพิ่มคำถามท้ายบท<i class="bi bi-question-circle mx-2"></i>
                 </button>
                 <% } else { %>
-                <a href="/adminIndex/addEndChapterQuestion?lesson=<%=lesson._id%>" class="btn add-button btn-info my-2 p-2" style="height: fit-content !important;">
+                <a href="/adminIndex/addEndChapterQuestion?lesson=<%=lesson._id%>" class="btn add-button btn-info my-2 p-2 text-white" style="height: fit-content !important;">
                   เพิ่มคำถามท้ายบท<i class="bi bi-question-circle mx-2"></i>
                 </a>
                 <% } %>
@@ -567,7 +782,7 @@
               </div>
             </div> -->
           </div>
-          <!-- <div class="manange-bar p-4 bg-white w-100">
+          <!-- <div class="manange-bar p-4  w-100">
             <div class="d-flex" style="align-items: center;">
               <div class="d-flex w-50" style="align-items: center;">
                 <p class="fw-bold w-auto fs-5 lesson-bar">แก้ไขเนื้อหา</p>
@@ -595,7 +810,7 @@
           <% if (paginatedLayouts.length > 0) { %>
           <% paginatedLayouts.forEach(Layout => {%>
           <% if (Layout.name == "Layout01") {%>
-          <div class="hide-layout-11 lesson-content py-2 bg-white my-1">
+          <div class="hide-layout-11 lesson-content py-2  my-1">
             <div class="d-flex mx-4">
               <p class="fw-bold fs-4 my-3 setpBorder">แก้ไขเนื้อหา รูปแบบที่ 1</p>
             </div>
@@ -663,7 +878,7 @@
             </form>
           </div>
           <% } else if (Layout.name == "Layout02") {%>
-          <div class="lesson-content py-2 bg-white my-4">
+          <div class="lesson-content py-2  my-4">
             <div class="d-flex mx-4">
               <p class="fw-bold fs-4 my-3 setpBorder">แก้ไขเนื้อหา รูปแบบที่ 2</p>
             </div>
@@ -711,18 +926,18 @@
                 </button>
               </div>
             </div>
-            <div class="setMargin py-4 px-4 bg-white w-100">
+            <div class="setMargin py-4 px-4  w-100">
               <div class="Layout2Contents w-100">
                 <div class="changeLayout02">
                   <div class="Layout2ContentsDiv p-1">
-                    <div class="subLayout2Contents bg-white">
+                    <div class="subLayout2Contents ">
                       <textarea name="TextArea1" class="textAreaLayout2 w-100 h-100" placeholder="กรอกข้อความหรือคำอธิบาย..."></textarea>
                     </div>
-                    <div class="subLayout2Contents bg-white">
+                    <div class="subLayout2Contents ">
                       <textarea name="TextArea2" class="textAreaLayout2 w-100 h-100" placeholder="กรอกข้อความหรือคำอธิบาย..."></textarea>
                     </div>
                   </div>
-                  <div class="subLayout2Contents2 bg-white">
+                  <div class="subLayout2Contents2 ">
                     <textarea name="TextArea3" class="textAreaLayout2 w-100 h-100" placeholder="กรอกข้อความหรือคำอธิบาย..."></textarea>
                   </div>
                 </div>
@@ -744,7 +959,7 @@
             <!--  ส่วนที่ลบไป -->
           </div>
           <% } else if (Layout.name == "Layout03") {%>
-          <div class="lesson-content py-2 bg-white my-4">
+          <div class="lesson-content py-2  my-4">
             <div class="d-flex mx-4">
               <p class="fw-bold fs-4 my-3 setpBorder">แก้ไขเนื้อหา รูปแบบที่ 3</p>
             </div>
@@ -791,7 +1006,7 @@
 
           </div>
           <% } else if (Layout.name == "Layout04") {%>
-          <div class="lesson-content bg-white my-4">
+          <div class="lesson-content  my-4">
             <form action="/adminIndex/makeEdit4" method="post" enctype="multipart/form-data">
               <input class="d-none" type="text" name="_id" value="<%= lesson._id %>">
               <div class="IandMain d-grid">
@@ -802,7 +1017,7 @@
                   </button>
                 </div>
               </div>
-              <div class="setMargin py-2 px-4 bg-white w-100">
+              <div class="setMargin py-2 px-4  w-100">
                 <div class="Layout2Contents w-100 p-3">
                   <textarea class="teaxtAreaLayout4_1" name="Description" class="w-100 h-25"><%= Layout.Description%></textarea>
                   <div class="columnGrid">
@@ -831,7 +1046,7 @@
             </form>
           </div>
           <% } else if (Layout.name == "pdfFiles") { %>
-          <div class="lesson-content py-2 bg-white my-4">
+          <div class="lesson-content py-2  my-4">
             <div class="d-flex mx-4">
               <p class="fw-bold fs-4 my-3 setpBorder">แก้ไขไฟล์ PDF</p>
 
@@ -857,7 +1072,7 @@
 
           </div>
           <% } else if (Layout.name == "TextEditor"){ %>
-            <div class="lesson-content p-4 my-4 bg-white w-100 h-auto">
+            <div class="lesson-content p-4 my-4  w-100 h-auto">
               <!-- <div class="add-content-header">
                 <p class="fw-bold fs-4 my-2 mx-2">เพิ่มเนื้อหา: <span class="text-primary">ปรับแต่งข้อความ</span> </p>
               </div>

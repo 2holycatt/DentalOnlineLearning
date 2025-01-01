@@ -17,12 +17,231 @@
       margin-bottom: 1em !important;
 
     }
+    * {
+         box-sizing: border-box !important;
+       }
+       body.dark {
+           background-color: #212121 !important;
+         }
+       .card-1,
+       .card-body-1 {
+         border: none !important;
+       }
+   
+       .descp {
+         text-indent: 2em;
+         margin: 0 2em;
+       }
+   
+       .rectangle-141 {
+         background-color: white;
+         border-radius: 0.75em;
+         box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+         height: 14.6875em;
+         width: 75%;
+         margin: 2em 2em;
+       }
+   
+       .home-div,
+       .a-home {
+         color: #999999 !important;
+       }
+   
+       .above-nav {
+         background-color: white !important;
+         border-bottom: 1px solid #999999;
+       }
+   
+       .dark .above-nav-status {
+         background-color:  var(--secondary-color) !important;
+         border-right:1px solid #494949 ;
+       }
+   
+       .status-a {
+         color: #404258 !important;
+       }
+   
+       .list-lesson-p {
+         color: #8A2BE2;
+       }
+   
+       .list-lesson-p-span {
+         color: #4B0082;
+       }
+   
+       .each-lesson {
+         border-top: 0.1em solid #8A2BE2;
+       }
+   
+       .aside-right {
+         background-color: var(--bg-color) !important;
+         height: 100%;
+       }
+   
+       .manange-bar {
+         border-radius: 0.5em;
+         justify-content: space-between !important;
+         
+       }
+   
+       .add-button {
+         border-radius: 0.5em !important;
+         width: 20% !important;
+         height: auto !important;
+       }
+   
+       .lesson-content {
+         height: fit-content !important;
+         border-radius: 1em !important;
+         justify-content: center !important;
+       }
+       .dark .manange-bar, .dark .lesson-content{
+         background-color:  var(--secondary-color) !important;
+       }
+   
+       .lesson-nothing {
+         margin: 25% 0 !important;
+         padding: 0 !important;
+       }
+   
+       .each-lesson-a {
+         text-decoration: none !important;
+       }
+   
+       .each-lesson-a:hover .each-lesson {
+         border-left: 0.2em solid #8A2BE2 !important;
+       }
+   
+       .card-img-top {
+         box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+       }
+   
+       .setColumn {
+         display: grid !important;
+         grid-template-columns: 1fr 1fr 1fr !important;
+       }
+   
+       .card-a {
+         text-decoration: none !important;
+       }
+   
+       .card-a:hover,
+       .card-a:hover .p-lesson-name {
+         color: #007bff !important;
+         transition: 0.5s;
+       }
+   
+       .card-a:hover .bi-book {
+         color: #007bff !important;
+         transition: color 0.5s;
+       }
+   
+       .bi-book-fill {
+         display: none;
+       }
+   
+       .card-a:hover .bi-book-fill {
+         display: inline-block !important;
+         transition: 0.5s;
+       }
+   
+       .card-a:hover .bi-book {
+         display: none;
+         transition: 0.5s;
+       }
+   
+       .manange-bar,
+       .lesson-content {
+         box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+         border-radius: 0.5em;
+       }
+   
+       .card-1 {
+         width: 90% !important;
+         height: fit-content !important;
+         transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+         cursor: pointer;
+         border-radius: 0.5em;
+         box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+       }
+       .dark .card-1{
+         box-shadow: lightgray 0px 2px 5px -1px !important;
+       }
+   
+       .card-1:hover {
+         transform: scale(1.05);
+       }
+   
+       .card-header {
+         border-right: 1px solid #EAEFF4;
+         border-bottom: 1px solid #EAEFF4;
+       }
+   
+       .a-list-1,
+       .bi-1 {
+         color: #8A2BE2 !important;
+       }
+   
+   
+   
+       #yearSelector {
+         border-color: #EAEFF4;
+         border-radius: 0.5em;
+         background-color: white !important;
+         font-size: smaller;
+         padding: 0.5em !important;
+       }
+   
+       #yearSelector option {
+         color: #404258;
+         background-color: white !important;
+   
+       }
+   
+       /* .set-border {
+         border-bottom: 1px solid #EAEFF4;
+         padding-bottom: 1em !important;
+   
+       } */
+   
+       .set-border-bottom {
+         border-bottom: 1px solid #EAEFF4;
+         margin-bottom: 1em !important;
+   
+       }
+   
+       .lesson-bar {
+         border-left: 0.25em solid #007bff !important;
+         padding-left: 0.5em !important;
+         margin-right: 0.5em !important;
+   
+       }
+   
+       .a-add{
+         color: #007bff !important;
+       }
+   
+       .a-add:hover{
+         color: #0053ac !important;
+       }
+       .grey {
+            color: gray !important;
+        }
+
+        .dark .grey {
+            color: lightgray !important
+        }
+       @media screen and (max-width: 768px) {
+         .above-nav-status{
+           display: none;
+         }
+       }
   </style>
 </head>
 
 <body>
   <div id="blur-container">
-    <%- include("./partials/nav.ejs")%>
+    <%- include("./partials/nav2.ejs", { theme: theme, isSidebarOpen: isSidebarOpen }) %>
     <!-- <div class="above-nav d-flex px-4 py-3">
       <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
         <i class="bi bi-house mx-2"></i>
@@ -43,7 +262,7 @@
           <p class="fw-bold fs-3 lesson-bar">งานที่มอบหมาย</p>
         </div>
         <div class="col-6 d-flex justify-content-end">
-          <a href="/adminIndex/chooseSubject" class="btn btn-primary py-2 px-2">มอบหมายงาน <i class="bi bi-plus-circle-fill"></i></a>
+          <a href="/adminIndex/chooseSubject" class="btn btn-primary py-2 px-2">ยกเลิก <i class="bi bi-x-circle-fill "></i></a>
         </div>
         <!-- <div>
           <a href="/adminIndex/addAssign" class="add-button btn btn-primary m-0 p-2">
@@ -60,19 +279,19 @@
         <div class="set-border-bottom col-12">
           <p class="fw-bold fs-5 my-1">
             วิชา:
-            <span class="text-primary fw-normal">
+            <span class="grey fw-normal">
               <%=findSubject.subjectId%> <%=findSubject.subjectName%>
             </span>
             <span class="">
               ภาคการศึกษา:
             </span>
-            <span class="text-primary fw-normal">
+            <span class="grey fw-normal">
               <%=findSubject.semester%>
             </span>
             <span class="">
               กลุ่มที่:
             </span>
-            <span class="text-primary fw-normal">
+            <span class="grey fw-normal">
               <%=findSubject.section%>
             </span>
           </p>

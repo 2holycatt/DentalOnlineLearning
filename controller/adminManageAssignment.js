@@ -63,6 +63,9 @@ const assignmentIndex = async (req, res) => {
 const assignmentDetail = async (req, res) => {
   try {
     // const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
     const getAssignId = req.query.id;
     const assignment = await Assignments.findById(getAssignId).populate("subject");
     const getSubmitDetail = await Assignments.findById(getAssignId)
@@ -84,7 +87,7 @@ const assignmentDetail = async (req, res) => {
     //   return fileName;
     // });
 
-    res.render('assignmentDetail', { assignment, formattedStartDate, formattedDeadline, getSubmitDetail });
+    res.render('assignmentDetail', { assignment, formattedStartDate, formattedDeadline, getSubmitDetail,userData,theme,isSidebarOpen });
 
   } catch (error) {
     console.error(error);

@@ -209,6 +209,65 @@
     .lesson-content{
       height: fit-content !important;
     }
+    body.light {
+      background-color: #ffffff;
+      color: #000000;
+    }
+
+    body.dark {
+      background-color: #212121;
+      color: #ffffff;
+    }
+
+    .dark .bg-white {
+      background-color: #444 !important;
+      color: #ffffff !important;
+    }
+
+    .dark .text-dark {
+      color: #ffffff !important;
+    }
+
+    .dark .text-primary {
+      color: #bb86fc !important;
+    }
+
+    .dark .bg-primary {
+      background-color: #bb86fc !important;
+    }
+
+    /* Additional dark mode styles as needed */
+    .dark .classroom-p {
+      
+      color: white !important;
+    }
+
+    /* Override other styles for dark mode */
+    .dark .lesson-content {
+      background-color: #444 !important;
+    }
+
+    .dark .up-down-a:hover,
+    .dark .up-down-a:hover .bi {
+      color: #bb86fc !important;
+    }
+
+    .dark .setColumn-p {
+      border-bottom-color: #bb86fc;
+    }
+
+    .dark .setColumn-p-lesson {
+      border-bottom-color: #bb86fc;
+    }
+
+    .dark .a-link {
+      color: #bb86fc !important;
+    }
+    @media screen and (max-width: 768px) {
+         .above-nav-status{
+           display: none;
+         }
+       }
   </style>
 
 </head>
@@ -260,7 +319,7 @@
       <p class="fw-bold mx-3 fs-5" style="border-left: 0.25em solid #0D6EFD !important;
       padding-left: 0.25em !important;
       color: #5A6A85;">บทเรียน</p>
-      <div class="lesson-content p-2 mx-3 bg-white w-auto my-2" style="height: fit-content;">
+      <div class="lesson-content p-2 mx-3  w-auto my-2" style="height: fit-content;">
         <div class="px-3 my-3">
           <div class="setColumn">
             <!-- <a href="/adminIndex/eachLessons?lessonId=">
@@ -306,7 +365,7 @@
       <p class="fw-bold mx-3 fs-5" style="border-left: 0.25em solid #0D6EFD !important;
       padding-left: 0.25em !important;
       color: #5A6A85;">แบบทดสอบ</p>
-      <div class="lesson-content p-2 mx-3 bg-white w-auto my-2">
+      <div class="lesson-content p-2 mx-3  w-auto my-2">
         <div class="px-3 my-3">
           <div class="setColumn">
             <!-- <a href="/adminIndex/eachLessons?lessonId=">
@@ -353,7 +412,7 @@
       <p class="fw-bold mx-3 fs-5" style="border-left: 0.25em solid #0D6EFD !important;
       padding-left: 0.25em !important;
       color: #5A6A85;">งานที่มอบหมาย</p>
-      <div class="lesson-content p-2 mx-3 bg-white w-auto my-2">
+      <div class="lesson-content p-2 mx-3  w-auto my-2">
         <div class="px-3 my-3">
           <div class="setColumn">
             <!-- <a href="/adminIndex/eachLessons?lessonId=">
