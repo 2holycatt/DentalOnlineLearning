@@ -246,7 +246,7 @@
           <div class="setColumn">
             <% quiz.forEach(quiz => { %>
             <% if (quiz.quizImage && quiz.quizImage.data) { %>
-            <a href="/adminIndex/eachQuizs?quizId=<%= quiz._id %>">
+            <a href="/adminIndex/eachQuiz?quizId=<%= quiz._id %>">
               <div class="card-1 text-bg-white mb-3" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
                 <div class="card-header bg-white px-2 py-1 fw-bold text-primary" style="width: fit-content; border-bottom-right-radius:0.5em; position: absolute;">
                   <%= quiz.quizname %>
@@ -258,7 +258,7 @@
               </div>  
              </a> 
              <% } else { %>
-              <a href="/adminIndex/eachQuizs?quizId=<%= quiz._id %>">
+              <a href="/adminIndex/eachQuiz?quizId=<%= quiz._id %>">
                 <div class="card-1 text-bg-white mb-4" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
                 <div class="card-header bg-white px-2 py-1 fw-bold text-primary" style="width: fit-content; border-bottom-right-radius: 0.5em; position: absolute; ">
                   <%= quiz.quizname %>

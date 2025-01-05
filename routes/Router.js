@@ -19,6 +19,7 @@ const profileController = require('../controller/profileController');
 const studentQuizController = require('../controller/studentQuizController')
 
 
+
 // Middleware For Files Uploading
 const upload = require("../middleware/multer");
 // const uploadMemory = require('../middleware/multerMemory'); // เรียกใช้ multer middleware
@@ -183,7 +184,8 @@ router.get('/studentAssignment', studentMiddleware, studentController.studentAss
 router.post('/studentAnswerEndChapterQuestions', studentMiddleware, adminController.studentAnswerEndChapterQuestions);
 router.post('/studentEditAnswerEndChapter', studentMiddleware, adminController.studentEditAnswerEndChapter);
 router.post('/studentEditScorePerweek', studentMiddleware, studentController.studentEditScorePerweek);
-
+router.get('/studentExam', studentMiddleware, studentController.studentExam);
+router.get('/studentIndex/eachQuiz',studentMiddleware, adminQuizController.eachQuiz);
 
 
 //show file 2

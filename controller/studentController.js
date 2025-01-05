@@ -2,6 +2,7 @@ var User = require('../models/user.model')
 var Student = require('../models/student.model')
 const Lesson = require("../models/Lessons");
 const Subject = require("../models/subjects");
+const Quiz = require("../models/quiz");
 const moment = require('moment');
 
 const studentIndex = async (req, res) => {
@@ -138,10 +139,63 @@ const studentEditScorePerweek = async (req, res) => {
         console.log(err);
     }
 }
+
+const studentExam = async (req, res) => {
+    try {
+        const userData = await User.findById(req.session.userId)
+        .populate({
+            path: "student",
+            populate: {
+                path: "subjects.subjectMongooseId",
+                populate: {
+                    path: "Quiz"
+                }
+            }
+        });
+        // const subjects = userData.student.subjects;
+
+            const quiz = await Quiz.find({ isReleased: true }).populate('subject').sort({ releaseDate: 1 });
+            const theme = req.session.theme || 'light'; 
+            // const getUserLessons = userData.student.schoolYear.lessonArray;
+            const findYear = null;
+            const isSidebarOpen = false;
+            // const subject = student.subjects.find(sub => sub.subjectMongooseId.toString() == subjectId);
+        // const getUserLessons = userData.student.schoolYear.lessonArray;
+        res.render("studentExam", { userData, quiz ,theme, isSidebarOpen });
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const eachQuizStudent = async(req, res) => {
+    try {
+        const userData = await User.findById(req.session.userId)
+            .populate({
+                path: "student",
+                populate: {
+                    path: "subjects.subjectMongooseId",
+                    populate : {
+                        path: "Quiz"
+                    }
+                }
+            });
+            // const subjects = userData.student.subjects;
+            // const subject = student.subjects.find(sub => sub.subjectMongooseId.toString() == subjectId);
+            const quiz = await Quiz.find().sort({ createdAt: 1 }).populate("schoolYear");
+            const theme = req.session.theme || 'light'; 
+            const isSidebarOpen = false;
+        // const getUserLessons = userData.student.schoolYear.lessonArray;
+        res.render("eachQuizStudent", { userData, quiz ,theme, isSidebarOpen });
+    } catch (error) {
+        console.error(error);
+    }
+}
 module.exports = {
     studentIndex,
     studentLesson,
     studentAssignment,
     subjectDetail,
-    studentEditScorePerweek
+    studentEditScorePerweek,
+    studentExam,
+    eachQuizStudent
 }

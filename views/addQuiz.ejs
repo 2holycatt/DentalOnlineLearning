@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Lessons</title>
+  <!-- <link rel="stylesheet" href="/css/event.css"> -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <%- include("./partials/header.ejs")%>
+  <style>
+     * {
+      box-sizing: border-box !important;
+    }
+
+    .card-1,
+    .card-body-1 {
+      border: none !important;
+    }
+
+    .descp {
+      text-indent: 2em;
+      margin: 0 2em;
+    }
+
+    .rectangle-141 {
+      background-color: white;
+      border-radius: 0.75em;
+      box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+      height: 14.6875em;
+      width: 75%;
+      margin: 2em 2em;
+    }
+
+    .home-div,
+    .a-home {
+      color: #999999 !important;
+    }
+
+    .above-nav {
+      background-color: white !important;
+      border-bottom: 1px solid #999999;
+    }
+
+    .dark .above-nav-status {
+      background-color: #333 !important;
+      border-right:1px solid #494949 ;
+    }
+
+    .status-a {
+      color: #404258 !important;
+    }
+
+    .list-lesson-p {
+      color: #8A2BE2;
+    }
+
+    .list-lesson-p-span {
+      color: #4B0082;
+    }
+
+    .each-lesson {
+      border-top: 0.1em solid #8A2BE2;
+    }
+
+    .aside-right {
+      background-color: var(--bg-color) !important;
+      height: 100%;
+    }
+
+    .manange-bar {
+      border-radius: 0.5em;
+      justify-content: space-between !important;
+      
+    }
+
+    .add-button {
+      border-radius: 0.5em !important;
+      width: 20% !important;
+      height: auto !important;
+    }
+
+    .lesson-content {
+      height: fit-content !important;
+      border-radius: 1em !important;
+      justify-content: center !important;
+    }
+    .dark .manange-bar, .dark .lesson-content{
+      background-color: #333 !important;
+    }
+
+    .lesson-nothing {
+      margin: 25% 0 !important;
+      padding: 0 !important;
+    }
+
+    .each-lesson-a {
+      text-decoration: none !important;
+    }
+
+    .each-lesson-a:hover .each-lesson {
+      border-left: 0.2em solid #8A2BE2 !important;
+    }
+
+    .card-img-top {
+      box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+    }
+
+    .setColumn {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr !important;
+    }
+
+    .card-a {
+      text-decoration: none !important;
+    }
+
+    .card-a:hover,
+    .card-a:hover .p-lesson-name {
+      color: #007bff !important;
+      transition: 0.5s;
+    }
+
+    .card-a:hover .bi-book {
+      color: #007bff !important;
+      transition: color 0.5s;
+    }
+
+    .bi-book-fill {
+      display: none;
+    }
+
+    .card-a:hover .bi-book-fill {
+      display: inline-block !important;
+      transition: 0.5s;
+    }
+
+    .card-a:hover .bi-book {
+      display: none;
+      transition: 0.5s;
+    }
+
+    .manange-bar,
+    .lesson-content {
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+      border-radius: 0.5em;
+    }
+
+    .card-1 {
+      width: 90% !important;
+      height: fit-content !important;
+      transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+      cursor: pointer;
+      border-radius: 0.5em;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+    }
+
+    .card-1:hover {
+      transform: scale(1.05);
+    }
+
+    .card-header {
+      border-right: 1px solid #EAEFF4;
+      border-bottom: 1px solid #EAEFF4;
+    }
+
+    .a-list-3,
+    .bi-3 {
+      color: #8A2BE2 !important;
+    }
+
+
+
+    #yearSelector {
+      border-color: #EAEFF4;
+      border-radius: 0.5em;
+      background-color: white !important;
+      font-size: smaller;
+      padding: 0.5em !important;
+    }
+
+    #yearSelector option {
+      color: #404258;
+      background-color: white !important;
+
+    }
+
+    /* .set-border {
+      border-bottom: 1px solid #EAEFF4;
+      padding-bottom: 1em !important;
+
+    } */
+
+    .set-border-bottom {
+      border-bottom: 1px solid #EAEFF4;
+      margin-bottom: 1em !important;
+
+    }
+
+    .lesson-bar {
+      border-left: 0.25em solid #007bff !important;
+      padding-left: 0.5em !important;
+      margin-right: 0.5em !important;
+
+    }
+
+    .a-add{
+      color: #007bff !important;
+    }
+
+    .a-add:hover{
+      color: #0053ac !important;
+    }
+  
+    .descp {
+      text-indent: 2em;
+      margin: 0 2em;
+    }
+
+    .rectangle-141 {
+      background-color: white;
+      border-radius: 0.75em;
+      box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+      height: 14.6875em;
+      left: 4.6875em;
+      top: 37.3125em;
+      width: 39.125em;
+      width: 75%;
+      margin: 2em 2em;
+    }
+
+    .home-div,
+    .a-home {
+      color: #999999 !important;
+    }
+
+    .above-nav {
+      background-color: #dde6ed33;
+    }
+
+    .status-a {
+      color: #404258 !important;
+    }
+
+    .list-lesson-p {
+      color: #8A2BE2;
+
+    }
+
+    .list-lesson-p-span {
+      color: #4B0082;
+    }
+
+    .each-lesson {
+      border-top: 0.1em solid #8A2BE2;
+
+    }
+
+    .aside-right {
+      background-color: #dde6ed1a;
+      height: 100%;
+    }
+
+    .manange-bar {
+      border-radius: 1em;
+      justify-content: space-between !important;
+    }
+
+    .add-button {
+      border-radius: 0.5em !important;
+      width: 20%;
+
+    }
+
+    .main-content {
+      height: 100%;
+    }
+
+    .lesson-content {
+      height: 100%;
+      border-radius: 1em !important;
+
+      justify-content: center !important;
+      border-top: 0.5em solid #8A2BE2;
+    }
+
+    .lesson-nothing {
+      margin: 25% 0 !important;
+      padding: 0 !important;
+    }
+
+    .add-lesson-btn {
+      float: none !important;
+      width: auto;
+    }
+
+    input[type=file] {
+      border: 1px solid #ced4da;
+      border-radius: 0.5em;
+
+    }
+
+    input[type=file]::file-selector-button {
+      margin-right: 1em;
+      border-top: none;
+      border-left: none;
+      border-bottom: none;
+      border-right: 1px solid #ced4da;
+      ;
+      background: white;
+      padding: 0.5em 1em;
+      border-radius: 0.5em;
+      color: #084cdf;
+      cursor: pointer;
+      transition: background .2s ease-in-out;
+
+    }
+
+    input[type=file]::file-selector-button:hover {
+      background: #0d45a5;
+      color: white;
+    }
+
+    .img-input::placeholder {
+      color: #ced4da !important;
+    }
+    .form-text{
+      color: var(--text-color) !important;
+    }
+  @media screen and (max-width: 768px) {
+      .above-nav-status{
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <%- include("./partials/nav2.ejs")%>
+
+  <div class="main-content d-flex h-auto">
+    <% const pageName = "addLesson" %>
+    <%- include("./partials/lessonsList.ejs", { pageName: pageName })%>
+    <div class="aside-right w-75 h-auto p-4 bg-white">
+      <div class="manange-bar p-3 bg-white d-flex w-100">
+        <p class="fw-bold fs-3">เพิ่มแบบทดสอบ</p>
+        <a href="/adminIndex/adminExamsIndex" class="add-button btn btn-primary m-0 p-2">
+          ยกเลิกการเพิ่ม<i class="bi bi-x-circle-fill mx-2"></i>
+        </a>
+      </div>
+      <div class="lesson-content p-4 bg-white w-100 my-4" style="height: auto;">
+        <form action="/adminIndex/createQuiz" method="post" enctype="multipart/form-data">
+          
+          <div class="mb-3">
+            <label for="schoolYear" class="form-label">ปีการศึกษา:</label>
+            <input type="text" list="script" class="form-control p-3 w-25" value="<%= schoolYearId %>" name="schoolYear" placeholder="ตัวเลข 4 หลัก" pattern="\d{4}" title="กรุณากรอกตัวเลข 4 ตัวอักษร" required>
+            <datalist id="script">
+              <% schoolYears.forEach(year => { %>
+              <option value="<%= year.schoolYear %>"></option>
+              <% }); %>
+            </datalist>
+            <div id="scriptData" class="form-text my-1 w-50"><span class="text-primary">* </span>ปีการศึกษาที่กรอกมีผลต่อ<span class="text-danger"> การเข้าถึงบทเรียน </span>ของนักศึกษา หากปีการศึกษาของ<span class="text-primary"> นักศึกษา</span> และ <span class="text-primary">บทเรียน </span>ไม่ตรงกัน นักศึกษาจะไม่สามารถเข้าถึงบทเรียนในปีการศึกษานั้น ๆ ได้</div>
+          </div>
+
+          <div class="mb-3">
+            <label for="quizname" class="form-label">ชื่อแบบทดสอบ:</label>
+            <input type="text" class="form-control p-3 w-50" name="quizname" placeholder="กรอกชื่อแบบทดสอบ" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="quizdescription" class="form-label">คำอธิบาย:</label>
+            <textarea class="form-control p-3 w-50" name="quizdescription" placeholder="กรอกคำอธิบายแบบทดสอบ" ></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="timeLimit" class="form-label">ระยะเวลาในการทำแบบทดสอบ:</label>
+            <select class="form-select px-3 w-50" id="timeLimit" name="timeLimit" required>
+              <option value='{"value":900,"display":"15 นาที"}' selected>15 นาที</option> <!-- 15 นาที = 900 วินาที -->
+              <option value='{"value":1800,"display":"30 นาที"}'>30 นาที</option> <!-- 30 นาที = 1800 วินาที -->
+              <option value='{"value":3600,"display":"1 ชั่วโมง"}'>1 ชั่วโมง</option> <!-- 1 ชั่วโมง = 3600 วินาที -->
+              <option value='{"value":5400,"display":"1 ชั่วโมง 30 นาที"}'>1 ชั่วโมง 30 นาที</option> <!-- 1 ชั่วโมง 30 นาที = 5400 วินาที -->
+              <option value='{"value":7200,"display":"2 ชั่วโมง"}'>2 ชั่วโมง</option> <!-- 2 ชั่วโมง = 7200 วินาที -->
+              <option value='{"value":10800,"display":"3 ชั่วโมง"}'>3 ชั่วโมง</option> <!-- 3 ชั่วโมง = 10800 วินาที -->
+            </select>            
+          </div>
+          
+          
+          <div class="mb-3">
+            <label for="attemptLimit" class="form-label">จำนวนครั้งที่เข้าทำได้:</label>
+            <input type="number" class="form-control px-3 w-50" id="attemptLimit" name="attemptLimit" value="1" min="1" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="quizImage" class="form-label">รูปภาพหน้าปก:</label><br>
+            <input type="file" class="w-50 img-input" style="background-color: white !important;" name="quizImage" accept="image/*">
+            <div id="imageHelp" class="form-text my-1"><span class="text-primary">* </span>ไม่ต้องทำการอัปโหลดรูปภาพ หากไม่มีรูปภาพที่ต้องการใช้</div>
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="add-lesson-btn btn btn-primary py-2 px-3 shadow">
+              <span>ถัดไป</span><i class="bi bi-arrow-right mx-2"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <%- include("./partials/footer.ejs")%>
+</body>
+
+
+</html>

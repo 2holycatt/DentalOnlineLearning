@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exams</title>
+    <!-- <link rel="stylesheet" href="/css/event.css"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <%- include("./partials/header.ejs")%>
+        <style>
+            * {
+                box-sizing: border-box !important;
+            }
+            body.dark {
+        background-color: #212121 !important;
+      }
+            .card-1,
+            .card-body-1 {
+                border: none !important;
+            }
+
+            .descp {
+                text-indent: 2em;
+                margin: 0 2em;
+            }
+
+            .rectangle-141 {
+                background-color: white;
+                border-radius: 0.75em;
+                box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+                height: 14.6875em;
+                width: 75%;
+                margin: 2em 2em;
+            }
+
+            .home-div,
+            .a-home {
+                color: #999999 !important;
+            }
+
+            .above-nav {
+                background-color: white !important;
+                border-bottom: 1px solid #999999;
+            }
+
+            .dark .above-nav-status {
+                background-color: #444 !important;
+                border-right: 1px solid #494949;
+            }
+
+            .status-a {
+                color: #404258 !important;
+            }
+
+            .list-lesson-p {
+                color: #8A2BE2;
+            }
+
+            .list-lesson-p-span {
+                color: #4B0082;
+            }
+
+            .each-lesson {
+                border-top: 0.1em solid #8A2BE2;
+            }
+
+            .aside-right {
+                background-color: var(--bg-color) !important;
+                height: 100%;
+            }
+
+            .manange-bar {
+                border-radius: 0.5em;
+                justify-content: space-between !important;
+
+            }
+
+            .add-button {
+                border-radius: 0.5em !important;
+                width: 20% !important;
+                height: auto !important;
+            }
+
+            .lesson-content {
+                height: fit-content !important;
+                border-radius: 1em !important;
+                justify-content: center !important;
+            }
+
+            .dark .manange-bar,
+            .dark .lesson-content {
+                background-color: #444 !important;
+            }
+
+            .lesson-nothing {
+                margin: 25% 0 !important;
+                padding: 0 !important;
+            }
+
+            .each-lesson-a {
+                text-decoration: none !important;
+            }
+
+
+            .card-img-top {
+                box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+            }
+
+            .setColumn {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr 1fr !important;
+            }
+
+            .card-a {
+                text-decoration: none !important;
+            }
+
+            .card-a:hover,
+            .card-a:hover .p-lesson-name {
+                color: #007bff !important;
+                transition: 0.5s;
+            }
+
+            .card-a:hover .bi-book {
+                color: #007bff !important;
+                transition: color 0.5s;
+            }
+
+            .bi-book-fill {
+                display: none;
+            }
+
+            .card-a:hover .bi-book-fill {
+                display: inline-block !important;
+                transition: 0.5s;
+            }
+
+            .card-a:hover .bi-book {
+                display: none;
+                transition: 0.5s;
+            }
+
+            .manange-bar,
+            .lesson-content {
+                box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+                border-radius: 0.5em;
+            }
+
+            .card-1 {
+                width: 90% !important;
+                height: fit-content !important;
+                transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+                cursor: pointer;
+                border-radius: 0.5em;
+                box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+            }
+
+            .dark .card-1 {
+                box-shadow: lightgray 0px 2px 5px -1px !important;
+            }
+
+            .card-1:hover {
+                transform: scale(1.05);
+            }
+
+            .card-header {
+                border-right: 1px solid #EAEFF4;
+                border-bottom: 1px solid #EAEFF4;
+            }
+
+            .a-list-3,
+            .bi-3 {
+                color: #8A2BE2 !important;
+            }
+
+
+
+            #yearSelector {
+                border-color: #EAEFF4;
+                border-radius: 0.5em;
+                background-color: white !important;
+                font-size: smaller;
+                padding: 0.5em !important;
+            }
+
+            #yearSelector option {
+                color: #404258;
+                background-color: white !important;
+
+            }
+
+            /* .set-border {
+         border-bottom: 1px solid #EAEFF4;
+         padding-bottom: 1em !important;
+   
+       } */
+
+            .set-border-bottom {
+                border-bottom: 1px solid #EAEFF4;
+                margin-bottom: 1em !important;
+
+            }
+
+            .lesson-bar {
+                border-left: 0.25em solid #007bff !important;
+                padding-left: 0.5em !important;
+                margin-right: 0.5em !important;
+
+            }
+
+            .a-add {
+                color: #007bff !important;
+            }
+
+            .a-add:hover {
+                color: #0053ac !important;
+            }
+
+            .above-nav-status {
+                background-color: white !important;
+            }
+
+            .dark .above-nav-status {
+                background-color: #444 !important;
+                border-right: 1px solid #494949;
+            }
+
+
+            @media screen and (max-width: 768px) {
+                .above-nav-status {
+                    display: none;
+                }
+            }
+        </style>
+</head>
+
+<body>
+    <%- include("./partials/studentNav.ejs") %>
+        <div class="main-content d-flex">
+            <%- include("./partials/studentAside.ejs") %>
+                <div class="aside-right  h-auto p-4 m-3" style="width: 80%;">
+                    <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
+                        <p class="fw-bold fs-3 lesson-bar">แบบทดสอบ</p>
+                    </div>
+
+
+                        <div class="row">
+
+
+                            <div class="lesson-content p-4 bg-white w-100 my-4">
+                                <% if (quiz.length == 0) {%>
+                                  <div class="d-flex">
+                                    <div class="set-border">
+                                      <p class="fw-bold fs-5 my-1 mx-2">ยังไม่มีแบบทดสอบใด ๆ ภายในระบบ</p>
+                                      
+                                    </div>
+                                  </div>
+                                <% } else if (quiz.length > 0) { %>
+                                  <div class="d-flex">
+                                    <div class="set-border d-flex">
+                                      <p class="fw-bold fs-5 my-1 mx-2" style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">แบบทดสอบ</p>
+                                      <div class="d-flex justify-content-center" style="align-items: center;">
+                                        <label class="mx-2" for="yearSelector">ปีการศึกษา: </label>
+                                        <select id="yearSelector">
+                                          <option value="all">ทั้งหมด</option>
+                                          <option value=""></option>
+                                        
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                <% } %>
+                                
+                                <% if (quiz.length > 0 )  { %>
+                                <div class="px-3 my-3">
+                                  <div class="showYear show" data-aos="fade-left" data-aos-duration="1000">
+                                    <div class="set-border-bottom">
+                                      <p class="my-2 p-schoolYear"><span class=" fw-bold">ปีการศึกษา:</span>
+                                        <span class="text-primary"> </span>                                      </p>
+                                    </div>
+                                    <div class="setColumn row">
+                                      <% quiz.forEach(quiz => { %>
+                                        <% if (quiz.isReleased) { %>
+                                      <a href="/studentIndex/eachQuiz?quizId=<%= quiz._id %>">
+                                        <div class="card-1 text-bg-white mb-3" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
+                                          <div class="card-header bg-white px-2 py-1 fw-bold text-primary" style="width: fit-content; border-bottom-right-radius:0.5em; position: absolute;">
+                                            <p class="text-break" style="font-size: small;"><%= quiz.quizname %></p>
+                                          </div>
+                                          <div class="card-body-1">
+                                            <img src="/" alt="รูปภาพประกอบแบบทดสอบ" class="card-img" alt="รูปของแบบทดสอบ" style="width: 100%; height: 20%; max-width: 15.125em; max-height: 8.8125em; border-radius: 0.5em;">
+                                            <!-- /* <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของแบบทดสอบ" style="height: 100%; width: 50%; object-fit: cover;"> */ -->
+                                          </div>
+                                        </div>
+                                      </a>
+                                    
+                                      <% } %>
+                                      <% }); %>
+                            
+                                    </div>
+                                  </div>
+                                </div>
+                                <% } %>
+                              </div>
+                        </div>
+
+
+                    </div>
+                </div>
+        <%- include("./partials/footer_st.ejs") %>
+            <script>
+                AOS.init();
+            </script>
+            <script>
+                document.getElementById('yearSelector').addEventListener('change', function() {
+                  const selectedYear = this.value;
+                  const showYearAll = document.querySelectorAll(`.showYear`);
+
+                  showYearAll.forEach(element => {
+                    const classList = element.classList;
+                    for (i = 1; i < 2; i++) {
+                      const getDiv = document.querySelector(`.${classList[i]}`);
+
+                      const showYearAll2 = document.querySelector(`.show${selectedYear}`);
+                      if (getDiv != showYearAll2) {
+                        getDiv.style.display = "none";
+                      } else if (getDiv === showYearAll2) {
+                        showYearAll2.style.display = "block";
+                      }
+
+                      if (selectedYear === "all") {
+                        showYearAll.forEach(element => {
+                          const classList = element.classList;
+                          for (i = 1; i < 2; i++) {
+                            const getDiv = document.querySelector(`.${classList[i]}`);
+                            getDiv.style.display = "block";
+
+                          }
+                        });
+                      }
+                    }
+                  });
+
+
+                });
+            </script>
+
+
+</body>
+
+
+</html>
