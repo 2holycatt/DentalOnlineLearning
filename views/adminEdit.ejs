@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit</title>
+  <title>แก้ไขเนื้อหา-<%=lesson.LessonName%></title>
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
   <link rel="stylesheet" href="/css/getMoreAddContent.css">
   <link rel="stylesheet" href="/css/animation.css">
@@ -726,20 +726,29 @@
       <div class="row allContent " style="width: 80%;">
         <div class="col-12 oldContent  aside-right px-4 py-4" style="width: 100% !important;">
           <div class="manange-bar px-4 py-3  w-100" style="margin-bottom: 1.5em !important;">
-            <div class="d-flex" style="border-bottom: 1px solid #ced4daa0; padding-bottom: 0.5em !important;">
-              <div class="d-flex w-75" style="align-items: center; grid-template-columns: 0.5fr 1.5fr;">
-                <p class="fw-bold w-auto fs-6 lesson-bar">แก้ไขเนื้อหา</p>
-                <p class="fw-normal w-auto fs-6" style="margin-left: 0.5em !important;">บทเรียน:
-                  <span class="fw-normal fs-6 grey" style="margin-right: 1em !important;"><%=lesson.LessonName%></span>
-
-                </p>
-                <a href="/adminIndex/editLesson?lessonId=<%=lesson._id%>&subjectId=<%=subject._id%>" class="edit-a  px-2" style="border-left: 1px solid #ced4daa0 ;margin:0em 1em !important; font-size: small;">แก้ไขชื่อและรูปปก<i class="bi bi-pencil mx-2"></i>
-                </a>
+            <div class="d-flex justify-content-between align-items-center" >
+              <div class="fw-normal fs-6 lesson-bar ms-2 d-flex justify-content-between w-100">
+                <div class="d-flex">
+                  <a class="grey link " href="/eachSubject?subjectDbId=<%=subject._id%>">
+                    <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
+                  </a>
+                  
+                </div>
+                <div class="d-flex justify-content-end">
+                  <a href="/adminIndex/eachLessons?lessonId=<%=lesson._id%>" class="return-a text-primary">กลับสู่เนื้อหา<i class="bi bi-arrow-return-left mx-2"></i></a>
+                </div>
               </div>
-              <div class="d-flex w-25 justify-content-end" style="align-items: center; margin-top: 0.5 !important;">
-                <a href="/adminIndex/eachLessons?lessonId=<%=lesson._id%>" class="return-a text-primary">กลับสู่เนื้อหา<i class="bi bi-arrow-return-left mx-2"></i>
-                </a>
-              </div>
+            </div>
+            <br>
+            <div class="d-flex align-items-center ms-2" style="border-bottom: 1px solid #ced4daa0; padding-bottom: 0.5em !important;">
+              <p class="fw-normal fs-3 mb-0">
+                <%= lesson.LessonName %>
+              </p>
+              <a href="/adminIndex/editLessonContent?lesson=<%= lesson._id %>&subjectId=<%= subject._id %>"
+                 class="edit-a text-primary px-2"
+                 style="margin-left: 10px; font-size: small;">
+                <i class="bi bi-pencil mx-2"></i>
+              </a>
             </div>
             <% const questions = lesson.lessonQuestion %>
             <div class="d-flex">
@@ -852,10 +861,10 @@
                     <div class="w-100">
                       <% const file = Layout.AboutImage[0].file %>
                       <% if (Layout.AboutImage[0].contentType.startsWith("image/")) { %>
-                      <img class="ImageFile w-75 h-75 my-4 shadow rounded" src="<%=file%>" alt="รูปภาพประกอบการเรียน">
+                      <img class="ImageFile w-75 h-75 my-4 shadow rounded" src="/<%=file%>" alt="รูปภาพประกอบการเรียน">
                       <%} else if (Layout.AboutImage[0].contentType.startsWith("video/")) {%>
                       <video class="w-75 h-75 my-4" controls autoplay>
-                        <source src="<%=file%>" type="<%=Layout.AboutImage[0].contentType%>">
+                        <source src="/<%=file%>" type="<%=Layout.AboutImage[0].contentType%>">
                         Your browser does not support the video tag.
                       </video>
                       <% } %>
@@ -979,10 +988,10 @@
                     <p class="fw-bold fs-6" style="margin-top: 1em !important;">รูปภาพหรือวิดีโอเดิมที่ใช้: </p>
                     <div class="w-75">
                       <% if (Layout.contentType.startsWith("image/")) { %>
-                        <img class="ImageFile h-75 w-100 mx-auto my-2" src="<%=Layout.file%>" alt="รูปภาพประกอบการเรียน">
+                        <img class="ImageFile h-75 w-100 mx-auto my-2" src="/<%=Layout.file%>" alt="รูปภาพประกอบการเรียน">
                         <%} else if (Layout.contentType.startsWith("video/")) {%>
                         <video class="w-75 h-75 my-4" controls autoplay>
-                          <source src="<%=Layout.file%>" type="<%=Layout.contenType%>">
+                          <source src="/<%=Layout.file%>" type="<%=Layout.contenType%>">
                           Your browser does not support the video tag.
                         </video>
                         <% } %>
@@ -1056,7 +1065,7 @@
                 <input class="d-none" type="text" name="_id" value="<%= lesson._id %>">
                 <input class="d-none" type="text" name="layoutId" value="<%= Layout._id %>">                
                 <p class="my-1"><span class="text-primary">ไฟล์เดิม:</span> <%=Layout.file.slice(53)%></p>
-                <iframe class="pdf-iframe" src="<%=Layout.file%>" frameborder="0"></iframe>
+                <iframe class="pdf-iframe" src="/<%=Layout.file%>" frameborder="0"></iframe>
                   <div class="my-2 me-3">
                     <input type="file" name="pdf-file" id="pdf-file" accept="application/pdf" multiple>
                     <button class="btn btn-primary p-1" type="submit">อัปโหลดไฟล์เพื่อแก้ไข</button>

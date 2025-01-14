@@ -163,6 +163,36 @@ const editLessonName = async (req, res) => {
   }
 }
 
+const subjectIndex = async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.redirect('/');
+    }
+
+    const userData = await User.findById(req.session.userId);
+    const originPage = req.query.originPage;
+
+    let subject;
+    if (userData.role === 'student') {
+      // ถ้าเป็นนักเรียน ให้แสดงเฉพาะวิชาที่นักเรียนลงทะเบียน
+      const studentData = await Student.findOne({ user: req.session.userId }).populate('subjects.subjectMongooseId');
+      subject = studentData.subjects.map(subject => subject.subjectMongooseId);
+    } else {
+      // ถ้าเป็นครูหรือผู้ดูแลระบบ ให้แสดงทุกวิชา
+      subject = await Subject.find().sort({ semester: 1 }).populate("lessonArray");
+    }
+
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
+    const findSubject = null;
+
+    res.render("subjects", { mytitle: "subjects", originPage: originPage, subject, findSubject, userData ,userRole: userData.role, theme, isSidebarOpen });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("เกิดข้อผิดพลาด");
+  }
+}
 
 const adminLessonIndex = async (req, res) => {
   try {
@@ -570,13 +600,20 @@ const createLayout = async function (req, res, next) {
 const createSubject = async (req, res, next) => {
   try {
     const { subjectId, subjectName, semester, unit, section } = req.body;
+    const userId = req.session.userId;
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
 
     const newSubject = new Subject({
       subjectId,
       subjectName,
       semester,
       unit,
-      section
+      section,
+      userId,
+      theme,
+      isSidebarOpen,
+      createdBy: userId
     })
 
     await newSubject.save();
@@ -657,6 +694,7 @@ const eachLessons = async (req, res) => {
     // };
 
     const lesson = await Lesson.findById(lessonId).populate('subject.subjectMongooseId').populate('lessonQuestion');
+
     // const result = await Lesson.paginate({ _id: lessonId }, options);
     // res.json(lesson);
     // console.log(lesson)
@@ -813,11 +851,14 @@ const eachLessons = async (req, res) => {
 
 const eachLessonStudent = async (req, res) => {
   try {
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
     const lessonId = req.query.lessonId;
 
 
     const lesson = await Lesson.findById(lessonId).populate("subject.subjectMongooseId")
       .populate("lessonQuestion");
+    const subject = lesson.subject.subjectMongooseId;
     // const lessonComment = await Lesson.findById(lessonId).populate("comments");
     const userData = await User.findById(req.session.userId);
     let studentAnswer = null;
@@ -980,7 +1021,10 @@ const eachLessonStudent = async (req, res) => {
       totalPages,
       percentage,
       lessonQuestions,
-      studentAnswer
+      studentAnswer,
+      theme,
+      isSidebarOpen,
+      subject
     });
 
     // res.render("eachLessonStudent", { mytitle: "eachLessons", lesson, lessons, foundLayouts, schYear, lessonComment, userData });
@@ -1397,6 +1441,10 @@ const updateLessonProgress = async (req, res, next) => {
 
 const manageSubject = async (req, res) => {
   try {
+    if (!req.session.userId) {
+      return res.redirect('/');
+    }
+    
     const userData = await User.findById(req.session.userId);
     const theme = req.session.theme || 'light';
     const isSidebarOpen = false;
@@ -1410,19 +1458,25 @@ const manageSubject = async (req, res) => {
         }
       })
       .populate('lessonArray')
+      .populate('quizArray')
       .exec();
 
-    // console.log(subject);
-    // console.log(subject);
-    res.render("manageEachSubject", { subject , userData, theme, isSidebarOpen});
-    // res.json(subject);
-  } catch (error) {
-    console.log(error);
+      if (userData.role === 'student') {
+        res.render("studentEachSubject", { subject, userData, theme, isSidebarOpen });
+      } else {
+        res.render("manageEachSubject", { subject, userData, theme, isSidebarOpen });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("เกิดข้อผิดพลาด");
+    }
   }
-}
 
 const addStudentToSubject = async (req, res) => {
   try {
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
     const subjectDbId = req.query.subjectDbId;
     const findSubject = await Subject.findById(subjectDbId);
 
@@ -1433,7 +1487,10 @@ const addStudentToSubject = async (req, res) => {
     // res.json(studentsNotInSubject);
     res.render('addStudentToSubject', {
       subject: findSubject,
-      studentsNotInSubject
+      studentsNotInSubject,
+      userData,
+      theme,
+      isSidebarOpen
     });
   } catch (err) {
     console.log(err);
@@ -1442,6 +1499,9 @@ const addStudentToSubject = async (req, res) => {
 
 const deleteStudentFromSubjectPage = async (req, res) => {
   try {
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
     const subjectDbId = req.query.subjectDbId;
     const findSubject = await Subject.findById(subjectDbId)
       .populate({
@@ -1459,7 +1519,10 @@ const deleteStudentFromSubjectPage = async (req, res) => {
     // res.json(studentsNotInSubject);
     res.render('deleteStudentFromSubject', {
       subject: findSubject,
-      studentInSubject: findSubject.students
+      studentInSubject: findSubject.students,
+      userData,
+      theme,
+      isSidebarOpen
     });
   } catch (err) {
     console.log(err);
@@ -1643,9 +1706,10 @@ const addEndChapterQuestion = async (req, res) => {
     const theme = req.session.theme || 'light';
     const isSidebarOpen = false;
     const lessonId = req.query.lesson;
-    const lesson = await Lesson.findById(lessonId).populate("schoolYear");
+    const lesson = await Lesson.findById(lessonId).populate('subject.subjectMongooseId').populate('lessonQuestion');
+	  const subject = lesson.subject.subjectMongooseId;
 
-    res.render("addEndChapterQuestion", { mytitle: "addEndChapterQuestion", lesson, userData, theme, isSidebarOpen });
+    res.render("addEndChapterQuestion", { mytitle: "addEndChapterQuestion", lessonId ,lesson ,subject , userData, theme, isSidebarOpen });
     // res.json(lesson);
 
   } catch (err) {
@@ -2094,6 +2158,7 @@ const checkEndAnswer = async (req, res) => {
 module.exports = {
   showStdAnswerDetail,
   studentAnswerLists,
+  subjectIndex,
   adminIndex,
   adminLessonIndex,
   adminExamsIndex,

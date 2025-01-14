@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const optionSchema = mongoose.Schema({
+const optionSchema = new mongoose.Schema({
     optionText: {
         type: String,
         required: true,
@@ -8,7 +8,7 @@ const optionSchema = mongoose.Schema({
     }
 });
 
-const questionSchema = mongoose.Schema({
+const questionSchema = new mongoose.Schema({
     questionText: {
         type: String,
         required: true,
@@ -32,8 +32,12 @@ const questionSchema = mongoose.Schema({
         }
     },
     answer: {
-        type: Boolean,
-        default: false
+        type: mongoose.Schema.Types.Mixed, // Change from Boolean to Mixed type
+        default: null
+    },
+    answerTexts: {
+        type: [String],
+        default: undefined
     },
     answerKey: {
         type: String,
@@ -42,7 +46,7 @@ const questionSchema = mongoose.Schema({
     },
     points: {
         type: Number,
-        default: 0,
+        default: 1,
         min: 0
     },
     open: {
@@ -70,7 +74,7 @@ const attemptSchema = mongoose.Schema({
     }
 });
 
-const quizSchema = mongoose.Schema({
+const quizSchema = new mongoose.Schema({
     quizname: {
         type: String,
         required: true,

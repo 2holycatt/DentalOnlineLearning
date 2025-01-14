@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lessons</title>
+  <title><%=lesson.LessonName%></title>
   <!-- <link rel="stylesheet" href="/css/event.css"> -->
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
   <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
@@ -71,7 +71,7 @@
 
     .add-button {
       border-radius: 0.5em !important;
-      width: 20%;
+      max-width: 500px !important;
 
     }
 
@@ -114,11 +114,11 @@
     }
 
     /* .input-mainSubDes,
-    .input-mainDes,
-    .input-mainSubDes2 {
-      white-space: pre-wrap !important;
-      overflow: auto !important;
-    } */
+  .input-mainDes,
+  .input-mainSubDes2 {
+    white-space: pre-wrap !important;
+    overflow: auto !important;
+  } */
 
     .subDes,
     .subDesNumber2 {
@@ -138,7 +138,7 @@
 
 
     .Topic1 {
-      background-color: #8A2BE2 !important;
+      /* background-color: #8A2BE2 !important; */
       color: white !important;
       border-radius: 1em !important;
       width: 70% !important;
@@ -155,21 +155,13 @@
       display: none !important;
     }
 
-    #cancelQuestionLink,
-    #cancelEditQuestionLink,
-    #sendQuestionLink,
-    .studentAnswer,
-    .editAnswer,
-    #sendEditQuestionLink {
-      display: none;
-    }
-
-    /* .center {
+    .center {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: ;
-    } */
+      height: auto;
+      /* ทำให้สูงเต็มหน้าจอ */
+    }
 
     video {
       border-radius: 0.5em;
@@ -244,7 +236,7 @@
     }
 
     .lesson-bar {
-      border-left: 0.25em solid #387bef !important;
+      border-left: 0.25em solid #8A2BE2 !important;
       padding-left: 0.5em !important;
     }
 
@@ -280,8 +272,8 @@
     }
 
     /* .comment .content {
-      flex-grow: 1;
-    } */
+    flex-grow: 1;
+  } */
 
     .comment-color {
       color: #7C8FAC !important;
@@ -309,9 +301,9 @@
       transition: 0.3s;
     }
 
-    /* .reply-comment {
+    .reply-comment {
       display: none;
-    } */
+    }
 
     .pdf-iframe {
       width: 100%;
@@ -320,20 +312,11 @@
       border: none;
     }
 
-    @keyframes fadeInScale {
-
-      /* กำหนด animation ใหม่ */
-      0% {
-        opacity: 0;
-        transform: translate(-50%, -40%) scale(0.7);
-        /* เริ่มด้วยขนาดเล็กและต่ำกว่ากึ่งกลาง */
-      }
-
-      100% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-        /* ขยายเต็มขนาดและอยู่กึ่งกลาง */
-      }
+    .editQuestion,
+    .deleteQuesitonsCheckbox,
+    #cancelDeleteCheckQuesitonLink,
+    .checkAllDeleteDiv {
+      display: none;
     }
 
     .editCommentForm {
@@ -353,6 +336,7 @@
       /* เพิ่ม animation */
     }
 
+
     .overlay {
       position: fixed;
       top: 0;
@@ -367,12 +351,125 @@
       /* ซ่อน overlay เมื่อ popup ยังไม่เปิด */
     }
 
+
     /* .spn-comment {
-      font-size:xx-small !important;
-      border: 2px solid white;
-      padding: 0.25em !important;
-      border-radius: 0.25em;
-    } */
+    font-size:xx-small !important;
+    border: 2px solid white;
+    padding: 0.25em !important;
+    border-radius: 0.25em;
+  } */
+    * {
+      box-sizing: border-box !important;
+    }
+
+    body.dark {
+      background-color: #212121 !important;
+    }
+
+    .card-1,
+    .card-body-1 {
+      border: none !important;
+    }
+
+    .dark .above-nav-status {
+      background-color: var(--secondary-color) !important;
+      border-right: 1px solid #494949;
+    }
+
+    .status-a {
+      color: #404258 !important;
+    }
+
+    .list-lesson-p {
+      color: #8A2BE2;
+    }
+
+    .list-lesson-p-span {
+      color: #4B0082;
+    }
+
+    .each-lesson {
+      border-top: 0.1em solid #8A2BE2;
+    }
+
+    .aside-right {
+      background-color: var(--bg-color) !important;
+      height: 100%;
+    }
+
+
+    .dark .manange-bar,
+    .dark .lesson-content {
+      background-color: var(--secondary-color) !important;
+    }
+
+    .lesson-nothing {
+      margin: 25% 0 !important;
+      padding: 0 !important;
+    }
+
+    .each-lesson-a {
+      text-decoration: none !important;
+    }
+
+    .each-lesson-a:hover .each-lesson {
+      border-left: 0.2em solid #8A2BE2 !important;
+    }
+
+    .card-img-top {
+      box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+    }
+
+    .setColumn {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr !important;
+    }
+
+    .card-a {
+      text-decoration: none !important;
+    }
+
+    .card-a:hover,
+    .card-a:hover .p-lesson-name {
+      color: #007bff !important;
+      transition: 0.5s;
+    }
+
+    .card-a:hover .bi-book {
+      color: #007bff !important;
+      transition: color 0.5s;
+    }
+
+    .bi-book-fill {
+      display: none;
+    }
+
+
+    .grey {
+      color: gray !important;
+    }
+
+    .dark .grey {
+      color: lightgray !important
+    }
+  
+
+.swal2-cancel,.swal2-confirm {
+  padding: 0.6rem  !important; /* เพิ่ม padding ของปุ่มยืนยัน */
+  margin: 1rem !important; /* เพิ่ม margin ของปุ่มยืนยัน */
+}
+.swal2-icon {
+  margin: 1rem auto !important; /* จัดโลโก้แจ้งเตือนให้อยู่ตรงกลาง */
+}
+.link:hover{
+      text-decoration: underline;
+      color: #ba55d3 !important;
+    }
+    @media screen and (max-width: 768px) {
+      .above-nav-status {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -394,31 +491,55 @@
   </div> -->
   <div class="main-content d-flex w-100 h-auto">
     <%- include("./partials/studentAside.ejs")%>
-    <div class="row allCOntent" style="width: 80% !important;">
+    <div class="row allCOntent m-3" style="width: 80% !important;">
       <div class="col-12 aside-right px-4 py-4 bg-white" style="width: 100% !important;">
         <div class="manange-bar px-4 py-4 bg-white w-100">
-          <div class="d-flex">
-            <div class="d-flex w-75" style="align-items: center; grid-template-columns: 0.5fr 1.5fr;">
-              <p class="fw-normal w-auto fs-6 lesson-bar" style="margin-left: 0.5em !important;">บทเรียน:
-                <span class="fw-normal fs-6 text-primary"><%=lesson.LessonName%></span>
+          <div class="d-row" style=" padding-bottom: 0.5em !important;">
+            <!-- <div class="d-flex col-12" style="align-items: center; grid-template-columns: 0.5fr 1.5fr;">
+              <p class="fw-normal w-auto fs-6 lesson-bar">บทเรียน:
+                <span class="fw-normal fs-6 grey" style="margin-right: 1em !important;">
+                  <%=lesson.LessonName%>
+                </span>
                 วิชา:
-                <span class="fw-normal fs-6 text-primary">
-                  <%=lesson.subject.subjectId%>
-                  <%=lesson.subject.subjectMongooseId.subjectName%>
+                <span class="fw-normal fs-6 grey">
+                  <%=subject.subjectId%>
+                    <%=subject.subjectName%>
                 </span>
                 ภาคการศึกษา:
-                <span class="fw-normal fs-6 text-primary">
-                  <%=lesson.subject.subjectMongooseId.semester%>
+                <span class="fw-normal fs-6 grey">
+                  <%=subject.semester%>
                 </span>
-                กลุ่ม:
-                <span class="fw-normal fs-6 text-primary">
-                  <%=lesson.subject.subjectMongooseId.section%>
+                กลุ่มที่:
+                <span class="fw-normal fs-6 grey">
+                  <%=subject.section%>
                 </span>
               </p>
+              <div class="d-flex justify-content-end w-auto">
+                <a href="/adminIndex/editLesson?lessonId=<%=lesson._id%>&subjectId=<%=subject._id%>"
+                  class="edit-a text-primary px-2"
+                  style="border-left: 1px solid #ced4daa0 ;margin:0em 1em !important; font-size: small;">แก้ไขชื่อและรูปปก<i
+                    class="bi bi-pencil mx-2"></i>
+                </a>
+              </div>
+            </div> -->
+            <div class="fw-normal fs-6 lesson-bar ms-2">
+              <a class="grey link" href="eachSubject?subjectDbId=<%=subject._id%>">
+                <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
+              </a> 
+              <span></span>
             </div>
-            <div class="d-flex w-25 justify-content-end" style="align-items: center; margin-top: 0.5 !important;">
+            <br>
+            <div class="d-flex align-items-center ms-2">
+              <p class="fw-normal fs-3 mb-0">
+                <%= lesson.LessonName %>
+              </p>
+              
             </div>
           </div>
+
+          <% const questions=lesson.lessonQuestion %>
+           
+
         </div>
         <div class="hide-layout-2">
           <% if (paginatedLayouts.length > 0) { %>
@@ -495,9 +616,9 @@
             <div class="setMargin py-2 px-4 bg-white w-100">
               <div class="Layout2Contents w-100 p-3 d-flex justify-content-center">
                 <% if (Layout.contentType == "image/png") { %>
-                <img class="ImageFile h-auto w-100 mx-auto my-2 shadow rounded" style="max-height: 750px;" src="<%=Layout.file%>" alt="รูปภาพประกอบการเรียน">
+                <img class="ImageFile h-auto w-100 mx-auto my-2 shadow rounded" style="max-height: 750px;" src="/<%=Layout.file%>" alt="รูปภาพประกอบการเรียน">
                 <% } else if (Layout.contentType == "video/mp4") {%>
-                <video class="w-100 h-auto object-fit-cover" src="<%=Layout.file%>" controls autoplay></video>
+                <video class="w-100 h-auto object-fit-cover" src="/<%=Layout.file%>" controls autoplay></video>
                 <% } %>
               </div>
             </div>
@@ -537,7 +658,7 @@
           <% } else if (Layout.name === "pdfFiles") { %>
           <div class="lesson-content py-2 bg-white my-4 layoutDetected" data-id="<%= Layout._id %>" data-type="pdfFile">
             <input class="d-none" type="text" name="_id" value="<%= Layout._id %>">
-            <iframe class="pdf-iframe" src="<%=Layout.file%>" frameborder="0"></iframe>
+            <iframe class="pdf-iframe" src="/<%=Layout.file%>" frameborder="0"></iframe>
           </div>
           <% } else if (Layout.name === "TextEditor") {%>
           <!-- <div class="layout" style="display: none;"></div> -->
@@ -567,7 +688,7 @@
                 </li>
                 <% } else { %>
                 <li class="page-item disabled">
-                  <a class="page-link px-2" href="#">Previous</a>
+                  <a class="page-link px-2" href="#">ก่อนหน้า</a>
                 </li>
                 <% } %>
 
@@ -589,7 +710,7 @@
                 </li>
                 <% } else { %>
                 <li class="page-item disabled">
-                  <a class="page-link px-2" href="#">Next</a>
+                  <a class="page-link px-2" href="#">ถัดไป</a>
                 </li>
                 <% } %>
               </ul>

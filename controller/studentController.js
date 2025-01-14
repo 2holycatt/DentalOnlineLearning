@@ -89,21 +89,24 @@ const studentAssignment = async (req, res) => {
 const subjectDetail = async (req, res) => {
     try {
         const subjectId = req.query.subjectDbId;
-        // console.log(subjectId);
-        const findUser = await User.findById(req.session.userId).populate("student");
-        const filterSubject = findUser.student.subjects.filter(subject => subject.subjectMongooseId == subjectId);
+        const studentData = await Student.findOne({ user: req.session.userId }).populate('subjects.subjectMongooseId');
 
-        // res.json(filterSubject);
+        if (!studentData || !studentData.subjects) {
+            return res.status(404).send("Student or subjects not found");
+        }
 
-        // res.json(findStudent);
+        const filterSubject = studentData.subjects.filter(subject => subject.subjectMongooseId._id.toString() === subjectId);
 
-        // const studentUser = findStudent.user;
-        // const studentSubmitAssign = findStudent.user.submitAssign;
+        if (filterSubject.length === 0) {
+            return res.status(404).send("Subject not found");
+        }
+
         const totalScore = filterSubject[0].weeks.reduce((total, week) => total + week.scorePerWeek, 0);
 
-        res.render("subjectDatail", { totalScore, filterSubject, findUser, subjectId });
+        res.render("subjectDatail", { totalScore, filterSubject, studentData, subjectId });
     } catch (error) {
         console.log(error);
+        res.status(500).send("เกิดข้อผิดพลาด");
     }
 }
 

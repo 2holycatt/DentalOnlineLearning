@@ -34,93 +34,64 @@ const deleteQuiz = async (req, res) => {
 
 const updateQuiz = async (req, res) => {
   try {
-      const { quizId, quizname, quizdescription, attemptLimit, timeLimit, schoolYear, questions } = req.body;
+      const { quizId, quizname, quizdescription, attemptLimit, timeLimit, questions } = req.body;
       console.log("Request data:", req.body);
 
-      // Ensure that schoolYear is a valid ObjectId
-      if (!mongoose.Types.ObjectId.isValid(schoolYear)) {
-          return res.status(400).json({ success: false, message: 'Invalid schoolYear ObjectId' });
-      }
-
-      // Update quiz details
-      const updatedQuiz = await Quiz.findByIdAndUpdate(
-          quizId,
-          {
-              quizname,
-              quizdescription,
-              attemptLimit,
-              timeLimit: {
-                  value: timeLimit.value, // Assuming timeLimit is an object
-                  display: timeLimit.display
-              },
-              schoolYear: new mongoose.Types.ObjectId(schoolYear),
-          },
-          { new: true }
-      );
-
-      if (!updatedQuiz) {
+      const quiz = await Quiz.findById(quizId);
+      if (!quiz) {
           return res.status(404).json({ success: false, message: 'Quiz not found' });
       }
 
-      // Update questions
+      // Update basic quiz info
+      quiz.quizname = quizname;
+      quiz.quizdescription = quizdescription;
+      quiz.attemptLimit = attemptLimit;
+      quiz.timeLimit = timeLimit;
+
+      // Update questions array
       if (questions && Array.isArray(questions)) {
-          // Clear existing questions
-          updatedQuiz.questions = [];
-
-          for (let questionData of questions) {
-              // Check if questionData contains _id for existing questions
-              if (questionData._id && mongoose.Types.ObjectId.isValid(questionData._id)) {
-                  const question = await Question.findByIdAndUpdate(
-                      questionData._id,
-                      {
-                          questionText: questionData.questionText,
-                          questionType: questionData.questionType,
-                          options: questionData.options,
-                          answer: questionData.answer,
-                          answerKey: questionData.answerKey,
-                          points: questionData.points,
-                          open: questionData.open
-                      },
-                      { new: true }
-                  );
-
-                  if (!question) {
-                      return res.status(404).json({ success: false, message: `Question not found for question: ${questionData.questionText}` });
-                  }
-
-                  updatedQuiz.questions.push(question);
-              } else {
-                  // If no _id is provided, create a new question
-                  const newQuestion = new Question({
-                      questionText: questionData.questionText,
-                      questionType: questionData.questionType,
-                      options: questionData.options,
-                      answer: questionData.answer,
-                      answerKey: questionData.answerKey,
-                      points: questionData.points,
-                      open: questionData.open
-                  });
-
-                  const savedQuestion = await newQuestion.save();
-                  updatedQuiz.questions.push(savedQuestion); // Push the new question into the updatedQuiz questions
+          quiz.questions = questions.map(q => {
+              // Process answer based on question type
+              let answer;
+              if (q.questionType === 'MCQ') {
+                  answer = Number(q.answer);
+              } else if (q.questionType === 'checkbox') {
+                  answer = Array.isArray(q.answer) ? q.answer : [];
+              } else if (q.questionType === 'Paragraph') {
+                  answer = null;
+              } else if (q.questionType === 'short_answ') {
+                  answer = q.answerTexts || [];
               }
-          }
+
+              return {
+                  questionText: q.questionText,
+                  questionType: q.questionType,
+                  options: q.options || [],
+                  answer: answer,
+                  answerKey: q.answerKey || '',
+                  points: q.points || 1,
+                  open: q.open !== undefined ? q.open : true,
+                  answerTexts: q.answerTexts
+              };
+          });
       }
 
-      // Save the updated quiz with the new questions
-      await updatedQuiz.save();
+      const savedQuiz = await quiz.save();
+      res.json({ 
+          success: true, 
+          message: 'Quiz updated successfully',
+          quiz: savedQuiz 
+      });
 
-      res.json({ success: true, quiz: updatedQuiz });
   } catch (error) {
       console.error('Error updating quiz:', error);
-      res.status(500).json({ success: false, message: 'Internal server error' });
+      res.status(500).json({ 
+          success: false, 
+          message: 'Error updating quiz',
+          error: error.message 
+      });
   }
 };
-
-
-
-
-
 
 
 const editLesson = async function (req, res, next) {

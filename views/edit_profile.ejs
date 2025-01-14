@@ -12,9 +12,7 @@
     <%- include("./partials/header.ejs")%>
         <title>Edit Profile</title>
         <style>
-            .grey {
-                color: grey !important;
-            }
+        
 
             .button-save {
                 background-color: #54B435;
@@ -409,10 +407,10 @@ justify-content: center;    }
                                         <div class="text-right">
                                                   <% if (userData.role === 'teacher') { %>
                                             <input type="text" class="form-control" value="<%= userData.notes %>"
-                                                id="notes" name="notes" placeholder="หมายเหตุ">
+                                                id="notes" name="notes" >
                                                 <% } else { %>
                                                     <input type="text" class="form-control grey" value="<%= userData.notes %>"
-                                                    id="notes" name="notes" placeholder="หมายเหตุ" disabled>
+                                                    id="notes" name="notes"  disabled>
                                                     <% } %>
                                         </div>
                                     </div>

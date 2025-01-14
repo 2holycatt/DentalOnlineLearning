@@ -88,13 +88,15 @@ const editLesson = async function (req, res, next) {
     const theme = req.session.theme || 'light'; 
     const isSidebarOpen = false; 
     const lessonId = req.query.lessonId;
+    const getLessonId = req.query.lessonId;
+    const lesson = await Lesson.findById(getLessonId);
     const subjectId = req.query.subjectId;
     const findSubject = await Subject.findById(subjectId);
     const findLesson = await Lesson.findById(lessonId);
 
 
     // res.json(findLessons);
-    res.render("editLesson", { mytitle: "editLesson", findSubject, findLesson , userData, theme, isSidebarOpen});
+    res.render("editLesson", { mytitle: "editLesson", findSubject, findLesson ,lesson ,getLessonId ,userData, theme, isSidebarOpen});
 
   } catch (err) {
     console.log(err);

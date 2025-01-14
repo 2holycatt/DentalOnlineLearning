@@ -140,13 +140,14 @@ const createLayout_02 = async (req, res) => {
 
 const getMoreAddContent = async (req, res) => {
     try {
-        const userData = await User.findById(req.session.userId);
+        const userData = await User.findById(req.session.userId);        
+        const lessonId = req.query.lesson; // ย้ายการกำหนดค่า lessonId มาที่นี่
+        const lesson = await Lesson.findById(lessonId).populate('subject.subjectMongooseId').populate('lessonQuestion');
+        const subject = lesson.subject.subjectMongooseId;
         const theme = req.session.theme || 'light'; 
         const isSidebarOpen = false; 
-        const lessonId = req.query.lesson;
-        const lesson = await Lesson.findById(lessonId).populate("schoolYear");
-
-        res.render("getMoreAddContent", { mytitle: "getMoreAddContent", lesson, userData, theme, isSidebarOpen });
+        
+        res.render("getMoreAddContent", { mytitle: "getMoreAddContent", lesson ,lessonId ,subject ,userData, theme, isSidebarOpen });
         // res.json(lesson);
 
     } catch (err) {
@@ -537,14 +538,16 @@ const createLayout_05 = asyncWrapper(async (req, res) => {
 const uploadPdfToLesson = async (req, res) => {
     try {
         const files = req.files;
+        console.log(files);
         const { _id } = req.body;
         // file: files.filename
         const fileData = files.map(files => {
             return {
                 contentType: files.mimetype,
-                file: files.location
+                file: files.filename
             };
         });
+        console.log(fileData);
 
         // for (let i = 0; i < files.length; i++) {
         //     console.log(files.file);

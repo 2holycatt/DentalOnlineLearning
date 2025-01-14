@@ -19,9 +19,14 @@ const subjectYearSchema = new Schema(
             default:null
         },
         unit: {
-            type: String,
+            type: Number,
             default:null
 
+        },
+        createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
         },
         section: {
             type: String,
@@ -34,7 +39,7 @@ const subjectYearSchema = new Schema(
             default: 0
         }
         ],
-        quizes: [{
+        quizArray: [{
             type: mongoose.Schema.ObjectId,
             ref: 'Quiz',
             default: 0

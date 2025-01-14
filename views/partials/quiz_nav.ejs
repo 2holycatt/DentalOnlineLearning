@@ -191,7 +191,7 @@
             </a>
             <!-- <span class="fw-normal fs-5 "> <%=quiz.quizname%></span> -->
             <span class="quiz_nav_name fw-normal fs-5" id="quizname" contenteditable="true" name="quizname"
-                oninput="autosaveQuizSettings(); updateQuizName(this); togglePlaceholder('quizname', 'ชื่อแบบทดสอบ')"
+                oninput="autosave(); updateQuizName(this); togglePlaceholder('quizname', 'ชื่อแบบทดสอบ')"
                 onfocus="removePlaceholder('quizname')" onblur="addPlaceholder('quizname', 'ชื่อแบบทดสอบ')">
                 <%= quiz.quizname %>
             </span>

@@ -59,22 +59,20 @@ body.dark .ul{
     background-color: #494949;
 }
 body.dark .dropdown {
-    background-color: #444 !important;
-    border-bottom: 1px solid #EAEFF4;
+    background-color: #555 !important;
 }
 
 
 body.dark .sub-menu {
-    background-color: #444; /* สีพื้นหลังของเมนูย่อย */
-    border-bottom: 1px solid #EAEFF4;
+    background-color: #555; /* สีพื้นหลังของเมนูย่อย */
 }
 
 body.dark .sub-menu-link {
-    color: #ccc; /* สีของลิงก์ในเมนูย่อย */
+    color: lightgray; /* สีของลิงก์ในเมนูย่อย */
 }
 body.dark .sub-menu-link:hover {
     color: #ccc; /* สีของลิงก์ในเมนูย่อย */
-    background-color: #444 ;
+    background-color: #555 ;
     color: #9146ff;
 }
 

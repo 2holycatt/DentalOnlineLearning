@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เพิ่มบทเรียน</title>
+  <title>เพิ่มเนื้อหา-<%=lesson.LessonName%></title>
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
   <link rel="stylesheet" href="/css/getMoreAddContent.css">
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -742,7 +742,7 @@
        }
    
        .lesson-bar {
-         border-left: 0.25em solid #007bff !important;
+         border-left: 0.25em solid #8A2BE2 !important;
          padding-left: 0.5em !important;
          margin-right: 0.5em !important;
    
@@ -762,6 +762,10 @@
         .dark .grey {
             color: lightgray !important
         }
+        .link:hover{
+        text-decoration: underline;
+        color: #ba55d3 !important;
+      }
        @media screen and (max-width: 768px) {
          .above-nav-status{
            display: none;
@@ -786,33 +790,47 @@
         <p class="m-0">บทเรียน</p>
       </a>
     </div> -->
-    <div class="main-content bg-white d-flex w-100 h-auto">
+    <div class="main-content  d-flex w-100 h-auto">
       <%- include("./partials/lessonsList.ejs")%>
-      <div class=" row allContent bg-white" style="width: 80%;">
+      <div class=" row allContent  m-3" style="width: 80%;">
         <div class="col-12 oldContent aside-right bg-white px-4 py-4" style="width: 100% !important;">
-          <div class="manange-bar px-4 py-3 bg-white w-100">
-            <div class="d-flex" style="border-bottom: 1px solid #ced4daa0; padding-bottom: 0.5em !important;">
-              <div class="d-flex w-75" style="align-items: center; grid-template-columns: 0.5fr 1.5fr;">
-                <p class="fw-bold w-auto fs-6 lesson-bar">เพิ่มเนื้อหา</p>
-                <p class="fw-normal w-auto fs-6" style="margin-left: 0.5em !important;">บทเรียน:
-                  <span class="fw-normal fs-6 grey" style="margin-right: 1em !important; "><%=lesson.LessonName%></span>
-                </p>
-                <a href="/adminIndex/eachLessons?lessonId=<%=lesson._id%>" class="edit-a  px-2 text-primary" style="border-left: 1px solid #ced4daa0 ;margin:0em 1em !important; font-size: small;">แก้ไขชื่อและรูปปก<i class="bi bi-pencil mx-2"></i>
-                </a>
+          <div class="manange-bar p-4 bg-white w-100">
+            <div class="d-flex justify-content-between align-items-center" >
+              <div class="fw-normal fs-6 lesson-bar ms-2 d-flex justify-content-between w-100">
+                <div class="d-flex">
+                  <a class="grey link " href="/eachSubject?subjectDbId=<%=subject._id%>">
+                    <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
+                  </a>
+
+                </div>
+                <div class="d-flex justify-content-end">
+                  <a href="/adminIndex/eachLessons?lessonId=<%=lesson._id%>" class="return-a text-primary">กลับสู่เนื้อหา<i class="bi bi-arrow-return-left mx-2"></i></a>
+                </div>
               </div>
-              <div class="d-flex w-25 justify-content-end" style="align-items: center; margin-top: 0.5 !important;">
-                <a href="/adminIndex/eachLessons?lessonId=<%=lesson._id%>" class="return-a text-primary">กลับสู่เนื้อหา<i class="bi bi-arrow-return-left mx-2"></i>
-                </a>
-              </div>
+            </div>
+            <br>
+            <div class="d-flex align-items-center ms-2" style="border-bottom: 1px solid #ced4daa0; padding-bottom: 0.5em !important;">
+              <p class="fw-normal fs-3 mb-0">
+                <%= lesson.LessonName %>
+              </p>
+              <a href="/adminIndex/editLessonContent?lesson=<%= lesson._id %>&subjectId=<%= subject._id %>"
+                 class="edit-a text-primary px-2"
+                 style="margin-left: 10px; font-size: small;">
+                <i class="bi bi-pencil mx-2"></i>
+              </a>
             </div>
             <div class="d-flex">
               <div class="d-flex w-50">
-                <button disabled href="#" class=" add-button btn btn-primary my-2 p-2" style="height: fit-content !important;">
+                <button disabled href="#" class="add-button btn btn-primary my-2 p-2" style="height: fit-content !important;">
                   เพิ่มเนื้อหา<i class="bi bi-plus-circle-fill mx-2"></i>
                 </button>
-                <a href="/adminIndex/editLesson?lesson=<%=lesson._id%>" class="btn add-button btn-warning my-2 p-2 mx-2" style="height: fit-content !important;color: white;">
+                <a href="/adminIndex/editLessonContent?lesson=<%=lesson._id%>" class="btn add-button btn-warning my-2 p-2 mx-2" style="height: fit-content !important;color: white;">
                   แก้ไขเนื้อหาภายในบทเรียน<i class="bi bi-pencil-square mx-2"></i>
                 </a>
+                    <a href="/adminIndex/addEndChapterQuestion?lesson=<%=lesson._id%>"
+                      class="btn add-button btn-info my-2 p-2" style="height: fit-content !important;color: white;">
+                      เพิ่มคำถามท้ายบท<i class="bi bi-question-circle mx-2"></i>
+                    </a>
               </div>
               <div class="d-flex w-50 justify-content-end">
                 <a href="/adminIndex/deleteLesson?lessonId=<%=lesson._id%>" class="btn add-button btn-danger my-2 p-2 mx-2" style="height: fit-content !important;">

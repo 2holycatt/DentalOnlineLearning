@@ -10,7 +10,6 @@
     backdrop-filter: blur(1em);
     width: 100%;
     height: auto;
-    border-bottom: 1px solid #EAEFF4;
     z-index: 1000;
     top: 0;
 }
@@ -91,10 +90,7 @@ body.light .a-li:hover {
     background-color: white;
     padding: 0.5em 1em !important;
   }
- body.light .sub-menu{
-    
-        border-bottom: 1px solid lightgray;
- }
+ 
 
 .sub-menu-wrap {
     position: absolute;
@@ -114,7 +110,6 @@ body.light .a-li:hover {
     background-color: white;
     padding: 1rem !important;
     margin: 0 10px !important;
-    /* border-bottom: 0.1px solid #ccc; */
     border-radius: 1em;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
 }

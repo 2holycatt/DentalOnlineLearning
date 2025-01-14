@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Quiz</title>
+    <title>Edit-<%=quiz.quizname%></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -21,8 +21,7 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
-
-
+    <link rel="icon" href="/images/indexMed/Ellipse9.png" type="image/x-icon">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap');
@@ -612,7 +611,7 @@
         }
 
         .lesson-bar {
-            border-left: 0.25em solid #007bff !important;
+            border-left: 0.25em solid #8A2BE2 !important;
             padding-left: 0.5em !important;
             margin-right: 0.5em !important;
 
@@ -780,10 +779,6 @@
             transition: 0.3s;
         }
 
-        .lesson-bar {
-            border-left: 0.25em solid #387bef !important;
-            padding-left: 0.5em !important;
-        }
 
         .comment-table tr th {
             padding-top: 1em !important;
@@ -1109,11 +1104,11 @@
                     <!-- title  -->
                     <br><br><br>
                     <div class="quiz">
-                        <p class="fw-normal fs-6 lesson-bar ms-2">แบบทดสอบ</p>
+                        <p class="fw-normal fs-6 lesson-bar ms-2"><%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%></p>
                         <div class="input-container mx-2">
                             <p class="mx-2">
                             <div class="question_form_top_name" id="editQuizname" contenteditable="true" name="quizname"
-                                oninput="autosaveQuizSettings(); updateQuizName(this); togglePlaceholder('quizname', 'ชื่อแบบทดสอบ')"
+                                oninput="autosave(); updateQuizName(this); togglePlaceholder('quizname', 'ชื่อแบบทดสอบ')"
                                 onfocus="removePlaceholder('quizname')"
                                 onblur="addPlaceholder('quizname', 'ชื่อแบบทดสอบ')">
                                 <%= quiz.quizname %>
@@ -1123,9 +1118,9 @@
                         <p class="mx-2" style="color: gray;">
                         <div class="input-container mx-2">
                             <p>
-                            <div class="question_form_top_desc" id="quizdescription" contenteditable="true"
-                                style="color: gray !important;" name="quizdescription"
-                                oninput="autosaveQuizSettings(); togglePlaceholder('quizdescription', 'คำอธิบายแบบทดสอบ')"
+                            <div class="question_form_top_desc grey" id="quizdescription" contenteditable="true"
+                               name="quizdescription"
+                                oninput="autosave(); togglePlaceholder('quizdescription', 'คำอธิบายแบบทดสอบ')"
                                 onfocus="removePlaceholder('quizdescription')"
                                 onblur="addPlaceholder('quizdescription', 'คำอธิบายแบบทดสอบ')">
                                 <%= quiz.quizdescription %>
@@ -1137,7 +1132,7 @@
                             เวลาในการทำแบบทดสอบ:
                             <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;">
                                 <select class="select" style="font-size: 0.9rem; max-width: 10em;" id="timeLimit"
-                                    name="timeLimit" required onchange="autosaveQuizSettings()">
+                                    name="timeLimit" required onchange="autosave()">
                                     <option value='{"value":900,"display":"15 นาที"}' <%=quiz.timeLimit.value===900
                                         ? 'selected' : '' %>>15 นาที</option> <!-- 15 นาที = 900 วินาที -->
                                     <option value='{"value":1800,"display":"30 นาที"}' <%=quiz.timeLimit.value===1800
@@ -1160,7 +1155,7 @@
                             <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;">
                                 <input type="number" value="<%= quiz.attemptLimit %>" min="1" class="input-number"
                                     id="attemptLimit" style="max-width: 3em; text-align: center; font-size: 0.9rem;"
-                                    oninput="autosaveQuizSettings()" name="attemptLimit" />
+                                    oninput="autosave()" name="attemptLimit" />
                             </span>
                         </p>
                         <br>
@@ -1177,7 +1172,7 @@
                     </div>
 
                     <div id="questionContainer">
-
+                        
                     </div>
                     <div class="center">
                         <button type="button" class="btn btn-outline-primary " onclick="addQuestion() ">เพิ่มคำถาม <i
@@ -1348,16 +1343,43 @@
         <script>
             let debounceTimer;
 
-            function saveQuizSettings() {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => {
-                    const quizName = document.getElementById('quizname').textContent;
-                    const quizDescription = document.getElementById('quizdescription').textContent;
-                    // Save the quiz name and description or perform any necessary actions
-                    console.log('Quiz Name:', quizName);
-                    console.log('Quiz Description:', quizDescription);
-                }, 300); // ปรับค่าความล่าช้าตามความเหมาะสม (300 milliseconds)
-            }
+            function autosave() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+            const quizName = document.getElementById('editQuizname').textContent;
+            const quizDescription = document.getElementById('quizdescription').textContent;
+            const attemptLimit = document.getElementById('attemptLimit').value;
+            const timeLimit = JSON.parse(document.getElementById('timeLimit').value);
+
+            const data = {
+                quizId: '<%= quiz._id %>',
+                quizname: quizName,
+                quizdescription: quizDescription,
+                attemptLimit: attemptLimit,
+                timeLimit: timeLimit,
+                questions: questions
+            };
+
+            fetch('/updateQuiz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Quiz settings saved successfully');
+                    } else {
+                        console.error('Error saving quiz settings');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }, 300); // ลดเวลาการ debounce เป็น 100 milliseconds
+    }
 
             function togglePlaceholder(id, placeholder) {
                 const element = document.getElementById(id);
@@ -1479,26 +1501,19 @@
                 formData.append('avatar', document.getElementById('avatar').files[0]) // since inputs allow multi files submission, therefore files are in array
                 xhttp.send(formData)
             }
-            let questions = [
-                {
-                    questionText: 'คำถามไม่ระบุชื่อ',
-                    options: [{ optionText: 'ตัวเลือก 1' }],
-                    questionType: 'MCQ',
-                    answer: false,
-                    answerKey: "",
-                    points: 1,
-                    open: true
-                }
-            ];
+            let questions = <%- JSON.stringify(questions) %>;
+
 
             function changeQuestion(text, i) {
                 questions[i].questionText = text;
                 console.log(questions);
+                autosave();
             }
 
             function changeOptionValue(text, i, j) {
                 questions[i].options[j].optionText = text;
                 console.log(questions);
+                autosave();
             }
 
             function addQuestionType(index, type) {
@@ -1507,6 +1522,7 @@
                 calculateTotalPoints();
                 renderQuestions();
                 console.log(questions);
+                autosave();
             }
 
             function removeOption(i, j) {
@@ -1515,7 +1531,7 @@
                     RemoveOptionQuestion[i].options.splice(j, 1);
                     setQuestions(RemoveOptionQuestion);
                     console.log(i + "__" + j);
-
+                    autosave();
                     // ใช้ requestAnimationFrame เพื่อให้ DOM อัพเดตทันที
                     requestAnimationFrame(() => {
                         renderQuestions();
@@ -1530,6 +1546,7 @@
                     questions[i].options.push({ optionText: `ตัวเลือก ${questions[i].options.length + 1}` });
 
                     renderQuestions();
+                    autosave();
                 } else {
                     console.log("Max 31 Options");
                 }
@@ -1541,6 +1558,7 @@
                     updateQuestionCount();
                     calculateTotalPoints();
                     renderQuestions();
+                    autosave();
                 }
             }
 
@@ -1556,6 +1574,7 @@
 
                 calculateTotalPoints();
                 renderQuestions();
+                autosave();
             }
 
             function copyQuestion(index) {
@@ -1564,6 +1583,7 @@
                 updateQuestionCount();
                 calculateTotalPoints();
                 renderQuestions();
+                autosave();
             }
 
 
@@ -1588,7 +1608,7 @@
 
             function updateQuestionCount() {
                 const questionCountElement = document.getElementById('question-count');
-                questionCountElement.innerHTML = ` ${questions.length} คำถาม`;
+                questionCountElement.innerHTML = ` ${questions.length} ข้อ`;
             }
 
             questions.forEach(question => {
@@ -1726,6 +1746,7 @@
                 initializeSortable();
                 calculateTotalPoints();
                 renderQuestions();
+                autosave();
             }
 
 

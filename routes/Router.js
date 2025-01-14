@@ -35,12 +35,14 @@ router.get('/', redirectIfAuth, adminController.notLoggedIn);
 // router.get('/logout', LoginController.logout);
 router.get('/auth/google', redirectIfAuth, LoginController.authGoogle);
 router.get('/auth/google/callback', LoginController.authGoogleCallback);
-router.get('/logoutGoogle', LoginController.logoutGoogle);
+router.post('/logoutGoogle', LoginController.logoutGoogle);
 
 // Login Process
 // router.post('/loginToWeb', LoginController.loginPage);
 router.post('/saveInfoStudent', LoginController.saveInfoStudent);
 
+//Subjects
+router.get('/subjects', adminController.subjectIndex);
 // Admin Center Router
 router.get('/adminIndex', teacherMiddleware, adminController.adminIndex);
 router.get('/adminIndex/adminLessonIndex', teacherMiddleware, adminController.adminLessonIndex);
@@ -68,7 +70,7 @@ router.route('/adminIndex/createLayout').post(upload.single("file"), createLayou
 router.route('/adminIndex/updateLesson').post(upload.single("file"), updateLesson);
 router.get('/adminIndex/eachLessons', teacherMiddleware, adminController.eachLessons)
 router.get('/adminIndex/copyLessons', teacherMiddleware, adminController.copyLessons)
-router.get('/adminIndex/manageSubject', teacherMiddleware, adminController.manageSubject)
+router.get('/eachSubject', adminController.manageSubject)
 router.get('/adminIndex/logsFile', teacherMiddleware, adminController.logsFile)
 router.get('/adminIndex/teacherNotification', teacherMiddleware, adminController.teacherNotification)
 const {createComment, makeEditComment } = require("../controller/adminController");
