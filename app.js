@@ -18,8 +18,9 @@ var multer = require('multer');
 const cors = require('cors');
 const passport = require('passport');
 // const LessonProgress = require('./models/lessonsProgress'); // นำเข้ารุ่น (model) LessonProgress
-const PORT = process.env.PORT || 4000;
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/elearning";
+
+// const PORT = process.env.PORT || 4000;
+// const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/elearning";
 
 const MongoStore = require('connect-mongo');
 // const authRouter = require('./routes/auth');
@@ -125,7 +126,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: MONGO_URI,
+      mongoUrl: process.env.MONGO_URI,
     }),
     cookie: {
       secure: process.env.NODE_ENV === 'production',
@@ -186,7 +187,7 @@ var type = upload.single('file');
 
 // const url = "mongodb://localhost:27017/Elearning";
 
-mongoose.connect(MONGO_URI, {
+mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 30000,
@@ -196,8 +197,8 @@ mongoose.connect(MONGO_URI, {
     .then(() => {
         console.log("Connected to MongoDB");
         // Start Express server หลังจากที่ MongoDB เชื่อมต่อเรียบร้อยแล้ว
-        app.listen(PORT, () => {
-            console.log("Express server is running on " + PORT);
+        app.listen(process.env.PORT, () => {
+            console.log("Express server is running on " + process.env.PORT);
         });
 
     })

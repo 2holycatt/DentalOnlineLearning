@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "webpack --mode production",
-    "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   
   "dependencies": {
