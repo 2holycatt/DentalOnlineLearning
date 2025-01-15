@@ -1344,12 +1344,16 @@
             let debounceTimer;
 
             function autosave() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-            const quizName = document.getElementById('editQuizname').textContent;
-            const quizDescription = document.getElementById('quizdescription').textContent;
-            const attemptLimit = document.getElementById('attemptLimit').value;
-            const timeLimit = JSON.parse(document.getElementById('timeLimit').value);
+                const saveStatus = document.getElementById('saveStatus');
+                saveStatus.style.display = 'inline-block';
+                saveStatus.querySelector('.status-text').textContent = 'กำลังบันทึก...';
+
+                clearTimeout(debounceTimer);
+                 debounceTimer = setTimeout(() => {
+                const quizName = document.getElementById('editQuizname').textContent;
+                const quizDescription = document.getElementById('quizdescription').textContent;
+                const attemptLimit = document.getElementById('attemptLimit').value;
+                const timeLimit = JSON.parse(document.getElementById('timeLimit').value);
 
             const data = {
                 quizId: '<%= quiz._id %>',
@@ -1371,14 +1375,24 @@
                 .then(data => {
                     if (data.success) {
                         console.log('Quiz settings saved successfully');
+                        saveStatus.querySelector('.status-text').textContent = 'บันทึกแล้ว';
+                        saveStatus.querySelector('i').classList.remove('bi-cloud-arrow-up-fill');
+                        saveStatus.querySelector('i').classList.add('bi-cloud-check-fill');
+                       
                     } else {
                         console.error('Error saving quiz settings');
+                        saveStatus.querySelector('.status-text').textContent = 'บันทึกไม่สำเร็จ';
+                        saveStatus.querySelector('i').classList.remove('bi-cloud-arrow-up-fill');
+                        saveStatus.querySelector('i').classList.add('bi-cloud-slash-fill');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    saveStatus.querySelector('.status-text').textContent = 'บันทึกไม่สำเร็จ';
+                    saveStatus.querySelector('i').classList.remove('bi-cloud-arrow-up-fill');
+                    saveStatus.querySelector('i').classList.add('bi-cloud-slash-fill');
                 });
-        }, 300); // ลดเวลาการ debounce เป็น 100 milliseconds
+        }, 1000); // ลดเวลาการ debounce เป็น 100 milliseconds
     }
 
             function togglePlaceholder(id, placeholder) {

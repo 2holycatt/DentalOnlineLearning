@@ -23,6 +23,23 @@ const cron = require('node-cron');
 // const { createNotification } = require('./notificationController');
 // const { sendEmail } = require('../service/notification');
 
+async function getSubjectsForNav(userId) {
+  const userData = await User.findById(userId);
+  let subject;
+  
+  if (userData.role === 'student') {
+    const studentData = await Student.findOne({ user: userId })
+      .populate('subjects.subjectMongooseId');
+    subject = studentData.subjects.map(subject => subject.subjectMongooseId);
+  } else {
+    subject = await Subject.find()
+      .sort({ semester: 1 })
+      .populate("lessonArray");
+  }
+  
+  return subject;
+}
+
 
 exports.createQuiz = async (req, res, next) => {
   try {
@@ -377,6 +394,8 @@ exports.eachQuiz = async (req, res) => {
   try {
     let quizId = req.query.quizId;
     // ตรวจสอบว่ามี '/edit' หรือไม่
+    const navSubjects = await getSubjectsForNav(req.session.userId);
+
     const isEditPage = quizId.includes('/edit');
     if (isEditPage) {
       quizId = quizId.split('/edit')[0]; // แยก '/edit' ออก
@@ -477,7 +496,8 @@ exports.eachQuiz = async (req, res) => {
           releaseWhenLocal,
           deadlineLocal,
           theme,
-          isSidebarOpen
+          isSidebarOpen,
+          navSubjects
 
         });
       } else if (isViewPage) {
@@ -494,7 +514,8 @@ exports.eachQuiz = async (req, res) => {
           timeLimitMilliseconds,
           timeLimitFormatted,
           theme,
-          isSidebarOpen
+          isSidebarOpen,
+          navSubjects
         });
       } else if (isResponsePage) {
         res.render("quiz_response", {
@@ -514,7 +535,8 @@ exports.eachQuiz = async (req, res) => {
           attemptCount,
           percentage: (studentScore / totalPoints) * 100,
           theme,
-          isSidebarOpen
+          isSidebarOpen,
+          navSubjects
         });
       } else if (isResultDetailPage) { // เพิ่มเงื่อนไขสำหรับ render หน้า rdetail
         res.render("quiz_resultDetailResponse", {
@@ -534,7 +556,8 @@ exports.eachQuiz = async (req, res) => {
           attemptCount,
           percentage: (studentScore / totalPoints) * 100,
           theme,
-          isSidebarOpen
+          isSidebarOpen,
+          navSubjects
         });
       } else {
         res.render("eachQuiz", {
@@ -548,7 +571,8 @@ exports.eachQuiz = async (req, res) => {
           releaseWhenLocal,
           deadlineLocal,
           theme,
-          isSidebarOpen
+          isSidebarOpen,
+          navSubjects
         });
       }
     } else if (userRole === 'student') {
@@ -566,7 +590,8 @@ exports.eachQuiz = async (req, res) => {
           timeLimitMilliseconds,
           timeLimitFormatted,
           theme,
-          isSidebarOpen
+          isSidebarOpen,
+          navSubjects
         });
       }
       else if (isResultPage) {
@@ -587,7 +612,8 @@ exports.eachQuiz = async (req, res) => {
           attemptCount,
           percentage: (studentScore / totalPoints) * 100,
           theme,
-          isSidebarOpen
+          isSidebarOpen,
+          navSubjects
         });
       }
       else if (isResultDetailPage) {
@@ -608,7 +634,8 @@ exports.eachQuiz = async (req, res) => {
           attemptCount,
           percentage: (studentScore / totalPoints) * 100,
           theme,
-          isSidebarOpen
+          isSidebarOpen,
+          navSubjects
         });
       }
 
@@ -629,8 +656,7 @@ exports.eachQuiz = async (req, res) => {
           percentage: (studentScore / totalPoints) * 100,
           theme,
           isSidebarOpen,
-
-
+          navSubjects
         });
       }
     }

@@ -129,6 +129,11 @@ input[type=file]::file-selector-button:hover {
     border-bottom: 1px solid #EAEFF4;
 
 }
+.dark .assign-head, .desDiv {
+    padding-bottom: 0.5em !important;
+    border-bottom: 1px solid #555;
+
+}
     
 .descriptionText{
     /* border-top: none;

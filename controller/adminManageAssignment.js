@@ -17,6 +17,24 @@ const fetch = require('node-fetch');
 
 const { deleteFileFromS3 } = require('../utils/s3Utils');
 
+
+async function getSubjectsForNav(userId) {
+  const userData = await User.findById(userId);
+  let subject;
+  
+  if (userData.role === 'student') {
+    const studentData = await Student.findOne({ user: userId })
+      .populate('subjects.subjectMongooseId');
+    subject = studentData.subjects.map(subject => subject.subjectMongooseId);
+  } else {
+    subject = await Subject.find()
+      .sort({ semester: 1 })
+      .populate("lessonArray");
+  }
+  
+  return subject;
+}
+
 const assignmentIndex = async (req, res) => {
   try {
     const userData = await User.findById(req.session.userId);
@@ -39,6 +57,7 @@ const assignmentIndex = async (req, res) => {
     // };
     // const assignments = await Assignments.find().populate("schoolYear").sort({ createdAt: 1 }).exec();
     // const formattedAssignments = formatAssignmentDates(subeject.Assignments);
+    const navSubjects = await getSubjectsForNav(req.session.userId);
     const theme = req.session.theme || 'light'; 
     const isSidebarOpen = false; 
     subjects.forEach(subject => {
@@ -52,7 +71,7 @@ const assignmentIndex = async (req, res) => {
     //ใช้ตอนแสดงผล
     // const getStartTimeMoment12h = moment(getStartTime).format('DD/MM/YYYY hh:mm A');
     // const getEndTimeMoment12h = moment(getendTime).format('DD/MM/YYYY hh:mm A');
-    res.render('assignmentIndex', { subjects,theme, isSidebarOpen , userData});
+    res.render('assignmentIndex', { subjects ,navSubjects , theme, isSidebarOpen , userData});
 
   } catch (error) {
     console.error(error);
@@ -64,6 +83,7 @@ const assignmentDetail = async (req, res) => {
   try {
     // const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
     const userData = await User.findById(req.session.userId);
+    const navSubjects = await getSubjectsForNav(req.session.userId);
     const theme = req.session.theme || 'light';
     const isSidebarOpen = false;
     const getAssignId = req.query.id;
@@ -87,7 +107,7 @@ const assignmentDetail = async (req, res) => {
     //   return fileName;
     // });
 
-    res.render('assignmentDetail', { assignment, formattedStartDate, formattedDeadline, getSubmitDetail,userData,theme,isSidebarOpen });
+    res.render('assignmentDetail', { assignment, formattedStartDate, formattedDeadline, getSubmitDetail,navSubjects,userData,theme,isSidebarOpen });
 
   } catch (error) {
     console.error(error);

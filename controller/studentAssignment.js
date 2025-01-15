@@ -13,20 +13,38 @@ const { deleteFileFromS3 } = require('../utils/s3Utils');
 
 const moment = require('moment');
 
+async function getSubjectsForNav(userId) {
+    const userData = await User.findById(userId);
+    let subject;
+    
+    if (userData.role === 'student') {
+      const studentData = await Student.findOne({ user: userId })
+        .populate('subjects.subjectMongooseId');
+      subject = studentData.subjects.map(subject => subject.subjectMongooseId);
+    } else {
+      subject = await Subject.find()
+        .sort({ semester: 1 })
+        .populate("lessonArray");
+    }
+    
+    return subject;
+  }
+
 const studentAssignDetail = async (req, res) => {
     try {
         const getAssignId = req.query.id;
         const userData = await User.findById(req.session.userId);
-        const assignment = await Assignments.findById(getAssignId).populate("schoolYear");;
-        const formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
+        const navSubjects = await getSubjectsForNav(req.session.userId);
+        const theme = req.session.theme || 'light';
+        const isSidebarOpen = false;
+        const assignment = await Assignments.findById(getAssignId).populate("subject");        const formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
         const formattedDeadline = moment(assignment.Deadline).format('DD/MM/YYYY hh:mm A');
-        const schoolYear = await SchoolYear.find();
 
         const userSubmit = await submitAssign.findOne({ user: req.session.userId, assignment: getAssignId });
         // console.log(req.session.userId);
         // console.log(getAssignId);
         // console.log(userSubmit);
-        res.render('studentAssignDetail', { schoolYear, assignment, formattedStartDate, formattedDeadline, userData, userSubmit });
+        res.render('studentAssignDetail', { assignment, formattedStartDate, formattedDeadline, userData ,navSubjects ,userSubmit, theme, isSidebarOpen });
 
     } catch (error) {
         console.error(error);

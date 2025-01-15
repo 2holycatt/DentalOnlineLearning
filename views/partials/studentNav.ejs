@@ -169,10 +169,19 @@
                         ห้องเรียน &nbsp; <i class="bi bi-chevron-down"></i>
                     </a>
                     <ul class="dropdown">
-                        <li class="drop-li my-1"><a class="a-li" href="/studentLesson">บทเรียน</a></li>
-                        <li class="drop-li my-1"><a class="a-li" href="/studentAssignment">งานที่ได้รับมอบหมาย</a>
-                        </li>
-                        <li class="drop-li my-1"><a class="a-li" href="/studentExam">แบบทดสอบ</a></li>
+                        <% if (typeof navSubjects !== 'undefined' && navSubjects.length > 0) { %>
+                            <% navSubjects.forEach(subject => { %>
+                              <li class="drop-li my-1">
+                                <a class="a-li" href="/eachSubject?subjectDbId=<%= subject._id %>">
+                                  <%= subject.subjectId %> <%= subject.subjectName %> <%= subject.semester %> กลุ่มที่: <%= subject.section %>
+                                </a>
+                              </li>
+                            <% }); %>
+                          <% } else { %>
+                            <li class="drop-li my-1">
+                              <span class="a-li">ไม่มีรายวิชา</span>
+                            </li>
+                          <% } %>
                     </ul>
                 </li>
                 

@@ -103,7 +103,7 @@ const subjectDetail = async (req, res) => {
 
         const totalScore = filterSubject[0].weeks.reduce((total, week) => total + week.scorePerWeek, 0);
 
-        res.render("subjectDatail", { totalScore, filterSubject, studentData, subjectId });
+        res.render("subjectDetail", { totalScore, filterSubject, studentData, subjectId });
     } catch (error) {
         console.log(error);
         res.status(500).send("เกิดข้อผิดพลาด");

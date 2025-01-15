@@ -296,13 +296,18 @@
         /* padding-top: 0.5em; */
         border-bottom: 1px solid #EAEFF4;
       }
+      .dark .list-div {
+        /* padding-top: 0.5em; */
+        border-bottom: 1px solid #555 ;
+      }
 
       .list-div-data {
         padding-top: 1em;
         border-bottom: 1px solid #EAEFF4;
         text-align: start;
-        color: #4e5458 !important;
-
+      }
+      .dark .list-div-data {
+        border-bottom: 1px solid #555 !important;
       }
 
       * {
@@ -754,7 +759,72 @@
                 <% } %>
               </div>
 
-             
+              <div class="col-12 mt-2 row">
+                <div class="col">
+                  <p class="fw-bold fs-6 my-1">
+                    <i class="bi-2 bi bi-list-task text-primary"></i>
+                    งานที่มอบหมาย
+                    <span class="text-secondary fw-normal">
+                      /
+                    </span>
+                    จำนวน:
+                    <span class="text-primary fw-normal">
+                        <%= subject.Assignments ? subject.Assignments.length : 0 %>
+                    </span>
+                  </p>
+                </div>
+               
+              </div>
+              <div class=" col-12 mt-2 row">
+                <% if (subject.Assignments.length > 0) { %>
+                  <div class="file-example w-100">
+                  <div class="list-div text-primary row ">
+                    <p class="fw-bold my-3 col-3 text-center">
+                      ชื่อ
+                    </p>
+                    <p class="fw-bold my-3 col-2 text-center">
+                      วันที่เปิดให้ส่ง
+                    </p>
+                    <p class="fw-bold my-3 col-2 text-center">
+                      วันที่หมดเขตส่ง
+                    </p>
+                    <p class="fw-bold my-3 col-3 text-center">
+                      จำนวนที่นักศึกษาส่งงาน
+                    </p>
+                    <p class="fw-bold my-3 col-1 text-center">
+                      คะแนนเต็ม
+                    </p>
+                  </div>
+                  <% subject.Assignments.forEach(assign => { %>
+                    <a href="/studentAssignDetail?id=<%= assign._doc._id %>" class="data-a">                    
+                      <div class="list-div-data row py-3">
+                      <p class="fs-6 fw-normal grey col-3">
+                        <%= assign.name %>
+                      </p>
+                      <p class="fs-6 fw-normal text-success col-2">
+                        <%= moment(assign.StartDate).format('DD/MM/YYYY HH:mm') %>
+                      </p>
+                      <p class="fs-6 fw-normal text-danger col-2">
+                        <%= moment(assign.Deadline).format('DD/MM/YYYY HH:mm') %>
+                      </p>
+                      <p class="fs-6 fw-normal text-center grey col-3">
+                        <%= assign.sentCount %>
+                      </p>
+                      <p class="fs-6 fw-normal text-success text-center col-1">
+                        <%= assign.Score %>
+                      </p>
+                    </div>
+                  </a>
+                  <% }); %>
+                  <% } else if (subject.Assignments.length < 1) {%>
+                  <div class="list-no-assign">
+                    <p class="showSubject show<%=subject.subjectId%> mb-2">ยังไม่มีงานที่มอบหมายในรายวิชานี้</p>
+                  </div>
+                  <% }; %>
+                
+                </div>
+              </div>
+
             </div>
           </div>
 

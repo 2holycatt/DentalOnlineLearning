@@ -20,13 +20,26 @@
                 <p class="fs-6 fw-bold bold-menus" style="margin-bottom: 1em !important;">
                     ห้องเรียน
                 </p>
-                <ul class="submenu">
-                    <li><a class="bi-1 a-list-1" href="/adminIndex/adminLessonIndex" onclick="toggleSidebar()"><i
+                <ul class="submenu ms-2">
+                    <!-- <li><a class="bi-1 a-list-1" href="/adminIndex/adminLessonIndex" onclick="toggleSidebar()"><i
                                 class="bi-1 bi bi-book-half mx-2"></i>บทเรียน</a></li>
                     <li><a class="bi-2" href="/adminIndex/assignmentIndex" onclick="toggleSidebar()"><i
                                 class="bi-2 bi bi-list-task mx-2"></i>งานที่มอบหมาย</a></li>
                     <li><a class="bi-3" href="/adminIndex/adminExamsIndex" onclick="toggleSidebar()"><i
-                                class="bi-3 bi bi-pencil-square mx-2"></i>แบบทดสอบ</a></li>
+                                class="bi-3 bi bi-pencil-square mx-2"></i>แบบทดสอบ</a></li> -->
+                                <% if (typeof navSubjects !== 'undefined' && navSubjects.length > 0) { %>
+                                    <% navSubjects.forEach(subject => { %>
+                                      <li>
+                                        <a class="a-li" href="/eachSubject?subjectDbId=<%= subject._id %>" onclick="toggleSidebar()">
+                                          <%= subject.subjectId %> <%= subject.subjectName %> <%= subject.semester %> กลุ่มที่: <%= subject.section %>
+                                        </a>
+                                      </li>
+                                    <% }); %>
+                                  <% } else { %>
+                                    <li>
+                                        <span class="a-li">ไม่มีรายวิชา</span>
+                                    </li>
+                                <% } %>
                 </ul>
             </li>
             <li>

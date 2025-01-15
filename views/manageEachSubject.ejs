@@ -296,13 +296,18 @@
         /* padding-top: 0.5em; */
         border-bottom: 1px solid #EAEFF4;
       }
+      .dark .list-div {
+        /* padding-top: 0.5em; */
+        border-bottom: 1px solid #555 ;
+      }
 
       .list-div-data {
         padding-top: 1em;
         border-bottom: 1px solid #EAEFF4;
         text-align: start;
-        color: #4e5458 !important;
-
+      }
+      .dark .list-div-data {
+        border-bottom: 1px solid #555 !important;
       }
 
       * {
@@ -544,6 +549,7 @@
         background-color: green;
       }
 
+      
       @media screen and (max-width: 768px) {
         .above-nav-status {
           display: none;
@@ -800,6 +806,88 @@
                                 <% } %>
               </div>
 
+              <div class="col-12 mt-2 row">
+                <div class="col">
+                  <p class="fw-bold fs-6 my-1">
+                    <i class="bi-2 bi bi-list-task text-primary"></i>
+                    งานที่มอบหมาย
+                    <span class="text-secondary fw-normal">
+                      /
+                    </span>
+                    จำนวน:
+                    <span class="text-primary fw-normal">
+                        <%= subject.Assignments ? subject.Assignments.length : 0 %>
+                    </span>
+                  </p>
+                </div>
+                <div class="col d-flex align-items-center justify-content-end">
+                  <div class="custom-dropdown" id="custom-dropdown-4">
+                    <a href="" class="icon-toggle" id="icon-toggle-4">
+                      <i class="fs-5 bi bi-three-dots-vertical text-primary icon-gear"></i>
+                    </a>
+                    <ul class="custom-dropdown-menu" id="custom-dropdown-menu">
+                      <li><a class="custom-dropdown-item"
+                          href="/adminIndex/subjectCreateAssignment?subjectId=<%=subject._id%>">
+                          <i class="bi bi-plus-circle me-2"></i>เพิ่มงานที่มอบหมาย</a>
+                      </li>
+                     
+                      <!-- <li><a class="custom-dropdown-item" href="/exportLogs?value=plain">ลบบทเรียน</a></li> -->
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class=" col-12 my-2 row">
+                <% if (subject.Assignments.length > 0) { %>
+                  <div class="file-example w-100">
+                  <div class="list-div text-primary row ">
+                    <p class="fw-bold my-3 col-3 text-center">
+                      ชื่อ
+                    </p>
+                    <p class="fw-bold my-3 col-2 text-center">
+                      วันที่เปิดให้ส่ง
+                    </p>
+                    <p class="fw-bold my-3 col-2 text-center">
+                      วันที่หมดเขตส่ง
+                    </p>
+                    <p class="fw-bold my-3 col-3 text-center">
+                      จำนวนที่นักศึกษาส่งงาน
+                    </p>
+                    <p class="fw-bold my-3 col-1 text-center">
+                      คะแนนเต็ม
+                    </p>
+                  </div>
+                  <% subject.Assignments.forEach(assign => { %>
+                    <a href="/adminIndex/assignmentDetail?id=<%= assign._id %>" class="data-a">                    
+                      <div class="list-div-data row py-3">
+                      <p class="fs-6 fw-normal grey col-3">
+                        <%= assign.name %>
+                      </p>
+                      <p class="fs-6 fw-normal text-success col-2">
+                        <%= moment(assign.StartDate).format('DD/MM/YYYY HH:mm') %>
+                      </p>
+                      <p class="fs-6 fw-normal text-danger col-2">
+                        <%= moment(assign.Deadline).format('DD/MM/YYYY HH:mm') %>
+                      </p>
+                      <p class="fs-6 fw-normal text-center grey col-3">
+                        <%= assign.sentCount %>
+                      </p>
+                      <p class="fs-6 fw-normal text-success text-center col-1">
+                        <%= assign.Score %>
+                      </p>
+                    </div>
+                  </a>
+                  <% }); %>
+                  <% } else if (subject.Assignments.length < 1) {%>
+                  <div class="list-no-assign">
+                    <p class="showSubject show<%=subject.subjectId%> mb-2">ยังไม่มีงานที่มอบหมายในรายวิชานี้</p>
+                  </div>
+                  <% }; %>
+                
+                </div>
+              </div>
+            
+
+              
               <div class=" col-12 mt-2 row">
                 <div class="col">
                   <p class="fw-bold fs-6 my-1">
@@ -909,6 +997,8 @@
           // const dropdownMenu2 = document.getElementById('custom-dropdown-menu-2');
 
           const dropdownToggle3 = document.getElementById('icon-toggle-3');
+          const dropdownToggle4 = document.getElementById('icon-toggle-4');
+
 
           dropdownToggle.addEventListener('click', function (event) {
             event.preventDefault();
@@ -923,6 +1013,11 @@
           });
 
           dropdownToggle3.addEventListener('click', function (event) {
+            event.preventDefault();
+            const dropdown = this.parentElement;
+            dropdown.classList.toggle('show');
+          });
+          dropdownToggle4.addEventListener('click', function (event) {
             event.preventDefault();
             const dropdown = this.parentElement;
             dropdown.classList.toggle('show');
@@ -986,6 +1081,38 @@
 
 
         });
+        
+        const startTimeInput = document.getElementById('StartDate');
+    const endTimeInput = document.getElementById('Deadline');
+
+    startTimeInput.addEventListener('input', function() {
+      checkTimeValidity();
+    });
+
+    endTimeInput.addEventListener('input', function() {
+      checkTimeValidity();
+    });
+
+    // ฟังก์ชันสำหรับตรวจสอบความถูกต้องของเวลาและแสดง alert ถ้ามีข้อผิดพลาด
+    function checkTimeValidity() {
+      const startTime = new Date(startTimeInput.value);
+      const endTime = new Date(endTimeInput.value);
+
+      if (startTime >= endTime) {
+        Swal.fire({
+          icon: "error",
+          title: "กำหนดวันที่และเวลาไม่ถูกต้อง",
+          text: "วันที่หมดเขตส่งไม่สามารถต่ำกว่าวันที่เปิดให้ส่งได้",
+          timer: 2000,
+          customClass: {
+            container: 'swal-container-padding', // กำหนด padding ให้ container ของ Swal
+            icon: 'swal-icon-center', // กำหนดให้ icon อยู่กึ่งกลาง
+            confirmButton: 'swal-btn-padding' // กำหนด padding ให้ปุ่ม "OK"
+          }
+        });
+        endTimeInput.value = '';
+      }
+    }
       </script>
 
 

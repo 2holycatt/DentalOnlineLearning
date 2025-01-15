@@ -256,13 +256,13 @@
   </div>
   <div class="main-content d-flex w-100 h-auto">
     <%- include("./partials/lessonsList.ejs")%>
-    <div class="aside-right w-75 h-auto p-4">
+    <div class="aside-right w-75 h-auto p-4 m-3">
       <div class="manange-bar px-4 py-3 bg-white d-flex w-100 row" id="topBar">
         <div class="col-6">
           <p class="fw-bold fs-3 lesson-bar">งานที่มอบหมาย</p>
         </div>
         <div class="col-6 d-flex justify-content-end">
-          <a href="/adminIndex/chooseSubject" class="btn btn-primary py-2 px-2">ยกเลิก <i class="bi bi-x-circle-fill "></i></a>
+          <a href="/eachSubject?subjectDbId=<%=findSubject._id%>" class="btn btn-primary py-2 px-2">ยกเลิก <i class="bi bi-x-circle-fill "></i></a>
         </div>
         <!-- <div>
           <a href="/adminIndex/addAssign" class="add-button btn btn-primary m-0 p-2">

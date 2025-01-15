@@ -94,7 +94,19 @@
     transition: 0.3s;
 
   }
- 
+  .a-li {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+.menues-sub div {
+    margin-bottom: 0.5rem;
+}
 
 </style>
 <div class="above-nav-status p-4 col-sm-0 col-3 ">
@@ -103,19 +115,30 @@
   </p>
   <div class="menues">
     <p class="menues-sub fs-6 my-2">
-      <!-- <i class="bi bi-card-list mx-2"></i> -->
-      <i class="bi-1 bi bi-book-half mx-2"></i>
-      <a href="/adminIndex/adminLessonIndex" class="a-list-1">บทเรียน</a>
+      <% if (typeof navSubjects !== 'undefined' && navSubjects.length > 0) { %>
+        <% navSubjects.forEach(subject => { %>
+        <div class="ms-2 my-1">
+          <a class="a-li grey" 
+          href="/eachSubject?subjectDbId=<%= subject._id %>"
+          title="<%= subject.subjectId %> <%= subject.subjectName %> <%= subject.semester %> กลุ่มที่: <%= subject.section %>">
+           <%= subject.subjectId %> <%= subject.subjectName %> <%= subject.semester %> กลุ่มที่: <%= subject.section %>
+       </a>
+        </div>
+        <% }); %>
+        <% } else { %>
+         
+              <span class="a-li">ไม่มีรายวิชา</span>
+         
+      <% } %>
     </p>
-    <p class="menues-sub my-2">
+    <!-- <p class="menues-sub my-2">
       <i class="bi-2 bi bi-list-task mx-2"></i>
       <a href="/adminIndex/assignmentIndex" class="a-list-2">งานที่มอบหมาย</a>
     </p>
     <p class="menues-sub my-2">
-      <!-- <i class="bi bi-database-add mx-2"></i> -->
       <i class="bi-3 bi bi-pencil-square mx-2"></i>
       <a href="/adminIndex/adminExamsIndex" class="a-list-3">แบบทดสอบ</a>
-    </p>
+    </p> -->
   </div>
   <p class="fs-6 fw-bold bold-menus my-4" style="margin-bottom: 1em !important;">
     จัดการข้อมูลนักศึกษา
