@@ -5,7 +5,7 @@
   "scripts": {
     "build": "webpack --mode production",
     "start": "node ./bin/www",
-    "dev": "webpack serve --mode development"
+    "dev": "nodemon ./bin/www"
   },
   
   "dependencies": {
@@ -102,7 +102,7 @@
     "webpack-dev-server": "^5.0.4"
   },
   "engines": {
-    "node": "20.14.0",
+   "node": ">=14.0.0",
     "npm": "10.8.1"
   }
 }
