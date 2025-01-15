@@ -31,7 +31,7 @@ const teacherMiddleware = require("../middleware/teacherMiddleware");
 // Not Logged in Routes
 router.get('/', redirectIfAuth, adminController.notLoggedIn);
 
-// router.get('/login', redirectIfAuth, LoginController.ifNotLoggedIn);
+router.get('/login', redirectIfAuth, LoginController.ifNotLoggedIn);
 // router.get('/logout', LoginController.logout);
 router.get('/auth/google', redirectIfAuth, LoginController.authGoogle);
 router.get('/auth/google/callback', LoginController.authGoogleCallback);
