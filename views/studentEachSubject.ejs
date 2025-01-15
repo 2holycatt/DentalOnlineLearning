@@ -548,7 +548,20 @@
       .status-green {
         background-color: green;
       }
+      .truncate-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
 
+.data-a {
+    text-decoration: none;
+}
+
+.list-div-data:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
       @media screen and (max-width: 768px) {
         .above-nav-status {
           display: none;
@@ -708,54 +721,37 @@
                 
               </div>
               <div class="set-border-bottom col-12 mt-3 row">
-                <% if (subject.quizArray.length > 0) { %>
-                  <% const quizzes = subject.quizArray %>
-                  <% quizzes.forEach(quiz => { %>
-                    <% if (quiz.isReleased) { %>
-                      <% if (quiz.file) { %>
-                        <div class="col-md-4 col-sm-6 col-xs-12 mb-3 d-flex justify-content-center">
-                          <a href="/studentIndex/eachQuiz?quizId=<%= quiz._id %>">
-                            <div class="card-1 text-bg-white mb-3" style="max-width: 18em; max-height: 10em; position: relative;">
-                              <div class="card-header bg-white px-2 py-1 fw-bold text-primary"
-                                style="width: fit-content; border-bottom-right-radius: 0.5em; position: absolute;">
-                                <p class="text-break" style="font-size: small;">
-                                  <%= quiz.quizname %>
-                                 
-                                </p>
-                              </div>
-                              <div class="card-body d-flex justify-content-center p-4">
-                                <% const image = quiz.file %>
-                                <img src="<%= image %>" alt="รูปภาพประกอบบทเรียน" class="card-img" alt="รูปของบทเรียน"
-                                  style="width: 100%; height: 20%; border-radius: 0.5em;">
-                              </div>
-                            </div>
-                          </a>
-                        </div>
-                      <% } else if (!quiz.file) { %>
-                        <div class="col-md-4 col-sm-6 col-xs-12 mb-3 d-flex justify-content-center">
-                          <a href="/studentIndex/eachQuiz?quizId=<%= quiz._id %>">
-                            <div class="card-1 text-bg-white mb-3" style="max-width: 18em; max-height: 10em; position: relative;">
-                              <div class="card-header bg-white px-2 py-1 fw-bold text-primary"
-                                style="width: fit-content; border-bottom-right-radius: 0.5em; position: absolute;">
-                                <p class="text-break" style="font-size: small;">
-                                  <%= quiz.quizname %>
-                                 
-                                </p>
-                              </div>
-                              <div class="card-body d-flex justify-content-center p-4">
-                                <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของบทเรียน"
-                                  style="height: 100%; width: 60%; object-fit: cover;">
-                              </div>
-                            </div>
-                          </a>
-                        </div>
-                      <% } %>
-                    <% } %>
-                  <% }); %>
-                <% } else if (subject.quizArray.length < 1) { %>
-                  <p class="showSubject show<%= subject.subjectId %> my-2 mx-3">
+                <% 
+                const releasedQuizzes = subject.quizArray ? subject.quizArray.filter(quiz => quiz.isReleased) : [];
+                if (releasedQuizzes.length === 0) { 
+                %>
+                  <p class="showSubject show<%= subject.subjectId %> m-2">
                     ยังไม่มีแบบทดสอบในรายวิชานี้
                   </p>
+                <% } else { %>
+                  <% releasedQuizzes.forEach(quiz => { %>
+                    <div class="col-md-4 col-sm-6 col-xs-12 mb-3 d-flex justify-content-center">
+                      <a href="/studentIndex/eachQuiz?quizId=<%= quiz._id %>">
+                        <div class="card-1 text-bg-white mb-3" style="max-width: 18em; max-height: 10em; position: relative;">
+                          <div class="card-header bg-white px-2 py-1 fw-bold text-primary"
+                            style="width: fit-content; border-bottom-right-radius: 0.5em; position: absolute;">
+                            <p class="text-break" style="font-size: small;">
+                              <%= quiz.quizname %>
+                            </p>
+                          </div>
+                          <div class="card-body d-flex justify-content-center p-4">
+                            <% if (quiz.file) { %>
+                              <img src="<%= quiz.file %>" alt="รูปภาพประกอบบทเรียน" class="card-img"
+                                style="width: 100%; height: 20%; border-radius: 0.5em;">
+                            <% } else { %>
+                              <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของบทเรียน"
+                                style="height: 100%; width: 60%; object-fit: cover;">
+                            <% } %>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  <% }); %>
                 <% } %>
               </div>
 
@@ -798,21 +794,21 @@
                   <% subject.Assignments.forEach(assign => { %>
                     <a href="/studentAssignDetail?id=<%= assign._doc._id %>" class="data-a">                    
                       <div class="list-div-data row py-3">
-                      <p class="fs-6 fw-normal grey col-3">
-                        <%= assign.name %>
-                      </p>
-                      <p class="fs-6 fw-normal text-success col-2">
-                        <%= moment(assign.StartDate).format('DD/MM/YYYY HH:mm') %>
-                      </p>
-                      <p class="fs-6 fw-normal text-danger col-2">
-                        <%= moment(assign.Deadline).format('DD/MM/YYYY HH:mm') %>
-                      </p>
-                      <p class="fs-6 fw-normal text-center grey col-3">
-                        <%= assign.sentCount %>
-                      </p>
-                      <p class="fs-6 fw-normal text-success text-center col-1">
-                        <%= assign.Score %>
-                      </p>
+                        <p class="fs-6 fw-normal grey col-3 truncate-text" title="<%= assign.name %>">
+                            <%= assign.name %>
+                        </p>
+                        <p class="fs-6 fw-normal text-success col-2">
+                            <%= moment(assign.StartDate).format('DD/MM/YYYY HH:mm') %>
+                        </p>
+                        <p class="fs-6 fw-normal text-danger col-2">
+                            <%= moment(assign.Deadline).format('DD/MM/YYYY HH:mm') %>
+                        </p>
+                        <p class="fs-6 fw-normal text-center grey col-3">
+                            <%= assign.sentCount %>
+                        </p>
+                        <p class="fs-6 fw-normal text-success text-center col-1">
+                            <%= assign.Score %>
+                        </p>
                     </div>
                   </a>
                   <% }); %>

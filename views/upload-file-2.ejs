@@ -164,12 +164,235 @@
       padding: 0.5em 1em !important;
       margin-top: 1em !important;
     }
+    body.dark {
+           background-color: #212121 !important;
+         }
+       .card-1,
+       .card-body-1 {
+         border: none !important;
+       }
+    .add-button {
+      width: fit-content !important;
+    }
+
+    .list-header {
+      box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+    }
+
+    .p-header-1,
+    .p-header-2 {
+      border-right: 1px solid #999999 !important;
+    }
+
+    .p-header-4 {
+      border-left: 1px solid #999999 !important;
+    }
+
+    .student-list {
+      border-bottom: 1px solid #cdcdcd !important;
+      color: #898989 !important;
+    }
+
+    .email-p {
+      font-size: smaller !important;
+    }
+
+    .link-list {
+      text-decoration: none !important;
+    }
+
+    .link-list:hover .student-list {
+      color: black !important;
+      transition: 0.3s;
+    }
+
+    .addContent-a {
+      text-decoration: none !important;
+      transition-duration: 0.3s;
+    }
+
+    .addContent-a:hover {
+      color: #0d57d6 !important;
+      transition: 0.3s;
+    }
+
+    .list-div {
+
+      padding-top: 0.5em;
+      border-bottom: 1px solid #EAEFF4;
+    }
+
+    .list-div-data {
+
+      padding-top: 1em;
+      border-bottom: 1px solid #EAEFF4;
+      text-align: start;
+      color: #4e5458 !important;
+
+    }
+
+    .lesson-bar {
+      border-left: 0.25em solid #8A2BE2 !important;
+      padding-left: 0.5em !important;
+      margin-right: 0.5em !important;
+
+    }
+
+    .studentDetail-a:hover>.list-div-data {
+      color: #0053ac !important;
+      transition: 0.3s;
+    }
+        .above-nav {
+        background-color: white !important;
+        border-bottom: 1px solid #999999;
+      }
+  
+      .dark .above-nav-status {
+        background-color:  var(--secondary-color) !important;
+        border-right:1px solid #494949 ;
+      }
+  
+      .status-a {
+        color: #404258 !important;
+      }
+  
+      .list-lesson-p {
+        color: #8A2BE2;
+      }
+  
+      .list-lesson-p-span {
+        color: #4B0082;
+      }
+  
+      .each-lesson {
+        border-top: 0.1em solid #8A2BE2;
+      }
+  
+      .aside-right {
+        background-color: var(--bg-color) !important;
+        height: 100%;
+      }
+  
+      .manange-bar {
+        border-radius: 0.5em;
+        justify-content: space-between !important;
+        
+      }
+  
+      .add-button {
+        border-radius: 0.5em !important;
+        height: auto !important;
+      }
+  
+      .lesson-content {
+        height: fit-content !important;
+        border-radius: 1em !important;
+        justify-content: center !important;
+      }
+      .dark .manange-bar, .dark .lesson-content{
+        background-color:  var(--secondary-color) !important;
+      }
+  
+      .lesson-nothing {
+        margin: 25% 0 !important;
+        padding: 0 !important;
+      }
+  
+      .each-lesson-a {
+        text-decoration: none !important;
+      }
+  
+      .each-lesson-a:hover .each-lesson {
+        border-left: 0.2em solid #8A2BE2 !important;
+      }
+  
+      .card-img-top {
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+      }
+  
+      .setColumn {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr !important;
+      }
+  
+      .card-a {
+        text-decoration: none !important;
+      }
+  
+      .card-a:hover,
+      .card-a:hover .p-lesson-name {
+        color: #007bff !important;
+        transition: 0.5s;
+      }
+  
+      .card-a:hover .bi-book {
+        color: #007bff !important;
+        transition: color 0.5s;
+      }
+  
+      .bi-book-fill {
+        display: none;
+      }
+  
+      .card-a:hover .bi-book-fill {
+        display: inline-block !important;
+        transition: 0.5s;
+      }
+  
+      .card-a:hover .bi-book {
+        display: none;
+        transition: 0.5s;
+      }
+  
+      .manange-bar,
+      .lesson-content {
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+        border-radius: 0.5em;
+      }
+  
+      .card-1 {
+        width: 90% !important;
+        height: fit-content !important;
+        transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+        cursor: pointer;
+        border-radius: 0.5em;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+      }
+  
+      .card-1:hover {
+        transform: scale(1.05);
+      }
+  
+      .card-header {
+        border-right: 1px solid #EAEFF4;
+        border-bottom: 1px solid #EAEFF4;
+      }
+  
+      .a-list-5,
+      .bi-5 {
+        color: #8A2BE2 !important;
+        
+      }
+      .grey {
+        color: gray !important;
+      }
+      .dark .grey{
+        color: lightgray !important
+      }
+      .studentDetail-a :hover{
+        color: #0053ac !important;
+      }
+      @media screen and (max-width: 768px) {
+        .above-nav-status{
+          display: none;
+        }
+      }
   </style>
 </head>
 
 <body>
   <div id="blur-container2">
-    <%- include("./partials/nav.ejs")%>
+    <%- include("./partials/nav2.ejs")%>
     <div class="main-content d-flex w-100 h-auto">
       <%- include("./partials/lessonsList.ejs")%>
       <div class="aside-right w-75 h-auto p-4">

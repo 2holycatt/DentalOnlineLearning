@@ -42,21 +42,36 @@ const { sendEmail } = require('../service/notification');
 // const updateSubjectQueue = require('../service/queue');
 
 async function getSubjectsForNav(userId) {
-  const userData = await User.findById(userId);
-  let subject;
-  
-  if (userData.role === 'student') {
-    const studentData = await Student.findOne({ user: userId })
-      .populate('subjects.subjectMongooseId');
-    subject = studentData.subjects.map(subject => subject.subjectMongooseId);
-  } else {
-    subject = await Subject.find()
-      .sort({ semester: 1 })
-      .populate("lessonArray");
+  try {
+    const userData = await User.findById(userId);
+    let subject = [];
+    
+    if (!userData) {
+      return [];
+    }
+
+    if (userData.role === 'student') {
+      const studentData = await Student.findOne({ user: userId })
+        .populate('subjects.subjectMongooseId');
+      
+      // Check if studentData and subjects exist
+      if (studentData && studentData.subjects) {
+        subject = studentData.subjects.map(subject => subject.subjectMongooseId);
+      }
+    } else {
+      // For teachers and admins
+      subject = await Subject.find()
+        .sort({ semester: 1 })
+        .populate("lessonArray") || [];
+    }
+    
+    return subject;
+  } catch (error) {
+    console.error('Error in getSubjectsForNav:', error);
+    return []; // Return empty array on error
   }
-  
-  return subject;
 }
+
 
 const adminIndex = async (req, res) => {
   try {
@@ -107,37 +122,44 @@ const manageStudent = async (req, res) => {
 
 const uploadStudent = async (req, res) => {
   try {
-    // const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
-    // const getLessonId = req.query.lessonId;
-    // const lesson = await Lesson.findById(getLessonId);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
 
-    const { page = 1, limit = 10 } = req.query;
+    const allStudents = await Student.paginate({}, {
+      page,
+      limit,
+      populate: {
+        path: 'user',
+        select: 'fname lname email major studentFromKku'
+      }
+    });
 
-    const options = {
-      page: parseInt(page, 10),
-      limit: parseInt(limit, 10),
-      sort: { createdAt: 1 }, // เรียงลำดับจากใหม่ไปเก่า
-      populate: 'user',
-    };
-
-    const allStudents = await Student.paginate({}, options);
+    const navSubjects = await getSubjectsForNav(req.session.userId);
     const userData = await User.findById(req.session.userId);
-    const theme = req.session.theme || 'light'; 
-    const isSidebarOpen = false; 
-    // res.json(allStudents);
-    // const findStudent = await User.findOne({email:"papinwit.s@kkumail.com"});
-    // res.json(allStudents);
-    res.render("upload-excelAndmanual", { allStudents, theme, isSidebarOpen,userData });
-  } catch (err) {
-    console.error(err);
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
+
+    res.render('upload-excelAndmanual', {
+      allStudents,
+      navSubjects,
+      userData,
+      theme,
+      isSidebarOpen
+    });
+
+  } catch (error) {
+    console.error(error);
     res.status(500).send("เกิดข้อผิดพลาด");
   }
-}
+};
 
 const uploadStudent2 = async (req, res) => {
   try {
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
 
-    res.render("upload-file-2", { formData: {}, error: null });
+    res.render("upload-file-2", { formData: {}, error: null ,theme,isSidebarOpen,userData});
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -193,8 +215,10 @@ const subjectIndex = async (req, res) => {
     if (userData.role === 'student') {
       // ถ้าเป็นนักเรียน ให้แสดงเฉพาะวิชาที่นักเรียนลงทะเบียน
       const studentData = await Student.findOne({ user: req.session.userId }).populate('subjects.subjectMongooseId');
-      subject = studentData.subjects.map(subject => subject.subjectMongooseId);
-    } else {
+      if (studentData && studentData.subjects) {
+        subject = studentData.subjects.map(subject => subject.subjectMongooseId);
+      }
+        } else {
       // ถ้าเป็นครูหรือผู้ดูแลระบบ ให้แสดงทุกวิชา
       subject = await Subject.find().sort({ semester: 1 }).populate("lessonArray");
     }
@@ -203,7 +227,7 @@ const subjectIndex = async (req, res) => {
     const isSidebarOpen = false; 
     const findSubject = null;
 
-    res.render("subjects", { mytitle: "subjects", originPage: originPage, subject, findSubject, navSubjects,userData ,userRole: userData.role, theme, isSidebarOpen });
+    res.render("subjects", { mytitle: "subjects", originPage: originPage, subject ,findSubject, navSubjects,userData ,userRole: userData.role, theme, isSidebarOpen });
 
   } catch (err) {
     console.error(err);
@@ -325,12 +349,13 @@ const addSubject = async (req, res) => {
     // const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
 
     // console.log(filteredResult);
+    const navSubjects = await getSubjectsForNav(req.session.userId);
     const userData = await User.findById(req.session.userId);
     const theme = req.session.theme || 'light';
     const isSidebarOpen = false;
     const filteredResult = await getUniqueSubjectValues();
     // console.log(filteredResult);
-    res.render("addSubjects", { mytitle: "addSubject", filteredResult: filteredResult || [], formData: {}, error: null ,theme,isSidebarOpen,userData});
+    res.render("addSubjects", { mytitle: "addSubject",navSubjects, filteredResult: filteredResult || [], formData: {}, error: null ,theme,isSidebarOpen,userData});
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -634,7 +659,7 @@ const createSubject = async (req, res, next) => {
     })
 
     await newSubject.save();
-    res.redirect('/adminIndex/adminLessonIndex');
+    res.redirect('/subjects');
   } catch (err) {
     console.error(err);
     // const { subjectId, subjectName, semester, unit, section } = req.body;

@@ -548,7 +548,20 @@
       .status-green {
         background-color: green;
       }
+      .truncate-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
 
+.data-a {
+    text-decoration: none;
+}
+
+.list-div-data:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
       
       @media screen and (max-width: 768px) {
         .above-nav-status {
@@ -859,21 +872,21 @@
                   <% subject.Assignments.forEach(assign => { %>
                     <a href="/adminIndex/assignmentDetail?id=<%= assign._id %>" class="data-a">                    
                       <div class="list-div-data row py-3">
-                      <p class="fs-6 fw-normal grey col-3">
-                        <%= assign.name %>
-                      </p>
-                      <p class="fs-6 fw-normal text-success col-2">
-                        <%= moment(assign.StartDate).format('DD/MM/YYYY HH:mm') %>
-                      </p>
-                      <p class="fs-6 fw-normal text-danger col-2">
-                        <%= moment(assign.Deadline).format('DD/MM/YYYY HH:mm') %>
-                      </p>
-                      <p class="fs-6 fw-normal text-center grey col-3">
-                        <%= assign.sentCount %>
-                      </p>
-                      <p class="fs-6 fw-normal text-success text-center col-1">
-                        <%= assign.Score %>
-                      </p>
+                        <p class="fs-6 fw-normal grey col-3 truncate-text" title="<%= assign.name %>">
+                            <%= assign.name %>
+                        </p>
+                        <p class="fs-6 fw-normal text-success col-2">
+                            <%= moment(assign.StartDate).format('DD/MM/YYYY HH:mm') %>
+                        </p>
+                        <p class="fs-6 fw-normal text-danger col-2">
+                            <%= moment(assign.Deadline).format('DD/MM/YYYY HH:mm') %>
+                        </p>
+                        <p class="fs-6 fw-normal text-center grey col-3">
+                            <%= assign.sentCount %>
+                        </p>
+                        <p class="fs-6 fw-normal text-success text-center col-1">
+                            <%= assign.Score %>
+                        </p>
                     </div>
                   </a>
                   <% }); %>

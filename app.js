@@ -26,6 +26,11 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/elearning"
 
 const app = express();
 
+// ปิดการใช้งาน view cache ในโหมด development
+if (process.env.NODE_ENV !== 'production') {
+    app.disable('view cache');
+  }
+
 app.locals.pluralize = require('pluralize');
 
 
@@ -64,6 +69,9 @@ const Router = require('./routes/Router.js');
 const manageStudent = require('./controller/manageStudent.js');
 const reminderJob = require('./service/countdown.js');
 
+const nocache = require('nocache');
+
+
 const loadNotificationsMiddleware = require('./middleware/notificationMiddleware.js');
 
 // เชื่อม middleware เข้ากับแอป Express
@@ -80,7 +88,7 @@ app.use(logger('dev'));
 // app.use(express.urlencoded({
 //     extended: true
 // }));
-
+app.use(nocache());
 app.use(express.json({ charset: 'utf-8' }));
 app.use(express.urlencoded({ extended: true, charset: 'utf-8' }));
 app.use(cookieParser());

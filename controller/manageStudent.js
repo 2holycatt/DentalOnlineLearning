@@ -750,7 +750,7 @@ const addStudentListsToSubject = async (req, res) => {
         { new: true }
       );
     }
-    res.redirect(`/adminIndex/manageSubject?subjectDbId=${subjectId}`);
+    res.redirect(`/eachSubject?subjectDbId=${subjectId}`);
   } catch (err) {
     console.log(err);
   }

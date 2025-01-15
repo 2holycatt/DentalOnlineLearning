@@ -165,10 +165,19 @@
                     <a href="/studentIndex" class="a-li">หน้าหลัก </a>
                 </li>
                 <li class="li-a show-drop">
-                    <a href="/subjects" class="a-li d-flex">
+                    <a href="#" class="a-li d-flex">
                         ห้องเรียน &nbsp; <i class="bi bi-chevron-down"></i>
                     </a>
                     <ul class="dropdown">
+                        <li class="drop-li my-1">
+                            <a class="a-li" href="/subjects">
+                                รายวิชาทั้งหมด
+                            </a>
+                        </li>
+                        <li class="drop-li li-a show-drop my-1">
+                            <a href="#" class="a-li d-flex">
+                                รายวิชา &nbsp; <i class="bi bi-chevron-down"></i>
+                            </a>
                         <% if (typeof navSubjects !== 'undefined' && navSubjects.length > 0) { %>
                             <% navSubjects.forEach(subject => { %>
                               <li class="drop-li my-1">
@@ -182,6 +191,7 @@
                               <span class="a-li">ไม่มีรายวิชา</span>
                             </li>
                           <% } %>
+                        </li>
                     </ul>
                 </li>
                 

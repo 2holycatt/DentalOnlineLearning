@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const AWS = require('@aws-sdk/client-s3');
 const path = require('path');
 
 // ตั้งค่า AWS S3
