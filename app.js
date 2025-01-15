@@ -21,7 +21,7 @@ const passport = require('passport');
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/elearning";
 
-// const MongoStore = require('connect-mongo');
+const MongoStore = require('connect-mongo');
 // const authRouter = require('./routes/auth');
 
 const app = express();
@@ -112,11 +112,23 @@ app.use('/pdfs', express.static('uploads'));
 // }));
 
 app.use(flash());
+//สำหรับ localhost
+// app.use(session({
+//     secret: "ppw.smw_094",
+//     resave: true,
+//     saveUninitialized: true
+// }));
+
+//สำหรับ Deploy
 app.use(session({
     secret: "ppw.smw_094",
-    resave: true,
-    saveUninitialized: true
-}));
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      ttl: 24 * 60 * 60 // 1 day
+    })
+  }));
 
 // custom middleware for login
 // const ifNotLoggedIn = (req, res, next) => {
