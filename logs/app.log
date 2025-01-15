@@ -875,3 +875,15 @@
 2025-01-15T12:00:23.614Z info: Student logged in: kongkungwan.w@kkumail.com, IP: ::1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
 2025-01-15T12:12:27.038Z info: Teacher logged in: herota151121@gmail.com, IP: ::ffff:127.0.0.1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
 2025-01-15T12:38:14.671Z info: Student logged in: kongkungwan.w@kkumail.com, IP: ::1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
+2025-01-15T16:49:52.611Z info: New teacher created and logged in: herota151121@gmail.com, IP: ::1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
+2025-01-15T17:09:44.085Z info: New user created: herota151121@gmail.com
+2025-01-15T17:10:30.342Z info: Teacher logged in: herota151121@gmail.com, IP: ::1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
+2025-01-15T17:17:53.183Z info: New user created: herota151121@gmail.com
+2025-01-15T17:18:34.854Z info: Teacher logged in: herota151121@gmail.com, IP: ::1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
+2025-01-15T17:19:35.370Z info: New user created: kongkungwan.w@kkumail.com
+2025-01-15T17:20:27.070Z error: Error saving student information: Student validation failed: lname: Path `lname` is required., fname: Path `fname` is required., email: Path `email` is required., IP: ::1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
+2025-01-15T17:20:42.069Z error: Error saving student information: Student validation failed: lname: Path `lname` is required., fname: Path `fname` is required., email: Path `email` is required., IP: ::1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
+2025-01-15T17:22:10.140Z info: Student logged in: kongkungwan.w@kkumail.com, IP: ::1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
+2025-01-15T17:23:40.417Z info: Teacher logged in: herota151121@gmail.com, IP: ::1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
+2025-01-15T17:30:03.912Z info: Teacher logged in: herota151121@gmail.com, IP: ::1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
+2025-01-15T17:30:17.428Z info: Student logged in: kongkungwan.w@kkumail.com, IP: ::1, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0

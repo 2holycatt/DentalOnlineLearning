@@ -28,7 +28,7 @@ const userSchema = new Schema({
     },
     img: {
         type: String,
-        default: 'https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_1280.png'
+        default: 'https://ui-avatars.com/api/?background=random&color=fff&name=User&size=200&font-size=0.5'
     },
     note: {
         type: String,

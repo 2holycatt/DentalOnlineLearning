@@ -325,12 +325,13 @@ const addSubject = async (req, res) => {
     // const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
 
     // console.log(filteredResult);
+    const navSubjects = await getSubjectsForNav(req.session.userId);
     const userData = await User.findById(req.session.userId);
     const theme = req.session.theme || 'light';
     const isSidebarOpen = false;
     const filteredResult = await getUniqueSubjectValues();
     // console.log(filteredResult);
-    res.render("addSubjects", { mytitle: "addSubject", filteredResult: filteredResult || [], formData: {}, error: null ,theme,isSidebarOpen,userData});
+    res.render("addSubjects", { mytitle: "addSubject",navSubjects, filteredResult: filteredResult || [], formData: {}, error: null ,theme,isSidebarOpen,userData});
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -634,7 +635,7 @@ const createSubject = async (req, res, next) => {
     })
 
     await newSubject.save();
-    res.redirect('/adminIndex/adminLessonIndex');
+    res.redirect('/subjects');
   } catch (err) {
     console.error(err);
     // const { subjectId, subjectName, semester, unit, section } = req.body;

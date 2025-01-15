@@ -48,6 +48,8 @@ const authGoogleCallback = async (req, res) => {
             const getRole = user.role;
             req.session.userId = user.id;
             req.session.isLoggedIn = true;
+            req.session.fname = user.fname;  
+            req.session.lname = user.lname;
             //ตรวจสอบว่าโค้ดทั้งหมดที่เกี่ยวข้องกับการตั้งค่าและการใช้งาน session ทำงานถูกต้อง เช่น การเรียก req.session.save()
             //ในบางครั้ง session อาจไม่ถูกบันทึกถ้าหากมีการเปลี่ยนแปลง session object หลังจากที่ response ถูกส่งไปแล้ว
             req.session.save((err) => {
@@ -62,68 +64,71 @@ const authGoogleCallback = async (req, res) => {
                     logger.info(`Student logged in: ${getEmail}, IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
                     return res.redirect('/studentIndex');
                 }
-            });
-        } else if (!user && gmailRegex.test(getEmail)) {
-            const createUser = new User({ email: getEmail, role: 'teacher' });
-            await createUser.save();
-            const createTeacher = new Teacher({ user: createUser._id });
-            await createTeacher.save();
-            await User.findByIdAndUpdate(createUser._id, { $push: { teacher: createTeacher._id } }, { new: true });
-
-            req.session.userId = createUser.id;
-            req.session.save((err) => {
-                if (err) {
-                    logger.error(`Session save error: ${err.message}`);
-                    return res.redirect('/');
-                }
-                logger.info(`New teacher created and logged in: ${getEmail}, IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
-                return res.redirect('/adminIndex');
-            });
-        } else if (!user && kkumailRegex.test(getEmail)) {
-            const createUser = new User({ email: getEmail, role: 'student' });
-            await createUser.save();
-
-            req.session.userId = createUser.id;
-            req.session.save((err) => {
-                if (err) {
-                    logger.error(`Session save error: ${err.message}`);
-                    return res.redirect('/');
-                }
-                logger.info(`New student created: ${getEmail}, IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
-                return res.render('studentInformation', { getUser: createUser });
-            });
-        }
-
-    } catch (err) {
-        logger.error(`Error during Google authentication: ${err.message}`);
-        return res.redirect('/');
-    }
-};
-
-
-const logoutGoogle = async (req, res) => {
-    try {
-        const user = await User.findById(req.session.userId);
-        logger.info(`User logged out: ${user.email}, IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
-        
-        // ทำการลบ session
-        req.session.destroy((err) => {
-            if (err) {
-                return res.status(500).send('Failed to log out.');
+                });
+            } else {
+                // สร้าง user ใหม่โดยดึงข้อมูลจาก Google profile
+                const createUser = await User.create({
+                    email: getEmail,
+                    role: kkumailRegex.test(getEmail) ? "student" : "teacher",
+                    fname: profile.given_name,  // ดึง fname จาก Google
+                    lname: profile.family_name, // ดึง lname จาก Google
+                    name: profile.displayName   // ดึงชื่อเต็มจาก Google
+                });
+    
+                req.session.userId = createUser.id;
+                req.session.isLoggedIn = true;
+                req.session.fname = profile.given_name; // เก็บ fname ใน session
+                req.session.lname = profile.family_name; // เก็บ lname ใน session
+    
+                req.session.save((err) => {
+                    if (err) {
+                        logger.error(`Session save error: ${err.message}`);
+                        return res.redirect('/');
+                    }
+                    logger.info(`New user created: ${getEmail}`);
+                    return res.render('studentInformation', { getUser: createUser });
+                });
             }
+        } catch (err) {
+            logger.error(`Error during Google authentication: ${err.message}`);
+            return res.redirect('/');
+        }
+    };
 
-            // ทำการลบคุกกี้ที่เกี่ยวข้องกับการเข้าสู่ระบบด้วย Google (ถ้ามี)
-            res.clearCookie('google_access_token');
-            res.clearCookie('google_id_token');
-
-            // ทำการลิ้งค์ไปยังหน้าแรกหรือหน้าล็อกอินของเว็บแอปพลิเคชันของคุณ
-            res.redirect('/');
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('An error occurred while logging out.');
-    }
-};
+    const logoutGoogle = async (req, res) => {
+        try {
+            // Check if userId exists in session
+            if (req.session.userId) {
+                const user = await User.findById(req.session.userId);
+                if (user) {
+                    logger.info(`User logged out: ${user.email}, IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
+                } else {
+                    logger.info(`User logged out (user not found in DB), IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
+                }
+            } else {
+                logger.info(`User logged out (no session), IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
+            }
+    
+            // Clear session
+            req.session.destroy((err) => {
+                if (err) {
+                    logger.error(`Logout error: ${err.message}`);
+                    return res.status(500).send('Failed to log out.');
+                }
+    
+                // Clear Google auth cookies
+                res.clearCookie('google_access_token');
+                res.clearCookie('google_id_token');
+                res.clearCookie('connect.sid');
+    
+                // Redirect to home
+                res.redirect('/');
+            });
+        } catch (error) {
+            logger.error(`Logout error: ${error.message}`);
+            res.status(500).send('An error occurred while logging out.');
+        }
+    };
 
 
 const ifNotLoggedIn = async (req, res, next) => {

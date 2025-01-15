@@ -106,9 +106,17 @@ app.use('/pdfs', express.static('uploads'));
 app.use(flash());
 app.use(session({
     secret: "ppw.smw_094",
-    resave: true,
-    saveUninitialized: true
-}));
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ 
+      mongoUrl: process.env.MONGO_URI || "mongodb://127.0.0.1:27017/elearning",
+      ttl: 24 * 60 * 60 // หมดอายุใน 1 วัน
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000 // 1 วัน
+    }
+  }));
 
 // custom middleware for login
 // const ifNotLoggedIn = (req, res, next) => {
