@@ -7,7 +7,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 // const winston = require('../logs/logger');
 const mongoose = require('mongoose')
-// const { MongoClient, GridFSBucket } = require('mongodb');
+const { MongoClient, GridFSBucket } = require('mongodb');
 const flash = require('connect-flash')
 const session = require("express-session")
 // const { body, validatorResult } = require('express-validator');
@@ -20,7 +20,7 @@ const passport = require('passport');
 // const LessonProgress = require('./models/lessonsProgress'); // นำเข้ารุ่น (model) LessonProgress
 
 // const PORT = process.env.PORT || 4000;
-// const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/elearning";
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/elearning";
 
 const MongoStore = require('connect-mongo');
 // const authRouter = require('./routes/auth');
@@ -126,7 +126,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI,
+      mongoUrl: MONGO_URI,
     }),
     cookie: {
       secure: process.env.NODE_ENV === 'production',
@@ -187,7 +187,7 @@ var type = upload.single('file');
 
 // const url = "mongodb://localhost:27017/Elearning";
 
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 30000,
@@ -270,6 +270,23 @@ app.use(function (err, req, res, next) {
     // render the error page
     res.status(err.status || 500);
     res.render('error');
+});
+
+// Create server with proper timeout settings
+const http = require('http');
+const server = http.createServer(app);
+
+// Increase timeout settings
+server.keepAliveTimeout = 120000; // 120 seconds
+server.headersTimeout = 120000; // 120 seconds
+
+// Get port from environment and store in Express
+const port = process.env.PORT || 10000;
+app.set('port', port);
+
+// Listen on provided port, on all network interfaces
+server.listen(port, '0.0.0.0', () => {
+    console.log(`Server running on port ${port}`);
 });
 
 
