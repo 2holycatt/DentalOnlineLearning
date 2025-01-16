@@ -12,6 +12,7 @@ const multer = require('multer');
 const flash = require('connect-flash');
 const nocache = require('nocache');
 const http = require('http');
+
 const Notification = require('./models/notification'); // เปลี่ยน path ตามที่ถูกต้อง
 
 
@@ -92,8 +93,51 @@ app.use(cors());
 app.use(flash());
 app.use(loadNotificationsMiddleware);
 
+// Add base URL configuration
+const BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://dentalonlinelearning.onrender.com'
+  : 'http://localhost:10000';
+  app.locals.baseUrl = BASE_URL;
 
+//สำหรับ localhost
+// app.use(session({
+//     secret: "ppw.smw_094",
+//     resave: true,
+//     saveUninitialized: true
+// }));
 
+//สำหรับ Deploy
+
+app.use(session({
+    secret: "ppw.smw_094",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: MONGO_URI,
+        ttl: 24 * 60 * 60
+    }),
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000,
+        domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined,
+        sameSite: 'lax'
+      }
+}));
+
+app.use((req, res, next) => {
+    if (req.isAuthenticated) {
+      passport.deserializeUser(req.user, (err, user) => {
+        if (err) return next(err);
+        req.user = user;
+        next();
+      });
+    } else {
+      next();
+    }
+  });
+  
+  // Update routing
+  app.use('/', Router);
 // //session_middleware
 // app.use(session({
 //     secret: 'keyboard cat',
@@ -105,28 +149,25 @@ app.use(loadNotificationsMiddleware);
 //     }
 // }));
 mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverSelectionTimeoutMS: 30000,
     socketTimeoutMS: 45000,
-    family: 4
+    family: 4,
 })
     .then(() => {
         console.log("Connected to MongoDB Atlas");
+
         const server = http.createServer(app);
-    
         // Increase timeout settings
         server.keepAliveTimeout = 120000; // 120 seconds
         server.headersTimeout = 120000; // 120 seconds
         
         // Get port from environment and store in Express
         const port = process.env.PORT || 10000;
-        const host = '0.0.0.0';
-        // Start Express server หลังจากที่ MongoDB เชื่อมต่อเรียบร้อยแล้ว
+        const host = process.env.NODE_ENV === 'production' ? 'dentalonlinelearning' : '0.0.0.0';
+        
         server.listen(port, host, () => {
-            console.log(`Server running at http://${host}:${port}/`);
+          console.log(`Server running on ${host}:${port}`);
         });
-
     })
     .catch(err => {
         console.error('MongoDB connection error:', err);
@@ -134,27 +175,7 @@ mongoose.connect(MONGO_URI, {
     });
 
 
-//สำหรับ localhost
-// app.use(session({
-//     secret: "ppw.smw_094",
-//     resave: true,
-//     saveUninitialized: true
-// }));
 
-//สำหรับ Deploy
-app.use(session({
-    secret: "ppw.smw_094",
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: MONGO_URI,
-        ttl: 24 * 60 * 60
-    }),
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000
-    }
-}));
 
 // custom middleware for login
 // const ifNotLoggedIn = (req, res, next) => {

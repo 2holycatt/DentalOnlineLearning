@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "webpack --mode production",
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "node app",
+    "dev": "nodemon app"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.726.1",
