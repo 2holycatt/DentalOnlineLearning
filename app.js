@@ -1,36 +1,44 @@
 require('dotenv').config();
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-const Jimp = require('jimp');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
+const passport = require('passport');
+const multer = require('multer');
+const flash = require('connect-flash');
+const nocache = require('nocache');
+const http = require('http');
+const Notification = require('./models/notification'); // เปลี่ยน path ตามที่ถูกต้อง
+
+
+const Router = require('./routes/Router.js');
+const manageStudent = require('./controller/manageStudent.js');
+const loadNotificationsMiddleware = require('./middleware/notificationMiddleware.js');
+const app = express();
+const MONGO_URI = process.env.MONGO_URI;
+
 // const winston = require('../logs/logger');
-const mongoose = require('mongoose')
-const { MongoClient, GridFSBucket } = require('mongodb');
-const flash = require('connect-flash')
-const session = require("express-session")
+// const { MongoClient, GridFSBucket } = require('mongodb');
 // const { body, validatorResult } = require('express-validator');
 // const cookieSession = require("cookie-session")
 // const fetch = require("node-fetch");
 // const fs = require('fs');
-var multer = require('multer');
-const cors = require('cors');
-const passport = require('passport');
 // const LessonProgress = require('./models/lessonsProgress'); // นำเข้ารุ่น (model) LessonProgress
 
-// const PORT = process.env.PORT || 4000;
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/elearning";
 
-const MongoStore = require('connect-mongo');
 // const authRouter = require('./routes/auth');
 
-const app = express();
+
+// const PORT = process.env.PORT || 4000;
 
 // ปิดการใช้งาน view cache ในโหมด development
 if (process.env.NODE_ENV !== 'production') {
     app.disable('view cache');
-  }
+}
 
 app.locals.pluralize = require('pluralize');
 
@@ -49,31 +57,12 @@ app.locals.pluralize = require('pluralize');
 // const xlsx = require('xlsx');
 const upload = multer({ dest: 'uploads/' });
 
-// const Layout1 = require('./models/Layout1');
-// const Layout2 = require('./models/Layout2');
-// const Layout3 = require('./models/Layout3');
-// const Layout4 = require('./models/Layout4');
-// const Lesson = require('./models/Lessons');
-// const subject = require('./models/subjects');
-
-// const User = require('./models/user.model');
-// const Student = require('./models/student.model');
-// const addAthlete = require('./models/AthleteOat')
-// const addEvent = require('./models/Event')
-// // const addMatch = require('./models/Match')
-// const addTeam = require('./models/Team')
-
-// const addMatch = require('./models/EventOat')
 
 
-const Router = require('./routes/Router.js');
-const manageStudent = require('./controller/manageStudent.js');
 const reminderJob = require('./service/countdown.js');
 
-const nocache = require('nocache');
 
 
-const loadNotificationsMiddleware = require('./middleware/notificationMiddleware.js');
 
 // เชื่อม middleware เข้ากับแอป Express
 
@@ -84,11 +73,13 @@ const loadNotificationsMiddleware = require('./middleware/notificationMiddleware
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use(logger('dev'));
+
 // app.use(express.json());
 // app.use(express.urlencoded({
 //     extended: true
 // }));
+
+app.use(logger('dev'));
 app.use(nocache());
 app.use(express.json({ charset: 'utf-8' }));
 app.use(express.urlencoded({ extended: true, charset: 'utf-8' }));
@@ -96,10 +87,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.static(path.join(__dirname, 'uploads')))
 app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
-
+app.use('/pdfs', express.static('uploads'));
+app.use(cors());
+app.use(flash());
 app.use(loadNotificationsMiddleware);
 
-app.use('/pdfs', express.static('uploads'));
+
 
 // //session_middleware
 // app.use(session({
@@ -113,23 +106,34 @@ app.use('/pdfs', express.static('uploads'));
 // }));
 mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 30000,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 30000,
+    socketTimeoutMS: 45000,
+    family: 4
 })
     .then(() => {
-        console.log("Connected to MongoDB");
+        console.log("Connected to MongoDB Atlas");
+        const server = http.createServer(app);
+    
+        // Increase timeout settings
+        server.keepAliveTimeout = 120000; // 120 seconds
+        server.headersTimeout = 120000; // 120 seconds
+        
+        // Get port from environment and store in Express
+        const port = process.env.PORT || 10000;
+        const host = '0.0.0.0';
         // Start Express server หลังจากที่ MongoDB เชื่อมต่อเรียบร้อยแล้ว
-        app.listen(process.env.PORT, () => {
-            console.log("Express server is running on " + process.env.PORT);
+        server.listen(port, host, () => {
+            console.log(`Server running at http://${host}:${port}/`);
         });
 
     })
     .catch(err => {
         console.error('MongoDB connection error:', err);
         process.exit(1);
-      });
-      
-app.use(flash());
+    });
+
+
 //สำหรับ localhost
 // app.use(session({
 //     secret: "ppw.smw_094",
@@ -143,13 +147,14 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: MONGO_URI,
+        mongoUrl: MONGO_URI,
+        ttl: 24 * 60 * 60
     }),
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000
     }
-  }));
+}));
 
 // custom middleware for login
 // const ifNotLoggedIn = (req, res, next) => {
@@ -202,7 +207,6 @@ var type = upload.single('file');
 
 
 
-// const url = "mongodb://localhost:27017/Elearning";
 
 
 // mongoose.connect(MONGO_URI, {
@@ -236,7 +240,6 @@ app.use((req, res, next) => {
         next();
     }
 });
-app.use(cors());
 app.use(passport.session());
 // app.use('/', authRouter);
 // app.use('/teacher', authRouter);
@@ -272,23 +275,41 @@ app.use(function (err, req, res, next) {
 });
 
 // Create server with proper timeout settings
-const http = require('http');
-const server = http.createServer(app);
+// const http = require('http');
+// const server = http.createServer(app);
 
-// Increase timeout settings
-server.keepAliveTimeout = 120000; // 120 seconds
-server.headersTimeout = 120000; // 120 seconds
+// // Increase timeout settings
+// server.keepAliveTimeout = 120000; // 120 seconds
+// server.headersTimeout = 120000; // 120 seconds
 
-// Get port from environment and store in Express
-const port = process.env.PORT || 10000;
-app.set('port', port);
+// // Get port from environment and store in Express
+// const port = process.env.PORT || 10000;
+// const host = '0.0.0.0';
 
-// Listen on provided port, on all network interfaces
-server.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on port ${port}`);
-});
+// // Start server after MongoDB connects
+// mongoose.connection.once('open', () => {
+//     server.listen(port, host, () => {
+//         console.log(`Server running at http://${host}:${port}/`);
+//     });
+// });
 
+// Handle server errors
+// server.on('error', (error) => {
+//     if (error.syscall !== 'listen') {
+//       throw error;
+//     }
+//     console.error(`Failed to start server: ${error}`);
+//     process.exit(1);
+//   });
 
-
+async function fetchNotification() {
+    try {
+        const docs = await Notification.find().maxTimeMS(5000);
+        console.log('Notification:', docs);
+    } catch (err) {
+        console.error('Error loading notifications:', err);
+    }
+}
+fetchNotification();
 
 module.exports = app;
