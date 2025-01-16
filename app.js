@@ -111,7 +111,24 @@ app.use('/pdfs', express.static('uploads'));
 //         maxAge: 1000 * 60 * 60 * 24
 //     }
 // }));
+mongoose.connect(MONGO_URI, {
+    useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000,
+})
+    .then(() => {
+        console.log("Connected to MongoDB");
+        // Start Express server หลังจากที่ MongoDB เชื่อมต่อเรียบร้อยแล้ว
+        app.listen(process.env.PORT, () => {
+            console.log("Express server is running on " + process.env.PORT);
+        });
 
+    })
+    .catch(err => {
+        console.error('MongoDB connection error:', err);
+        process.exit(1);
+      });
+      
 app.use(flash());
 //สำหรับ localhost
 // app.use(session({
@@ -187,25 +204,7 @@ var type = upload.single('file');
 
 // const url = "mongodb://localhost:27017/Elearning";
 
-mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 30000,
-  socketTimeoutMS: 45000,
-  family: 4
-})
-    .then(() => {
-        console.log("Connected to MongoDB");
-        // Start Express server หลังจากที่ MongoDB เชื่อมต่อเรียบร้อยแล้ว
-        app.listen(process.env.PORT, () => {
-            console.log("Express server is running on " + process.env.PORT);
-        });
 
-    })
-    .catch(err => {
-        console.error('MongoDB connection error:', err);
-        process.exit(1);
-      });
 // mongoose.connect(MONGO_URI, {
 //     useNewUrlParser: true,
 //     useUnifiedTopology: true,
