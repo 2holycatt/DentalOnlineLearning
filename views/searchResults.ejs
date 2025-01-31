@@ -9,6 +9,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <%- include("./partials/header.ejs")%>
+    <script>
+        function highlightText(text, query) {
+            if (!query || !text) return text;
+            try {
+                const regex = new RegExp(`(${query})`, 'gi');
+                return text.replace(regex, '<mark class="highlight">$1</mark>');
+            } catch (e) {
+                return text;
+            }
+        }
+        </script>
         <style>
             * {
                 box-sizing: border-box !important;
@@ -199,7 +210,7 @@
             }
 
             .lesson-bar {
-                border-left: 0.25em solid #007bff !important;
+                border-left: 0.25em solid #8A2BE2 !important;
                 padding-left: 0.5em !important;
                 margin-right: 0.5em !important;
 
@@ -213,6 +224,43 @@
                 color: #0053ac !important;
             }
 
+            .highlight {
+                background-color: yellow;
+                font-weight: bold;
+            }
+
+            .result {
+                padding: 15px;
+                margin-bottom: 20px;
+                border-bottom: 1px solid lightgray;
+            }
+
+            .dark .result {
+              
+                border-bottom: 1px solid gray;
+            }
+
+            .result-title {
+                color: #007bff;
+                margin-bottom: 10px;
+            }
+            .result-title:hover {
+                color: #0055b1;
+            }
+            .dark .result-title{
+                color: #5AA7FF ;
+            }
+            .dark .result-title:hover{
+                color: #4f93e0 ;
+            }
+            .result-content {
+                color: #34495e;
+                line-height: 1.6;
+            }
+            .dark .result-content {
+                color: #bdc3c7;
+            }
+
             @media screen and (max-width: 768px) {
                 .above-nav-status {
                     display: none;
@@ -224,6 +272,7 @@
 </head>
 
 
+
 <body>
     <% if (userData.role==='teacher' ) { %>
         <%- include("./partials/nav2.ejs", { theme: theme, isSidebarOpen: isSidebarOpen }) %>
@@ -233,6 +282,7 @@
 
 
                         <div class="main-content d-flex">
+
                             <% if (userData.role==='teacher' ) { %>
                                 <%- include("./partials/lessonsList.ejs")%>
                                     <% } else { %>
@@ -248,74 +298,122 @@
 
                                                     <!-- Section for Lessons -->
                                                     <div class="lesson-content p-4 bg-white w-100 my-4 mx-2">
-                                                        <% if (lessons.length==0) { %>
+                                                        <% 
+                                                        // 1. Find matching items first
+                                                        const matchingLessons = lessons.filter(l => 
+                                                            l.LessonName.toLowerCase().includes(searchQuery.toLowerCase())
+                                                        );
+                                                        
+                                                        // Filter quizzes based on role and isReleased status
+                                                        const matchingQuizzes = quiz.filter(q => {
+                                                            const quizNameMatches = q.quizname.toLowerCase().includes(searchQuery.toLowerCase());
+                                                            if (userData.role === 'student') {
+                                                                return quizNameMatches && q.isReleased === true;
+                                                            }
+                                                            return quizNameMatches;
+                                                        });
+                                                        
+                                                        
+                                                        const matchingAssignments = assignments.filter(a => 
+                                                            a.name.toLowerCase().includes(searchQuery.toLowerCase())
+                                                        );
+                                                    
+                                                        // 2. Get all subjects that contain matching items
+                                                        const subjectsWithMatchingItems = subjects.filter(subject => {
+                                                            return lessons.some(l => 
+                                                                l.subject.toString() === subject._id.toString() && 
+                                                                l.LessonName.toLowerCase().includes(searchQuery.toLowerCase())
+                                                            ) || 
+                                                            quiz.some(q => {
+                                                                const quizMatches = q.subject.subjectMongooseId.toString() === subject._id.toString() && 
+                                                                                  q.quizname.toLowerCase().includes(searchQuery.toLowerCase());
+                                                                if (userData.role === 'student') {
+                                                                    return quizMatches && q.isReleased === true;
+                                                                }
+                                                                return quizMatches;
+                                                        }) ||
+                                                            assignments.some(a => 
+                                                                a.subject.toString() === subject._id.toString() && 
+                                                                a.name.toLowerCase().includes(searchQuery.toLowerCase())
+                                                            );
+                                                        });
+                                                    
+                                                        // 3. Get subjects that match the query directly
+                                                        const matchingSubjects = subjects.filter(subject =>
+                                                            subject.subjectId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                                            subject.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                                            subject.semester.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                                            subject.section.toLowerCase().includes(searchQuery.toLowerCase())
+                                                        );
+                                                    
+                                                        // 4. Combine unique subjects
+                                                        const allSubjectsToShow = [...new Set([...subjectsWithMatchingItems, ...matchingSubjects])];
+                                                    
+                                                        if (allSubjectsToShow.length === 0) { %>
                                                             <div class="d-flex">
                                                                 <div class="set-border">
-                                                                    <p class="fw-bold fs-5 my-1 mx-2">ไม่พบบทเรียน</p>
-                                                                </div>
-                                                            </div>
-                                                            <% } else { %>
-                                                                <div class="set-border d-flex">
-                                                                    <p class="fw-bold fs-5 my-1 mx-2"
-                                                                        style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">
-                                                                        บทเรียน</p>
-                                                                    <% lessons.forEach(lesson=> { %>
-                                                                        <a
-                                                                            href="<%= userData.role === 'teacher' ? '/adminIndex/eachLessons?lessonId=' + lesson._id : '/studentIndex/eachLessons?lessonId=' + lesson._id %>">
-                                                                            <div class="card-1 text-bg-white mb-3">
-                                                                                <p class="text-break">
-                                                                                    <%= lesson.LessonName %>
-                                                                                </p>
-                                                                            </div>
-                                                                        </a>
-                                                                        <% }) %>
-                                                                </div>
-                                                                <% } %>
-                                                    </div>
-
-                                                    <!-- Section for Quizzes -->
-                                                    <div class="lesson-content p-4 bg-white w-100 my-4">
-                                                        <% if (quiz.length == 0) { %>
-                                                            <div class="d-flex">
-                                                                <div class="set-border">
-                                                                    <p class="fw-bold fs-5 my-1 mx-2">ไม่พบแบบทดสอบ</p>
+                                                                    <p class="fw-bold fs-5 my-1 mx-2">ไม่พบผลการค้นหา</p>
                                                                 </div>
                                                             </div>
                                                         <% } else { %>
-
-                                                                <% let foundReleasedQuiz = false; %> <!-- ตัวแปรสำหรับเช็คว่าพบแบบทดสอบหรือไม่ -->
+                                                            <% allSubjectsToShow.forEach(subject => { 
+                                                                const subjectLessons = matchingLessons.filter(l => 
+                                                                    l.subject.toString() === subject._id.toString()
+                                                                );
+                                                                
+                                                                const subjectQuizzes = matchingQuizzes.filter(q => 
+                                                                    q.subject.subjectMongooseId.toString() === subject._id.toString()
+                                                                );
+                                                                
+                                                                const subjectAssignments = matchingAssignments.filter(a => 
+                                                                    a.subject.toString() === subject._id.toString()
+                                                                );
                                                     
-                                                                <% quiz.forEach(quiz => { %>
-                                                                    <% if (userData.role === 'teacher' || (userData.role === 'student' && quiz.isReleased)) { %>
-                                                                        <% foundReleasedQuiz = true; %> <!-- ตั้งค่าเป็น true ถ้าพบแบบทดสอบ -->
-
-                                                            <div class="set-border d-flex">
-                                                                <p class="fw-bold fs-5 my-1 mx-2"
-                                                                    style="border-left: 0.25em solid #387bef; padding-left: 0.75em !important;">
-                                                                    แบบทดสอบ
-                                                                </p>
+                                                                // Show subject if it has matching items or matches query directly
+                                                                if (subjectLessons.length > 0 || subjectQuizzes.length > 0 || subjectAssignments.length > 0 || 
+                                                                    subject.subjectId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                                                    subject.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                                                    subject.semester.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                                                    subject.section.toLowerCase().includes(searchQuery.toLowerCase())) { %>
+                                                                    <div class="result mb-4">
+                                                                        <h4 class="result-title">
+                                                                            <a href="/eachSubject?subjectDbId=<%= subject._id %>" class="text-decoration-none result-title">
+                                                                                <%= subject.subjectId + ' ' + subject.subjectName + ' ' + subject.semester + ' กลุ่มที่: ' + subject.section %>
+                                                                            </a>
+                                                                        </h4>
                                                     
-                                                                        <a href="<%= userData.role === 'teacher' ? '/adminIndex/eachQuiz?quizId=' + quiz._id : '/studentIndex/eachQuiz?quizId=' + quiz._id %>">
-                                                                            <div class="card-1 text-bg-white mb-3">
-                                                                                <p class="text-break">
-                                                                                    <%= quiz.quizname %>
-                                                                                </p>
+                                                                        <% if (subjectLessons.length > 0) { %>
+                                                                            <div class="result-content mb-2">
+                                                                                <strong>บทเรียนในรายวิชา:</strong> 
+                                                                                <%= subjectLessons.map(l => l.LessonName).join(', ') %>
                                                                             </div>
-                                                                        </a>
-                                                                    <% } %>
-                                                                <% }) %>
+                                                                        <% } %>
                                                     
-                                                                <% if (!foundReleasedQuiz && userData.role === 'student') { %>
-                                                                    <p class="fw-bold fs-5 my-1 mx-2">ไม่พบแบบทดสอบ</p>
+                                                                        <% if (subjectQuizzes.length > 0) { %>
+                                                                            <div class="result-content mb-2">
+                                                                                <strong>แบบทดสอบในรายวิชา:</strong> 
+                                                                                <%= subjectQuizzes.map(q => q.quizname).join(', ') %>
+                                                                            </div>
+                                                                        <% } %>
+                                                    
+                                                                        <% if (subjectAssignments.length > 0) { %>
+                                                                            <div class="result-content mb-2">
+                                                                                <strong>งานที่มอบหมายในรายวิชา:</strong> 
+                                                                                <%= subjectAssignments.map(a => a.name).join(', ') %>
+                                                                            </div>
+                                                                        <% } %>
+                                                                    </div>
                                                                 <% } %>
-                                                            </div>
+                                                            <% }) %>
                                                         <% } %>
                                                     </div>
-                                                    
-                                                    
+
+
+
+
                                                 </div>
                         </div>
-                    </div>
+                        </div>
                         <%- include("./partials/footer.ejs")%>
                             <script>
                                 AOS.init();
@@ -352,6 +450,8 @@
 
 
                                 });
+
+                           
                             </script>
 
 

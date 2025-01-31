@@ -1020,7 +1020,12 @@
             opacity: 0.8;
             /* ลดความโปร่งแสงขณะลาก */
         }
-
+        .dark .text-primary{
+        color:#5AA7FF !important;
+      }
+  .dark .btn-primary{
+    background-color: #0866FF !important;
+  }
         @media screen and (max-width: 768px) {
             body {
                 width: 120%;
@@ -1052,12 +1057,12 @@
                         </a>
                     </div>
                     <div class="modal-body">
-                        <form id="formimage">
+                        <form id="formimage" enctype="multipart/form-data">
                             <input class="form-control form-control-lg" style="width: 100%;" id="avatar" type="file"
                                 accept="image/*" onchange="readURL(this);">
                             <input type="submit" id="submit_image" value="Submit" style="display: none;" />
                         </form>
-                        <img id="preview_image" src="" alt="your image" style="height: 100px; display: none;">
+                        <img id="preview_image" src="" alt="Preview" style="max-width: 300px; margin-top: 10px; display: none;">
                         <div class="loader" id="loader" style="display: none;">
                             <svg class="svgloader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1728 1296">
                                 <rect x="153.55" y="492.48" width="311.04" height="311.04" fill="#ff499e" />
@@ -1341,6 +1346,79 @@
 
 
         <script>
+            let currentQuestionId = null;
+
+function selectedbody(questionId) {
+    currentQuestionId = questionId;
+    // Reset form and preview
+    document.getElementById('formimage').reset();
+    document.getElementById('preview_image').style.display = 'none';
+}
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('preview_image');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function savechanges() {
+    const formData = new FormData();
+    const fileInput = document.getElementById('avatar');
+    
+    if (!fileInput.files[0]) return;
+
+    formData.append('avatar', fileInput.files[0]);
+    formData.append('questionId', currentQuestionId);
+    
+    document.getElementById('loader').style.display = 'block';
+
+    fetch(`/uploadQuestionImage?quizId=<%= quiz._id %>`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Add or update image in question container
+            const questionEl = document.getElementById(currentQuestionId);
+            const imageContainer = questionEl.querySelector('.question-image') || 
+                                 document.createElement('div');
+            imageContainer.className = 'question-image';
+            imageContainer.style.marginTop = '10px';
+            imageContainer.innerHTML = `
+                <img src="${data.imageUrl}" style="max-width: 300px;">
+            `;
+            
+            // Insert image at the top of question
+            if (!questionEl.querySelector('.question-image')) {
+                questionEl.insertBefore(imageContainer, questionEl.firstChild);
+            }
+            
+            // Update questions array
+            const questionIndex = currentQuestionId.split('_')[1];
+            questions[questionIndex].questionImage = {
+                url: data.imageUrl
+            };
+            
+            // Close modal
+            $('#exampleModalLong').modal('hide');
+            
+            // Autosave
+            autosave();
+        }
+    })
+    .catch(err => console.error('Upload error:', err))
+    .finally(() => {
+        document.getElementById('loader').style.display = 'none';
+    });
+}
+
             let debounceTimer;
 
             function autosave() {
@@ -1490,31 +1568,47 @@
                 }
             }
             // upload image 
-            document.getElementById('formimage').onsubmit = function (event) {
-                event.preventDefault() // prevent form from posting without JS
-                var xhttp = new XMLHttpRequest(); // create new AJAX request
-
-                xhttp.onreadystatechange = function () {
-                    if (this.readyState == 4 && this.status == 200) { // sucess from server
-                        document.getElementById("status").innerHTML = 'Done';
-                        document.getElementById("preview_image").style.display = "block";
-                        currentImagestatue = this.responseText
-                        console.log(currentImagestatue)
-                        animation()
-                    } else { // errors occured
-                        document.getElementById("status").innerHTML = 'failed';
-                        currentImagestatue = "none"
-                        console.log(currentImagestatue)
-                        animation()
-                    }
-                }
-
-                xhttp.open("POST", "upload")
-                var formData = new FormData()
-                // the text data
-                formData.append('avatar', document.getElementById('avatar').files[0]) // since inputs allow multi files submission, therefore files are in array
-                xhttp.send(formData)
+            document.getElementById('formimage').onsubmit = async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    const fileInput = document.getElementById('avatar');
+    const quizId = document.querySelector('[name="quizId"]').value;
+    
+    formData.append('avatar', fileInput.files[0]);
+    formData.append('questionId', currentQuestionId);
+    
+    document.getElementById('loader').style.display = 'block';
+    
+    try {
+        const response = await fetch(`/uploadQuestionImage?quizId=${quizId}`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            const questionEl = document.getElementById(currentQuestionId);
+            const imgEl = questionEl.querySelector('.question-image') || 
+                         document.createElement('img');
+            
+            imgEl.src = data.imageUrl;
+            imgEl.className = 'question-image';
+            imgEl.style.maxWidth = '300px';
+            
+            if (!questionEl.querySelector('.question-image')) {
+                questionEl.insertBefore(imgEl, questionEl.firstChild);
             }
+            
+            $('#exampleModalLong').modal('hide');
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+    } finally {
+        document.getElementById('loader').style.display = 'none';
+    }
+};
+            
             let questions = <%- JSON.stringify(questions) %>;
 
 
@@ -1691,7 +1785,7 @@
                     </div>
                 `).join('') : ''}
             </div>
-            <a class="double_item" style="color:primary; cursor: pointer;margin-left:0 !important" onclick="addShortAnswer(${index})">เพิ่มคำตอบ</a>
+            <a class="double_item text-primary" style="cursor: pointer;margin-left:0 !important" onclick="addShortAnswer(${index})">เพิ่มคำตอบ</a>
            
         `;
                 }
@@ -1775,6 +1869,16 @@
                     questionDiv.className = 'question grab';
                     questionDiv.id = `question_${i}`;
 
+                     // Add image if exists
+                 if (question.questionImage && question.questionImage.url) {
+                 questionDiv.innerHTML = `
+                        <div class="question-image" style="margin-top: 10px;">
+                         <img src="${question.questionImage.url}" style="max-width: 300px;">
+                     </div>
+                    ` + questionDiv.innerHTML;
+                 }
+
+
                     questionDiv.innerHTML = `
             <div class="first">
                 <input class="input-question" type="text" style="width: 60%;" name="questions_${i}" value="${question.questionText}" oninput="changeQuestion(this.value, ${i})">
@@ -1795,15 +1899,15 @@
                 ${renderOptions(question, i)}
             </div>
             ${question.questionType !== 'Paragraph' && question.questionType !== 'short_answ' ? `
-                <a class="double_item" style="color:primary; cursor: pointer;" onclick="addOption(${i})">เพิ่มตัวเลือก</a>
+                <a class="double_item text-primary" style=" cursor: pointer;" onclick="addOption(${i})">เพิ่มตัวเลือก</a>
             ` : ''}
             ${question.questionType === 'short_answ' ? `<div class="">คำตอบที่ถูกต้อง: <span style='color:yellowgreen;'>${question.answerTexts ? question.answerTexts.join(', ') : ''}</span></div>` : ''}
             <br>
             <div class="add_footer">
                 <div className='add_question_bottom_left'>
-                    <a class="answer_key"
-                    style="color:primary; cursor: pointer; display: inline-flex; padding: 2px;"
-                    onclick="addAnswer(${i})"><i class="bi bi-check2-square me-1"></i> เฉลยคำตอบ</a><span style="color:lightgray; margin-left: 1rem;">(${question.points} คะแนน)</span>
+                    <a class="answer_key text-primary"
+                    style=" cursor: pointer; display: inline-flex; padding: 2px;"
+                    onclick="addAnswer(${i})"><i class="bi bi-check2-square me-1"></i> เฉลยคำตอบ</a><span class='grey' style=" margin-left: 1rem;">(${question.points} คะแนน)</span>
                 </div>
                 <div class="add_question_bottom">
                     <button type="button" class="btn btn-outline-secondary me-2" onclick="copyQuestion(${i})"><i class="bi bi-copy"></i></button>

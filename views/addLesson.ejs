@@ -373,9 +373,15 @@
     <div class="aside-right w-75 h-auto p-4 m-3 bg-white">
       <div class="manange-bar p-3 bg-white d-flex w-100">
         <p class="fw-bold fs-3 lesson-bar">เพิ่มบทเรียน</p>
-        <a href="/adminIndex/adminLessonIndex" class="add-button btn btn-primary m-0 p-2">
-          ยกเลิกการเพิ่ม<i class="bi bi-x-circle-fill mx-2"></i>
-        </a>
+        <% if (typeof subject !== 'undefined' && subject) { %>
+          <a href="/eachSubject?subjectDbId=<%= subject._id %>" class="add-button btn btn-primary m-0 p-2">
+              ยกเลิกการเพิ่ม<i class="bi bi-x-circle-fill mx-2"></i>
+          </a>
+      <% } else { %>
+          <a href="#" onclick="history.back(); return false;" class="add-button btn btn-primary m-0 p-2">
+              ยกเลิกการเพิ่ม<i class="bi bi-x-circle-fill mx-2"></i>
+          </a>
+      <% } %>
       </div>
       <div class="lesson-content p-4 bg-white w-100 my-4" style="height: auto;">
         <div class="set-border-bottom col-12">

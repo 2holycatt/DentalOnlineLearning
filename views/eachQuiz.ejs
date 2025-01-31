@@ -6,8 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%=quiz.quizname%></title>
   <!-- <link rel="stylesheet" href="/css/event.css"> -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
-  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
 
   <!-- <link rel="stylesheet" href="/css/getMoreAddContent.css"> -->
@@ -1273,7 +1271,14 @@
         z-index: 1050 !important;
         /* ให้แน่ใจว่า dropdown อยู่ด้านบน */
       }
-      .link:hover{
+      
+      .link{
+        color: gray;
+      }
+      .dark .link{
+        color: rgb(231, 231, 231);
+      }
+      .dark .link:hover ,.link:hover{
         text-decoration: underline;
         color: #ba55d3 !important;
       }
@@ -1304,16 +1309,20 @@
     </a>
 
   </div> -->
-    <!-- อยากเพิ่มปุ่ม ปล่อยแบบทดสอบ -->
+    <!-- อยากเพิ่มปุ่ม เผยแพร่แบบทดสอบ -->
 
     <div class="main-content d-flex w-100 h-auto">
       <%- include("./partials/lessonsList.ejs")%>
         <div class="row allCOntent m-3" style="width: 80% !important;">
           <div class="col-12 aside-right px-4 py-4 bg-white" style="width: 100% !important;">
             <div class="manange-bar p-4 bg-white w-100">
-              <div class="fw-normal fs-6 lesson-bar ms-2"> <a class="grey link" href="/eachSubject?subjectDbId=<%=subject._id%>">
+              
+              <div class="fw-normal fs-6  ms-2"> 
+                <span><i class="bi bi-card-checklist me-2" style="color: #8A2BE2;"></i> </span>
+                <a class="link" href="/eachSubject?subjectDbId=<%=subject._id%>">
                 <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%></a> 
-              <span> </span>
+             
+            <span> / แบบทดสอบ: <%=quiz.quizname%></span> 
             </div>
               <br>
               <p class="fw-normal fs-3 ms-2 ">
@@ -1369,7 +1378,7 @@
                     เพิ่มคำถาม<i class="bi bi-plus-circle-fill ms-2"></i>
                   </a> -->
                   <% if (!quiz.releaseWhen) { %>
-                    <!-- แสดงปุ่มแก้ไขและปล่อยแบบทดสอบ เมื่อยังไม่ได้ปล่อย -->
+                    <!-- แสดงปุ่มแก้ไขและเผยแพร่แบบทดสอบ เมื่อยังไม่ได้เผยแพร่ -->
                     <a href="/adminIndex/eachQuiz?quizId=<%= quiz._id %>/edit"
                       class="add-button btn btn-warning my-2 ms-2 p-2" style="color: white;">
                       <span class="text_btn">แก้ไข</span>
@@ -1384,7 +1393,7 @@
 
                     <div class="btn-group p-2">
                       <button type="button" class="btn btn-primary px-2"
-                        onclick="confirmRelease('<%= quiz._id %>')">ปล่อยแบบทดสอบ</button>
+                        onclick="confirmRelease('<%= quiz._id %>')">เผยแพร่</button>
                       <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split px-1"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="visually-hidden">Toggle Dropdown</span>
@@ -1392,7 +1401,7 @@
                       <ul class="dropdown-menu">
                         <li>
                           <a class="dropdown-item" href="#"
-                            onclick="openReleaseQuizModal('<%= quiz._id %>')">ตั้งเวลาปล่อย</a>
+                            onclick="openReleaseQuizModal('<%= quiz._id %>')">ตั้งเวลาที่จะเผยแพร่</a>
                         </li>
                       </ul>
                     </div>
@@ -1400,12 +1409,12 @@
                    
 
                     <% } else { %>
-                      <!-- แสดงปุ่มยกเลิกการปล่อย เมื่อปล่อยแล้ว -->
+                      <!-- แสดงปุ่มยกเลิกการเผยแพร่ เมื่อเผยแพร่แล้ว -->
 
                       
                       <a href="#" class="add-button cancel-button btn my-2 ms-2 p-2"
                         onclick="cancelReleaseQuiz('<%= quiz._id %>')">
-                        <span class="text_btn">ยกเลิกการปล่อย</span>
+                        <span class="text_btn">ยกเลิกการเผยแพร่</span>
                         <i class="bi bi-x-circle ms-1"></i>
                       </a>
                       <a href="/adminIndex/eachQuiz?quizId=<%= quiz._id %>/response"
@@ -1423,8 +1432,8 @@
 
 
 
-                <!-- อยากทำปุม่ปล่อย พอกดแล้วมีเลือกวันหมดเขตทำ แล้วเปลี่ยนเป็นปุ่มหยุดปล่อยแทน
-                มีบอกสถานะว่า ปล่อยรึยัง
+                <!-- อยากทำปุม่เผยแพร่ พอกดแล้วมีเลือกวันหมดเขตทำ แล้วเปลี่ยนเป็นปุ่มหยุดเผยแพร่แทน
+                มีบอกสถานะว่า เผยแพร่รึยัง
                 -->
                 <div class="d-flex w-50 justify-content-end">
                   <a href="#" class="add-button btn btn-danger my-2 p-2" onclick="confirmDelete('<%=quiz._id%>')">
@@ -1439,7 +1448,7 @@
                 <span id="releaseStatus" class="fw-normal fs-6" style="margin-right: 1em !important;">
                   <% if (quiz.isReleased===true) { %>
                     <span class="text-success">
-                      ปล่อยแล้วเมื่อ <%= releaseWhenLocal ? releaseWhenLocal : 'ยังไม่มีการตั้งเวลาปล่อย' %>
+                      เผยแพร่เมื่อ <%= releaseWhenLocal ? releaseWhenLocal : 'ยังไม่มีการตั้งเวลาเผยแพร่' %>
                     </span>
 
                     <% if (quiz.deadline) { %>
@@ -1450,7 +1459,7 @@
 
                         <% } else if (quiz.releaseWhen) { %>
                           <span class="text-warning">
-                            จะปล่อยเมื่อ <%= releaseWhenLocal %>
+                            จะเผยแพร่เมื่อ <%= releaseWhenLocal %>
                           </span>
                           <% if (quiz.deadline) { %>
                             <span class="grey">
@@ -1460,7 +1469,7 @@
 
                               <% } else { %>
                                 <span class="text-danger">
-                                  ยังไม่ได้ปล่อย
+                                  ยังไม่ได้เผยแพร่
                                 </span>
                                 <% } %>
                 </span>
@@ -1531,19 +1540,18 @@
     </div>
     <%- include("./partials/footer.ejs")%>
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
       
       <script>
 
 
         function confirmRelease(quizId) {
           Swal.fire({
-            title: 'ยืนยันการปล่อยแบบทดสอบ?',
-            text: "คุณแน่ใจหรือไม่ว่าต้องการปล่อยแบบทดสอบนี้ทันที!",
+            title: 'ยืนยันการเผยแพร่แบบทดสอบ?',
+            text: "คุณแน่ใจหรือไม่ว่าต้องการเผยแพร่แบบทดสอบนี้ทันที!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
-            confirmButtonText: 'ใช่, ปล่อยเลย!',
+            confirmButtonText: 'ใช่, เผยแพร่เลย!',
             cancelButtonText: 'ยกเลิก',
             customClass: {
               container: 'swal-container',
@@ -1554,7 +1562,7 @@
             }
           }).then((result) => {
             if (result.isConfirmed) {
-              // ปล่อยแบบทดสอบทันที (ปรับเวลาเป็น UTC+7)
+              // เผยแพร่แบบทดสอบทันที (ปรับเวลาเป็น UTC+7)
               let releaseWhen = new Date(); // เวลาปัจจุบัน (UTC)
               releaseWhen = new Date(releaseWhen.getTime() + (7 * 60 * 60 * 1000)); // เพิ่ม 7 ชั่วโมงเพื่อเป็นเวลาไทย (UTC+7)
               submitReleaseQuiz(quizId, releaseWhen.toISOString(), null); // ส่งในรูปแบบ ISO และไม่มี deadline
@@ -1588,9 +1596,9 @@
 
         function openReleaseQuizModal(quizId) {
   Swal.fire({
-    title: '<div class="my-4">ปล่อยแบบทดสอบ</div>',
+    title: '<div class="my-4">เผยแพร่แบบทดสอบ</div>',
     html: `
-      <div><label for="releaseDate" class="form-label me-2">วันเวลาที่จะปล่อย:</label></div>
+      <div><label for="releaseDate" class="form-label me-2">วันเวลาที่จะเผยแพร่:</label></div>
       <div class="d-flex justify-content-center mb-3">
           <div class="m-3">
               <input type="date" style="width: 125px;" id="releaseDate" class="form-control" required>
@@ -1611,7 +1619,7 @@
       </div>
     `,
     showCancelButton: true,
-    confirmButtonText: 'ปล่อยแบบทดสอบ',
+    confirmButtonText: 'เผยแพร่แบบทดสอบ',
     cancelButtonText: 'ยกเลิก',
     customClass: {
       container: 'swal-container',
@@ -1659,7 +1667,7 @@
       const releaseTime = document.getElementById('releaseTime').value;
 
       if (!releaseDate || !releaseTime) {
-        Swal.showValidationMessage('กรุณากรอกวันและเวลาสำหรับการปล่อยแบบทดสอบ');
+        Swal.showValidationMessage('กรุณากรอกวันและเวลาสำหรับการเผยแพร่แบบทดสอบ');
         return false;
       }
 
@@ -1693,7 +1701,7 @@
 
           // ตรวจสอบว่า deadline หลังจาก releaseWhen หรือไม่
           if (deadline <= releaseWhen) {
-            Swal.showValidationMessage('วันเวลาหมดเขตต้องอยู่หลังวันเวลาปล่อยแบบทดสอบ');
+            Swal.showValidationMessage('วันเวลาหมดเขตต้องอยู่หลังวันเวลาเผยแพร่แบบทดสอบ');
             return false;
           }
 
@@ -1721,7 +1729,7 @@
         function submitReleaseQuiz(quizId, releaseWhen, deadline) {
           console.log('quizId:', quizId); // ตรวจสอบว่า quizId ถูกส่งมาเป็นสตริงหรือไม่
 
-          const isReleased = true; // ปล่อยแบบทดสอบ
+          const isReleased = true; // เผยแพร่แบบทดสอบ
 
           fetch(`/adminIndex/releaseQuiz/${quizId}`, {  // ใช้ path parameters แทน query parameters
             method: 'POST',
@@ -1739,7 +1747,7 @@
               if (data.success) {
                 Swal.fire({
                   icon: "success",
-                  title: "ปล่อยแบบทดสอบสำเร็จ",
+                  title: "เผยแพร่แบบทดสอบสำเร็จ",
                   showConfirmButton: false,
                   timer: 1500,
 
@@ -1751,7 +1759,7 @@
                   location.reload(); // รีเฟรชหน้าจอหลังจากปิด Swal
                 });
               } else {
-                alert('เกิดข้อผิดพลาดในการปล่อยแบบทดสอบ');
+                alert('เกิดข้อผิดพลาดในการเผยแพร่แบบทดสอบ');
               }
             })
             .catch(error => {
@@ -1784,7 +1792,7 @@
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              releaseWhen,  // เวลาในการปล่อย
+              releaseWhen,  // เวลาในการเผยแพร่
               deadline      // กำหนดเส้นตาย
             })
           })
@@ -1794,7 +1802,7 @@
               if (data.success) {
                 Swal.fire({
                   icon: "success",
-                  title: "ตั้งเวลาปล่อยแบบทดสอบสำเร็จ",
+                  title: "ตั้งเวลาเผยแพร่แบบทดสอบสำเร็จ",
                   showConfirmButton: false,
                   customClass: {
                     container: 'swal-container',
@@ -1811,7 +1819,7 @@
                 Swal.fire({
                   icon: "error",
                   title: "เกิดข้อผิดพลาด",
-                  text: data.message || 'ไม่สามารถตั้งเวลาปล่อยแบบทดสอบได้',
+                  text: data.message || 'ไม่สามารถตั้งเวลาเผยแพร่แบบทดสอบได้',
                 });
               }
             })
@@ -1829,7 +1837,7 @@
         function cancelReleaseQuiz(quizId) {
           Swal.fire({
             title: "แน่ใจแล้วหรือยัง?",
-            text: "หากยกเลิกการปล่อยแล้วนักศึกษาทั้งหมดจะไม่เห็นแบบทสอบนี้!",
+            text: "หากยกเลิกการเผยแพร่แล้วนักศึกษาทั้งหมดจะไม่เห็นแบบทสอบนี้!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
@@ -1851,7 +1859,7 @@
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  isReleased: false,  // ตั้ง isReleased เป็น false เพื่อยกเลิกการปล่อย
+                  isReleased: false,  // ตั้ง isReleased เป็น false เพื่อยกเลิกการเผยแพร่
                 })
               })
                 .then(response => response.json())
@@ -1859,7 +1867,7 @@
                   if (data.success) {
                     Swal.fire({
                       icon: "success",
-                      title: "ยกเลิกการปล่อยสำเร็จ",
+                      title: "ยกเลิกการเผยแพร่สำเร็จ",
                       showConfirmButton: false,
                       timer: 1500,
 
@@ -1873,7 +1881,7 @@
                   } else {
                     Swal.fire({
                       title: 'เกิดข้อผิดพลาด',
-                      text: 'เกิดข้อผิดพลาดในการยกเลิกการปล่อย',
+                      text: 'เกิดข้อผิดพลาดในการยกเลิกการเผยแพร่',
                       icon: 'error',
                       confirmButtonText: 'ตกลง'
                     });

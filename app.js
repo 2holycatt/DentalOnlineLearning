@@ -5,6 +5,8 @@ var path = require('path');
 const Jimp = require('jimp');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const net = require('net');
+const http = require('http');
 // const winston = require('../logs/logger');
 const mongoose = require('mongoose')
 // const { MongoClient, GridFSBucket } = require('mongodb');
@@ -26,10 +28,6 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/elearning"
 
 const app = express();
 
-// ปิดการใช้งาน view cache ในโหมด development
-if (process.env.NODE_ENV !== 'production') {
-    app.disable('view cache');
-  }
 
 app.locals.pluralize = require('pluralize');
 
@@ -69,8 +67,6 @@ const Router = require('./routes/Router.js');
 const manageStudent = require('./controller/manageStudent.js');
 const reminderJob = require('./service/countdown.js');
 
-const nocache = require('nocache');
-
 
 const loadNotificationsMiddleware = require('./middleware/notificationMiddleware.js');
 
@@ -82,13 +78,20 @@ const loadNotificationsMiddleware = require('./middleware/notificationMiddleware
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+
+const ejs = require('ejs');
 app.set('view engine', 'ejs');
+
+app.use((req, res, next) => {
+  ejs.clearCache();
+  next();
+});
 app.use(logger('dev'));
+
 // app.use(express.json());
 // app.use(express.urlencoded({
 //     extended: true
 // }));
-app.use(nocache());
 app.use(express.json({ charset: 'utf-8' }));
 app.use(express.urlencoded({ extended: true, charset: 'utf-8' }));
 app.use(cookieParser());
@@ -172,8 +175,7 @@ var type = upload.single('file');
 // const url = "mongodb://localhost:27017/Elearning";
 
 mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+   
 })
     .then(() => {
         console.log("Connected to MongoDB");

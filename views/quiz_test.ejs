@@ -1113,7 +1113,25 @@
         .pagination-btn.chevron i {
             font-size: 1.5em;
         }
+        .pagination-btn {
+    padding: 0.1em 0.75em;
+    margin: 0.2em;
+    border: 1px solid #ccc;
+    background-color: #D9D9D9;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
+.pagination-btn.active {
+    background-color: #8A2BE2;
+    color: white;
+}
+
+.pagination-btn.chevron {
+    background-color: none;
+    color: #8A2BE2;
+    border: none;
+}
         @media screen and (max-width: 768px) {
             .above-nav-status {
                 display: none;
@@ -1579,11 +1597,33 @@
 
             function goToResultPage(quizId) {
 
-                window.location.href = `/studentIndex/eachQuiz?quizId=${quizId}/result`;
+                window.location.href = `/studentIndex/eachQuiz?quizId=${quizId}`;
             }
 
             function confirmSubmitQuiz(quizId) {
                 console.log("Quiz ID being submitted:", quizId); // ตรวจสอบว่า quizId มีค่าถูกต้อง
+                const unansweredQuestions = [];
+                document.querySelectorAll('.question').forEach((question, index) => {
+                 if (index === 0) return; // ข้ามส่วนหัวของแบบทดสอบ
+        
+                 const questionType = question.querySelector('input[type="radio"]') ? 'MCQ' : 
+                           question.querySelector('input[type="checkbox"]') ? 'checkbox' : 
+                           question.querySelector('textarea') ? 'text' : null;
+                           
+                const isAnswered = questionType === 'MCQ' ? question.querySelector('input[type="radio"]:checked') :
+                          questionType === 'checkbox' ? question.querySelector('input[type="checkbox"]:checked') :
+                          questionType === 'text' ? question.querySelector('textarea').value.trim() !== '' : 
+                          false;
+                          
+                if (!isAnswered) {
+                 unansweredQuestions.push(index);
+        }
+    });
+
+    const confirmMessage = unansweredQuestions.length > 0 ? 
+        `คุณยังไม่ได้ตอบคำถามข้อที่: ${unansweredQuestions.join(', ')}<br>ต้องการส่งแบบทดสอบหรือไม่?` :
+        'คุณต้องการส่งแบบทดสอบนี้หรือไม่?';
+
 
                 Swal.fire({
                     title: 'คุณแน่ใจหรือไม่?',
@@ -1596,51 +1636,87 @@
                     cancelButtonText: 'ยกเลิก'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const form = document.getElementById('form');  // ตรวจสอบว่า form มีอยู่จริง
-                        const formData = new FormData(form);
+                        submitQuiz(quizId);
+    }
+  });
+}
 
-                        // แปลงข้อมูล formData เป็น JSON
-                        const answers = {};
-                        formData.forEach((value, key) => {
-                            answers[key] = value;
-                        });
+async function submitQuiz(quizId) {
+    try {
+        // รวบรวมคำตอบ
+        const answers = {};
+        document.querySelectorAll('.question').forEach((questionDiv, index) => {
+            if (index === 0) return; // ข้ามส่วนหัวของแบบทดสอบ
+            
+            const questionId = questionDiv.id.split('_')[1];
+            const questionType = questionDiv.querySelector('input[type="radio"]') ? 'MCQ' : 
+                               questionDiv.querySelector('input[type="checkbox"]') ? 'checkbox' : 
+                               questionDiv.querySelector('textarea') ? 'text' : null;
 
-                        // ตรวจสอบค่าที่อยู่ใน answers
-                        console.log("Answers:", answers);
-
-                        // ส่งข้อมูลไปยัง backend ในรูปแบบ JSON
-                        fetch(`/studentIndex/submitQuiz/${quizId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                quizId: quizId,   // ส่ง quizId
-                                answers: answers  // ส่งคำตอบทั้งหมด
-                            })
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    window.location.href = `/studentIndex/eachQuiz?quizId=${quizId}`;
-                                } else {
-                                    Swal.fire('เกิดข้อผิดพลาด', data.message || 'ไม่สามารถส่งคำตอบได้', 'error');
-                                }
-                            })
-                            .catch((error) => {
-                                console.error('Error:', error);
-                                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถส่งคำตอบได้', 'error');
-                            });
-                    }
-                });
+            if (questionType === 'MCQ') {
+                const selectedOption = questionDiv.querySelector('input[type="radio"]:checked');
+                answers[questionId] = selectedOption ? selectedOption.value : null;
+            } else if (questionType === 'checkbox') {
+                const selectedOptions = Array.from(questionDiv.querySelectorAll('input[type="checkbox"]:checked'))
+                    .map(input => input.value);
+                answers[questionId] = selectedOptions;
+            } else if (questionType === 'text') {
+                const textArea = questionDiv.querySelector('textarea');
+                answers[questionId] = textArea ? textArea.value.trim() : null;
             }
+        });
 
-            function goToQuestion(index) {
-                // ซ่อนคำถามทั้งหมด
-                document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
-                // แสดงคำถามที่ถูกเลือก
-                document.getElementById('question_' + index).style.display = 'block';
-            }
+        // ส่งคำตอบไปยังเซิร์ฟเวอร์
+        const response = await fetch(`/studentIndex/submitQuiz/${quizId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ quizId, answers })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            Swal.fire({
+                title: 'ส่งแบบทดสอบสำเร็จ!',
+                text: `คะแนนของคุณคือ ${result.score}`,
+                icon: 'success'
+            }).then(() => {
+                window.location.href = `/studentIndex/eachQuiz?quizId=${quizId}`;
+            });
+        } else {
+            throw new Error(result.message);
+        }
+
+    } catch (error) {
+        Swal.fire({
+            title: 'เกิดข้อผิดพลาด!',
+            text: error.message || 'ไม่สามารถส่งแบบทดสอบได้',
+            icon: 'error'
+        });
+    }
+}     
+
+function goToQuestion(index) {
+    // ซ่อนคำถามทั้งหมด
+    document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
+    
+    // แสดงคำถามที่ถูกเลือก
+    document.getElementById('question_' + index).style.display = 'block';
+    
+    // ลบ active class จากปุ่มทั้งหมด
+    document.querySelectorAll('.pagination-btn').forEach(btn => {
+        btn.style.backgroundColor = '';
+    });
+    
+    // เพิ่ม active class ให้ปุ่มปัจจุบัน (ยกเว้นปุ่ม chevron)
+    const currentBtn = document.querySelector(`.pagination-btn:nth-child(${parseInt(index) + 2})`);
+    if (currentBtn && !currentBtn.classList.contains('chevron')) {
+        currentBtn.style.backgroundColor = '#8A2BE2';
+        currentBtn.style.color = 'white';
+    }
+}
 
             goToQuestion(0);
 

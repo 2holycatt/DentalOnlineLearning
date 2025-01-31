@@ -18,69 +18,48 @@ const multer = require('multer');
 // const path = require('path');
 
 const deleteLesson = async (req, res) => {
-  const getLesson_id = req.query.lessonId;
-  const subject_Id = req.query.subjectId;
+  try {
+      const getLesson_id = req.query.lessonId;
+      const subject_Id = req.query.subjectId;
 
-  // const pageName = req.query.pageName;
-  const getLesson = await Lesson.findById(getLesson_id);
-
-  const deleteLayout01 = getLesson.LayOut1ArrayObject;
-  const deleteLayout02 = getLesson.LayOut2ArrayObject;
-  const deleteLayout03 = getLesson.LayOut3ArrayObject;
-  const deleteLayout04 = getLesson.LayOut4ArrayObject;
-  const deletePdfFiles = getLesson.PdfFiles;
-
-  async function deleteLayouts(deleteLayouts, Layout) {
-    if (deleteLayouts.length > 0) {
-
-      for (const layoutId of deleteLayouts) {
-        let findLayout = await Layout.findById(layoutId);
-        if (findLayout) {
-          if (findLayout.name == 'Layout01') {
-            var layoutFile = findLayout.AboutImage[0].file;
-            // console.log(layoutFile);
-
-            // var filePath = path.join(__dirname, '../uploads', layoutFile); // สร้าง path ของไฟล์
-            // unlinkFile(filePath);
-
-            var deleteFile = await deleteFileFromS3(layoutFile);
-          } else if (findLayout.name == 'pdfFiles') {
-            var layoutFile = findLayout.file;
-            // var filePath = path.join(__dirname, '../uploads', layoutFile); // สร้าง path ของไฟล์
-            // unlinkFile(filePath);
-            var deleteFile = await deleteFileFromS3(layoutFile);
-
-          }
-          const deletedLayout = await Layout.findByIdAndDelete(layoutId);
-        }
-
+      const getLesson = await Lesson.findById(getLesson_id);
+      if (!getLesson) {
+          return res.status(404).send('Lesson not found');
       }
-    }
+
+      // Delete layouts
+      const deleteLayout01 = getLesson.LayOut1ArrayObject;
+      const deleteLayout02 = getLesson.LayOut2ArrayObject;
+      const deleteLayout03 = getLesson.LayOut3ArrayObject;
+      const deleteLayout04 = getLesson.LayOut4ArrayObject;
+      const deletePdfFiles = getLesson.PdfFiles;
+
+      // Delete all layouts in parallel
+      await Promise.all([
+          deleteLayout01.length > 0 ? Layout1.deleteMany({ _id: { $in: deleteLayout01 } }) : null,
+          deleteLayout02.length > 0 ? Layout2.deleteMany({ _id: { $in: deleteLayout02 } }) : null,
+          deleteLayout03.length > 0 ? Layout3.deleteMany({ _id: { $in: deleteLayout03 } }) : null,
+          deleteLayout04.length > 0 ? Layout4.deleteMany({ _id: { $in: deleteLayout04 } }) : null,
+          deletePdfFiles.length > 0 ? PdfFile.deleteMany({ _id: { $in: deletePdfFiles } }) : null
+      ]);
+
+      // Delete lesson and update subject
+      await Promise.all([
+          Lesson.findByIdAndDelete(getLesson_id),
+          Subject.updateOne(
+              { _id: subject_Id },
+              { $pull: { lessons: getLesson_id } }
+          )
+      ]);
+
+      // Redirect using subject_Id from query
+      res.redirect(`/eachSubject?subjectDbId=${subject_Id}`);
+
+  } catch (error) {
+      console.error('Error deleting lesson:', error);
+      res.status(500).send('Internal Server Error');
   }
-  // เรียกใช้ฟังก์ชั่น deleteLayouts สำหรับแต่ละประเภทของ Layout
-  await deleteLayouts(deleteLayout01, Layout1);
-  await deleteLayouts(deleteLayout02, Layout2);
-  await deleteLayouts(deleteLayout03, Layout3);
-  await deleteLayouts(deleteLayout04, Layout4);
-  await deleteLayouts(deletePdfFiles, PdfFile);
-
-  await Subject.findOneAndUpdate(
-    { _id: subject_Id },
-    { $pull: { lessonArray: getLesson_id } },
-    { new: true } // ลบ lessonId ออกจาก lessonArray
-  );
-
-  const deleteLesson = await Lesson.findByIdAndDelete(getLesson_id)
-
-  // res.redirect(pageName);
-
-  // const lessons = await Lesson.find().sort({ createdAt: 1 }).populate("schoolYear");
-  // // console.log(lessons)
-  // const schoolYears = await SchoolYear.find().sort({ schoolYear: 0 });
-  // const findYear = null;
-
-  res.redirect('/adminIndex/adminLessonIndex');
-}
+};
 
 const editLesson = async function (req, res, next) {
   try {

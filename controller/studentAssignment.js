@@ -8,6 +8,8 @@ const path = require('path');
 const fs = require('fs');
 const util = require('util');
 const unlinkFile = util.promisify(fs.unlink);
+const Subject = require("../models/subjects");
+
 
 const { deleteFileFromS3 } = require('../utils/s3Utils');
 
@@ -37,14 +39,19 @@ const studentAssignDetail = async (req, res) => {
         const navSubjects = await getSubjectsForNav(req.session.userId);
         const theme = req.session.theme || 'light';
         const isSidebarOpen = false;
-        const assignment = await Assignments.findById(getAssignId).populate("subject");        const formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
+        const assignment = await Assignments.findById(getAssignId)
+         .populate({
+            path: 'subject',
+            select: 'subjectId subjectName section semester'
+        });      
+        const formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
         const formattedDeadline = moment(assignment.Deadline).format('DD/MM/YYYY hh:mm A');
-
+        
         const userSubmit = await submitAssign.findOne({ user: req.session.userId, assignment: getAssignId });
         // console.log(req.session.userId);
         // console.log(getAssignId);
         // console.log(userSubmit);
-        res.render('studentAssignDetail', { assignment, formattedStartDate, formattedDeadline, userData ,navSubjects ,userSubmit, theme, isSidebarOpen });
+        res.render('studentAssignDetail', { assignment, formattedStartDate, formattedDeadline, userData ,navSubjects ,userSubmit , subject: assignment.subject ,theme, isSidebarOpen });
 
     } catch (error) {
         console.error(error);

@@ -465,6 +465,16 @@
       text-decoration: underline;
       color: #ba55d3 !important;
     }
+    .link{
+        color: gray;
+      }
+      .dark .link{
+        color: rgb(231, 231, 231);
+      }
+      .dark .link:hover ,.link:hover{
+        text-decoration: underline;
+        color: #ba55d3 !important;
+      }
     @media screen and (max-width: 768px) {
       .above-nav-status {
         display: none;
@@ -522,11 +532,12 @@
                 </a>
               </div>
             </div> -->
-            <div class="fw-normal fs-6 lesson-bar ms-2">
-              <a class="grey link" href="eachSubject?subjectDbId=<%=subject._id%>">
+            <div class="fw-normal fs-6  ms-2">
+              <span><i class="bi bi-book-half me-2" style="color: #8A2BE2;"></i> </span>
+              <a class="grey link" href="/eachSubject?subjectDbId=<%=subject._id%>">
                 <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
               </a> 
-              <span></span>
+              <span>   / บทเรียน:  <%=lesson.LessonName%></span> 
             </div>
             <br>
             <div class="d-flex align-items-center ms-2">

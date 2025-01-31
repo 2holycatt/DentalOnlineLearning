@@ -220,7 +220,7 @@ const calculateTimeSpent = async (req, res, next) => {
                 const finishedProgress = {
                     checkFinished: true,
                     message: user.name + " เรียนบทเรียน " + lesson.LessonName + "ครบแล้ว",
-                    finishehDate: dateObject
+                    finishehDate: currentDate
                 }
 
                 const updateLessonProgress = await LessonProgress.findByIdAndUpdate(

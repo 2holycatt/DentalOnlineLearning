@@ -793,7 +793,7 @@ const deleteStudentListsFromSubject = async (req, res) => {
         $pull: { subjects: { subjectMongooseId: subjectId } }
       });
     }
-    res.redirect(`/adminIndex/manageSubject?subjectDbId=${subjectId}`);
+    res.redirect(`/eachSubject?subjectDbId=${subjectId}`);
   } catch (err) {
     console.log(err);
   }

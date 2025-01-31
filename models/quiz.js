@@ -14,6 +14,16 @@ const questionSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    questionImage: {
+        url: {
+            type: String,
+            default: null
+        },
+        contentType: {
+            type: String,
+            default: null
+        }
+    },
     questionType: {
         type: String,
         enum: ['MCQ', 'checkbox', 'Paragraph', 'short_answ'],
@@ -57,22 +67,38 @@ const questionSchema = new mongoose.Schema({
 });
 
 // เพิ่ม schema สำหรับเก็บข้อมูลจำนวนครั้งที่เข้าทำแบบทดสอบของนักเรียน
-const attemptSchema = mongoose.Schema({
-    attemptCount: {
-        type: Number,
-        default: 0,
-        min: 0
+const attemptSchema = new mongoose.Schema({
+    studentDbId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Student',
+        required: true
     },
-    score: {
-        type: Number,
-        default: 0, // คะแนนที่ทำได้ในการพยายามนี้
-        min: 0
+    studentId: {
+        type: 'string',
+        ref: 'Student',
     },
-    date: {
-        type: Date,
-        default: Date.now // วันที่และเวลาที่ทำแบบทดสอบ
-    }
-});
+    studentName: {
+        type: String,
+        required: true
+    },
+    eachAttempt:[{
+        answers: [{
+            questionId: String,
+            answer: mongoose.Schema.Types.Mixed,
+            isCorrect: Boolean,
+            points: Number
+        }],
+        score: Number,
+        attemptNumber: {
+          type: Number,
+          default: 1
+        },
+        submittedAt: {
+          type: Date,
+          default: Date.now
+        }
+    }]
+  });
 
 const quizSchema = new mongoose.Schema({
     quizname: {

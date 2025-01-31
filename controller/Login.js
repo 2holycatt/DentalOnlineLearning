@@ -299,7 +299,7 @@ const saveInfoStudent = async (req, res) => {
             req.flash('validationErrors', validationErrors)
             req.flash('data', req.body)
         }
-        return res.redirect('/login')
+        return res.redirect('/')
     }
 }
 

@@ -5,6 +5,7 @@ const Student = require("../models/student.model");
 const Teacher = require("../models/teacher.model")
 const SchoolYear = require("../models/schoolYear");
 const Subject = require("../models/subjects");
+const Assignment = require("../models/Assignments");
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -394,6 +395,9 @@ exports.eachQuiz = async (req, res) => {
   try {
     let quizId = req.query.quizId;
     // ตรวจสอบว่ามี '/edit' หรือไม่
+
+    const student = await Student.findOne({ user: req.session.userId });
+
     const navSubjects = await getSubjectsForNav(req.session.userId);
 
     const isEditPage = quizId.includes('/edit');
@@ -469,12 +473,22 @@ exports.eachQuiz = async (req, res) => {
     let attemptCount = 0;
 
     if (userRole === 'student' && isResultPage) {
-      const studentAttempt = quiz.attempts.find(attempt => attempt.studentId.toString() === req.session.userId);
-      if (studentAttempt) {
-        studentScore = studentAttempt.score; // สมมุติว่ามีการเก็บคะแนนในฟิลด์นี้
-        attemptCount = studentAttempt.attemptCount;
+      // Initialize attempts array if undefined
+      if (!quiz.attempts) {
+          quiz.attempts = [];
       }
-    }
+  
+      // Find student attempt with proper null checks
+      const studentAttempt = quiz.attempts.find(attempt => 
+          attempt && attempt.studentDbId && 
+          attempt.studentDbId.toString() === req.session.userId
+      );
+  
+      if (studentAttempt) {
+          studentScore = studentAttempt.score || 0;
+          attemptCount = studentAttempt.attemptNumber || 0;
+      }
+  }
 
     // จัดเรียง foundQuestions ตามวันที่สร้าง
     // questions.sort((a, b) => {
@@ -489,7 +503,7 @@ exports.eachQuiz = async (req, res) => {
           mytitle: "editEachQuiz",
           quiz,
           quizzes,
-          questions,
+          questions: quiz.questions,
           options,
           userData,
           subject,
@@ -505,7 +519,7 @@ exports.eachQuiz = async (req, res) => {
           mytitle: "viewEachQuiz",
           quiz,
           quizzes,
-          questions,
+          questions: quiz.questions,
           options,
           userData,
           subject,
@@ -522,7 +536,7 @@ exports.eachQuiz = async (req, res) => {
           mytitle: "responseEachQuiz",
           quiz,
           quizzes,
-          questions,
+          questions: quiz.questions,
           options,
           userData,
           subject,
@@ -543,7 +557,7 @@ exports.eachQuiz = async (req, res) => {
           mytitle: "Quiz Result Detail Response",
           quiz,
           quizzes,
-          questions,
+          questions: quiz.questions,
           options,
           userData,
           subject,
@@ -564,7 +578,7 @@ exports.eachQuiz = async (req, res) => {
           mytitle: "eachQuiz",
           quiz,
           quizzes,
-          questions,
+          questions: quiz.questions,
           options,
           userData,
           subject,
@@ -581,7 +595,7 @@ exports.eachQuiz = async (req, res) => {
           mytitle: "quizTestPage",
           quiz,
           quizzes,
-          questions,
+          questions: quiz.questions,
           options,
           userData,
           subject,
@@ -599,7 +613,7 @@ exports.eachQuiz = async (req, res) => {
           mytitle: "isResultPage",
           quiz,
           quizzes,
-          questions,
+          questions: quiz.questions,
           options,
           userData,
           subject,
@@ -621,7 +635,7 @@ exports.eachQuiz = async (req, res) => {
           mytitle: "Quiz Result Detail",
           quiz,
           quizzes,
-          questions,
+          questions: quiz.questions,
           options,
           userData,
           subject,
@@ -644,7 +658,8 @@ exports.eachQuiz = async (req, res) => {
           mytitle: "eachQuizStudent",
           quiz,
           quizzes,
-          questions,
+          questions: quiz.questions,
+          student, 
           options,
           userData,
           subject,
@@ -706,12 +721,13 @@ exports.createQuestion = async function (req, res, next) {
 // }
 
 exports.releaseQuiz = async (req, res) => {
-  const { quizId } = req.params; // รับค่า quizId จาก URL
-  const { isReleased, releaseWhen, deadline } = req.body;
 
   try {
-    // ตรวจสอบว่า quizId เป็น ObjectId ที่ถูกต้องหรือไม่
+    const { quizId } = req.params; // รับค่า quizId จาก URL
+    const { isReleased, releaseWhen, deadline } = req.body;
+
     console.log('quizId from params:', quizId); // เพิ่ม log
+
 
     if (!mongoose.Types.ObjectId.isValid(quizId)) {
       return res.status(400).json({ success: false, message: 'quizId ไม่ถูกต้อง' });
@@ -731,10 +747,10 @@ exports.releaseQuiz = async (req, res) => {
 
     await quiz.save(); // บันทึกการเปลี่ยนแปลงลงฐานข้อมูล
 
-    res.json({ success: true, message: 'ปล่อยแบบทดสอบสำเร็จ' });
+    res.json({ success: true, message: 'เผยแพร่แบบทดสอบสำเร็จ' });
   } catch (error) {
     console.error('Error:', error); // เพิ่ม log ข้อผิดพลาด
-    res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในการปล่อยแบบทดสอบ' });
+    res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในการเผยแพร่แบบทดสอบ' });
   }
 };
 
@@ -813,13 +829,34 @@ exports.scheduleQuizRelease = async (req, res) => {
 };
 
 // ฟังก์ชันสำหรับค้นหาฝั่งครู
-exports.searchTeacher = async (req, res) => {
-  const searchQuery = req.params.query;
-
+exports.search = async (req, res) => {
   try {
-    // ดึงข้อมูลผู้ใช้งานจาก session
+    const searchQuery = req.params.query;
+    
+    // Check session
+    if (!req.session.userId) {
+        return res.redirect('/');
+    }
+
+    // Get subjects with error handling
+    const navSubjects = await getSubjectsForNav(req.session.userId);
+    
+    // Get user data safely
     const userData = await User.findById(req.session.userId);
+    if (!userData) {
+        return res.redirect('/');
+    }
+
     const originPage = req.query.originPage;
+
+    const subjectResults = await Subject.find({
+      $or: [
+          { subjectId: new RegExp(searchQuery, 'i') },
+          { subjectName: new RegExp(searchQuery, 'i') },
+          { semester: new RegExp(searchQuery, 'i') },
+          { section: new RegExp(searchQuery, 'i') }
+      ]
+  });
 
     // ค้นหาแบบทดสอบทั้งหมดเพื่อแสดงใน sidebar หรือเมนูอื่น ๆ
     const quizzes = await Quiz.find().sort({ createdAt: 1 }).exec();
@@ -829,16 +866,18 @@ exports.searchTeacher = async (req, res) => {
 
     // ค้นหาในฐานข้อมูลสำหรับบทเรียน (lessons)
     const lessonResults = await Lesson.find({ LessonName: new RegExp(searchQuery, 'i') });
-    const schoolYears = await SchoolYear.find().sort({ schoolYear: 0 });
+
+    const assignmentResults = await Assignment.find({ name: new RegExp(searchQuery, 'i') });
 
 
     const theme = req.session.theme || 'light';
     const isSidebarOpen = false;
 
+    const combinedResults = [...subjectResults, ...quizResults, ...lessonResults, ...assignmentResults];
+
     // หากมีผลลัพธ์จากการค้นหาแบบทดสอบ ให้ดึงข้อมูลเพิ่มเติม
     if (quizResults.length > 0) {
       const quiz = quizResults[0]; // เอาผลลัพธ์ตัวแรกมาใช้
-      const schYear = quiz.schoolYear ? quiz.schoolYear.schoolYear : '';
       const questions = quiz.questions || [];
       const releaseWhenLocal = quiz.releaseWhen ? moment.utc(quiz.releaseWhen).format('DD/MM/YYYY, เวลา HH:mm') : null;
       const deadlineLocal = quiz.deadline ? moment.utc(quiz.deadline).format('DD/MM/YYYY, เวลา HH:mm') : null;
@@ -847,17 +886,19 @@ exports.searchTeacher = async (req, res) => {
       return res.render('searchResults', {
         quiz: quizResults,
         lessons: lessonResults,
+        subjects: subjectResults,
+        assignments: assignmentResults,
         searchQuery,
         userData,
         quizzes,
-        schYear,
         questions,
         releaseWhenLocal,
         deadlineLocal,
         theme,
         isSidebarOpen,
         originPage,
-        schoolYears
+        navSubjects,
+        combinedResults
       });
     }
 
@@ -865,6 +906,8 @@ exports.searchTeacher = async (req, res) => {
     res.render('searchResults', {
       quiz: [],
       lessons: lessonResults,
+      subjects: subjectResults,
+      assignments: assignmentResults,
       searchQuery,
       userData,
       quizzes,
@@ -875,7 +918,8 @@ exports.searchTeacher = async (req, res) => {
       theme,
       isSidebarOpen,
       originPage,
-      schoolYears
+      navSubjects,
+      combinedResults
     });
 
   } catch (error) {
@@ -884,77 +928,35 @@ exports.searchTeacher = async (req, res) => {
   }
 };
 
-
-// ฟังก์ชันสำหรับค้นหาฝั่งนักเรียน
-exports.searchStudent = async (req, res) => {
-  const searchQuery = req.params.query;
-
+exports.uploadQuestionImage = async (req, res) => {
   try {
-    // ดึงข้อมูลผู้ใช้งานจาก session
-    const userData = await User.findById(req.session.userId);
-    const originPage = req.query.originPage;
-
-    // ค้นหาแบบทดสอบทั้งหมดเพื่อแสดงใน sidebar หรือเมนูอื่น ๆ
-    const quizzes = await Quiz.find().sort({ createdAt: 1 }).exec();
-
-    // ค้นหาแบบทดสอบที่เกี่ยวข้องกับการค้นหา
-    const quizResults = await Quiz.find({ quizname: new RegExp(searchQuery, 'i') });
-
-    // ค้นหาในฐานข้อมูลสำหรับบทเรียน (lessons)
-    const lessonResults = await Lesson.find({ LessonName: new RegExp(searchQuery, 'i') });
-    const schoolYears = await SchoolYear.find().sort({ schoolYear: 0 });
-
-
-    const theme = req.session.theme || 'light';
-    const isSidebarOpen = false;
-
-    // หากมีผลลัพธ์จากการค้นหาแบบทดสอบ ให้ดึงข้อมูลเพิ่มเติม
-    if (quizResults.length > 0) {
-      const quiz = quizResults[0]; // เอาผลลัพธ์ตัวแรกมาใช้
-      const schYear = quiz.schoolYear ? quiz.schoolYear.schoolYear : '';
-      const questions = quiz.questions || [];
-      const releaseWhenLocal = quiz.releaseWhen ? moment.utc(quiz.releaseWhen).format('DD/MM/YYYY, เวลา HH:mm') : null;
-      const deadlineLocal = quiz.deadline ? moment.utc(quiz.deadline).format('DD/MM/YYYY, เวลา HH:mm') : null;
-
-      // แสดงผลลัพธ์ในหน้า searchResultsStudent.ejs พร้อมข้อมูลที่ดึงมา
-      return res.render('searchResults', {
-        quiz: quizResults,
-        lessons: lessonResults,
-        searchQuery,
-        userData,
-        quizzes,
-        schYear,
-        questions,
-        releaseWhenLocal,
-        deadlineLocal,
-        theme,
-        isSidebarOpen,
-        originPage,
-        schoolYears,
-
+      // รับ questionId จาก selectedbody function
+      const questionId = req.body.questionId.split('_')[1]; // แยกเอาเลข index จาก "question_1"
+      const quizId = req.query.quizId;
+      const imageFile = req.files.avatar;
+      
+      // บันทึกรูปภาพ
+      const imagePath = `/uploads/questions/${questionId}_${Date.now()}.jpg`;
+      await imageFile.mv(path.join(__dirname, '../public', imagePath));
+      
+      // อัพเดทข้อมูลคำถาม
+      const quiz = await Quiz.findById(quizId);
+      quiz.questions[questionId].questionImage = {
+          url: imagePath,
+          contentType: imageFile.mimetype
+      };
+      await quiz.save();
+      
+      res.json({ 
+          success: true, 
+          imageUrl: imagePath 
       });
-    }
-
-    // หากไม่มีผลลัพธ์จากการค้นหาแบบทดสอบ
-    res.render('searchResults', {
-      quiz: [],
-      lessons: lessonResults,
-      searchQuery,
-      userData,
-      quizzes,
-      schYear: '',
-      questions: [],
-      releaseWhenLocal: null,
-      deadlineLocal: null,
-      theme,
-      isSidebarOpen,
-      originPage,
-      schoolYears
-    });
-
   } catch (error) {
-    console.error(error);
-    res.status(500).send('เกิดข้อผิดพลาดในการค้นหาแบบทดสอบและบทเรียน');
+      console.error(error);
+      res.status(500).json({ 
+          success: false, 
+          error: 'Failed to upload image' 
+      });
   }
 };
 

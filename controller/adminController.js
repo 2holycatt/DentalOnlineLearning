@@ -286,9 +286,17 @@ const addLesson = async (req, res) => {
     const subjectSection = req.query.subjectSection;
     const subjectSemester = req.query.subjectSemester;
 
+    const subject = await Subject.findOne({ 
+      subjectDbId : subjectDbId,
+      subjectId: subjectId,
+      subjectName: subjectName,
+      subjectSemester: subjectSemester,
+      subjectSection: subjectSection
+  });
+    
     const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
     // const schoolYears = await SchoolYear.find().sort({ schoolYear: 0 });
-    res.render("addLesson", { mytitle: "addLesson", lessons, subjectDbId, subjectId, subjectName, subjectSection, subjectSemester,theme,isSidebarOpen,userData });
+    res.render("addLesson", { mytitle: "addLesson", lessons, subject ,subjectDbId, subjectId, subjectName, subjectSection, subjectSemester,theme,isSidebarOpen,userData });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -313,7 +321,7 @@ const addLesson = async (req, res) => {
 
 // สำหรับการดึงข้อมูลรายวิชา
 async function getUniqueSubjectValues() {
-  const findSubjects = await Subject.find().sort({ semester: 0 });
+  const findSubjects = await Subject.find().sort({ semester: 1 }); // เปลี่ยนจาก 0 เป็น 1 หรือ -1
 
   const uniqueValues = {};
 
@@ -403,7 +411,7 @@ const updateSubject = async (req, res) => {
       },
       { new: true }
     );
-    res.redirect(`/adminIndex/manageSubject?subjectDbId=${subjectDbId}`);
+    res.redirect(`/eachSubject?subjectDbId=${subjectDbId}`);
     // res.json(findSubject);
 
     // const SubjectSemester = req.query.subjectSemester;
@@ -1690,7 +1698,7 @@ const deleteSubject = async (req, res) => {
 
     await Subject.deleteOne({ _id: subjectId });
 
-    res.redirect('/adminIndex/adminLessonIndex');
+    res.redirect('/subjects');
   } catch (err) {
     console.log(err);
   }

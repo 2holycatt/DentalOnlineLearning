@@ -94,36 +94,94 @@
     transition: 0.3s;
 
   }
+  .a-li {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+.menues-sub div {
+    margin-bottom: 0.5rem;
+}
+.menu-header:hover{
+  cursor: pointer;
+}
 
 </style>
   <div class="above-nav-status p-4" style="width: 20%;">
-    <p class="fs-6 fw-bold bold-menus" style="margin-bottom: 1em !important;">
+    <a class="fs-6 ms-2 my-2 a-li grey" href="/studentIndex">
+      หน้าหลัก
+  </a>
+    <p class="fs-6 fw-bold bold-menus" >
       ห้องเรียน
     </p>
-    <p class="menues-sub fs-6 my-2">
-      <% if (typeof navSubjects !== 'undefined' && navSubjects.length > 0) { %>
-        <% navSubjects.forEach(subject => { %>
-          <div class="ms-2 my-1">
-            <a class="a-li grey" 
-              href="/eachSubject?subjectDbId=<%= subject._id %>"
-              title="<%= subject.subjectId %> <%= subject.subjectName %> <%= subject.semester %> กลุ่มที่: <%= subject.section %>">
-              <%= subject.subjectId %> <%= subject.subjectName %> <%= subject.semester %> กลุ่มที่: <%= subject.section %>
-            </a>
+    <div class="menues">
+      <p class="menues-sub fs-6 my-2">
+        <div class="ms-2 my-1">
+          <a class="a-li grey" href="/subjects">
+           รายวิชาทั้งหมด
+       </a>
+        </div>
+        <div class="menu-item">
+          <div class="menu-header ms-2 my-1" onclick="toggleSubjects(this)">
+            <span class="a-li grey">รายวิชา <i class="bi bi-chevron-down"></i></span>
+            
           </div>
-        <% }); %>
-      <% } else { %>
-        <span class="a-li">ไม่มีรายวิชา</span>
-      <% } %>
-    </p>
+          
+          <div class="menu-content" style="display: none;">
+            <% if (typeof navSubjects !== 'undefined' && navSubjects.length > 0) { %>
+              <% navSubjects.forEach(subject => { %>
+                <div class="ms-4 my-1">
+                  <a class="a-li grey" 
+                    href="/eachSubject?subjectDbId=<%= subject._id %>"
+                    title="<%= subject.subjectId %> <%= subject.subjectName %> <%= subject.semester %> กลุ่มที่: <%= subject.section %>">
+                    <%= subject.subjectId %> <%= subject.subjectName %> 
+                    <%= subject.semester %> กลุ่มที่: <%= subject.section %>
+                  </a>
+                </div>
+              <% }); %>
+            <% } else { %>
+              <div class="ms-4 my-1">
+                <span class="a-li">ไม่มีรายวิชา</span>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </p>
+    </div>
     <% if (hasUnread) { %>
-      <li id="teacherNotification" >
+      <li id="teacherNotification" class="mx-2">
         <a href="/adminIndex/teacherNotification" class="a-list-8 bell-animatio"><span class="text-success">แจ้งเตือน</spanc>
             <i class="bi-8 bi-bell-fill text-success mx-2"></i>
         </a>
   
         <% } else { %>
-      <li id="teacherNotification" >
-        <a href="/adminIndex/teacherNotification" class="a-list-8">แจ้งเตือน</a>
+      <li id="teacherNotification" class="mx-2">
+        <a href="/adminIndex/teacherNotification" class="a-list-8">แจ้งเตือน <i class="bi bi-bell-fill mx-1"></i></a>
       </li>
       <% } %>
   </div>
+
+  <script>
+    function toggleSubjects(element) {
+       const menuItem = element.parentElement;
+       const menuContent = menuItem.querySelector('.menu-content');
+       const icon = element.querySelector('.bi-chevron-down');
+       
+       // Toggle active class
+       menuItem.classList.toggle('active');
+       
+       // Show/hide content
+       if (menuItem.classList.contains('active')) {
+           menuContent.style.display = 'block';
+           icon.style.transform = 'rotate(180deg)';
+       } else {
+           menuContent.style.display = 'none';
+           icon.style.transform = 'rotate(0deg)';
+       }
+   }
+   </script>

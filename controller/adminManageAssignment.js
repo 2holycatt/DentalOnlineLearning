@@ -89,6 +89,7 @@ const assignmentDetail = async (req, res) => {
     const getAssignId = req.query.id;
     const assignment = await Assignments.findById(getAssignId).populate("subject");
     const getSubmitDetail = await Assignments.findById(getAssignId)
+    .populate('subject')  // Populate subject reference
       .populate({
         path: "submitDetail",
         populate: {
@@ -98,6 +99,7 @@ const assignmentDetail = async (req, res) => {
           }
         }
       });
+      const subject = assignment.subject; // Contains subject fields
     const formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
     const formattedDeadline = moment(assignment.Deadline).format('DD/MM/YYYY hh:mm A');
     // const schoolYear = await SchoolYear.find();
@@ -107,7 +109,7 @@ const assignmentDetail = async (req, res) => {
     //   return fileName;
     // });
 
-    res.render('assignmentDetail', { assignment, formattedStartDate, formattedDeadline, getSubmitDetail,navSubjects,userData,theme,isSidebarOpen });
+    res.render('assignmentDetail', { assignment, formattedStartDate, formattedDeadline, getSubmitDetail,navSubjects,subject,userData,theme,isSidebarOpen });
 
   } catch (error) {
     console.error(error);
@@ -117,13 +119,17 @@ const assignmentDetail = async (req, res) => {
 
 const uploadAssignments = asyncWrapper(async (req, res) => {
   try {
-
     const { subjectId, name, Description, StartDate, Deadline, Score, schoolYear } = req.body;
     const files = req.files;
-    // const checkExists = await SchoolYear.findOne({ schoolYear });
+   
+    const subject = await Subject.findById(subjectId);
+    if (!subject) {
+      return res.status(404).send('Subject not found');
+    }
+
     const users = await User.find();
     const userData = await User.findById(req.session.userId);
-    const subject = "การมอบหมายงานใหม่จาก Online Dentristy Learning";
+    const header = "การมอบหมายงานใหม่จาก Online Dentristy Learning";
     const whatCome = "มีงานที่มอบหมายใหม่เรื่อง";
     // console.log(files);
     // res.json(files);
@@ -134,7 +140,11 @@ const uploadAssignments = asyncWrapper(async (req, res) => {
       StartDate,
       Deadline,
       Score,
-      subject: subjectId
+      subject: subject._id, // Reference to subject
+      files: files.map(file => ({
+        file: file.location,
+        contentType: file.mimetype
+      }))
     });
 
     const fileData = files.map(files => {
@@ -156,8 +166,8 @@ const uploadAssignments = asyncWrapper(async (req, res) => {
       );
     }
 
-    const addAssignId = await Subject.findByIdAndUpdate(
-      subjectId,
+    await Subject.findByIdAndUpdate(
+      subject._id,
       { $push: { Assignments: saveAssign._id } },
       { new: true }
     );
@@ -167,16 +177,16 @@ const uploadAssignments = asyncWrapper(async (req, res) => {
         .populate({
           path: "student",
           populate: {
-            path: "schoolYear",
+            path: "subject",
           }
         });
       // if (findUser.student && (findUser.student.schoolYear.schoolYear == checkExists.schoolYear)) {
       //   const email = user.email;
-      //   sendEmail(email, subject, name, userData, whatCome);
+      //   sendEmail(email, header, name, userData, whatCome);
       // }
     }));
 
-    res.redirect('/adminIndex/assignmentIndex')
+    res.redirect(`/eachSubject?subjectDbId=${subject._id}`);
 
   } catch (error) {
     console.error(error);
@@ -430,8 +440,13 @@ const editAssign = async (req, res) => {
 
 const delAssign = async (req, res) => {
   const getAssignId = req.query.assignId;
-  const assign = await Assignments.findById(getAssignId);
+  const assign = await Assignments.findById(getAssignId)
+  .populate('subject');
 
+  if (!assign) {
+    return res.status(404).send('Assignment not found');
+  }
+  const subjectDbId = assign.subject._id; // Get subject ID from populated data
   const files = assign.files;
   // res.json(files);
   for (const i of files) {
@@ -449,7 +464,7 @@ const delAssign = async (req, res) => {
   }
 
   const deleteAssign = await Assignments.findByIdAndDelete(getAssignId);
-  res.redirect('/adminIndex/assignmentIndex');
+  res.redirect(`/eachSubject?subjectDbId=${subjectDbId}`);
 };
 
 const submitDetail = async (req, res) => {

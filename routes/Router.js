@@ -227,8 +227,8 @@ router.post('/adminIndex/releaseQuiz/:quizId', teacherMiddleware, adminQuizContr
 router.post('/adminIndex/scheduleQuizRelease/:quizId', teacherMiddleware, adminQuizController.scheduleQuizRelease);
 
 
-router.get('/adminIndex/search=:query', adminQuizController.searchTeacher);
-router.get('/studentIndex/search=:query', adminQuizController.searchStudent);
+router.get('/search=:query', adminQuizController.search);
+// router.get('/studentIndex/search=:query', adminQuizController.searchStudent);
 
 
 
@@ -246,6 +246,7 @@ router.get('/seestudent',teacherMiddleware,adminQuizController.seeStudent)
 router.get('/adminIndex/deleteQuiz',adminEditDeleteQuizController.deleteQuiz)
 router.post('/uploadquiz',teacherMiddleware,adminQuizController.uploadQuiz)
 router.post('/updateQuiz',teacherMiddleware,adminEditDeleteQuizController.updateQuiz)
+router.post('/upload-question-image', adminQuizController.uploadQuestionImage);
 
 
 // router.get('/getallquestion/:id',teacherMiddleware,adminManageQuestions.getAllQuestion)

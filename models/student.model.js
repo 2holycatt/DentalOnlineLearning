@@ -65,42 +65,82 @@ const studentSchema = new Schema(
                         scorePerWeek: {
                             type: Number,
                             default: 0
-                        },
-                        noteWeek: {
-                            type: String,
-                            default: null
                         }
                     }
                 ],
-                studentNumber: {
-                    type: String
-                }
+                quizAttempts: [{
+                    quizId: {
+                        type: mongoose.Schema.ObjectId,
+                        ref: 'Quiz'
+                    },
+                    eachAttempt: [{
+                        answers: [{
+                            questionId: String, 
+                            answer: mongoose.Schema.Types.Mixed,
+                            isCorrect: Boolean,
+                            points: Number
+                        }],
+                        score: Number,
+                        attemptNumber: {
+                            type: Number,
+                            default: 1
+                        },
+                        submittedAt: {
+                            type: Date,
+                            default: Date.now
+                        }
+                    }]
+                }]
             }
-        ],
-    attempts: [{
-        quizId: {
-            type: mongoose.Schema.ObjectId,
-            ref: 'Quiz' // อ้างอิงไปยัง Quiz model
-        },
-        attemptCount: {
-            type: Number,
-            default: 0, // จำนวนครั้งที่เข้าทำ
-            min: 0
-        },
-        score: {
-            type: Number,
-            default: 0, // คะแนนที่ทำได้ในการพยายามนี้
-            min: 0
-        },
-        date: {
-            type: Date,
-            default: Date.now // วันที่เข้าทำ
+        ]
+    },
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
+    }
+);
+
+// Add virtual for quiz attempts
+studentSchema.virtual('myQuizAttempts', {
+    ref: 'Quiz',
+    localField: '_id', 
+    foreignField: 'attempts.studentDbId',
+    justOne: false
+});
+
+// Add method to get student's quiz attempts
+studentSchema.methods.getMyQuizAttempts = async function() {
+    const populatedStudent = await this.populate({
+        path: 'myQuizAttempts',
+        match: { 'attempts.studentDbId': this._id },
+        populate: {
+            path: 'subject.subjectMongooseId',
+            select: 'subjectId subjectName'
         }
-    }]
-}, {
-    timestamps: true
-}
-)
+    });
+
+    // Get all attempts for this student
+    const attempts = [];
+    if (populatedStudent.myQuizAttempts) {
+        populatedStudent.myQuizAttempts.forEach(quiz => {
+            const studentAttempts = quiz.attempts.filter(attempt => 
+                attempt.studentDbId.toString() === this._id.toString()
+            );
+            
+            if (studentAttempts.length > 0) {
+                attempts.push({
+                    quizId: quiz._id,
+                    quizName: quiz.quizname,
+                    subject: quiz.subject,
+                    attempts: studentAttempts
+                });
+            }
+        });
+    }
+
+    return attempts;
+};
 studentSchema.plugin(mongoosePaginate);
 
 const Student = mongoose.model('Student', studentSchema)

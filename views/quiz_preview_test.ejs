@@ -1121,23 +1121,39 @@
             cursor: pointer;
         }
 
-        .pagination-btn.answered {
-            background-color: #8A2BE2;
-            /* สีม่วงสำหรับข้อที่ตอบแล้ว */
-            color: white;
-        }
+        .pagination-btn.active {
+    background-color: #8A2BE2;
+    color: white;
+}
 
-        .pagination-btn.chevron {
-            background-color: transparent;
-            color: #8A2BE2;
-            border: none;
-        }
+.pagination-btn.chevron {
+    background-color: transparent;
+    color: #8A2BE2;
+    border: none;
+}
 
         .pagination-btn.chevron i {
             font-size: 1.5em;
         }
 
+        .nav-btn:hover {
+    background-color: #6B1FB1;
+    transform: translateY(-2px);
+}
 
+.nav-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.prev-btn {
+    left: 30px;
+}
+
+.next-btn {
+    right: 30px;
+}
     /* .spn-comment {
       font-size:xx-small !important;
       border: 2px solid white;
@@ -1331,9 +1347,16 @@
           </div>
 
         
-        </div>
-
+      
       </form>
+      <!-- <button type="button" id="prevQuestionBtn" class="nav-btn prev-btn" onclick="event.preventDefault(); navigateQuestion('prev')">
+        <i class="bi bi-arrow-left"></i> ข้อก่อนหน้า
+    </button>
+    
+    <button type="button" id="nextQuestionBtn" class="nav-btn next-btn" onclick="event.preventDefault(); navigateQuestion('next')">
+        ข้อถัดไป <i class="bi bi-arrow-right"></i>
+    </button> -->
+        </div>
 
 
       <!-- Modal -->
@@ -1590,13 +1613,117 @@
         window.location.href = '/adminIndex/eachQuiz?quizId=<%= quiz._id %>/edit';  
       }
 
-      function goToQuestion(index) {
-        // ซ่อนคำถามทั้งหมด
-        document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
-        // แสดงคำถามที่ถูกเลือก
-        document.getElementById('question_' + index).style.display = 'block';
-    }
+//       function goToQuestion(index) {
+//     // ซ่อนคำถามทั้งหมด
+//     document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
+    
+//     // แสดงคำถามที่ถูกเลือก
+//     document.getElementById('question_' + index).style.display = 'block';
+    
+//     // ลบ active class จากปุ่มทั้งหมด
+//     document.querySelectorAll('.pagination-btn').forEach(btn => {
+//         btn.style.backgroundColor = '';
+//     });
+    
+//     // เพิ่ม active class ให้ปุ่มปัจจุบัน (ยกเว้นปุ่ม chevron)
+//     const currentBtn = document.querySelector(`.pagination-btn:nth-child(${parseInt(index) + 2})`);
+//     if (currentBtn && !currentBtn.classList.contains('chevron')) {
+//         currentBtn.style.backgroundColor = '#8A2BE2';
+//         currentBtn.style.color = 'white';
+//     }
+// }
 
+function navigateQuestion(direction) {
+    event.preventDefault();
+    const questions = document.querySelectorAll('.question');
+    const totalQuestions = questions.length - 1; // Subtract 1 for title question
+    
+    // Calculate new index
+    if (direction === 'prev') {
+        currentQuestionIndex = Math.max(1, currentQuestionIndex - 1);
+    } else {
+        currentQuestionIndex = Math.min(totalQuestions, currentQuestionIndex + 1);
+    }
+    
+    // Hide all questions
+    questions.forEach(q => q.style.display = 'none');
+    
+    // Show selected question
+    const questionElement = document.getElementById('question_' + currentQuestionIndex);
+    if (questionElement) {
+        questionElement.style.display = 'block';
+    }
+    
+    // Update pagination
+    updatePagination(currentQuestionIndex);
+    
+    // Update navigation buttons
+    const prevBtn = document.getElementById('prevQuestionBtn');
+    const nextBtn = document.getElementById('nextQuestionBtn');
+    
+    prevBtn.style.display = currentQuestionIndex <= 1 ? 'none' : 'flex';
+    nextBtn.style.display = currentQuestionIndex >= totalQuestions ? 'none' : 'flex';
+}
+
+function updatePagination(index) {
+    document.querySelectorAll('.pagination-btn').forEach(btn => {
+        btn.style.backgroundColor = '#D9D9D9';
+        btn.style.color = 'black';
+    });
+    
+    const currentBtn = document.querySelector(`.pagination-btn[onclick="goToQuestion(${index})"]`);
+    if (currentBtn) {
+        currentBtn.style.backgroundColor = '#8A2BE2';
+        currentBtn.style.color = 'white';
+    }
+}
+
+
+function updateNavButtons(currentIndex, totalQuestions) {
+    const prevBtn = document.getElementById('prevQuestionBtn');
+    const nextBtn = document.getElementById('nextQuestionBtn');
+    
+    // Disable/enable prev button
+    prevBtn.disabled = currentIndex <= 1;
+    
+    // Disable/enable next button
+    nextBtn.disabled = currentIndex >= totalQuestions;
+    
+    // Update visibility
+    prevBtn.style.display = currentIndex <= 1 ? 'none' : 'flex';
+    nextBtn.style.display = currentIndex >= totalQuestions ? 'none' : 'flex';
+}
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateNavButtons(1, document.querySelectorAll('.question').length - 1);
+    currentQuestionIndex = 1;
+    navigateQuestion('none');
+});
+
+function goToQuestion(index) {
+    // ซ่อนคำถามทั้งหมด
+    document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
+    
+    // แสดงคำถามที่ถูกเลือก
+    document.getElementById('question_' + index).style.display = 'block';
+    
+    // อัพเดทปุ่ม pagination
+    document.querySelectorAll('.pagination-btn').forEach(btn => {
+        btn.style.backgroundColor = '';
+        btn.style.color = '#8A2BE2';
+    });
+    
+    const currentBtn = document.querySelector(`.pagination-btn:nth-child(${parseInt(index) + 2})`);
+    if (currentBtn && !currentBtn.classList.contains('chevron')) {
+        currentBtn.style.backgroundColor = '#8A2BE2';
+        currentBtn.style.color = 'white';
+    }
+    
+    // อัพเดทปุ่มนำทาง
+    updateNavButtons(index, document.querySelectorAll('.question').length - 1);
+}
     goToQuestion(0);
       // let currentPage = 0;
       //       const questionsPerPage = 10;

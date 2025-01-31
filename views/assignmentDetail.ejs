@@ -92,7 +92,6 @@
   
       .lesson-content {
         height: fit-content !important;
-        border-radius: 1em !important;
         justify-content: center !important;
       }
       .dark .manange-bar, .dark .lesson-content{
@@ -153,7 +152,6 @@
       .manange-bar,
       .lesson-content {
         box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
-        border-radius: 0.5em;
       }
   
       .card-1 {
@@ -187,16 +185,26 @@
       }
       .dark .descriptionText {
     background-color: #4444 !important;
-    color: white !important;
+    color: lightgray !important;
   }
   .border-grey{
-    border-top: 1px solid #999999 !important;
-    border-bottom: 1px solid #999999 !important;
+    border-top: 1px solid lightgray !important;
+    border-bottom: 1px solid lightgray !important;
   }
   .dark .border-grey{
-    border-top: 1px solid #555 !important;
-    border-bottom: 1px solid #555 !important;
+    border-top: 1px solid #666 !important;
+    border-bottom: 1px solid #666 !important;
   }
+  .link{
+        color: gray;
+      }
+      .dark .link{
+        color: rgb(231, 231, 231);
+      }
+      .dark .link:hover ,.link:hover{
+        text-decoration: underline;
+        color: #ba55d3 !important;
+      }
       @media screen and (max-width: 768px) {
         .above-nav-status{
           display: none;
@@ -223,30 +231,33 @@
   <div class="main-content d-flex w-100 h-auto">
     <%- include("./partials/lessonsList.ejs")%>
     <div class="aside-right w-75 h-auto p-4 m-3">
-      <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
-        <p class="fw-bold fs-3 lesson-bar">งานที่มอบหมาย</p>
-        <!-- <div>
-          <a href="/adminIndex/addAssign" class="add-button btn btn-primary m-0 p-2">
-            มอบหมายงาน <i class="bi bi-file-arrow-up-fill"></i>
-          </a>
-          <a href="#" class="add-button btn btn-dark m-0 p-2">
-            นำออกข้อมูลนักศึกษา (Export file) <i class="bi bi-file-arrow-down-fill"></i>
-            </i>
-          </a>
-        </div> -->
-      </div>
-      <div class="lesson-content bg-white w-100 p-4 my-4" style="height: fit-content;">
-        <div class="row assign-head">
-          <div class="row">
-            <div class="col-6 mb-3">
-              <p class="fs-5 fw-bold"><i class="bi bi-clipboard-fill text-primary fs-5"></i> <%=assignment.name%></p>
+    
+      <div class="lesson-content bg-white w-100 py-3 px-4 " style="height: fit-content;">
+        <div class="py-3 ps-1  d-flex w-100">
+          <div class="fw-normal fs-6 ms-1">
+            <span> <i class="bi bi-list-task me-1" style="cursor: default;color: #8A2BE2;"></i>
+               </span>
+            <a class="grey link" href="/eachSubject?subjectDbId=<%=subject._id%>">
+              <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
+            </a> 
+            <span>   / งานที่มอบหมาย:  <%=assignment.name%></span> 
+
+          </div>
+        </div>
+        <div >
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <div class="flex-grow-1 mb-3">
+              <p class="fw-normal fs-3 ms-2"><%=assignment.name%></p>
             </div>
-            <div class="col-6 mb-3 d-flex justify-content-end">
-              <a href="#editForm" class="btn btn-warning py-1 px-3 mx-2 text-white">แก้ไข </a>
-              <a href="/adminIndex/delAssign?assignId=<%=assignment._id%>" class="btn btn-danger py-1 px-3">ลบ</a>
+            <div class="d-flex mb-3">
+              <a href="#editForm" class="btn btn-warning  px-2 py-1 mx-1 text-white">แก้ไข </a>
+              <a href="/adminIndex/delAssign?assignId=<%=assignment._id%>" class="btn btn-danger  mx-1 px-2 py-1">ลบ</a>
             </div>
           </div>
-          <div class="col-12 row">
+            <div class="row  ms-2 ">
+          <div class="form-control w-100 descriptionText p-1" name="Description" disabled><%=assignment.Description%></div>
+        </div>
+          <div class="col-12 row my-2 ms-2">
             <div class="col-4">
               <p class="fs-6 fw-bold"><i class="fs-5 bi bi-stopwatch text-success"></i><span class="mx-1 text-success">วันที่เปิดให้ส่ง</span>: <span class="fw-normal"><%=formattedStartDate%></span></p>
             </div>
@@ -255,11 +266,8 @@
             </div>
           </div>
         </div>
-        <div class="row my-2 desDiv">
-          <p class="fs-6 fw-bold text-primary ">คำอธิบาย: </p>
-          <textarea class="form-control w-100 descriptionText p-1" name="Description" disabled><%=assignment.Description%></textarea>
-        </div>
-        <div class="row">
+      <br>
+        <div class="row ms-2">
           <div class="col-8">
             <p class="my-1 w-100 fw-bold text-primary">ไฟล์ที่เกี่ยวข้อง:</p>
             <% if (assignment.files.length > 0) { %>
@@ -276,17 +284,17 @@
               </div>
             </div>
             <% } else if (assignment.files.length < 1) { %>
-            <div class="row">
+            <div class="row ms-2">
               <p class="fs-6 text-center py-2 border-grey" >ไม่มีไฟล์ที่ถูกแนบ</p>            </div>
             <% } %>
           </div>
           <div class="col-4">
-            <div class="row">
+            <div class="row ms-2">
               <div class="col-6">
-                <p class="my-1 w-100 text-center fw-bold text-primary">คะแนนเต็ม</p>
+                <p class="my-1 w-100 text-center fw-bold fs-6 text-primary">คะแนนเต็ม</p>
               </div>
               <div class="col-6">
-                <p class="my-1 w-100 text-center fw-bold text-primary">จำนวนนักศึกษาส่งงาน</p>
+                <p class="studentSubmit-h my-1  w-100 text-center fw-bold fs-6 text-primary" >จำนวนนักศึกษาที่ส่งงาน</p>
               </div>
             </div>
             <div class="row">
@@ -295,7 +303,7 @@
                   <p class="fw-bold fs-2 text-success"><%=assignment.Score%></p>
                 </div>
                 <div class="col-6 p-3 d-flex justify-content-center">
-                  <p class="fw-bold fs-2 text-info"><%=assignment.sentCount%></p>
+                  <p class="fw-bold fs-2 text-secondary"><%=assignment.sentCount%></p>
                 </div>
               </div>
             </div>
@@ -380,7 +388,7 @@
                 <label for="name" class="form-label fs-bold">ชื่อ:</label>
                 <input type="text" class="form-control p-3 setWidth70" name="name" value="<%=assignment.name%>">
               </div>
-              <div class="my-1 mb-3">
+              <div class="my-1  mb-3">
                 <label for="description" class="form-label fs-bold">คำอธิบาย:</label>
 
                 <textarea class="form-control setWidth70 px-3 py-1" name="Description" style="height: 100px;"><%=assignment.Description%></textarea>

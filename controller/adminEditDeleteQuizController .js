@@ -16,16 +16,18 @@ const deleteQuiz = async (req, res) => {
 
   try {
       // หา Quiz ที่ต้องการลบ
-      const getQuiz = await Quiz.findById(getQuiz_id);
+      const getQuiz = await Quiz.findById(getQuiz_id)
+      .populate('subject.subjectMongooseId');
 
       if (!getQuiz) {
           return res.status(404).send('Quiz not found');
       }
+      const subjectDbId = getQuiz.subject.subjectMongooseId._id;
 
       // ลบ quiz
       await Quiz.findByIdAndDelete(getQuiz_id);
 
-      res.redirect('/adminIndex/adminExamsIndex');
+      res.redirect(`/eachSubject?subjectDbId=${subjectDbId}`);
   } catch (error) {
       console.error('Error deleting quiz:', error);
       res.status(500).send('Internal Server Error');
@@ -52,6 +54,8 @@ const updateQuiz = async (req, res) => {
       if (questions && Array.isArray(questions)) {
           quiz.questions = questions.map(q => {
               // Process answer based on question type
+              const existingQuestion = quiz.questions[index];
+
               let answer;
               if (q.questionType === 'MCQ') {
                   answer = Number(q.answer);
@@ -71,7 +75,11 @@ const updateQuiz = async (req, res) => {
                   answerKey: q.answerKey || '',
                   points: q.points || 1,
                   open: q.open !== undefined ? q.open : true,
-                  answerTexts: q.answerTexts
+                  answerTexts: q.answerTexts,
+                  questionImage: existingQuestion ? existingQuestion.questionImage : {
+                    url: null,
+                    contentType: null
+                  }
               };
           });
       }

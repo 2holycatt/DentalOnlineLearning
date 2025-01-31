@@ -563,6 +563,17 @@
     background-color: rgba(0, 0, 0, 0.05);
 }
       
+.swal2-cancel,.swal2-confirm {
+    padding: 0.6rem  !important; /* เพิ่ม padding ของปุ่มยืนยัน */
+    margin: 1rem !important; /* เพิ่ม margin ของปุ่มยืนยัน */
+  }
+  .swal2-icon {
+    margin: 1rem auto !important; /* จัดโลโก้แจ้งเตือนให้อยู่ตรงกลาง */
+  }
+  .link:hover{
+        text-decoration: underline;
+        color: #ba55d3 !important;
+      }
       @media screen and (max-width: 768px) {
         .above-nav-status {
           display: none;
@@ -623,9 +634,9 @@
                     class="btn btn-warning text-white m-1 p-2">
                     แก้ไขรายวิชา<i class="bi bi-pencil-fill ms-2"></i>
                   </a>
-                  <a href="/adminIndex/deleteSubject?subjectId=<%=subject._id%>" class="btn btn-danger m-1 p-2">
+                  <a href="#" onclick="confirmDelete('<%=subject._id%>')" class="btn btn-danger m-1 p-2">
                     จัดเก็บรายวิชา <i class="bi bi-archive"></i>
-                  </a>
+                </a>
                 </div>
               </div>
             </div>
@@ -725,7 +736,7 @@
               <div class="col-12 mt-2 row">
                 <div class="col">
                   <p class="fw-bold fs-6 my-1">
-                    <i class="bi-3 bi bi-pencil-square me-1 text-primary"></i>
+                    <i class="bi-3 bi-card-checklist me-1 text-primary"></i>
                     แบบทดสอบ
                     <span class="text-secondary fw-normal">
                       /
@@ -822,7 +833,7 @@
               <div class="col-12 mt-2 row">
                 <div class="col">
                   <p class="fw-bold fs-6 my-1">
-                    <i class="bi-2 bi bi-list-task text-primary"></i>
+                    <i class="me-1 bi-2 bi bi-list-task text-primary"></i>
                     งานที่มอบหมาย
                     <span class="text-secondary fw-normal">
                       /
@@ -1126,6 +1137,28 @@
         endTimeInput.value = '';
       }
     }
+
+    function confirmDelete(subjectId) {
+    Swal.fire({
+        title: 'ยืนยันการจัดเก็บรายวิชา',
+        text: "คุณต้องการจัดเก็บรายวิชานี้ใช่หรือไม่?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'ยืนยัน',
+        cancelButtonText: 'ยกเลิก',
+        customClass: {
+            container: 'swal-container-padding',
+            icon: 'swal-icon-center',
+            confirmButton: 'swal-btn-padding'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/adminIndex/deleteSubject?subjectId=${subjectId}`;
+        }
+    });
+}
       </script>
 
 

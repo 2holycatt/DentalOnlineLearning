@@ -5,6 +5,39 @@ const Subject = require("../models/subjects");
 const Quiz = require("../models/quiz");
 const moment = require('moment');
 
+
+async function getSubjectsForNav(userId) {
+    try {
+      const userData = await User.findById(userId);
+      let subject = [];
+      
+      if (!userData) {
+        return [];
+      }
+  
+      if (userData.role === 'student') {
+        const studentData = await Student.findOne({ user: userId })
+          .populate('subjects.subjectMongooseId');
+        
+        // Check if studentData and subjects exist
+        if (studentData && studentData.subjects) {
+          subject = studentData.subjects.map(subject => subject.subjectMongooseId);
+        }
+      } else {
+        // For teachers and admins
+        subject = await Subject.find()
+          .sort({ semester: 1 })
+          .populate("lessonArray") || [];
+      }
+      
+      return subject;
+    } catch (error) {
+      console.error('Error in getSubjectsForNav:', error);
+      return []; // Return empty array on error
+    }
+  }
+
+
 const studentIndex = async (req, res) => {
     try {
         const userData = await User.findById(req.session.userId)
@@ -14,6 +47,7 @@ const studentIndex = async (req, res) => {
                     path: "subjects.subjectMongooseId",
                 }
             });
+        const navSubjects = await getSubjectsForNav(req.session.userId);
         const getUserLessons = userData
         const theme = req.session.theme || 'light';
         const isSidebarOpen = false;
@@ -21,7 +55,7 @@ const studentIndex = async (req, res) => {
         // console.log(getUserLessons);
 
         // res.json(userData);
-        res.render("studentIndex", { getUserLessons, userData, theme, isSidebarOpen });
+        res.render("studentIndex", { getUserLessons, userData, theme, isSidebarOpen,navSubjects });
     } catch (err) {
         console.error(err);
         res.status(500).send("เกิดข้อผิดพลาด");

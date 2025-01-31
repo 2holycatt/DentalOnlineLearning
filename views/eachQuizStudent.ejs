@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quizs</title>
+  <title><%=quiz.quizname%></title>
   <!-- <link rel="stylesheet" href="/css/event.css"> -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link rel="stylesheet" href="/css/getMoreAddContent.css">
@@ -544,13 +544,26 @@
         border-color: gray;
         padding: 0.75rem !important;
       }
-
-    /* .spn-comment {
-      font-size:xx-small !important;
-      border: 2px solid white;
-      padding: 0.25em !important;
-      border-radius: 0.25em;
-    } */
+      .link:hover{
+        text-decoration: underline;
+        color: #ba55d3 !important;
+      }
+      .link{
+        color: gray;
+      }
+      .dark .link{
+        color: rgb(231, 231, 231);
+      }
+      .dark .link:hover ,.link:hover{
+        text-decoration: underline;
+        color: #ba55d3 !important;
+      }
+      .a-hover:hover{
+        color: #0055b1 !important;
+      }
+      .dark .a-hover:hover{
+        color: #4f93e0 !important;
+      }
     @media screen and (max-width: 768px) {
       .above-nav-status{
         display: none;
@@ -581,7 +594,12 @@
     <div class="row allCOntent m-3" style="width: 80% !important;">
       <div class="col-12 aside-right px-4 py-4 bg-white" style="width: 100% !important;">
         <div class="manange-bar p-4 bg-white w-100">
-          <p class="fw-normal fs-6 lesson-bar ms-2">แบบทดสอบ</p> 
+          <div class="fw-normal fs-6  ms-2"> 
+            <span><i class="bi bi-card-checklist me-2" style="color: #8A2BE2;"></i></span>
+            <a class="grey link" href="/eachSubject?subjectDbId=<%=subject._id%>">
+            <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%></a> 
+        <span>/ แบบทดสอบ: <%=quiz.quizname%></span>
+        </div>
               <br>
               <p class="fw-normal fs-3 ms-2 ">
                 <%=quiz.quizname%>
@@ -605,8 +623,35 @@
             <div>
                
                 <br><hr><br>
-                <p class="fw-normal w-auto fs-6 mx-2">สถานะ:
-                    <span class="fw-normal fs-6 text-danger" style="margin-right: 1em !important;">ยังไม่ได้ทำ</span>
+              
+                <% 
+                // Check quiz attempt status once at the top
+                const hasAttempt = student && quiz.attempts?.some(attempt => 
+                    attempt?.studentDbId?.toString() === student._id?.toString() && 
+                    attempt.eachAttempt?.length > 0
+                );
+                
+                let studentAttempt;
+                let lastAttempt;
+                let percentage;
+                
+                if (hasAttempt) {
+                    studentAttempt = quiz.attempts.find(a => 
+                        a.studentDbId.toString() === student._id.toString()
+                    );
+                    if (studentAttempt?.eachAttempt?.length > 0) {
+                        lastAttempt = studentAttempt.eachAttempt[studentAttempt.eachAttempt.length - 1];
+                        percentage = (lastAttempt.score / totalPoints) * 100;
+                    }
+                }
+                %>
+                     
+                  <p class="fw-normal w-auto fs-6 mx-2">สถานะ:
+                    <span class="fw-normal fs-6 <%= hasAttempt ? 'text-success' : 'text-danger' %>" 
+                          style="margin-right: 1em !important;">
+                        <%= hasAttempt ? 'ทำแล้ว' : 'ยังไม่ได้ทำ' %>
+                    </span>
+               
                     <% if (quiz.releaseWhen) { %>
                     
                         <label>ถูกปล่อยเมื่อ: </label>
@@ -626,33 +671,40 @@
                   </p>
         </p></div>
           
+
          <br>
-         <% if (attemptCount === 0) { %>
-          <div class="d-flex justify-content-center my-2">
-              <a href="javascript:void(0)" onclick="confirmStartQuiz('<%= quiz._id %>')" 
-                 class="add-button btn btn-secondary" style="background-color: #8A2BE2 !important; padding: 0.8rem !important;">
-                  เริ่มทำแบบทดสอบ
-              </a>
-          </div>
-      <% } else if (attemptCount > 1) { %>
+         <% if (hasAttempt && lastAttempt) { %>
           <div class="d-flex justify-content-center">
               <div class="score-display text-center mx-2">
-                <p>คะแนนที่ทำได้: <br><br>
+                  <p>คะแนนที่ทำได้: <br><br>
                   <h2>
-                      <%= studentScore %>/<%= totalPoints %>  <span class="fs-4">(<%=
-                                      percentage.toFixed(0) %>%)
-                                      <a class="fs-6 " href="/studentIndex/eachQuiz?quizId=<%= quiz._id %>/rdetail"  target="_blank">ดูรายละเอียด</a>
-                              </span>
+                      <%= lastAttempt.score %>/<%= totalPoints %>
+                      <span class="fs-4">
+                          (<%= percentage.toFixed(0) %>%)
+                          <a class="fs-6 text-primary a-hover" href="/studentIndex/eachQuiz?quizId=<%= quiz._id %>/rdetail" target="_blank">
+                              ดูรายละเอียด
+                          </a>
+                      </span>
                   </h2>
-
                   </p>
               </div>
           </div>
-          <br/>
+          <br>
           <div class="d-flex justify-content-center my-2">
-              <a href="javascript:void(0)" onclick="confirmStartQuiz('<%= quiz._id %>')" 
-                 class="add-button btn btn-secondary" style="background-color: #8A2BE2 !important; padding: 0.8rem !important;">
+              <a href="javascript:void(0)" 
+                 onclick="confirmStartQuiz('<%= quiz._id %>')" 
+                 class="add-button btn btn-secondary" 
+                 style="background-color: #8A2BE2 !important; padding: 0.8rem !important;">
                   ทำแบบทดสอบอีกครั้ง
+              </a>
+          </div>
+      <% } else { %>
+          <div class="d-flex justify-content-center my-2">
+              <a href="javascript:void(0)" 
+                 onclick="confirmStartQuiz('<%= quiz._id %>')" 
+                 class="add-button btn btn-secondary" 
+                 style="background-color: #8A2BE2 !important; padding: 0.8rem !important;">
+                  เริ่มทำแบบทดสอบ
               </a>
           </div>
       <% } %>
