@@ -1026,6 +1026,31 @@
   .dark .btn-primary{
     background-color: #0866FF !important;
   }
+  .matching-pair {
+
+    margin-bottom: 0.5rem;
+}
+
+.matching-pair input {
+    min-width: 200px;
+}
+
+.input-matching {
+            border: none;
+            outline: none;
+            border-bottom: 1px lightgray solid;
+            width: 300px;
+        }
+
+        .dark .input-matching {
+            border: none;
+            outline: none;
+            background-color: var(--secondary-color);
+            border-bottom: 1px #555 solid;
+            color: var(--text-color);
+            width: 300px;
+        }
+
         @media screen and (max-width: 768px) {
             body {
                 width: 120%;
@@ -1034,7 +1059,10 @@
             .above-nav-status {
                 display: none;
             }
-
+            .input-matching, .dark .input-matching{
+                width: 50px;
+            }
+       
         }
     </style>
 </head>
@@ -1058,9 +1086,13 @@
                     </div>
                     <div class="modal-body">
                         <form id="formimage" enctype="multipart/form-data">
-                            <input class="form-control form-control-lg" style="width: 100%;" id="avatar" type="file"
-                                accept="image/*" onchange="readURL(this);">
-                            <input type="submit" id="submit_image" value="Submit" style="display: none;" />
+                            <input class="form-control form-control-lg" 
+                                   style="width: 100%;" 
+                                   id="avatar" 
+                                   type="file"
+                                   name="avatar"
+                                   accept="image/*" 
+                                   onchange="readURL(this);">
                         </form>
                         <img id="preview_image" src="" alt="Preview" style="max-width: 300px; margin-top: 10px; display: none;">
                         <div class="loader" id="loader" style="display: none;">
@@ -1403,7 +1435,8 @@ function savechanges() {
             // Update questions array
             const questionIndex = currentQuestionId.split('_')[1];
             questions[questionIndex].questionImage = {
-                url: data.imageUrl
+                url: data.imageUrl,
+                contentType: 'image/jpeg' // หรือตามประเภทไฟล์จริง
             };
             
             // Close modal
@@ -1413,7 +1446,10 @@ function savechanges() {
             autosave();
         }
     })
-    .catch(err => console.error('Upload error:', err))
+    .catch(err => {
+        console.error('Upload error:', err);
+        document.getElementById('status').textContent = 'อัปโหลดไม่สำเร็จ';
+    })
     .finally(() => {
         document.getElementById('loader').style.display = 'none';
     });
@@ -1433,13 +1469,21 @@ function savechanges() {
                 const attemptLimit = document.getElementById('attemptLimit').value;
                 const timeLimit = JSON.parse(document.getElementById('timeLimit').value);
 
+                const questionsWithImages = questions.map(question => ({
+            ...question,
+            questionImage: question.questionImage ? {
+                url: question.questionImage.url,
+                contentType: question.questionImage.contentType
+            } : null
+        }));
+
             const data = {
                 quizId: '<%= quiz._id %>',
                 quizname: quizName,
                 quizdescription: quizDescription,
                 attemptLimit: attemptLimit,
                 timeLimit: timeLimit,
-                questions: questions
+                questions: questionsWithImages
             };
 
             fetch('/updateQuiz', {
@@ -1676,10 +1720,23 @@ function savechanges() {
                     options: [{ optionText: 'ตัวเลือก 1' }],
                     questionType: 'MCQ',
                     points: 1,
-                    open: true
-                });
+                    open: true,
+                    matchingPairs: [{  
+            left: {
+                text: 'ด้านซ้าย',
+                image: null
+            },
+            right: {
+                text: 'ด้านขวา',
+                image: null
+            },
+            points: 1,
+            correctMatch: 0
+        }]
+    });
+               
                 updateQuestionCount();
-
+                initializeSortable();
                 calculateTotalPoints();
                 renderQuestions();
                 autosave();
@@ -1744,7 +1801,7 @@ function savechanges() {
                 console.log("Question data:", question);
 
                 let answerContent = '';
-
+                
                 if (question.questionType === 'MCQ') {
                     answerContent = `
             ${question.options.map((option, i) => `
@@ -1773,6 +1830,38 @@ function savechanges() {
                     answerContent = `
             <textarea placeholder='บรรยายไม่จำเป็นต้องระบุคำตอบ คุณสามารถดูคำตอบและให้คะแนนทีหลังได้' class="form-control mt-2" name="answer_${index}" rows="2" style='width:100%' disabled>${question.answerText || ''}</textarea>
         `;
+    } else if (question.questionType === 'matching') {
+    answerContent = `
+        <div class="matching-pairs-container">
+            <div class="mb-3">แบบจับคู่ สามารถปรับคะแนนแต่ละคู่ได้</div>
+            ${question.matchingPairs.map((pair, pairIndex) => `
+                <div class="matching-pair d-flex align-items-center mb-3">
+                    <div class="pair-number me-2" style="min-width: 30px;">
+                        ${pairIndex + 1}.
+                    </div>
+                    <div class="pair-content flex-grow-1">
+                        <div class="d-flex">
+                            <div class="left-side me-3">
+                                <input type="text" class="form-control" value="${pair.left.text}" disabled>
+                            </div>
+                            <div class="right-side">
+                                <input type="text" class="form-control" value="${pair.right.text}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="points-input ms-3">
+                        <input type="number" 
+                            class="form-control form-control-sm" 
+                            style="width: 70px;"
+                            value="${pair.points || 1}"
+                            min="0"
+                            onchange="updatePairPoints(${currentQuestionIndex}, ${pairIndex}, this.value)"
+                            placeholder="คะแนน">
+                    </div>
+                </div>
+            `).join('')}
+         
+    `;
                 } else if (question.questionType === 'short_answ') {
                     answerContent = `
             <div id="shortAnswerContainer">
@@ -1789,19 +1878,39 @@ function savechanges() {
            
         `;
                 }
+                let pointsDisplay = '';
+    if (question.questionType === 'matching') {
+        const totalPoints = calculateMatchingTotalPoints(question);
+        pointsDisplay = `
+            <div style="display: flex; align-items: center;">
+                <input type="number" class="form-control" value="${totalPoints}" disabled 
+                    style="width: 4rem; height: 2rem; font-size:15px; background-color: #e9ecef;">
+                <span style="margin: 0; margin-left: 10px; font-size:15px; color:lightgray;">
+                    คะแนน (รวมจากคู่ทั้งหมด)
+                </span>
+            </div>`;
+    } else {
+        pointsDisplay = `
+            <div style="display: flex; align-items: center;">
+                <input type="number" class="form-control" id="questionPoints" 
+                    value="${question.points}" min="1" 
+                    style="width: 4rem; height: 2rem; font-size:15px;">
+                <span style="margin: 0; margin-left: 10px; font-size:15px; color:lightgray;">
+                    คะแนน
+                </span>
+            </div>`;
+    }
 
-                modalContent.innerHTML = `
+    modalContent.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <h6 style="margin: 0;">${question.questionText}</h6>
-            <div style="display: flex; align-items: center;">
-                <input type="number" class="form-control" id="questionPoints" value="${question.points}" min="1" style="width: 4rem;height: 2rem; font-size:15px;">
-                <span style="margin: 0; margin-left: 10px;font-size:15px; color:lightgray;">คะแนน </span>
-            </div>
+            ${pointsDisplay}
         </div>
         <div><br>
             ${answerContent}
         </div>
     `;
+
                 console.log("Modal content set:", modalContent.innerHTML);
                 $('#answerModal').modal('show');
             }
@@ -1810,6 +1919,7 @@ function savechanges() {
                 $('#answerModal').modal('hide');
             }
 
+            //คำตอบสั้น
             function addShortAnswer(index) {
                 const container = document.getElementById('shortAnswerContainer');
                 const newIndex = container.children.length;
@@ -1832,30 +1942,174 @@ function savechanges() {
                 }
             }
 
-            function saveAnswer() {
-                const question = questions[currentQuestionIndex];
-                const points = document.getElementById('questionPoints').value;
-                question.points = parseInt(points, 10);
+            //จับคู่
+            function addMatchingPair(questionIndex) {
+    const question = questions[questionIndex];
+    
+    if (!question.matchingPairs) {
+        question.matchingPairs = [];
+    }
 
-                if (question.questionType === 'MCQ') {
-                    const correctAnswer = document.querySelector('input[name="correctAnswer"]:checked').value;
-                    question.answer = parseInt(correctAnswer, 10);
-                } else if (question.questionType === 'checkbox') {
-                    const selectedAnswers = Array.from(document.querySelectorAll('input[name="correctAnswer"]:checked'))
-                        .map(input => parseInt(input.value, 10));
-                    question.answer = selectedAnswers;
-                } else if (question.questionType === 'Paragraph' || question.questionType === 'short_answ') {
-                    const answerTexts = document.querySelectorAll(`#shortAnswerContainer textarea`);
-                    question.answerTexts = Array.from(answerTexts).map(textarea => textarea.value);
-                }
+    // Add new pair
+    const newIndex = question.matchingPairs.length;
+    question.matchingPairs.push({
+        left: {
+            text: 'ด้านซ้าย',
+            image: null,
+            index: newIndex
+        },
+        right: {
+            text: 'ด้านขวา',
+            image: null,
+            index: newIndex
+        },
+        points: 1,
+        correctMatch: {
+            leftIndex: newIndex,
+            rightIndex: newIndex
+        }
+    });
 
-                $('#answerModal').modal('hide');
-                updateQuestionCount();
-                initializeSortable();
-                calculateTotalPoints();
-                renderQuestions();
-                autosave();
-            }
+    question.points = calculateMatchingTotalPoints(question);
+
+    // Re-render question display
+    renderQuestions();
+    calculateTotalPoints();
+    autosave();
+}
+
+function removeMatchingPair(questionIndex, pairIndex) {
+    // Get the question
+    const question = questions[questionIndex];
+    
+    // Validate that matchingPairs exists and has more than one pair
+    if (!question.matchingPairs || question.matchingPairs.length <= 1) {
+        alert('ต้องมีอย่างน้อย 1 คู่');
+        return;
+    }
+
+    // Remove the pair
+    question.matchingPairs.splice(pairIndex, 1);
+
+    // Update correctMatch indices
+    question.matchingPairs.forEach((pair, idx) => {
+        pair.correctMatch = idx;
+    });
+
+    // Re-render the question
+    renderQuestions();
+    autosave();
+}
+
+function updateMatchingPair(questionIndex, pairIndex, side) {
+    const input = document.querySelector(`#matching_pairs_${questionIndex} .matching-pair:nth-child(${pairIndex + 1}) .${side}-side input`);
+    questions[questionIndex].matchingPairs[pairIndex][side] = {
+        text: input.value,
+        image: null,
+        index: pairIndex
+    };
+    autosave();
+}
+
+function updatePairPoints(questionIndex, pairIndex, points) {
+    const question = questions[questionIndex];
+    question.matchingPairs[pairIndex].points = parseInt(points) || 1;
+    
+    // Update total points for the question
+    question.points = calculateMatchingTotalPoints(question);
+    
+    renderQuestions();
+    calculateTotalPoints(); // Update total quiz points
+    autosave();
+}
+
+function calculateMatchingTotalPoints(question) {
+    if (!question.matchingPairs) return 0;
+    return question.matchingPairs.reduce((total, pair) => total + (parseInt(pair.points) || 1), 0);
+}
+
+function renderMatchingPairs(question, questionIndex) {
+    return `
+        <div class="matching-pairs" id="matching_pairs_${questionIndex}">
+            ${question.matchingPairs.map((pair, pairIndex) => `
+                <div class="matching-pair d-flex align-items-center mb-3">
+                    <div class="pair-number me-2" style="min-width: 30px;">
+                        ${pairIndex + 1}.
+                    </div>
+                    <div class="left-side me-3">
+                        <input type="text" class="input-question" 
+                            value="${pair.left.text}"
+                            onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'left')">
+                        ${pair.left.image?.url ? `
+                            <img src="${pair.left.image.url}" class="mt-2" style="max-width: 100px;">
+                        ` : ''}
+                    </div>
+                    <div class="right-side me-3">
+                        <input type="text" class="input-question"
+                            value="${pair.right.text}"
+                            onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'right')">
+                        ${pair.right.image?.url ? `
+                            <img src="${pair.right.image.url}" class="mt-2" style="max-width: 100px;">
+                        ` : ''}
+                    </div>
+                    <a onclick="removeMatchingPair(${questionIndex}, ${pairIndex})" 
+                       style="margin-top:8px; margin-left: 8px; font-size:1.6rem; cursor:pointer;">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </div>
+            `).join('')}
+            <button class="btn btn-outline-primary" onclick="addMatchingPair(${questionIndex})">
+                เพิ่มคู่จับคู่ <i class="bi bi-plus"></i>
+            </button>
+        </div>`;
+}
+
+function saveAnswer() {
+    const question = questions[currentQuestionIndex];
+
+    if (question.questionType === 'matching') {
+        question.matchingPairs.forEach((pair, index) => {
+            pair.correctMatch = {
+                leftIndex: index,
+                rightIndex: index
+            };
+        });
+        question.answer = question.matchingPairs.map(pair => ({
+            leftIndex: pair.correctMatch.leftIndex,
+            rightIndex: pair.correctMatch.rightIndex
+        }));
+
+        // Calculate and set total points from pairs
+        question.points = calculateMatchingTotalPoints(question);
+        
+        // Set answer array for matching pairs
+        question.answer = question.matchingPairs.map((pair, index) => index);
+
+    } else if (question.questionType === 'MCQ') {
+        const points = document.getElementById('questionPoints').value;
+        question.points = parseInt(points, 10);
+        const correctAnswer = document.querySelector('input[name="correctAnswer"]:checked').value;
+        question.answer = parseInt(correctAnswer, 10);
+    } else if (question.questionType === 'checkbox') {
+        const points = document.getElementById('questionPoints').value;
+        question.points = parseInt(points, 10);
+        const selectedAnswers = Array.from(document.querySelectorAll('input[name="correctAnswer"]:checked'))
+            .map(input => parseInt(input.value, 10));
+        question.answer = selectedAnswers;
+    } else if (question.questionType === 'Paragraph' || question.questionType === 'short_answ') {
+        const points = document.getElementById('questionPoints').value;
+        question.points = parseInt(points, 10);
+        const answerTexts = document.querySelectorAll(`#shortAnswerContainer textarea`);
+        question.answerTexts = Array.from(answerTexts).map(textarea => textarea.value);
+    }
+
+    $('#answerModal').modal('hide');
+    updateQuestionCount();
+    initializeSortable();
+    calculateTotalPoints();
+    renderQuestions();
+    autosave();
+}
 
 
             let sortableInitialized = false; // ตัวแปรเพื่อเช็คว่า Sortable ถูกติดตั้งหรือยัง
@@ -1893,12 +2147,13 @@ function savechanges() {
                     <option value="checkbox" ${question.questionType === 'checkbox' ? 'selected' : ''}>อัตนัยหลายคำตอบ</option>
                     <option value="Paragraph" ${question.questionType === 'Paragraph' ? 'selected' : ''}>บรรยาย</option>
                     <option value="short_answ" ${question.questionType === 'short_answ' ? 'selected' : ''}>เติมคำตอบสั้นๆ</option>
+                     <option value="matching" ${question.questionType === 'matching' ? 'selected' : ''}>จับคู่</option>
                 </select>
             </div>
             <div class="options" id="options_${i}">
                 ${renderOptions(question, i)}
             </div>
-            ${question.questionType !== 'Paragraph' && question.questionType !== 'short_answ' ? `
+            ${question.questionType !== 'Paragraph' && question.questionType !== 'short_answ' && question.questionType !== 'matching' ? `
                 <a class="double_item text-primary" style=" cursor: pointer;" onclick="addOption(${i})">เพิ่มตัวเลือก</a>
             ` : ''}
             ${question.questionType === 'short_answ' ? `<div class="">คำตอบที่ถูกต้อง: <span style='color:yellowgreen;'>${question.answerTexts ? question.answerTexts.join(', ') : ''}</span></div>` : ''}
@@ -1972,7 +2227,43 @@ function savechanges() {
                     return `<textarea class="form-control  mt-3 mb-2" name="answer_${questionIndex}" rows="1" style="width:90%;" disabled placeholder="ข้อความคำตอบแบบยาว"></textarea>`;
                 } else if (question.questionType === 'short_answ') {
                     return `<textarea class="form-control  mt-3 mb-2" name="answer_${questionIndex}" rows="1" style="width:50%;" disabled placeholder="ข้อความคำตอบสั้นๆ"></textarea>`;
-                }
+            } else if (question.questionType === 'matching') {
+                return `
+        <div class="matching-pairs" id="matching_pairs_${questionIndex}">
+            ${question.matchingPairs.map((pair, pairIndex) => `
+                <div class="matching-pair d-flex align-items-center mb-3">
+                    <div class="pair-number pt-2" style="min-width: 30px;">
+                        ${pairIndex + 1}.
+                    </div>
+                    <div class="left-side me-3">
+                        
+                        <input type="text" class="input-matching" 
+                            value="${pair.left.text}"
+                            onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'left')">
+                        ${pair.left.image?.url ? `
+                            <img src="${pair.left.image.url}" class="mt-2" style="max-width: 100px;">
+                        ` : ''}
+                    </div>
+                    <div class="right-side me-3">
+                        <input type="text" class="input-matching"
+                            value="${pair.right.text}"
+                            onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'right')">
+                        ${pair.right.image?.url ? `
+                            <img src="${pair.right.image.url}" class="mt-2" style="max-width: 100px;">
+                        ` : ''}
+                    </div>
+                    <a onclick="removeMatchingPair(${questionIndex}, ${pairIndex})" 
+                       style="margin-top:8px; margin-left: 8px; font-size:1.6rem; cursor:pointer;">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </div>
+            `).join('')}
+            <button class="btn btn-outline-primary" onclick="addMatchingPair(${questionIndex})">
+                เพิ่มคู่จับคู่ <i class="bi bi-plus"></i>
+            </button>
+        </div>`;
+}
+    
                 return '';
             }
 

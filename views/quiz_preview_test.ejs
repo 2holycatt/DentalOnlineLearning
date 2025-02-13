@@ -1154,6 +1154,31 @@
 .next-btn {
     right: 30px;
 }
+.pagination {
+    max-width: 100%;
+}
+.matching-container {
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.matching-item {
+  position: relative;
+}
+
+.matching-item .form-control {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.matching-item .form-control:hover {
+  background-color: #e9ecef;
+}
+
+.matching-lines {
+  height: 100%;
+  border-left: 2px dashed #dee2e6;
+}
     /* .spn-comment {
       font-size:xx-small !important;
       border: 2px solid white;
@@ -1164,6 +1189,12 @@
       .above-nav-status {
         display: none;
       }
+      .pagination {
+        padding: 5px;
+    }
+    .pagination-btn {
+        width: 40px !important;
+    }
     }
   </style>
 </head>
@@ -1236,21 +1267,20 @@
           <!-- title  -->
           <br><br><br><br>
                   <!-- Pagination -->
-        <div class="pagination">
+<div class="pagination" style="display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;">
           <button type="button" class="pagination-btn chevron" onclick="prevPage()">
-              <i class="bi bi-chevron-left"></i>
           </button>
           
-          <% for (let i = 0; i < Math.min(10, questions.length); i++) { %>
+          <% for (let i = 0; i < questions.length; i++) { %>
               <button type="button"
-                  class="pagination-btn <%= questions[i].isAnswered ? 'answered' : '' %>"
-                  onclick="goToQuestion('<%= i %>')">
+                  class=" py-2 pagination-btn <%= questions[i].isAnswered ? 'answered' : '' %>"
+                  onclick="goToQuestion('<%= i %>')"
+                  style="width: 45px;margin: 2px;">
                   <%= i + 1 %>
               </button>
           <% } %>
 
           <button type="button" class="pagination-btn chevron" onclick="nextPage()">
-              <i class="bi bi-chevron-right"></i>
           </button>
       </div>
 
@@ -1339,7 +1369,59 @@
                           <% } else if (question.questionType==='short_answ' ) { %>
                             <textarea class="form-control ms-4 mt-2" name="answer_<%= i %>" rows="1"
                               style="width:50%;" readonly></textarea>
-                            <% } %>
+                              <% } else if (question.questionType === 'matching') { %>
+                                <div class="matching-container ms-4 mt-3">
+                                  <div class="row">
+                                    <div class="col-5">
+                                      <!-- Left side items -->
+                                      <% const shuffledLeft = [...question.matchingPairs].map((pair, idx) => ({
+                                        text: pair.left.text,
+                                        image: pair.left.image,
+                                        originalIndex: idx
+                                      })).sort(() => Math.random() - 0.5) %>
+                                      
+                                      <% shuffledLeft.forEach((item, idx) => { %>
+                                        <div class="matching-item mb-3" data-original-index="<%= item.originalIndex %>">
+                                          <div class="form-control">
+                                            <%= idx + 1 %>. <%= item.text %>
+                                            <% if (item.image?.url) { %>
+                                              <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
+                                            <% } %>
+                                          </div>
+                                        </div>
+                                      <% }) %>
+                                    </div>
+                              
+                                    <div class="col-2 d-flex align-items-center justify-content-center">
+                                      <div class="matching-lines"></div>
+                                    </div>
+                              
+                                    <div class="col-5">
+                                      <!-- Right side items -->
+                                      <% const shuffledRight = [...question.matchingPairs].map((pair, idx) => ({
+                                        text: pair.right.text,
+                                        image: pair.right.image,
+                                        originalIndex: idx
+                                      })).sort(() => Math.random() - 0.5) %>
+                              
+                                      <% shuffledRight.forEach((item, idx) => { %>
+                                        <div class="matching-item mb-3" data-original-index="<%= item.originalIndex %>">
+                                          <div class="form-control">
+                                            <%= String.fromCharCode(65 + idx) %>. <%= item.text %>
+                                            <% if (item.image?.url) { %>
+                                              <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
+                                            <% } %>
+                                          </div>
+                                        </div>
+                                      <% }) %>
+                                    </div>
+                                  </div>
+                              
+                                  <!-- Hidden inputs to store answers -->
+                                  <input type="hidden" name="matching_left_order_<%= i %>" value="<%= JSON.stringify(shuffledLeft.map(i => i.originalIndex)) %>">
+                                  <input type="hidden" name="matching_right_order_<%= i %>" value="<%= JSON.stringify(shuffledRight.map(i => i.originalIndex)) %>">
+                                </div>
+                              <% } %>
                 </div>
               </div>
               <% }) %>
@@ -1830,6 +1912,109 @@ function goToQuestion(index) {
                     }
                 });
             }
+            function initializeMatching() {
+  document.querySelectorAll('.matching-container').forEach(container => {
+    const leftItems = container.querySelectorAll('.col-5:first-child .matching-item');
+    const rightItems = container.querySelectorAll('.col-5:last-child .matching-item');
+    
+    // Store original indices for submission
+    const matches = new Map();
+
+    leftItems.forEach(left => {
+      left.addEventListener('click', () => handleItemClick(left, 'left'));
+    });
+
+    rightItems.forEach(right => {
+      right.addEventListener('click', () => handleItemClick(right, 'right'));
+    });
+  });
+}
+function handleItemClick(item, side) {
+  // Add selection logic here
+  if (item.classList.contains('selected')) {
+    item.classList.remove('selected');
+  } else {
+    const container = item.closest('.matching-container');
+    container.querySelectorAll(`.col-5:${side === 'left' ? 'first' : 'last'}-child .selected`)
+      .forEach(selected => selected.classList.remove('selected'));
+    item.classList.add('selected');
+  }
+  
+  checkForMatch();
+}
+
+function checkForMatch() {
+    const containers = document.querySelectorAll('.matching-container');
+    
+    containers.forEach(container => {
+        const leftSelected = container.querySelector('.col-5:first-child .selected');
+        const rightSelected = container.querySelector('.col-5:last-child .selected');
+
+        if (leftSelected && rightSelected) {
+            // Get original indices
+            const leftIndex = parseInt(leftSelected.dataset.originalIndex);
+            const rightIndex = parseInt(rightSelected.dataset.originalIndex);
+
+            // Record match
+            const questionIndex = parseInt(container.closest('.question').id.split('_')[1]);
+            const currentMatches = matches.get(questionIndex) || [];
+            
+            // Check if indices are already matched
+            const existingMatchIndex = currentMatches.findIndex(m => 
+                m.leftIndex === leftIndex || m.rightIndex === rightIndex
+            );
+
+            if (existingMatchIndex >= 0) {
+                // Remove existing match
+                currentMatches.splice(existingMatchIndex, 1);
+            }
+
+            // Add new match
+            currentMatches.push({
+                leftIndex,
+                rightIndex,  
+                isCorrect: leftIndex === rightIndex // Correct if indices match
+            });
+
+            matches.set(questionIndex, currentMatches);
+
+            // Update visual feedback
+            leftSelected.classList.add('matched');
+            rightSelected.classList.add('matched');
+            drawLine(leftSelected, rightSelected);
+
+            // Clear selections
+            leftSelected.classList.remove('selected');
+            rightSelected.classList.remove('selected');
+        }
+    });
+}
+
+// Helper function to draw connection line
+function drawLine(left, right) {
+    const line = document.createElement('div');
+    line.className = 'matching-line';
+    
+    const leftRect = left.getBoundingClientRect();
+    const rightRect = right.getBoundingClientRect();
+    
+    // Calculate line position and angle
+    const x1 = leftRect.right;
+    const y1 = leftRect.top + leftRect.height/2;
+    const x2 = rightRect.left; 
+    const y2 = rightRect.top + rightRect.height/2;
+    
+    const length = Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+    const angle = Math.atan2(y2-y1, x2-x1) * 180/Math.PI;
+    
+    // Style line
+    line.style.width = `${length}px`;
+    line.style.transform = `rotate(${angle}deg)`;
+    line.style.left = `${x1}px`;
+    line.style.top = `${y1}px`;
+    
+    document.body.appendChild(line);
+}
 
     </script>
     <button id="backToEditBtn" onclick="goToEditPage()">🖉</button>

@@ -347,8 +347,16 @@
                                                         );
                                                     
                                                         // 4. Combine unique subjects
-                                                        const allSubjectsToShow = [...new Set([...subjectsWithMatchingItems, ...matchingSubjects])];
-                                                    
+                                                        const allSubjectsToShow = [...new Set([...subjectsWithMatchingItems, ...matchingSubjects])]
+                                                        .filter(subject => {
+                                                            if (userData.role === 'student') {
+                                                                // Check if student is enrolled in the subject
+                                                                return subject.students.some(studentId => 
+                                                                    studentId.toString() === userData._id.toString()
+                                                                );
+                                                            }
+                                                            return true; // Show all subjects for non-students
+                                                        });                                                    
                                                         if (allSubjectsToShow.length === 0) { %>
                                                             <div class="d-flex">
                                                                 <div class="set-border">
@@ -356,18 +364,33 @@
                                                                 </div>
                                                             </div>
                                                         <% } else { %>
-                                                            <% allSubjectsToShow.forEach(subject => { 
-                                                                const subjectLessons = matchingLessons.filter(l => 
-                                                                    l.subject.toString() === subject._id.toString()
-                                                                );
-                                                                
-                                                                const subjectQuizzes = matchingQuizzes.filter(q => 
-                                                                    q.subject.subjectMongooseId.toString() === subject._id.toString()
-                                                                );
-                                                                
-                                                                const subjectAssignments = matchingAssignments.filter(a => 
-                                                                    a.subject.toString() === subject._id.toString()
-                                                                );
+                                                            <% 
+    // Filter subjects based on user role
+    let subjectsToDisplay = [];
+    if (userData.role === 'student') {
+        // For students, only show enrolled subjects
+        subjectsToDisplay = allSubjectsToShow.filter(subject => 
+            userData.student.subjects.some(s => 
+                s.subjectMongooseId.toString() === subject._id.toString()
+            )
+        );
+    } else {
+        // For teachers/admin show all subjects
+        subjectsToDisplay = allSubjectsToShow;
+    }
+    
+    subjectsToDisplay.forEach(subject => { 
+        const subjectLessons = matchingLessons.filter(l => 
+            l.subject.toString() === subject._id.toString()
+        );
+        
+        const subjectQuizzes = matchingQuizzes.filter(q => 
+            q.subject.subjectMongooseId.toString() === subject._id.toString()
+        );
+        
+        const subjectAssignments = matchingAssignments.filter(a => 
+            a.subject.toString() === subject._id.toString()
+        );
                                                     
                                                                 // Show subject if it has matching items or matches query directly
                                                                 if (subjectLessons.length > 0 || subjectQuizzes.length > 0 || subjectAssignments.length > 0 || 

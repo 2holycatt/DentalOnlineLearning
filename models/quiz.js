@@ -8,6 +8,54 @@ const optionSchema = new mongoose.Schema({
     }
 });
 
+const matchingOptionSchema = new mongoose.Schema({
+    left: {
+        text: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        image: {
+            url: String,
+            contentType: String
+        },
+        index: {
+            type: Number,
+            required: true
+        }
+    },
+    right: {
+        text: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        image: {
+            url: String,
+            contentType: String
+        },
+        index: {
+            type: Number,
+            required: true
+        }
+    },
+    points: {
+        type: Number,
+        default: 1,
+        min: 0
+    },
+    correctMatch: {
+        leftIndex: {
+            type: Number,
+            required: true
+        },
+        rightIndex: {
+            type: Number,
+            required: true
+        }
+    }
+});
+
 const questionSchema = new mongoose.Schema({
     questionText: {
         type: String,
@@ -26,7 +74,7 @@ const questionSchema = new mongoose.Schema({
     },
     questionType: {
         type: String,
-        enum: ['MCQ', 'checkbox', 'Paragraph', 'short_answ'],
+        enum: ['MCQ', 'checkbox', 'Paragraph', 'short_answ','matching'],
         required: true
     },
     options: {
@@ -41,9 +89,43 @@ const questionSchema = new mongoose.Schema({
             message: 'Options are required for MCQ and checkbox question types.'
         }
     },
+    matchingPairs: {
+        type: [matchingOptionSchema],
+        validate: {
+            validator: function(v) {
+                if (this.questionType !== 'matching') return true;
+                
+                // ตรวจสอบว่ามีคู่คำถามอย่างน้อย 1 คู่
+                if (!v || v.length === 0) return false;
+                
+                // ตรวจสอบว่า index ไม่ซ้ำกัน
+                const leftIndexes = v.map(pair => pair.left.index);
+                const rightIndexes = v.map(pair => pair.right.index);
+                
+                const uniqueLeftIndexes = new Set(leftIndexes);
+                const uniqueRightIndexes = new Set(rightIndexes);
+                
+                return uniqueLeftIndexes.size === leftIndexes.length &&
+                       uniqueRightIndexes.size === rightIndexes.length;
+            },
+            message: 'Matching questions require valid pairs with unique indexes'
+        }
+    },
+
     answer: {
-        type: mongoose.Schema.Types.Mixed, // Change from Boolean to Mixed type
-        default: null
+        type: mongoose.Schema.Types.Mixed,
+        validate: {
+            validator: function(v) {
+                if (this.questionType === 'matching') {
+                    return Array.isArray(v) && v.every(match => 
+                        typeof match.leftIndex === 'number' && 
+                        typeof match.rightIndex === 'number'
+                    );
+                }
+                return true;
+            },
+            message: 'Matching answers must be an array of valid matches'
+        }
     },
     answerTexts: {
         type: [String],
@@ -81,22 +163,41 @@ const attemptSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    eachAttempt:[{
-        answers: [{
-            questionId: String,
-            answer: mongoose.Schema.Types.Mixed,
-            isCorrect: Boolean,
-            points: Number
-        }],
-        score: Number,
-        attemptNumber: {
-          type: Number,
-          default: 1
-        },
-        submittedAt: {
-          type: Date,
-          default: Date.now
-        }
+        eachAttempt:[{
+            answers: [{
+                questionId: String,
+                answer: mongoose.Schema.Types.Mixed,
+                isCorrect: Boolean,
+                points: Number,
+                matchingAnswers: [{
+                    leftIndex: Number,
+                    rightIndex: Number,
+                    isCorrect: Boolean,
+                    pointsEarned: Number
+                }]
+            }],
+            totalScore: {
+                type: Number,
+                default: 0
+            },
+            maxPossibleScore: {
+                type: Number,
+                default: 0
+            },
+            attemptNumber: {
+                type: Number,
+                default: 1
+            },
+            startedAt: {
+                type: Date,
+                default: Date.now
+            },
+            submittedAt: {
+                type: Date
+            },
+            duration: {
+                type: Number  
+            }
     }]
   });
 

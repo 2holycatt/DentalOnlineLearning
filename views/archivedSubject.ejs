@@ -159,10 +159,24 @@
         cursor: pointer;
         border-radius: 0.5em;
         box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+        background-image: repeating-linear-gradient(
+      45deg,
+      #ffffff,
+      #ffffff 10px,
+      #f8f9fa 10px,
+      #f8f9fa 20px
+    );
       }
 
       .dark .card-1 {
         box-shadow: lightgray 0px 2px 5px -1px !important;
+        background-image: repeating-linear-gradient(
+      45deg,
+      #2b2b2b,
+      #2b2b2b 10px,
+      #333333 10px,
+      #333333 20px
+    );
       }
 
       .card-1:hover {
@@ -262,16 +276,12 @@
         <% } %>
           <div class="aside-right bg-white h-auto p-4 m-3" style="width: 80%;">
             <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
-              <p class="fw-bold fs-3 lesson-bar">รายวิชา</p>
+              <p class="fw-bold fs-3 lesson-bar">รายวิชาที่จัดเก็บ</p>
               <div>
-                <% if (userRole !== 'student') { %>
-                  <a href="/adminIndex/addSubject" class="btn btn-primary m-1 p-2">
-                    เพิ่มรายวิชา<i class="bi bi-plus-circle-fill mx-1"></i>
-                  </a>
-                <% } %>
-                <a href="/archivedSubject" class="btn m-0 p-2"
+               
+                <a href="/subjects" class="btn m-0 p-2"
                   style="color: white;background-color: #999999;">
-                  รายวิชาที่จัดเก็บ <i class="bi bi-clock-history"></i>
+                  กลับไปรายวิชา <i class="bi bi-arrow-left"></i>
                 </a>
               </div>
             </div>
@@ -282,38 +292,32 @@
               <% if (!subject || subject.length === 0) { %>
                 <div class="d-flex">
                   <div class="set-border">
-                    <p class="fw-bold fs-5 my-1 mx-2">ยังไม่มีรายวิชาใด ๆ ภายในระบบ</p>
-                    <!-- <a href="/adminIndex/addLesson" class="a-add text-primary m-0 p-2">
-                เพิ่มบทเรียน<i class="bi bi-plus-circle-fill mx-2"></i>
-              </a> -->
-                    <% if (userRole !== 'student') { %>
-                      <a href="/adminIndex/addSubject" class="a-add text-primary m-0 p-2">
-                      เพิ่มรายวิชา<i class="bi bi-plus-circle-fill mx-2"></i>
-                      </a>
-                    <% } %>
+                    <p class="fw-bold fs-5 my-1 mx-2">ยังไม่มีรายวิชาใด ๆ ที่ถูกจัดเก็บ</p>
+              
+                
                   </div>
                 </div>
 
 
                 <% } else if (subject.length> 0) { %>
-                  <% let groupedSubjects = {}; %>
+                    <% let groupedSubjects = {}; %>
 
-  <% 
-  // Filter out invalid subjects
-  const validSubjects = subject.filter(sub => sub && sub.semester && sub.section);
-  
-  validSubjects.forEach(sub => { 
-    const key = `${sub.semester}-${sub.section}`;
-    if (!groupedSubjects[key]) {
-      groupedSubjects[key] = [];
-    }
-    groupedSubjects[key].push(sub);
-  });
-
-  // Get unique semesters and sections from valid subjects only
-  const semesters = [...new Set(validSubjects.map(sub => sub.semester))];
-  const sections = [...new Set(validSubjects.map(sub => sub.section))];
-  %>
+                    <% 
+                    // Filter out invalid subjects
+                    const validSubjects = subject.filter(sub => sub && sub.semester && sub.section);
+                    
+                    validSubjects.forEach(sub => { 
+                      const key = `${sub.semester}-${sub.section}`;
+                      if (!groupedSubjects[key]) {
+                        groupedSubjects[key] = [];
+                      }
+                      groupedSubjects[key].push(sub);
+                    });
+                  
+                    // Get unique semesters and sections from valid subjects only
+                    const semesters = [...new Set(validSubjects.map(sub => sub.semester))];
+                    const sections = [...new Set(validSubjects.map(sub => sub.section))];
+                    %>
 
                                   <div class="d-flex align-items-center flex-wrap my-2 justify-content-end">
                                     <div class="set-border d-flex align-items-center mb-2 mb-sm-0">

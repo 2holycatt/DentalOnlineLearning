@@ -1,4 +1,5 @@
 const Quiz = require("../models/quiz");
+const Subject = require("../models/subjects");
 const SchoolYear = require("../models/schoolYear");
 const User = require("../models/user.model");
 const mongoose = require('mongoose');
@@ -12,9 +13,11 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 
 const deleteQuiz = async (req, res) => {
-  const getQuiz_id = req.query.quizId;
 
   try {
+      const getQuiz_id = req.query.quizId;
+      const subjectDbId = req.query.subjectId;
+
       // หา Quiz ที่ต้องการลบ
       const getQuiz = await Quiz.findById(getQuiz_id)
       .populate('subject.subjectMongooseId');
@@ -22,8 +25,10 @@ const deleteQuiz = async (req, res) => {
       if (!getQuiz) {
           return res.status(404).send('Quiz not found');
       }
-      const subjectDbId = getQuiz.subject.subjectMongooseId._id;
-
+      await Subject.findByIdAndUpdate(
+        getQuiz.subject.subjectMongooseId._id,
+        { $pull: { quizArray: getQuiz_id } }
+      );
       // ลบ quiz
       await Quiz.findByIdAndDelete(getQuiz_id);
 
@@ -36,68 +41,82 @@ const deleteQuiz = async (req, res) => {
 
 const updateQuiz = async (req, res) => {
   try {
-      const { quizId, quizname, quizdescription, attemptLimit, timeLimit, questions } = req.body;
-      console.log("Request data:", req.body);
+    const { quizId, quizname, quizdescription, attemptLimit, timeLimit, questions } = req.body;
 
-      const quiz = await Quiz.findById(quizId);
-      if (!quiz) {
-          return res.status(404).json({ success: false, message: 'Quiz not found' });
-      }
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      return res.status(404).json({ success: false, message: 'Quiz not found' });
+    }
 
-      // Update basic quiz info
-      quiz.quizname = quizname;
-      quiz.quizdescription = quizdescription;
-      quiz.attemptLimit = attemptLimit;
-      quiz.timeLimit = timeLimit;
+    quiz.quizname = quizname;
+    quiz.quizdescription = quizdescription;
+    quiz.attemptLimit = attemptLimit;
+    quiz.timeLimit = timeLimit;
 
-      // Update questions array
-      if (questions && Array.isArray(questions)) {
-          quiz.questions = questions.map(q => {
-              // Process answer based on question type
-              const existingQuestion = quiz.questions[index];
+    if (questions && Array.isArray(questions)) {
+      quiz.questions = questions.map(q => {
+        const questionData = {
+          _id: q._id,
+          questionText: q.questionText,
+          questionType: q.questionType,
+          points: q.points,
+          open: q.open || true
+        };
 
-              let answer;
-              if (q.questionType === 'MCQ') {
-                  answer = Number(q.answer);
-              } else if (q.questionType === 'checkbox') {
-                  answer = Array.isArray(q.answer) ? q.answer : [];
-              } else if (q.questionType === 'Paragraph') {
-                  answer = null;
-              } else if (q.questionType === 'short_answ') {
-                  answer = q.answerTexts || [];
-              }
+        // Handle question image if exists
+        if (q.questionImage && Object.keys(q.questionImage).length > 0) {
+          questionData.questionImage = q.questionImage;
+        }
 
-              return {
-                  questionText: q.questionText,
-                  questionType: q.questionType,
-                  options: q.options || [],
-                  answer: answer,
-                  answerKey: q.answerKey || '',
-                  points: q.points || 1,
-                  open: q.open !== undefined ? q.open : true,
-                  answerTexts: q.answerTexts,
-                  questionImage: existingQuestion ? existingQuestion.questionImage : {
-                    url: null,
-                    contentType: null
-                  }
-              };
-          });
-      }
+        // Handle different question types
+        if (q.questionType === 'matching') {
+          questionData.matchingPairs = q.matchingPairs.map((pair, index) => ({
+            left: {
+              text: pair.left.text,
+              image: pair.left.image || null,
+              index: index
+            },
+            right: {
+              text: pair.right.text,
+              image: pair.right.image || null,
+              index: index
+            },
+            points: pair.points || 1,
+            correctMatch: {
+              leftIndex: index,
+              rightIndex: index
+            }
+          }));
+          questionData.answer = questionData.matchingPairs.map(pair => ({
+            leftIndex: pair.correctMatch.leftIndex,
+            rightIndex: pair.correctMatch.rightIndex
+          }));
+        } else if (q.questionType === 'MCQ') {
+          questionData.options = q.options;
+          questionData.answer = Number(q.answer);
+        } else if (q.questionType === 'checkbox') {
+          questionData.options = q.options;
+          questionData.answer = Array.isArray(q.answer) ? q.answer : [];
+        } else if (q.questionType === 'Paragraph') {
+          questionData.answer = null;
+        } else if (q.questionType === 'short_answ') {
+          questionData.answerTexts = q.answerTexts || [];
+        }
 
-      const savedQuiz = await quiz.save();
-      res.json({ 
-          success: true, 
-          message: 'Quiz updated successfully',
-          quiz: savedQuiz 
+        return questionData;
       });
+    }
+
+    const savedQuiz = await quiz.save();
+    res.json({ success: true, message: 'Quiz updated successfully', quiz: savedQuiz });
 
   } catch (error) {
-      console.error('Error updating quiz:', error);
-      res.status(500).json({ 
-          success: false, 
-          message: 'Error updating quiz',
-          error: error.message 
-      });
+    console.error('Error updating quiz:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error updating quiz',
+      error: error.message 
+    });
   }
 };
 

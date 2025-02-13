@@ -54,6 +54,7 @@ router.get('/adminIndex/downloadFile', teacherMiddleware, adminController.downlo
 router.get('/adminIndex/uploadStudent', teacherMiddleware, adminController.uploadStudent);
 router.get('/adminIndex/uploadStudent2', teacherMiddleware, adminController.uploadStudent2);
 
+router.get('/archivedSubject',adminController.archivedSubjectIndex);
 router.get('/adminIndex/schoolYearRender', teacherMiddleware, adminController.schoolYearRender);
 router.get('/adminIndex/addLesson', teacherMiddleware, adminController.addLesson);
 router.get('/adminIndex/addSubject', teacherMiddleware, adminController.addSubject);
@@ -86,6 +87,8 @@ router.get('/studentIndex/eachLessonStudent', studentMiddleware, adminController
 router.get('/adminIndex/addStudentToSubject', teacherMiddleware, adminController.addStudentToSubject);
 router.get('/adminIndex/deleteStudentFromSubjectPage', teacherMiddleware, adminController.deleteStudentFromSubjectPage);
 router.get('/adminIndex/deleteSubject', teacherMiddleware, adminController.deleteSubject);
+router.get('/adminIndex/archiveSubject', teacherMiddleware, adminController.archiveSubject);
+router.get('/adminIndex/restoreSubject', teacherMiddleware, adminController.restoreSubject);
 router.get('/adminIndex/chooseSubject', teacherMiddleware, adminController.chooseSubject);
 router.get('/adminIndex/subjectCreateAssignment', teacherMiddleware, adminController.subjectCreateAssignment);
 router.get('/adminIndex/setPermission', teacherMiddleware, adminController.setPermission);

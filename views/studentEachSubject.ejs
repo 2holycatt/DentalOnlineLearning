@@ -608,6 +608,16 @@
                   <%=subject.section%>
                 </span>
               </p>
+              <p class="grey m-3"><%=subject.description%></p>
+
+              <% if (subject.isArchived) { %>
+                <br>
+              <hr>
+                <p class="grey mt-2">
+                  <i class="me-2"></i>
+                  รายวิชานี้ถูกจัดเก็บ 
+                </p>
+              <% } %>
             </div>
             <div>
               <!-- <div class="d-flex justify-content-start mx-3 mb-2">

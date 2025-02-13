@@ -43,14 +43,14 @@ const deleteLesson = async (req, res) => {
           deletePdfFiles.length > 0 ? PdfFile.deleteMany({ _id: { $in: deletePdfFiles } }) : null
       ]);
 
-      // Delete lesson and update subject
-      await Promise.all([
-          Lesson.findByIdAndDelete(getLesson_id),
-          Subject.updateOne(
-              { _id: subject_Id },
-              { $pull: { lessons: getLesson_id } }
-          )
-      ]);
+     // Remove lesson from subject's lessonArray
+    await Subject.findByIdAndUpdate(
+      subject_Id,
+      { $pull: { lessonArray: getLesson_id } }
+    );
+
+    // Delete the lesson
+    await Lesson.findByIdAndDelete(getLesson_id);
 
       // Redirect using subject_Id from query
       res.redirect(`/eachSubject?subjectDbId=${subject_Id}`);

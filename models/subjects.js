@@ -14,6 +14,10 @@ const subjectYearSchema = new Schema(
             default:null
 
         },
+        description: {  
+            type: String,
+            default: null
+        },
         semester: {
             type: String,
             default:null
@@ -42,18 +46,25 @@ const subjectYearSchema = new Schema(
         quizArray: [{
             type: mongoose.Schema.ObjectId,
             ref: 'Quiz',
-            default: 0
+            default: 0,
+            quizname: String
         }],
         lessonArray: [{
             type: mongoose.Schema.ObjectId,
             ref: 'lessons',
-            default: 0
+            default: 0,
+            LessonName: String
         }],
         Assignments: [{
             type: mongoose.Schema.ObjectId,
             ref: 'Assignments',
-            default: 0
-        }]
+            default: 0,
+            name: String
+        }],
+        isArchived: {
+            type: Boolean,
+            default: false
+          }
     }, {
     timestamps: true
 })

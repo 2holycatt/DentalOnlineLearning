@@ -78,12 +78,18 @@ const adminIndex = async (req, res) => {
     const userData = await User.findById(req.session.userId);
     const navSubjects = await getSubjectsForNav(req.session.userId);
 
+    const activeSubjectsCount = await Subject.countDocuments({ isArchived: false });
+
+    const recentSubjects = await Subject.find({ isArchived: false })
+    .sort({ updatedAt: -1 })
+    .limit(3);
+
     const findSubject = null;
     console.log(userData);
     const theme = req.session.theme || 'light'; 
     const isSidebarOpen = false; 
     
-    res.render("adminIndex", { navSubjects , findSubject  ,userData, theme, isSidebarOpen });
+    res.render("adminIndex", { navSubjects , findSubject  ,userData, theme, isSidebarOpen, activeSubjectsCount,recentSubjects });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -214,14 +220,20 @@ const subjectIndex = async (req, res) => {
     let subject;
     if (userData.role === 'student') {
       // ถ้าเป็นนักเรียน ให้แสดงเฉพาะวิชาที่นักเรียนลงทะเบียน
-      const studentData = await Student.findOne({ user: req.session.userId }).populate('subjects.subjectMongooseId');
+      const studentData = await Student.findOne({ user: req.session.userId }) 
+      .populate({
+        path: 'subjects.subjectMongooseId',
+        match: { isArchived: false }
+      });
       if (studentData && studentData.subjects) {
         subject = studentData.subjects.map(subject => subject.subjectMongooseId);
       }
         } else {
       // ถ้าเป็นครูหรือผู้ดูแลระบบ ให้แสดงทุกวิชา
-      subject = await Subject.find().sort({ semester: 1 }).populate("lessonArray");
-    }
+      subject = await Subject.find({ isArchived: false })
+        .sort({ semester: 1 })
+        .populate("lessonArray");    
+      }
 
     const theme = req.session.theme || 'light'; 
     const isSidebarOpen = false; 
@@ -396,7 +408,7 @@ const editSubject = async (req, res) => {
 
 const updateSubject = async (req, res) => {
   try {
-    const { subjectDbId, subjectId, subjectName, semester, unit, section } = req.body;
+    const { subjectDbId, subjectId, subjectName,description, semester, unit, section } = req.body;
 
     const findSubject = await Subject.findByIdAndUpdate(
       { _id: subjectDbId },
@@ -404,6 +416,7 @@ const updateSubject = async (req, res) => {
         $set: {
           subjectId: subjectId,
           subjectName: subjectName,
+          description: description,
           semester: semester,
           unit: unit,
           section: section
@@ -423,7 +436,7 @@ const updateSubject = async (req, res) => {
     // res.render("editSubjects", { mytitle: "editSubjects", findSubject, error: null });
   } catch (err) {
     console.error(err);
-    const { subjectDbId, subjectId, subjectName, semester, unit, section } = req.body;
+    const { subjectDbId, subjectId, subjectName, description,semester, unit, section } = req.body;
 
     if (err.code === 11000) { // รหัสข้อผิดพลาดสำหรับ duplicate key error
       return res.redirect(`/adminIndex/editSubject?subjectId=${subjectDbId}&error=มีรายวิชานี้อยู่ในระบบแล้ว`);
@@ -467,7 +480,7 @@ const updateLesson = async (req, res) => {
       findLesson.save();
     }
 
-    res.redirect(`/adminIndex/editLesson?lessonId=${lessonId}&subjectId=${findLesson.subject.subjectMongooseId}`);
+    res.redirect(`/adminIndex/eachLessons?lessonId=${lessonId}&subjectId=${findLesson.subject.subjectMongooseId}`);
 
   } catch (err) {
     console.error(err);
@@ -649,7 +662,7 @@ const createLayout = async function (req, res, next) {
 
 const createSubject = async (req, res, next) => {
   try {
-    const { subjectId, subjectName, semester, unit, section } = req.body;
+    const { subjectId, subjectName,description, semester, unit, section } = req.body;
     const userId = req.session.userId;
     const theme = req.session.theme || 'light';
     const isSidebarOpen = false;
@@ -657,6 +670,7 @@ const createSubject = async (req, res, next) => {
     const newSubject = new Subject({
       subjectId,
       subjectName,
+      description,
       semester,
       unit,
       section,
@@ -743,8 +757,14 @@ const eachLessons = async (req, res) => {
     //   populate: 'schoolYear' // populate schoolYear field
     // };
 
-    const lesson = await Lesson.findById(lessonId).populate('subject.subjectMongooseId').populate('lessonQuestion');
+const lesson = await Lesson.findById(lessonId)
+      .populate('subject.subjectMongooseId')
+      .populate('lessonQuestion');
 
+    // If lesson not found, redirect to subject page
+    if (!lesson) {
+      return res.redirect(`/eachSubject?subjectDbId=${req.query.subjectId}`);
+    }
     // const result = await Lesson.paginate({ _id: lessonId }, options);
     // res.json(lesson);
     // console.log(lesson)
@@ -1704,6 +1724,40 @@ const deleteSubject = async (req, res) => {
   }
 }
 
+const archiveSubject = async (req, res) => {
+  try {
+    const subjectId = req.query.subjectId;
+    
+    // Update subject to mark as archived instead of deleting
+    await Subject.findByIdAndUpdate(subjectId, {
+      isArchived: true
+    });
+
+    res.redirect('/subjects');
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("เกิดข้อผิดพลาด");
+  }
+}
+
+const restoreSubject = async (req, res) => {
+  try {
+    const subjectId = req.query.subjectId;
+    
+    await Subject.findByIdAndUpdate(subjectId, {
+      isArchived: false  
+    });
+
+    res.redirect('/archivedSubject');
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("เกิดข้อผิดพลาด");
+  }
+}
+
+
 const chooseSubject = async (req, res) => {
   try {
     const userData = await User.findById(req.session.userId);
@@ -2236,6 +2290,65 @@ const checkEndAnswer = async (req, res) => {
     console.log(err);
   }
 }
+
+const archivedSubjectIndex = async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.redirect('/');
+    }
+
+    const userData = await User.findById(req.session.userId);
+    const navSubjects = await getSubjectsForNav(req.session.userId);
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
+
+    let archivedSubjects = [];
+
+    if (userData.role === 'student') {
+      // Get student document with enrolled subjects
+      const student = await Student.findOne({ user: req.session.userId })
+        .populate('subjects.subjectMongooseId');
+
+      if (student && student.subjects) {
+        // Get IDs of all subjects student is enrolled in
+        const enrolledSubjectIds = student.subjects
+          .filter(s => s && s.subjectMongooseId)
+          .map(s => s.subjectMongooseId._id);
+
+        // Find archived subjects that student is enrolled in
+        archivedSubjects = await Subject.find({
+          _id: { $in: enrolledSubjectIds },
+          isArchived: true
+        }).sort({ semester: 1 });
+      }
+    } else {
+      // For teachers - show all archived subjects
+      archivedSubjects = await Subject.find({
+        isArchived: true
+      }).sort({ semester: 1 });
+    }
+
+    // Filter out invalid subjects
+    const validSubjects = archivedSubjects.filter(sub => 
+      sub && sub.semester && sub.section
+    );
+
+    res.render('archivedSubject', {
+      subject: validSubjects,
+      userData,
+      navSubjects,
+      theme,
+      isSidebarOpen,
+      userRole: userData.role
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("เกิดข้อผิดพลาด");
+  }
+};
+
+
 module.exports = {
   showStdAnswerDetail,
   studentAnswerLists,
@@ -2286,5 +2399,8 @@ module.exports = {
   updateLesson,
   editLessonContent,
   deleteReplyComment,
-  checkEndAnswer
+  checkEndAnswer,
+  archivedSubjectIndex,
+  archiveSubject,
+  restoreSubject
 }

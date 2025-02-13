@@ -1132,10 +1132,21 @@
     color: #8A2BE2;
     border: none;
 }
+.pagination {
+    max-width: 100%;
+  
+}
+
         @media screen and (max-width: 768px) {
             .above-nav-status {
                 display: none;
             }
+            .pagination {
+        padding: 5px;
+    }
+    .pagination-btn {
+        width: 35px !important;
+    }
         }
     </style>
 </head>
@@ -1212,19 +1223,19 @@
 
                     <div class="pagination">
                         <button type="button" class="pagination-btn chevron" onclick="prevPage()">
-                            <i class="bi bi-chevron-left"></i>
+                            
                         </button>
 
-                        <% for (let i=0; i < Math.min(10, questions.length); i++) { %>
+                        <% for (let i = 0; i < questions.length; i++) { %>
                             <button type="button"
-                                class="pagination-btn <%= questions[i].isAnswered ? 'answered' : '' %>"
-                                onclick="goToQuestion('<%= i %>')">
+                                class="py-2  pagination-btn <%= questions[i].isAnswered ? 'answered' : '' %>"
+                                onclick="goToQuestion('<%= i %>')"
+                                style="width: 45px;">
                                 <%= i + 1 %>
                             </button>
                             <% } %>
 
                                 <button type="button" class="pagination-btn chevron" onclick="nextPage()">
-                                    <i class="bi bi-chevron-right"></i>
                                 </button>
                     </div>
 

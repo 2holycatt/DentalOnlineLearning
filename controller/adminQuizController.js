@@ -25,21 +25,36 @@ const cron = require('node-cron');
 // const { sendEmail } = require('../service/notification');
 
 async function getSubjectsForNav(userId) {
-  const userData = await User.findById(userId);
-  let subject;
-  
-  if (userData.role === 'student') {
-    const studentData = await Student.findOne({ user: userId })
-      .populate('subjects.subjectMongooseId');
-    subject = studentData.subjects.map(subject => subject.subjectMongooseId);
-  } else {
-    subject = await Subject.find()
-      .sort({ semester: 1 })
-      .populate("lessonArray");
+  try {
+    const userData = await User.findById(userId);
+    if (!userData) {
+      console.log('User not found:', userId);
+      return [];
+    }
+
+    let subject;
+    
+    if (userData.role === 'student') {
+      const studentData = await Student.findOne({ user: userId })
+        .populate('subjects.subjectMongooseId');
+      
+      if (!studentData) {
+        console.log('Student data not found for user:', userId);
+        return [];
+      }
+      
+      subject = studentData.subjects.map(subject => subject.subjectMongooseId);
+    } else {
+      subject = await Subject.find();
+    }
+
+    return subject;
+  } catch (error) {
+    console.error('Error in getSubjectsForNav:', error);
+    return [];
   }
-  
-  return subject;
 }
+
 
 
 exports.createQuiz = async (req, res, next) => {
@@ -125,6 +140,7 @@ exports.createQuiz = async (req, res, next) => {
 
     const allStudent = findUser.students;
     const subjectName = `${findUser.subjectId} ภาคการศึกษา: ${findUser.semester} กลุ่มที่${findUser.section}:`;
+    
     // if (allStudent) {
     //   allStudent.forEach(student => {
     //     const email = student.user.email;
@@ -433,7 +449,7 @@ exports.eachQuiz = async (req, res) => {
 
     const quiz = await Quiz.findById(quizId).populate("subject.subjectMongooseId");
     if (!quiz) {
-      return res.status(404).send('Quiz not found');
+      return res.redirect(`/eachSubject?subjectDbId=${req.query.subjectId}`);
     }
     if (isEditPage && req.xhr) { // เช็คว่าเป็นการร้องขอผ่าน AJAX หรือไม่
       return res.json({ success: true, questions: quiz.questions });
@@ -831,90 +847,80 @@ exports.scheduleQuizRelease = async (req, res) => {
 // ฟังก์ชันสำหรับค้นหาฝั่งครู
 exports.search = async (req, res) => {
   try {
-    const searchQuery = req.params.query;
-    
-    // Check session
     if (!req.session.userId) {
-        return res.redirect('/');
-    }
-
-    // Get subjects with error handling
-    const navSubjects = await getSubjectsForNav(req.session.userId);
-    
-    // Get user data safely
-    const userData = await User.findById(req.session.userId);
+      return res.redirect('/');
+    }   
+   
+    const searchQuery = req.params.query;
+    const userData = await User.findById(req.session.userId)
+    .populate({
+      path: 'student',
+      populate: {
+        path: 'subjects.subjectMongooseId'
+      }
+    });   
     if (!userData) {
-        return res.redirect('/');
+      return res.redirect('/');
     }
-
+    
+    const navSubjects = await getSubjectsForNav(req.session.userId);
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
     const originPage = req.query.originPage;
 
-    const subjectResults = await Subject.find({
-      $or: [
+  if (!userData) {
+      return res.redirect('/');
+    }
+    
+    let subjectResults;
+    if (userData.role === 'student') {
+      // For students - only show enrolled subjects
+      const student = await Student.findOne({ user: req.session.userId })
+        .populate('subjects.subjectMongooseId');
+      
+      if (student && student.subjects) {
+        const enrolledSubjectIds = student.subjects.map(s => 
+          s.subjectMongooseId._id.toString()
+        );
+
+        subjectResults = await Subject.find({
+          _id: { $in: enrolledSubjectIds },
+          $or: [
+            { subjectId: new RegExp(searchQuery, 'i') },
+            { subjectName: new RegExp(searchQuery, 'i') },
+            { semester: new RegExp(searchQuery, 'i') },
+            { section: new RegExp(searchQuery, 'i') }
+          ]
+        });
+      } else {
+        subjectResults = [];
+      }
+    } else {
+      // For teachers - show all subjects
+      subjectResults = await Subject.find({
+        $or: [
           { subjectId: new RegExp(searchQuery, 'i') },
           { subjectName: new RegExp(searchQuery, 'i') },
           { semester: new RegExp(searchQuery, 'i') },
           { section: new RegExp(searchQuery, 'i') }
-      ]
-  });
-
-    // ค้นหาแบบทดสอบทั้งหมดเพื่อแสดงใน sidebar หรือเมนูอื่น ๆ
-    const quizzes = await Quiz.find().sort({ createdAt: 1 }).exec();
-
-    // ค้นหาแบบทดสอบที่เกี่ยวข้องกับการค้นหา
-    const quizResults = await Quiz.find({ quizname: new RegExp(searchQuery, 'i') });
-
-    // ค้นหาในฐานข้อมูลสำหรับบทเรียน (lessons)
-    const lessonResults = await Lesson.find({ LessonName: new RegExp(searchQuery, 'i') });
-
-    const assignmentResults = await Assignment.find({ name: new RegExp(searchQuery, 'i') });
-
-
-    const theme = req.session.theme || 'light';
-    const isSidebarOpen = false;
-
-    const combinedResults = [...subjectResults, ...quizResults, ...lessonResults, ...assignmentResults];
-
-    // หากมีผลลัพธ์จากการค้นหาแบบทดสอบ ให้ดึงข้อมูลเพิ่มเติม
-    if (quizResults.length > 0) {
-      const quiz = quizResults[0]; // เอาผลลัพธ์ตัวแรกมาใช้
-      const questions = quiz.questions || [];
-      const releaseWhenLocal = quiz.releaseWhen ? moment.utc(quiz.releaseWhen).format('DD/MM/YYYY, เวลา HH:mm') : null;
-      const deadlineLocal = quiz.deadline ? moment.utc(quiz.deadline).format('DD/MM/YYYY, เวลา HH:mm') : null;
-
-      // แสดงผลลัพธ์ในหน้า searchResultsTeacher.ejs พร้อมข้อมูลที่ดึงมา
-      return res.render('searchResults', {
-        quiz: quizResults,
-        lessons: lessonResults,
-        subjects: subjectResults,
-        assignments: assignmentResults,
-        searchQuery,
-        userData,
-        quizzes,
-        questions,
-        releaseWhenLocal,
-        deadlineLocal,
-        theme,
-        isSidebarOpen,
-        originPage,
-        navSubjects,
-        combinedResults
+        ]
       });
     }
 
-    // หากไม่มีผลลัพธ์จากการค้นหาแบบทดสอบ
+    // Rest of the search logic...
+    const quizResults = await Quiz.find({ quizname: new RegExp(searchQuery, 'i') });
+    const lessonResults = await Lesson.find({ LessonName: new RegExp(searchQuery, 'i') });
+    const assignmentResults = await Assignment.find({ name: new RegExp(searchQuery, 'i') });
+
+    const combinedResults = [...subjectResults, ...quizResults, ...lessonResults, ...assignmentResults];
+
     res.render('searchResults', {
-      quiz: [],
-      lessons: lessonResults,
+      quiz: quizResults,
+      lessons: lessonResults, 
       subjects: subjectResults,
       assignments: assignmentResults,
       searchQuery,
       userData,
-      quizzes,
-      schYear: '',
-      questions: [],
-      releaseWhenLocal: null,
-      deadlineLocal: null,
       theme,
       isSidebarOpen,
       originPage,
@@ -924,7 +930,7 @@ exports.search = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).send('เกิดข้อผิดพลาดในการค้นหาแบบทดสอบและบทเรียน');
+    res.status(500).send('เกิดข้อผิดพลาดในการค้นหา');
   }
 };
 

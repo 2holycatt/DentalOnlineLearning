@@ -64,6 +64,18 @@ const lessonSchema = new Schema({
         ,
         subjectId: {
             type: String
+        },
+        
+        subjectName: {
+            type: String
+        }
+        ,
+        semester: {
+            type: String
+        }
+        ,
+        section: {
+            type: String
         }
     },
     lessonQuestion: {
