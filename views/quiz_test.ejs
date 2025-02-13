@@ -1,3 +1,18 @@
+<%
+// Define colors at the top of file
+const colors = [
+    '#FF6B6B', // red
+    '#4ECDC4', // teal
+    '#45B7D1', // blue
+    '#96CEB4', // green
+    '#FFEEAD', // yellow
+    '#D4B4DA', // purple
+    '#88D8B0', // mint
+    '#FF9999', // pink
+    '#77A1D3', // light blue
+    '#BAB0E6'  // lavender
+];
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -1136,7 +1151,62 @@
     max-width: 100%;
   
 }
+.matching-container {
+    position: relative;
+    min-height: 200px;
+}
 
+.matching-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.matching-line {
+    position: absolute;
+    height: 3px;
+    transform-origin: 0 0;
+    pointer-events: none;
+}
+
+.matching-item {
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    z-index: 2;
+}
+
+.matching-item.selected {
+    border-color: #007bff;
+    background-color: #e7f1ff;
+    box-shadow: 0 0 5px rgba(0,123,255,0.5);
+}
+.dark .matching-item .form-control{
+    background-color: #666;
+    color: white;
+    border: 1px solid #777;
+}
+.dark .matching-item.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+
+.number-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    margin-right: 10px;
+}
         @media screen and (max-width: 768px) {
             .above-nav-status {
                 display: none;
@@ -1331,7 +1401,63 @@
                                                             name="answers[<%= i %>]" rows="1" style="width:50%;">
                                             <%= question.answerText %>
                                         </textarea>
+                                        <% } else if (question.questionType === 'matching') { %>
+                                            <div class="matching-container ms-4 mt-3">
+                                              <div class="row position-relative">
+                                                <div class="col-5 left-side">
+                                                  <!-- Left side items -->
+                                                  <% const shuffledLeft = [...question.matchingPairs].map((pair, idx) => ({
+                                                    text: pair.left.text,
+                                                    image: pair.left.image,
+                                                    originalIndex: idx
+                                                  })).sort(() => Math.random() - 0.5) %>
+                                                  
+                                                  <% shuffledLeft.forEach((item, idx) => { %>
+                                                    <div class="matching-item mb-3" data-original-index="<%= item.originalIndex %>" data-color="<%= colors[idx % colors.length] %>">
+                                                        <div class="form-control d-flex align-items-center" style="width: 100%;">
+                                                            <span class="number-badge" style="background-color: <%= colors[idx % colors.length] %>">
+                                                                <%= idx + 1 %>
+                                                            </span>
+                                                            <span><%= item.text %></span>                                                        
+                                                            <% if (item.image?.url) { %>
+                                                          <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
                                                         <% } %>
+                                                      </div>
+                                                    </div>
+                                                  <% }) %>
+                                                </div>
+                                          
+                                                <div class="col-2">
+                                                  <div class="matching-lines"></div>
+                                                </div>
+                                          
+                                                <div class="col-5 right-side">
+                                                  <!-- Right side items -->
+                                                  <% const shuffledRight = [...question.matchingPairs].map((pair, idx) => ({
+                                                    text: pair.right.text,
+                                                    image: pair.right.image,
+                                                    originalIndex: idx
+                                                  })).sort(() => Math.random() - 0.5) %>
+                                          
+                                                  <% shuffledRight.forEach((item, idx) => { %>
+                                                    <div class="matching-item mb-3" data-original-index="<%= item.originalIndex %>">
+                                                      <div class="form-control" style="width: 100%;">
+                                                        <%= String.fromCharCode(65 + idx) %>. <%= item.text %>
+                                                        <% if (item.image?.url) { %>
+                                                          <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
+                                                        <% } %>
+                                                      </div>
+                                                    </div>
+                                                  <% }) %>
+                                                </div>
+                                              </div>
+                                          
+                                              <!-- Hidden inputs to store answers -->
+                                              <input type="hidden" name="matching_answers_<%= i %>">
+                                              <input type="hidden" name="matching_left_order_<%= i %>" value="<%= JSON.stringify(shuffledLeft.map(i => i.originalIndex)) %>">
+                                              <input type="hidden" name="matching_right_order_<%= i %>" value="<%= JSON.stringify(shuffledRight.map(i => i.originalIndex)) %>">
+                                            </div>
+                                          <% } %>
                                 </div>
                             </div>
                             <% }) %>
@@ -1573,6 +1699,49 @@
             //         return '';
             //     }
 
+            function saveAnswersToLocalStorage() {
+    const quizId = document.querySelector('#quizId').value;
+    const answers = {};
+    
+    // Save matching answers
+    matchingAnswers.forEach((value, key) => {
+        answers[`matching_${quizId}_${key}`] = value;
+    });
+    
+    localStorage.setItem(`quiz_${quizId}_answers`, JSON.stringify(answers));
+}
+
+function restoreMatching(questionIndex, matches) {
+    const container = document.querySelector(`#question_${questionIndex} .matching-container`);
+    if (!container) return;
+
+    matches.forEach(match => {
+        const leftItem = container.querySelector(`.left-side .matching-item[data-original-index="${match.left}"]`);
+        const rightItem = container.querySelector(`.right-side .matching-item[data-original-index="${match.right}"]`);
+        if (leftItem && rightItem) {
+            leftItem.classList.add('matched');
+            rightItem.classList.add('matched');
+            drawMatchingLine(leftItem, rightItem);
+        }
+    });
+}
+
+function loadAnswersFromLocalStorage() {
+    const quizId = document.querySelector('#quizId').value;
+    const savedAnswers = localStorage.getItem(`quiz_${quizId}_answers`);
+    
+    if (savedAnswers) {
+        const answers = JSON.parse(savedAnswers);
+        Object.entries(answers).forEach(([key, value]) => {
+            if (key.startsWith('matching_')) {
+                const questionIndex = key.split('_')[2];
+                matchingAnswers.set(questionIndex, value);
+                restoreMatching(questionIndex, value);
+            }
+        });
+    }
+}
+
             document.addEventListener('DOMContentLoaded', () => {
                 renderQuestions();
             });
@@ -1791,6 +1960,177 @@ function goToQuestion(index) {
             // updatePagination();
             // goToQuestion(0);
 
+            let selectedItem = null;
+const matchingAnswers = new Map();
+
+function initializeMatching() {
+    matchingAnswers.clear();
+    document.querySelectorAll('.matching-container').forEach(container => {
+        const linesContainer = container.querySelector('.matching-lines');
+        linesContainer.innerHTML = '';
+    });
+}
+
+function handleMatchingClick(item) {
+    const questionIndex = item.closest('.question').id.split('_')[1];
+    
+    if (selectedItem === item) {
+        item.classList.remove('selected');
+        selectedItem = null;
+        return;
+    }
+
+    if (!selectedItem) {
+        selectedItem = item;
+        item.classList.add('selected');
+    } else {
+        const firstSide = selectedItem.closest('.col-5');
+        const secondSide = item.closest('.col-5');
+
+        if (firstSide !== secondSide) {
+            createMatch(
+                questionIndex,
+                firstSide.classList.contains('left-side') ? selectedItem : item,
+                firstSide.classList.contains('left-side') ? item : selectedItem
+            );
+        }
+
+        selectedItem.classList.remove('selected');
+        item.classList.remove('selected');
+        selectedItem = null;
+    }
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function redrawAllLines() {
+    document.querySelectorAll('.matching-container').forEach(container => {
+        const questionIndex = container.closest('.question').id.split('_')[1];
+        const lines = container.querySelector('.matching-lines');
+        const matches = matchingAnswers.get(questionIndex) || [];
+        
+        // Clear existing lines
+        lines.innerHTML = '';
+        
+        // Redraw each match
+        matches.forEach(match => {
+            const leftItem = container.querySelector(`.left-side .matching-item[data-original-index="${match.left}"]`);
+            const rightItem = container.querySelector(`.right-side .matching-item[data-original-index="${match.right}"]`);
+            if (leftItem && rightItem) {
+                drawMatchingLine(leftItem, rightItem);
+            }
+        });
+    });
+}
+
+
+const debouncedRedraw = debounce(redrawAllLines, 150);
+window.addEventListener('resize', debouncedRedraw);
+function createMatch(questionIndex, leftItem, rightItem) {
+    removeExistingMatches(questionIndex, leftItem, rightItem);
+    
+    const match = {
+        left: parseInt(leftItem.dataset.originalIndex),
+        right: parseInt(rightItem.dataset.originalIndex)
+    };
+
+    if (!matchingAnswers.has(questionIndex)) {
+        matchingAnswers.set(questionIndex, []);
+    }
+    matchingAnswers.get(questionIndex).push(match);
+
+    leftItem.classList.add('matched');
+    rightItem.classList.add('matched');
+    drawMatchingLine(leftItem, rightItem);
+    updateMatchingAnswers(questionIndex);
+    saveAnswersToLocalStorage();
+}
+
+function drawMatchingLine(leftItem, rightItem) {
+    const container = leftItem.closest('.matching-container');
+    const linesContainer = container.querySelector('.matching-lines');
+    const line = document.createElement('div');
+    line.className = 'matching-line';
+
+    const leftRect = leftItem.getBoundingClientRect();
+    const rightRect = rightItem.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    const startX = leftRect.right - containerRect.left;
+    const startY = leftRect.top + (leftRect.height / 2) - containerRect.top;
+    const endX = rightRect.left - containerRect.left;
+    const endY = rightRect.top + (rightRect.height / 2) - containerRect.top;
+
+    const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+    const angle = Math.atan2(endY - startY, endX - startX);
+
+    const color = leftItem.dataset.color;
+
+    Object.assign(line.style, {
+        backgroundColor: color,
+        width: `${length}px`,
+        left: `${startX}px`,
+        top: `${startY}px`,
+        transform: `rotate(${angle}rad)`,
+        position: 'absolute'
+    });
+
+    line.dataset.left = leftItem.dataset.originalIndex;
+    line.dataset.right = rightItem.dataset.originalIndex;
+
+    linesContainer.appendChild(line);
+}
+
+function removeExistingMatches(questionIndex, leftItem, rightItem) {
+    if (!matchingAnswers.has(questionIndex)) return;
+
+    const matches = matchingAnswers.get(questionIndex);
+    const leftIndex = parseInt(leftItem.dataset.originalIndex);
+    const rightIndex = parseInt(rightItem.dataset.originalIndex);
+
+    const container = leftItem.closest('.matching-container');
+    container.querySelectorAll(`.matching-line[data-left="${leftIndex}"], .matching-line[data-right="${rightIndex}"]`)
+        .forEach(line => line.remove());
+
+    container.querySelectorAll('.matching-item').forEach(item => {
+        if (parseInt(item.dataset.originalIndex) === leftIndex || 
+            parseInt(item.dataset.originalIndex) === rightIndex) {
+            item.classList.remove('matched');
+        }
+    });
+
+    matchingAnswers.set(questionIndex, 
+        matches.filter(match => match.left !== leftIndex && match.right !== rightIndex)
+    );
+}
+
+function updateMatchingAnswers(questionIndex) {
+    const input = document.querySelector(`input[name="matching_answers_${questionIndex}"]`);
+    if (input) {
+        input.value = JSON.stringify(matchingAnswers.get(questionIndex) || []);
+    }
+}
+
+
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    initializeMatching();
+    
+    document.querySelectorAll('.matching-item').forEach(item => {
+        item.addEventListener('click', () => handleMatchingClick(item));
+    });
+});
 
 
         </script>

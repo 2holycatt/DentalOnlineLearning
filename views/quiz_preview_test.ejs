@@ -1,3 +1,19 @@
+<%
+// Define colors at the top of file
+const colors = [
+    '#FF6B6B', // red
+    '#4ECDC4', // teal
+    '#45B7D1', // blue
+    '#96CEB4', // green
+    '#FFEEAD', // yellow
+    '#D4B4DA', // purple
+    '#88D8B0', // mint
+    '#FF9999', // pink
+    '#77A1D3', // light blue
+    '#BAB0E6'  // lavender
+];
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -1158,33 +1174,60 @@
     max-width: 100%;
 }
 .matching-container {
-  border-radius: 8px;
-  padding: 15px;
-}
-
-.matching-item {
-  position: relative;
-}
-
-.matching-item .form-control {
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.matching-item .form-control:hover {
-  background-color: #e9ecef;
+    position: relative;
+    min-height: 200px;
 }
 
 .matching-lines {
-  height: 100%;
-  border-left: 2px dashed #dee2e6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
 }
-    /* .spn-comment {
-      font-size:xx-small !important;
-      border: 2px solid white;
-      padding: 0.25em !important;
-      border-radius: 0.25em;
-    } */
+
+.matching-line {
+    position: absolute;
+    height: 3px;
+    transform-origin: 0 0;
+    pointer-events: none;
+}
+
+.matching-item {
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    z-index: 2;
+}
+
+.matching-item.selected {
+    border-color: #007bff;
+    background-color: #e7f1ff;
+    box-shadow: 0 0 5px rgba(0,123,255,0.5);
+}
+.dark .matching-item .form-control{
+    background-color: #666;
+    color: white;
+    border: 1px solid #777;
+}
+.dark .matching-item.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+.number-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    margin-right: 10px;
+}
     @media screen and (max-width: 768px) {
       .above-nav-status {
         display: none;
@@ -1342,7 +1385,7 @@
             <% questions.forEach((question, i)=> { %>
               <div class="question" id="question_<%= i %>">
                 <div class="first">
-                  <div class="input-question">
+                  <div>
                     <!-- <%= i + 1 %>)  -->
                     <%= question.questionText %>
                   </div>
@@ -1371,8 +1414,8 @@
                               style="width:50%;" readonly></textarea>
                               <% } else if (question.questionType === 'matching') { %>
                                 <div class="matching-container ms-4 mt-3">
-                                  <div class="row">
-                                    <div class="col-5">
+                                  <div class="row position-relative">
+                                    <div class="col-5 left-side">
                                       <!-- Left side items -->
                                       <% const shuffledLeft = [...question.matchingPairs].map((pair, idx) => ({
                                         text: pair.left.text,
@@ -1381,10 +1424,13 @@
                                       })).sort(() => Math.random() - 0.5) %>
                                       
                                       <% shuffledLeft.forEach((item, idx) => { %>
-                                        <div class="matching-item mb-3" data-original-index="<%= item.originalIndex %>">
-                                          <div class="form-control">
-                                            <%= idx + 1 %>. <%= item.text %>
-                                            <% if (item.image?.url) { %>
+                                        <div class="matching-item mb-3" data-original-index="<%= item.originalIndex %>" data-color="<%= colors[idx % colors.length] %>">
+                                            <div class="form-control d-flex align-items-center" style="width: 100%;">
+                                                <span class="number-badge" style="background-color: <%= colors[idx % colors.length] %>">
+                                                    <%= idx + 1 %>
+                                                </span>
+                                                <span><%= item.text %></span>                                                        
+                                                <% if (item.image?.url) { %>
                                               <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
                                             <% } %>
                                           </div>
@@ -1392,11 +1438,11 @@
                                       <% }) %>
                                     </div>
                               
-                                    <div class="col-2 d-flex align-items-center justify-content-center">
+                                    <div class="col-2">
                                       <div class="matching-lines"></div>
                                     </div>
                               
-                                    <div class="col-5">
+                                    <div class="col-5 right-side">
                                       <!-- Right side items -->
                                       <% const shuffledRight = [...question.matchingPairs].map((pair, idx) => ({
                                         text: pair.right.text,
@@ -1406,7 +1452,7 @@
                               
                                       <% shuffledRight.forEach((item, idx) => { %>
                                         <div class="matching-item mb-3" data-original-index="<%= item.originalIndex %>">
-                                          <div class="form-control">
+                                          <div class="form-control" style="width: 100%;">
                                             <%= String.fromCharCode(65 + idx) %>. <%= item.text %>
                                             <% if (item.image?.url) { %>
                                               <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
@@ -1418,6 +1464,7 @@
                                   </div>
                               
                                   <!-- Hidden inputs to store answers -->
+                                  <input type="hidden" name="matching_answers_<%= i %>">
                                   <input type="hidden" name="matching_left_order_<%= i %>" value="<%= JSON.stringify(shuffledLeft.map(i => i.originalIndex)) %>">
                                   <input type="hidden" name="matching_right_order_<%= i %>" value="<%= JSON.stringify(shuffledRight.map(i => i.originalIndex)) %>">
                                 </div>
@@ -1912,109 +1959,179 @@ function goToQuestion(index) {
                     }
                 });
             }
-            function initializeMatching() {
-  document.querySelectorAll('.matching-container').forEach(container => {
-    const leftItems = container.querySelectorAll('.col-5:first-child .matching-item');
-    const rightItems = container.querySelectorAll('.col-5:last-child .matching-item');
-    
-    // Store original indices for submission
-    const matches = new Map();
 
-    leftItems.forEach(left => {
-      left.addEventListener('click', () => handleItemClick(left, 'left'));
-    });
+            let selectedItem = null;
+const matchingAnswers = new Map();
 
-    rightItems.forEach(right => {
-      right.addEventListener('click', () => handleItemClick(right, 'right'));
+function initializeMatching() {
+    matchingAnswers.clear();
+    document.querySelectorAll('.matching-container').forEach(container => {
+        const linesContainer = container.querySelector('.matching-lines');
+        linesContainer.innerHTML = '';
     });
-  });
-}
-function handleItemClick(item, side) {
-  // Add selection logic here
-  if (item.classList.contains('selected')) {
-    item.classList.remove('selected');
-  } else {
-    const container = item.closest('.matching-container');
-    container.querySelectorAll(`.col-5:${side === 'left' ? 'first' : 'last'}-child .selected`)
-      .forEach(selected => selected.classList.remove('selected'));
-    item.classList.add('selected');
-  }
-  
-  checkForMatch();
 }
 
-function checkForMatch() {
-    const containers = document.querySelectorAll('.matching-container');
+function handleMatchingClick(item) {
+    const questionIndex = item.closest('.question').id.split('_')[1];
     
-    containers.forEach(container => {
-        const leftSelected = container.querySelector('.col-5:first-child .selected');
-        const rightSelected = container.querySelector('.col-5:last-child .selected');
+    if (selectedItem === item) {
+        item.classList.remove('selected');
+        selectedItem = null;
+        return;
+    }
 
-        if (leftSelected && rightSelected) {
-            // Get original indices
-            const leftIndex = parseInt(leftSelected.dataset.originalIndex);
-            const rightIndex = parseInt(rightSelected.dataset.originalIndex);
+    if (!selectedItem) {
+        selectedItem = item;
+        item.classList.add('selected');
+    } else {
+        const firstSide = selectedItem.closest('.col-5');
+        const secondSide = item.closest('.col-5');
 
-            // Record match
-            const questionIndex = parseInt(container.closest('.question').id.split('_')[1]);
-            const currentMatches = matches.get(questionIndex) || [];
-            
-            // Check if indices are already matched
-            const existingMatchIndex = currentMatches.findIndex(m => 
-                m.leftIndex === leftIndex || m.rightIndex === rightIndex
+        if (firstSide !== secondSide) {
+            createMatch(
+                questionIndex,
+                firstSide.classList.contains('left-side') ? selectedItem : item,
+                firstSide.classList.contains('left-side') ? item : selectedItem
             );
-
-            if (existingMatchIndex >= 0) {
-                // Remove existing match
-                currentMatches.splice(existingMatchIndex, 1);
-            }
-
-            // Add new match
-            currentMatches.push({
-                leftIndex,
-                rightIndex,  
-                isCorrect: leftIndex === rightIndex // Correct if indices match
-            });
-
-            matches.set(questionIndex, currentMatches);
-
-            // Update visual feedback
-            leftSelected.classList.add('matched');
-            rightSelected.classList.add('matched');
-            drawLine(leftSelected, rightSelected);
-
-            // Clear selections
-            leftSelected.classList.remove('selected');
-            rightSelected.classList.remove('selected');
         }
+
+        selectedItem.classList.remove('selected');
+        item.classList.remove('selected');
+        selectedItem = null;
+    }
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function redrawAllLines() {
+    document.querySelectorAll('.matching-container').forEach(container => {
+        const questionIndex = container.closest('.question').id.split('_')[1];
+        const lines = container.querySelector('.matching-lines');
+        const matches = matchingAnswers.get(questionIndex) || [];
+        
+        // Clear existing lines
+        lines.innerHTML = '';
+        
+        // Redraw each match
+        matches.forEach(match => {
+            const leftItem = container.querySelector(`.left-side .matching-item[data-original-index="${match.left}"]`);
+            const rightItem = container.querySelector(`.right-side .matching-item[data-original-index="${match.right}"]`);
+            if (leftItem && rightItem) {
+                drawMatchingLine(leftItem, rightItem);
+            }
+        });
     });
 }
 
-// Helper function to draw connection line
-function drawLine(left, right) {
+
+const debouncedRedraw = debounce(redrawAllLines, 150);
+window.addEventListener('resize', debouncedRedraw);
+function createMatch(questionIndex, leftItem, rightItem) {
+    removeExistingMatches(questionIndex, leftItem, rightItem);
+    
+    const match = {
+        left: parseInt(leftItem.dataset.originalIndex),
+        right: parseInt(rightItem.dataset.originalIndex)
+    };
+
+    if (!matchingAnswers.has(questionIndex)) {
+        matchingAnswers.set(questionIndex, []);
+    }
+    matchingAnswers.get(questionIndex).push(match);
+
+    leftItem.classList.add('matched');
+    rightItem.classList.add('matched');
+    drawMatchingLine(leftItem, rightItem);
+    updateMatchingAnswers(questionIndex);
+    saveAnswersToLocalStorage();
+}
+
+function drawMatchingLine(leftItem, rightItem) {
+    const container = leftItem.closest('.matching-container');
+    const linesContainer = container.querySelector('.matching-lines');
     const line = document.createElement('div');
     line.className = 'matching-line';
-    
-    const leftRect = left.getBoundingClientRect();
-    const rightRect = right.getBoundingClientRect();
-    
-    // Calculate line position and angle
-    const x1 = leftRect.right;
-    const y1 = leftRect.top + leftRect.height/2;
-    const x2 = rightRect.left; 
-    const y2 = rightRect.top + rightRect.height/2;
-    
-    const length = Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
-    const angle = Math.atan2(y2-y1, x2-x1) * 180/Math.PI;
-    
-    // Style line
-    line.style.width = `${length}px`;
-    line.style.transform = `rotate(${angle}deg)`;
-    line.style.left = `${x1}px`;
-    line.style.top = `${y1}px`;
-    
-    document.body.appendChild(line);
+
+    const leftRect = leftItem.getBoundingClientRect();
+    const rightRect = rightItem.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    const startX = leftRect.right - containerRect.left;
+    const startY = leftRect.top + (leftRect.height / 2) - containerRect.top;
+    const endX = rightRect.left - containerRect.left;
+    const endY = rightRect.top + (rightRect.height / 2) - containerRect.top;
+
+    const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+    const angle = Math.atan2(endY - startY, endX - startX);
+
+    const color = leftItem.dataset.color;
+
+    Object.assign(line.style, {
+        backgroundColor: color,
+        width: `${length}px`,
+        left: `${startX}px`,
+        top: `${startY}px`,
+        transform: `rotate(${angle}rad)`,
+        position: 'absolute'
+    });
+
+    line.dataset.left = leftItem.dataset.originalIndex;
+    line.dataset.right = rightItem.dataset.originalIndex;
+
+    linesContainer.appendChild(line);
 }
+
+function removeExistingMatches(questionIndex, leftItem, rightItem) {
+    if (!matchingAnswers.has(questionIndex)) return;
+
+    const matches = matchingAnswers.get(questionIndex);
+    const leftIndex = parseInt(leftItem.dataset.originalIndex);
+    const rightIndex = parseInt(rightItem.dataset.originalIndex);
+
+    const container = leftItem.closest('.matching-container');
+    container.querySelectorAll(`.matching-line[data-left="${leftIndex}"], .matching-line[data-right="${rightIndex}"]`)
+        .forEach(line => line.remove());
+
+    container.querySelectorAll('.matching-item').forEach(item => {
+        if (parseInt(item.dataset.originalIndex) === leftIndex || 
+            parseInt(item.dataset.originalIndex) === rightIndex) {
+            item.classList.remove('matched');
+        }
+    });
+
+    matchingAnswers.set(questionIndex, 
+        matches.filter(match => match.left !== leftIndex && match.right !== rightIndex)
+    );
+}
+
+function updateMatchingAnswers(questionIndex) {
+    const input = document.querySelector(`input[name="matching_answers_${questionIndex}"]`);
+    if (input) {
+        input.value = JSON.stringify(matchingAnswers.get(questionIndex) || []);
+    }
+}
+
+
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    initializeMatching();
+    
+    document.querySelectorAll('.matching-item').forEach(item => {
+        item.addEventListener('click', () => handleMatchingClick(item));
+    });
+});
+
 
     </script>
     <button id="backToEditBtn" onclick="goToEditPage()">🖉</button>
