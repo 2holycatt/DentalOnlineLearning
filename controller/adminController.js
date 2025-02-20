@@ -43,32 +43,35 @@ const { sendEmail } = require('../service/notification');
 
 async function getSubjectsForNav(userId) {
   try {
-    const userData = await User.findById(userId);
-    let subject = [];
-    
-    if (!userData) {
-      return [];
-    }
-
-    if (userData.role === 'student') {
-      const studentData = await Student.findOne({ user: userId })
-        .populate('subjects.subjectMongooseId');
+      const userData = await User.findById(userId);
+      let subjects = [];
       
-      // Check if studentData and subjects exist
-      if (studentData && studentData.subjects) {
-        subject = studentData.subjects.map(subject => subject.subjectMongooseId);
+      if (!userData) {
+          return [];
       }
-    } else {
-      // For teachers and admins
-      subject = await Subject.find()
-        .sort({ semester: 1 })
-        .populate("lessonArray") || [];
-    }
-    
-    return subject;
+
+      if (userData.role === 'student') {
+          const studentData = await Student.findOne({ user: userId })
+              .populate('subjects.subjectMongooseId');
+          
+          if (studentData && studentData.subjects) {
+              subjects = studentData.subjects
+                  .filter(subject => 
+                      subject.subjectMongooseId && 
+                      !subject.subjectMongooseId.isArchived)
+                  .map(subject => subject.subjectMongooseId);
+          }
+      } else {
+          // For teachers and admins, filter out archived subjects
+          subjects = await Subject.find({ isArchived: false })
+              .sort({ semester: 1 })
+              .populate("lessonArray") || [];
+      }
+      
+      return subjects;
   } catch (error) {
-    console.error('Error in getSubjectsForNav:', error);
-    return []; // Return empty array on error
+      console.error('Error in getSubjectsForNav:', error);
+      return [];
   }
 }
 
@@ -80,16 +83,12 @@ const adminIndex = async (req, res) => {
 
     const activeSubjectsCount = await Subject.countDocuments({ isArchived: false });
 
-    const recentSubjects = await Subject.find({ isArchived: false })
-    .sort({ updatedAt: -1 })
-    .limit(3);
-
     const findSubject = null;
     console.log(userData);
     const theme = req.session.theme || 'light'; 
     const isSidebarOpen = false; 
     
-    res.render("adminIndex", { navSubjects , findSubject  ,userData, theme, isSidebarOpen, activeSubjectsCount,recentSubjects });
+    res.render("adminIndex", { navSubjects , findSubject  ,userData, theme, isSidebarOpen, activeSubjectsCount });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");

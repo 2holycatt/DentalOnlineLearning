@@ -23,1202 +23,1223 @@ const colors = [
     <title>
         <%=quiz.quizname%>
     </title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/getMoreAddContent.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
-    <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
+  <link rel="stylesheet" href="/css/getMoreAddContent.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+  <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+  <link rel="icon" href="/images/indexMed/Ellipse9.png" type="image/x-icon">
 
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap');
-
+    
         * {
-            font-family: "Noto Sans Thai", sans-serif !important;
+          font-family: "Noto Sans Thai", sans-serif !important;
         }
-
+    
         .header {
-            margin: 0 !important;
-            padding: 0 !important;
-            position: relative !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          position: relative !important;
         }
-
+    
         html {
-            scroll-behavior: smooth !important;
+          scroll-behavior: smooth !important;
         }
-
+    
         body {
-            margin: 0px;
+          margin: 0px;
         }
-
+    
         .center {
-            display: inline;
-            margin: 3px;
+          display: inline;
+          margin: 3px;
         }
-
+    
         .form-input {
-            width: 100px;
-            padding: 3px;
-            background: #fff;
-            border: 2px dashed dodgerblue;
+          width: 100px;
+          padding: 3px;
+          background: #fff;
+          border: 2px dashed dodgerblue;
         }
-
+    
         .form-input input {
-            display: none;
+          display: none;
         }
-
+    
         .form-input label {
-            display: block;
-            width: 100px;
-            height: auto;
-            max-height: 100px;
-            background: var(--secondary-color);
-            border-radius: 10px;
-            cursor: pointer;
+          display: block;
+          width: 100px;
+          height: auto;
+          max-height: 100px;
+          background: var(--secondary-color);
+          border-radius: 10px;
+          cursor: pointer;
         }
-
+    
         .form-input img {
-            width: 100px;
-            height: 100px;
-            margin: 2px;
-            opacity: .4;
+          width: 100px;
+          height: 100px;
+          margin: 2px;
+          opacity: .4;
         }
-
+    
         .imgRemove {
-            position: relative;
-            bottom: 114px;
-            left: 68%;
-            background-color: transparent;
-            border: none;
-            font-size: 30px;
-            outline: none;
+          position: relative;
+          bottom: 114px;
+          left: 68%;
+          background-color: transparent;
+          border: none;
+          font-size: 30px;
+          outline: none;
         }
-
+    
         .imgRemove::after {
-            content: ' \21BA';
-            color: #fff;
-            font-weight: 900;
-            border-radius: 8px;
-            cursor: pointer;
+          content: ' \21BA';
+          color: #fff;
+          font-weight: 900;
+          border-radius: 8px;
+          cursor: pointer;
         }
-
+    
         .small {
-            color: firebrick;
+          color: firebrick;
         }
-
+    
         .image {
-            max-width: 100%;
-            max-height: 100%;
+          max-width: 100%;
+          max-height: 100%;
         }
-
+    
         #required {
-            display: inline-block;
-            position: absolute;
-            right: 10px;
+          display: inline-block;
+          position: absolute;
+          right: 10px;
         }
-
+    
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
         }
-
+    
         :root {
-            --background: #e5e8eb;
-            --forground: #2882a5;
+          --background: #e5e8eb;
+          --forground: #2882a5;
         }
-
+    
         body,
         .screenshot {
-            background-color: var(--background);
+          background-color: var(--background);
         }
-
+    
         input {
-            outline: none;
-            border: none;
-            width: 100%;
+          outline: none;
+          border: none;
+          width: 100%;
         }
-
+    
         input:hover {
-            border-bottom: 1px solid lightgray;
-
+          border-bottom: 1px solid lightgray;
+    
         }
-
+    
         input:focus,
         .dark .input:focus {
-            border-bottom: 2px solid rgb(103, 58, 183) !important;
+          border-bottom: 2px solid rgb(103, 58, 183) !important;
         }
-
+    
         .dark input:hover {
-            border-bottom: 1px solid #444;
+          border-bottom: 1px solid #444;
         }
-
+    
         form {
-            width: 78%;
-            margin-bottom: 100px;
+          width: 78%;
+          margin-bottom: 100px;
         }
-
+    
         .form-control {
-            width: 33%;
+          width: 33%;
         }
-
+    
         textarea .form-control {
-            border: none;
-            border-bottom: 1px solid lightgray;
+          border: none;
+          border-bottom: 1px solid lightgray;
         }
-
+    
         .answer_key input {
-            width: 10%;
+          width: 10%;
         }
-
+    
         .container {
-            display: flex;
-            margin-top: 12px;
-            width: 200%;
-            justify-content: center;
+          display: flex;
+          margin-top: 12px;
+          width: 200%;
+          justify-content: center;
         }
-
+    
         .question {
-            background-color: white;
-            margin: 30px !important;
-            padding: 41px;
-            border-radius: 14px;
-            position: relative;
-            border-left: 6px solid #ffffff;
-
+          background-color: white;
+          margin: 30px !important;
+          padding: 41px;
+          border-radius: 14px;
+          position: relative;
+          border-left: 6px solid #ffffff;
+    
         }
-
+    
         .dark .question {
-            background-color: var(--secondary-color);
-            border-left: 6px solid var(--secondary-color);
+          background-color: var(--secondary-color);
+          border-left: 6px solid var(--secondary-color);
         }
-
+    
         .question_option-prop,
         .dark .question_option-prop {
-            border-left: 6px solid rgb(103, 58, 183);
-
+          border-left: 6px solid rgb(103, 58, 183);
+    
         }
-
+    
         .first {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-
-            /* align-items: center; */
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+    
+          /* align-items: center; */
         }
-
+    
         .double_item {
-            display: inline-block;
-            padding: 3px;
-            text-decoration: none;
-            /* margin: 0 24px; */
-            margin-bottom: 1rem;
+          display: inline-block;
+          padding: 3px;
+          text-decoration: none;
+          /* margin: 0 24px; */
+          margin-bottom: 1rem;
         }
-
+    
         .double_item:hover {
-            text-decoration: underline;
-            border-radius: 7px;
-
+          text-decoration: underline;
+          border-radius: 7px;
+    
         }
-
+    
         .options {
-            padding-top: 8px;
-            padding-bottom: 8px;
-            display: flex;
-            flex-direction: column;
+          padding-top: 8px;
+          padding-bottom: 8px;
+          display: flex;
+          flex-direction: column;
         }
-
+    
         .options input:focus {
-            border: none;
+          border: none;
         }
-
+    
         .options input {
-            margin: 4px;
-            border: none;
-
+          margin: 4px;
+          border: none;
+    
         }
-
+    
         .dark .options input {
-            background-color: var(--secondary-color);
-            color: var(--text-color);
-
+          background-color: var(--secondary-color);
+          color: var(--text-color);
+    
         }
-
+    
         .description_class {
-            display: flex;
-            flex-direction: column;
+          display: flex;
+          flex-direction: column;
         }
-
+    
         .description_class :first-child {
-            padding-bottom: 15px;
-            margin-bottom: 27px;
-            border: none;
-            border-bottom: 1px solid gray;
+          padding-bottom: 15px;
+          margin-bottom: 27px;
+          border: none;
+          border-bottom: 1px solid gray;
         }
-
+    
         select.description_class:first-child:focus {
-            outline: none;
-            box-shadow: none !important;
+          outline: none;
+          box-shadow: none !important;
         }
-
+    
         .description_class :last-child {
-            outline: none;
-            border: none;
+          outline: none;
+          border: none;
         }
-
+    
         .footer {
-            background-color: #F8F9FA;
+          background-color: #F8F9FA;
         }
-
+    
         .answer_key {
-            margin-top: 20px;
-            text-decoration: none;
+          margin-top: 20px;
+          text-decoration: none;
         }
-
+    
         .answer_key:hover {
-            text-decoration: underline;
+          text-decoration: underline;
         }
-
+    
         .input_check {
-            margin: 0px;
-            display: inline-block;
-            width: 3%;
-            padding: 0px;
+          margin: 0px;
+          display: inline-block;
+          width: 3%;
+          padding: 0px;
         }
-
+    
         .setting_menu {
-            margin-left: 20px;
-            background-color: white;
-            width: 80%;
-            height: 440px;
-            border-radius: 10px;
+          margin-left: 20px;
+          background-color: white;
+          width: 80%;
+          height: 440px;
+          border-radius: 10px;
         }
-
+    
         .addition {
-            background-color: white;
+          background-color: white;
         }
-
-
-
+    
+    
+    
         /* on off  */
         .switch {
-            position: relative;
-            display: inline-block;
-            width: 48px;
-            height: 25px;
+          position: relative;
+          display: inline-block;
+          width: 48px;
+          height: 25px;
         }
-
+    
         .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
+          opacity: 0;
+          width: 0;
+          height: 0;
         }
-
+    
         .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 6px;
-            right: -5px;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 6px;
+          right: -5px;
+          bottom: 0;
+          background-color: #ccc;
+          -webkit-transition: .4s;
+          transition: .4s;
         }
-
+    
         .slider:before {
-            position: absolute;
-            content: "";
-            height: 17px;
-            width: 18px;
-            left: 1px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
+          position: absolute;
+          content: "";
+          height: 17px;
+          width: 18px;
+          left: 1px;
+          bottom: 4px;
+          background-color: white;
+          -webkit-transition: .4s;
+          transition: .4s;
         }
-
+    
         input:checked+.slider {
-            background-color: #2196F3;
+          background-color: #2196F3;
         }
-
+    
         input:focus+.slider {
-            box-shadow: 0 0 1px #2196F3;
+          box-shadow: 0 0 1px #2196F3;
         }
-
+    
         input:checked+.slider:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
+          -webkit-transform: translateX(26px);
+          -ms-transform: translateX(26px);
+          transform: translateX(26px);
         }
-
+    
         /* Rounded sliders */
         .slider.round {
-            border-radius: 34px;
+          border-radius: 34px;
         }
-
+    
         .slider.round:before {
-            border-radius: 50%;
+          border-radius: 50%;
         }
-
+    
         .imagebutton {
-            padding: 11px;
-            margin-left: 14px;
-            margin-right: 9px;
+          padding: 11px;
+          margin-left: 14px;
+          margin-right: 9px;
         }
-
+    
         .dark .imagebutton {
-            color: white;
+          color: white;
         }
-
+    
         .embed-responsive {
-            width: 63%;
-
+          width: 63%;
+    
         }
-
+    
         /* hover  */
         .Hover-effect {
-            position: relative;
+          position: relative;
         }
-
+    
         :root {
-            --underline_color: red;
-            --underline-hight: 0.175rem;
+          --underline_color: red;
+          --underline-hight: 0.175rem;
         }
-
+    
         .Hover-effect::after {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: var(--underline-hight);
-            background-color: var(--underline_color);
-            left: 0;
-            bottom: 0;
-            transform: scale(0, 1);
-            transition: transform 0.3s ease;
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: var(--underline-hight);
+          background-color: var(--underline_color);
+          left: 0;
+          bottom: 0;
+          transform: scale(0, 1);
+          transition: transform 0.3s ease;
         }
-
-
+    
+    
         .active-container::after {
-            transform: scale(1, 1);
+          transform: scale(1, 1);
         }
-
-
+    
+    
         .Hover-effect:hover::after {
-            transform: scale(1, 1);
+          transform: scale(1, 1);
         }
-
-
-
+    
+    
+    
         .svgloader {
-            display: block;
-            width: 30%;
-            margin: 0 auto;
+          display: block;
+          width: 30%;
+          margin: 0 auto;
         }
-
+    
         .videobut {
-            padding: 9px;
-            margin-right: 8px;
+          padding: 9px;
+          margin-right: 8px;
         }
-
+    
         .videoicon {
-            padding: 0px;
-            height: 19px;
-            width: 24px;
+          padding: 0px;
+          height: 19px;
+          width: 24px;
         }
-
+    
         * {
-            box-sizing: border-box !important;
+          box-sizing: border-box !important;
         }
-
+    
         .card-1,
         .card-body-1 {
-            border: none !important;
+          border: none !important;
         }
-
+    
         .descp {
-            text-indent: 2em;
-            margin: 0 2em;
+          text-indent: 2em;
+          margin: 0 2em;
         }
-
+    
         .rectangle-141 {
-            background-color: white;
-            border-radius: 0.75em;
-            box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
-            height: 14.6875em;
-            width: 75%;
-            margin: 2em 2em;
+          background-color: white;
+          border-radius: 0.75em;
+          box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+          height: 14.6875em;
+          width: 75%;
+          margin: 2em 2em;
         }
-
+    
         .home-div,
         .a-home {
-            color: #999999 !important;
+          color: #999999 !important;
         }
-
+    
         .above-nav {
-            background-color: white !important;
-            border-bottom: 1px solid #999999;
+          background-color: white !important;
+          border-bottom: 1px solid #999999;
         }
-
+    
         .dark .above-nav-status {
-            background-color: var(--secondary-color) !important;
-            border-right: 1px solid #494949;
+          background-color:  var(--secondary-color) !important;
+          border-right: 1px solid #494949;
         }
-
+    
         .status-a {
-            color: #404258 !important;
+          color: #404258 !important;
         }
-
+    
         .list-lesson-p {
-            color: #8A2BE2;
+          color: #8A2BE2;
         }
-
+    
         .list-lesson-p-span {
-            color: #4B0082;
+          color: #4B0082;
         }
-
+    
         .each-lesson {
-            border-top: 0.1em solid #8A2BE2;
+          border-top: 0.1em solid #8A2BE2;
         }
-
+    
         .aside-right {
-            background-color: var(--bg-color) !important;
-            height: 100%;
+          background-color: var(--bg-color) !important;
+          height: 100%;
         }
-
+    
         .manange-bar {
-            border-radius: 0.5em;
-            justify-content: space-between !important;
-
+          border-radius: 0.5em;
+          justify-content: space-between !important;
+    
         }
-
-
+    
+    
         .lesson-content {
-            height: fit-content !important;
-            border-radius: 1em !important;
-            justify-content: center !important;
+          height: fit-content !important;
+          border-radius: 1em !important;
+          justify-content: center !important;
         }
-
+    
         .dark .manange-bar,
         .dark .lesson-content {
-            background-color: var(--secondary-color) !important;
+          background-color:  var(--secondary-color) !important;
         }
-
+    
         .lesson-nothing {
-            margin: 25% 0 !important;
-            padding: 0 !important;
+          margin: 25% 0 !important;
+          padding: 0 !important;
         }
-
+    
         .each-lesson-a {
-            text-decoration: none !important;
+          text-decoration: none !important;
         }
-
+    
         .each-lesson-a:hover .each-lesson {
-            border-left: 0.2em solid #8A2BE2 !important;
+          border-left: 0.2em solid #8A2BE2 !important;
         }
-
+    
         .card-img-top {
-            box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+          box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
         }
-
+    
         .setColumn {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr !important;
+          display: grid !important;
+          grid-template-columns: 1fr 1fr 1fr !important;
         }
-
+    
         .card-a {
-            text-decoration: none !important;
+          text-decoration: none !important;
         }
-
+    
         .card-a:hover,
         .card-a:hover .p-lesson-name {
-            color: #007bff !important;
-            transition: 0.5s;
+          color: #007bff !important;
+          transition: 0.5s;
         }
-
+    
         .card-a:hover .bi-book {
-            color: #007bff !important;
-            transition: color 0.5s;
+          color: #007bff !important;
+          transition: color 0.5s;
         }
-
+    
         .bi-book-fill {
-            display: none;
+          display: none;
         }
-
+    
         .card-a:hover .bi-book-fill {
-            display: inline-block !important;
-            transition: 0.5s;
+          display: inline-block !important;
+          transition: 0.5s;
         }
-
+    
         .card-a:hover .bi-book {
-            display: none;
-            transition: 0.5s;
+          display: none;
+          transition: 0.5s;
         }
-
+    
         .manange-bar,
         .lesson-content {
-            box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
-            border-radius: 0.5em;
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+          border-radius: 0.5em;
         }
-
+    
         .card-1 {
-            width: 90% !important;
-            height: fit-content !important;
-            transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
-            cursor: pointer;
-            border-radius: 0.5em;
-            box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+          width: 90% !important;
+          height: fit-content !important;
+          transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+          cursor: pointer;
+          border-radius: 0.5em;
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
         }
-
+    
         .dark .card-1 {
-            box-shadow: lightgray 0px 2px 5px -1px !important;
+          box-shadow: lightgray 0px 2px 5px -1px !important;
         }
-
+    
         .card-1:hover {
-            transform: scale(1.05);
+          transform: scale(1.05);
         }
-
+    
         .card-header {
-            border-right: 1px solid #EAEFF4;
-            border-bottom: 1px solid #EAEFF4;
+          border-right: 1px solid #EAEFF4;
+          border-bottom: 1px solid #EAEFF4;
         }
-
+    
         .lesson-nothing {
-            margin: 25% 0 !important;
-            padding: 0 !important;
+          margin: 25% 0 !important;
+          padding: 0 !important;
         }
-
+    
         .each-lesson-a {
-            text-decoration: none !important;
+          text-decoration: none !important;
         }
-
+    
         .each-lesson-a:hover .each-lesson {
-            border-left: 0.2em solid #8A2BE2 !important;
+          border-left: 0.2em solid #8A2BE2 !important;
         }
-
+    
         .card-img-top {
-            box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+          box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
         }
-
+    
         .setColumn {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr !important;
+          display: grid !important;
+          grid-template-columns: 1fr 1fr 1fr !important;
         }
-
+    
         .card-a {
-            text-decoration: none !important;
+          text-decoration: none !important;
         }
-
+    
         .card-a:hover,
         .card-a:hover .p-lesson-name {
-            color: #007bff !important;
-            transition: 0.5s;
+          color: #007bff !important;
+          transition: 0.5s;
         }
-
+    
         .card-a:hover .bi-book {
-            color: #007bff !important;
-            transition: color 0.5s;
+          color: #007bff !important;
+          transition: color 0.5s;
         }
-
+    
         .bi-book-fill {
-            display: none;
+          display: none;
         }
-
+    
         .card-a:hover .bi-book-fill {
-            display: inline-block !important;
-            transition: 0.5s;
+          display: inline-block !important;
+          transition: 0.5s;
         }
-
+    
         .card-a:hover .bi-book {
-            display: none;
-            transition: 0.5s;
+          display: none;
+          transition: 0.5s;
         }
-
+    
         .manange-bar,
         .lesson-content {
-            box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
-            border-radius: 0.5em;
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+          border-radius: 0.5em;
         }
-
+    
         .card-1 {
-            width: 90% !important;
-            height: fit-content !important;
-            transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
-            cursor: pointer;
-            border-radius: 0.5em;
-            box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+          width: 90% !important;
+          height: fit-content !important;
+          transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+          cursor: pointer;
+          border-radius: 0.5em;
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
         }
-
+    
         .dark .card-1 {
-            box-shadow: lightgray 0px 2px 5px -1px !important;
+          box-shadow: lightgray 0px 2px 5px -1px !important;
         }
-
+    
         .card-1:hover {
-            transform: scale(1.05);
+          transform: scale(1.05);
         }
-
+    
         .card-header {
-            border-right: 1px solid #EAEFF4;
-            border-bottom: 1px solid #EAEFF4;
+          border-right: 1px solid #EAEFF4;
+          border-bottom: 1px solid #EAEFF4;
         }
-
+    
         /* .a-list-3,
-      .bi-3 {
-        color: #8A2BE2 !important;
-      } */
-
-
-
+          .bi-3 {
+            color: #8A2BE2 !important;
+          } */
+    
+    
+    
         #yearSelector {
-            border-color: #EAEFF4;
-            border-radius: 0.5em;
-            background-color: white !important;
-            font-size: smaller;
-            padding: 0.5em !important;
+          border-color: #EAEFF4;
+          border-radius: 0.5em;
+          background-color: white !important;
+          font-size: smaller;
+          padding: 0.5em !important;
         }
-
+    
         #yearSelector option {
-            color: #404258;
-            background-color: white !important;
-
+          color: #404258;
+          background-color: white !important;
+    
         }
-
+    
         /* .set-border {
-      border-bottom: 1px solid #EAEFF4;
-      padding-bottom: 1em !important;
-
-    } */
-
+          border-bottom: 1px solid #EAEFF4;
+          padding-bottom: 1em !important;
+    
+        } */
+    
         .set-border-bottom {
-            border-bottom: 1px solid #EAEFF4;
-            margin-bottom: 1em !important;
-
+          border-bottom: 1px solid #EAEFF4;
+          margin-bottom: 1em !important;
+    
         }
-
+    
         .lesson-bar {
-            border-left: 0.25em solid #007bff !important;
-            padding-left: 0.5em !important;
-            margin-right: 0.5em !important;
-
+          border-left: 0.25em solid #007bff !important;
+          padding-left: 0.5em !important;
+          margin-right: 0.5em !important;
+    
         }
-
+    
         .a-add {
-            color: #007bff !important;
+          color: #007bff !important;
         }
-
+    
         .a-add:hover {
-            color: #0053ac !important;
+          color: #0053ac !important;
         }
-
+    
         .descp {
-            text-indent: 2em;
-            margin: 0 2em;
+          text-indent: 2em;
+          margin: 0 2em;
         }
-
+    
         .rectangle-141 {
-            background-color: white;
-            border-radius: 0.75em;
-            box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
-            height: 14.6875em;
-            left: 4.6875em;
-            top: 37.3125em;
-            width: 39.125em;
-            width: 75%;
-            margin: 2em 2em;
+          background-color: white;
+          border-radius: 0.75em;
+          box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+          height: 14.6875em;
+          left: 4.6875em;
+          top: 37.3125em;
+          width: 39.125em;
+          width: 75%;
+          margin: 2em 2em;
         }
-
+    
         .home-div,
         .a-home {
-            color: #999999 !important;
+          color: #999999 !important;
         }
-
+    
         .above-nav {
-            background-color: #dde6ed33;
+          background-color: #dde6ed33;
         }
-
+    
         .status-a {
-            color: #404258 !important;
+          color: #404258 !important;
         }
-
+    
         .list-lesson-p {
-            color: #8A2BE2;
-
+          color: #8A2BE2;
+    
         }
-
+    
         .list-lesson-p-span {
-            color: #4B0082;
+          color: #4B0082;
         }
-
+    
         .each-lesson {
-            border-top: 0.1em solid #8A2BE2;
-
+          border-top: 0.1em solid #8A2BE2;
+    
         }
-
+    
         .aside-right {
-            background-color: #dde6ed1a;
-            height: 100%;
+          background-color: #dde6ed1a;
+          height: 100%;
         }
-
+    
         .manange-bar {
-            border-radius: 1em;
-            /* grid-template-columns: 1fr 1fr; */
-            /* justify-content: space-between !important; */
-
+          border-radius: 1em;
+          /* grid-template-columns: 1fr 1fr; */
+          /* justify-content: space-between !important; */
+    
         }
-
-
+    
+    
         .main-content {
-            height: 100%;
+          height: 100%;
         }
-
+    
         .lesson-content {
-            height: 100%;
-            border-radius: 1em !important;
-
-            justify-content: center !important;
-            border-top: 0.5em solid #8A2BE2;
+          height: 100%;
+          border-radius: 1em !important;
+    
+          justify-content: center !important;
+          border-top: 0.5em solid #8A2BE2;
         }
-
+    
         .lesson-nothing {
-            /* margin: 25% 0 !important; */
-            padding: 0 !important;
+          /* margin: 25% 0 !important; */
+          padding: 0 !important;
         }
-
+    
         .add-lesson-btn {
-            float: right;
-            width: auto;
+          float: right;
+          width: auto;
         }
-
-
+    
+    
         .show-layout-2 {
-            display: block;
-            opacity: 1;
-            /* สิ้นสุดที่ความทึบ 1 */
-            transition: opacity 0.5s ease;
-            /* กำหนดการเปลี่ยนแปลงที่ต้องการ */
+          display: block;
+          opacity: 1;
+          /* สิ้นสุดที่ความทึบ 1 */
+          transition: opacity 0.5s ease;
+          /* กำหนดการเปลี่ยนแปลงที่ต้องการ */
         }
-
+    
         .layout01-mainDes {
-
-            font-size: xx-large !important;
-            font-weight: bolder !important;
-
+    
+          font-size: xx-large !important;
+          font-weight: bolder !important;
+    
         }
-
+    
         /* .input-mainSubDes,
-    .input-mainDes,
-    .input-mainSubDes2 {
-      white-space: pre-wrap !important;
-      overflow: auto !important;
-    } */
-
+        .input-mainDes,
+        .input-mainSubDes2 {
+          white-space: pre-wrap !important;
+          overflow: auto !important;
+        } */
+    
         .subDes,
         .subDesNumber2 {
-            border: none !important;
+          border: none !important;
         }
-
+    
         .layout1-contents {
-            background-color: #dde6ed1a;
-            width: 85%;
-
+          background-color: #dde6ed1a;
+          width: 85%;
+    
         }
-
+    
         .layout01_gird {
-            display: grid;
-            grid-template-columns: 0.75fr 1.25fr;
+          display: grid;
+          grid-template-columns: 0.75fr 1.25fr;
         }
-
-
+    
+    
         .Topic1 {
-            background-color: #8A2BE2 !important;
-            color: white !important;
-            border-radius: 1em !important;
-            width: 70% !important;
+          background-color: #8A2BE2 !important;
+          color: white !important;
+          border-radius: 1em !important;
+          width: 70% !important;
         }
-
+    
         .Topic1::placeholder {
-            color: white !important;
-            font-size: xx-large;
-            font-weight: bolder;
-            text-align: center !important;
+          color: white !important;
+          font-size: xx-large;
+          font-weight: bolder;
+          text-align: center !important;
         }
-
+    
         #file-input {
-            display: none !important;
+          display: none !important;
         }
-
+    
         .center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: ฟ;
-            /* ทำให้สูงเต็มหน้าจอ */
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: ฟ;
+          /* ทำให้สูงเต็มหน้าจอ */
         }
-
+    
         video {
-            border-radius: 0.5em;
-            box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
-
+          border-radius: 0.5em;
+          box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+    
         }
-
+    
         .file-icon {
-            font-size: 7em;
+          font-size: 7em;
         }
-
+    
         .content-2 {
-            border-top: 0.5em solid #8A2BE2;
-            border-radius: 1em !important;
-            height: 100% !important;
-            background-color: #dde6ed1a !important;
-            box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+          border-top: 0.5em solid #8A2BE2;
+          border-radius: 1em !important;
+          height: 100% !important;
+          background-color: #dde6ed1a !important;
+          box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
         }
-
+    
         .main-content-long-text {
-            color: #8A2BE2 !important;
-            border: none !important;
-
+          color: #8A2BE2 !important;
+          border: none !important;
+    
         }
-
+    
         .text-areas-indent {
-            text-indent: 2em;
+          text-indent: 2em;
         }
-
+    
         .main-content-long-text::placeholder {
-            color: #8A2BE2 !important;
-            /* text-indent: 2em !important; */
+          color: #8A2BE2 !important;
+          /* text-indent: 2em !important; */
         }
-
+    
         .setEdge1,
         .setEdge2 {
-            border-right: 1px solid #8A2BE2 !important;
-            border-bottom-width: 50% !important;
-            box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset !important;
+          border-right: 1px solid #8A2BE2 !important;
+          border-bottom-width: 50% !important;
+          box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset !important;
         }
-
+    
         .add-button-2 {
-            float: right;
-
+          float: right;
+    
         }
-
+    
         .layout01_gird {
-            display: grid;
-            grid-template-columns: 0.75fr 1.25fr;
+          display: grid;
+          grid-template-columns: 0.75fr 1.25fr;
         }
-
+    
         .allCOntent {
-            height: fit-content;
+          height: fit-content;
         }
-
+    
         .subLayout2Contents2 div {
-            height: fit-content !important;
+          height: fit-content !important;
         }
-
+    
         .setborder {
-            border-radius: 0.5em !important;
+          border-radius: 0.5em !important;
         }
-
+    
         .addContent-a {
-            text-decoration: none !important;
-            transition-duration: 0.3s;
+          text-decoration: none !important;
+          transition-duration: 0.3s;
         }
-
+    
         .addContent-a:hover {
-            color: #0d57d6 !important;
-            transition: 0.3s;
+          color: #0d57d6 !important;
+          transition: 0.3s;
         }
-
+    
         .lesson-bar {
-            border-left: 0.25em solid #387bef !important;
-            padding-left: 0.5em !important;
+          border-left: 0.25em solid #387bef !important;
+          padding-left: 0.5em !important;
         }
-
+    
         .comment-table tr th {
-            padding-top: 1em !important;
-            padding-bottom: 1em !important;
-            border-bottom: 1px solid #ced4daa0;
-            color: #5a6a85 !important;
-
+          padding-top: 1em !important;
+          padding-bottom: 1em !important;
+          border-bottom: 1px solid #ced4daa0;
+          color: #5a6a85 !important;
+    
         }
-
+    
         .comment-table tr td {
-            padding-top: 1em !important;
-            /* padding-bottom: 1em !important; */
-            /* border-bottom: 1px solid #ced4daa0; */
-
+          padding-top: 1em !important;
+          /* padding-bottom: 1em !important; */
+          /* border-bottom: 1px solid #ced4daa0; */
+    
         }
-
+    
         .comment {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            max-height: 104px;
+          display: flex;
+          align-items: center;
+          padding: 15px;
+          max-height: 104px;
         }
-
+    
         .comment img {
-            width: 50px;
-            height: 50px;
-            border-radius: 25%;
-            margin-right: 1em !important;
-            object-fit: cover;
-
+          width: 50px;
+          height: 50px;
+          border-radius: 25%;
+          margin-right: 1em !important;
+          object-fit: cover;
+    
         }
-
+    
         /* .comment .content {
-      flex-grow: 1;
-    } */
-
+          flex-grow: 1;
+        } */
+    
         .comment-color {
-            color: #7C8FAC !important;
+          color: #7C8FAC !important;
         }
-
+    
         .fancyBox {
-            width: 10%;
-            height: auto;
+          width: 10%;
+          height: auto;
         }
-
+    
         .comment-files {
-            width: 125px;
-            height: 125px;
-            margin-right: 1em !important;
-            border-radius: 10%;
+          width: 125px;
+          height: 125px;
+          margin-right: 1em !important;
+          border-radius: 10%;
         }
-
+    
         .commentOption {
-            position: absolute;
-
+          position: absolute;
+    
         }
-
+    
         .optionComment:hover {
-            color: #003ba1 !important;
-            transition: 0.3s;
+          color: #003ba1 !important;
+          transition: 0.3s;
         }
-
+    
         .reply-comment {
-            display: none;
+          display: none;
         }
-
+    
         .swal-container {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            text-align: center !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          text-align: center !important;
         }
-
+    
         .swal-title {
-            font-size: 1.5em !important;
-            font-weight: bold !important;
+          font-size: 1.5em !important;
+          font-weight: bold !important;
         }
-
+    
         .swal-text {
-            margin: 1em 0 !important;
+          margin: 1em 0 !important;
         }
-
+    
         .swal-icon {
-
-            margin: 2em auto !important;
+    
+          margin: 2em auto !important;
         }
-
+    
         .swal-confirm-button,
         .swal-cancel-button {
-            margin: 2em 1em !important;
+          margin: 2em 1em !important;
         }
-
+    
         .swal-confirm-button {
-            background-color: #d33;
-            border-color: #d33;
-            padding: 0.75rem !important;
+          background-color: #d33;
+          border-color: #d33;
+          padding: 0.75rem !important;
         }
-
+    
         .swal-cancel-button {
-            background-color: gray;
-            border-color: gray;
-            padding: 0.75rem !important;
+          background-color: gray;
+          border-color: gray;
+          padding: 0.75rem !important;
         }
-
+    
         .input-question {
-            border: none;
-            outline: none;
-            /* margin: 0 24px; */
+          border: none;
+          outline: none;
+          /* margin: 0 24px; */
         }
-
+    
         .dark .input-question {
-            border: none;
-            outline: none;
-            background-color: var(--secondary-color);
-            color: var(--text-color);
-
+          border: none;
+          outline: none;
+          background-color: var(--secondary-color);
+          color: var(--text-color);
         }
-
+    
         .grey {
-            color: gray !important;
+          color: gray !important;
         }
-
+    
         .dark .grey {
-            color: lightgray !important
+          color: lightgray !important
         }
-
+    
         .question_form_top_name {
-            font-size: 32px;
-            font-weight: 400;
-            line-height: 40px;
-            line-height: 135%;
-            width: 100%;
-            border: none;
-            outline: none;
-            margin-bottom: 0.5em !important;
-
+          font-size: 32px;
+          font-weight: 400;
+          line-height: 40px;
+          line-height: 135%;
+          width: 100%;
+          border: none;
+          outline: none;
+          margin-bottom: 0.5em !important;
+    
         }
-
+    
         .dark .question_form_top_name {
-            background-color: var(--secondary-color) !important;
-            color: white;
+          background-color:  var(--secondary-color) !important;
+          color: white;
         }
-
+    
         .question_form_top_desc {
-            font-weight: 400;
-            width: 100%;
-            border: none;
-            outline: none;
-            color: gray;
-            background: transparent;
-            overflow-wrap: break-word;
-
-
+          font-weight: 400;
+          width: 100%;
+          border: none;
+          outline: none;
+          color: gray;
+          background: transparent;
+          overflow-wrap: break-word;
+    
+    
         }
-
+    
         .dark .question_form_top_desc {
-            background-color: var(--secondary-color);
+          background-color: var(--secondary-color);
         }
-
+    
+        #backToEditBtn {
+          position: fixed;
+          bottom: 25px;
+          right: 25px;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background-color: #8A2BE2;
+          color: white;
+          border: none;
+          font-size: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          cursor: pointer;
+          transition: background-color 0.3s, transform 0.3s;
+        }
+    
+        #backToEditBtn:hover {
+          background-color: #0056b3;
+          transform: scale(1.1);
+        }
+    
         .pagination {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1em;
-        }
-
-        .pagination-btn {
-            padding: 0.1em 0.75em;
-            margin: 0.2em;
-            border: 1px solid #ccc;
-            background-color: #D9D9D9;
-            cursor: pointer;
-        }
-
-        .pagination-btn.answered {
-            background-color: #8A2BE2;
-            /* สีม่วงสำหรับข้อที่ตอบแล้ว */
-            color: white;
-        }
-
-        .pagination-btn.chevron {
-            background-color: transparent;
-            color: #8A2BE2;
-            border: none;
-        }
-
-        .pagination-btn.chevron i {
-            font-size: 1.5em;
-        }
-        .pagination-btn {
-    padding: 0.1em 0.75em;
-    margin: 0.2em;
-    border: 1px solid #ccc;
-    background-color: #D9D9D9;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.pagination-btn.active {
-    background-color: #8A2BE2;
-    color: white;
-}
-
-.pagination-btn.chevron {
-    background-color: none;
-    color: #8A2BE2;
-    border: none;
-}
-.pagination {
-    max-width: 100%;
-  
-}
-.matching-container {
-    position: relative;
-    min-height: 200px;
-}
-
-.matching-lines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.matching-line {
-    position: absolute;
-    height: 3px;
-    transform-origin: 0 0;
-    pointer-events: none;
-}
-
-.matching-item {
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    z-index: 2;
-}
-
-.matching-item.selected {
-    border-color: #007bff;
-    background-color: #e7f1ff;
-    box-shadow: 0 0 5px rgba(0,123,255,0.5);
-}
-.dark .matching-item .form-control{
-    background-color: #666;
-    color: white;
-    border: 1px solid #777;
-}
-.dark .matching-item.selected {
-    background-color: #007bff;
-    color: white;
-}
-
-
-.number-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    color: white;
-    font-weight: bold;
-    margin-right: 10px;
-}
-        @media screen and (max-width: 768px) {
-            .above-nav-status {
-                display: none;
+                display: flex;
+                justify-content: center;
+                margin-bottom: 1em;
             }
-            .pagination {
-        padding: 5px;
+    
+            .pagination-btn {
+                padding: 0.1em 0.75em;
+                margin: 0.2em;
+                border: 1px solid #ccc;
+                background-color: #D9D9D9;
+                cursor: pointer;
+            }
+    
+            .pagination-btn.active {
+        background-color: #8A2BE2;
+        color: white;
     }
-    .pagination-btn {
-        width: 35px !important;
+    
+    .pagination-btn.chevron {
+        background-color: transparent;
+        color: #8A2BE2;
+        border: none;
     }
+    
+            .pagination-btn.chevron i {
+                font-size: 1.5em;
+            }
+    
+            .nav-btn:hover {
+        background-color: #6B1FB1;
+        transform: translateY(-2px);
+    }
+    
+    .nav-btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .prev-btn {
+        left: 30px;
+    }
+    
+    .next-btn {
+        right: 30px;
+    }
+    .pagination {
+        max-width: 100%;
+    }
+    .matching-container {
+        position: relative;
+        min-height: 200px;
+    }
+    
+    .matching-lines {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+    
+    .matching-line {
+        position: absolute;
+        height: 3px;
+        transform-origin: 0 0;
+        pointer-events: none;
+    }
+    
+    .matching-item {
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .matching-item.selected {
+        border-color: #007bff;
+        background-color: #e7f1ff;
+        box-shadow: 0 0 5px rgba(0,123,255,0.5);
+    }
+    .dark .matching-item .form-control{
+        background-color: #666;
+        color: white;
+        border: 1px solid #777;
+    }
+    .dark .matching-item.selected {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .number-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        color: white;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+        @media screen and (max-width: 768px) {
+          .above-nav-status {
+            display: none;
+          }
+          .pagination {
+            padding: 5px;
         }
-    </style>
+        .pagination-btn {
+            width: 40px !important;
+        }
+        }
+      </style>
 </head>
 
 <body onload="setTimeLimit()">
@@ -1274,7 +1295,7 @@ const colors = [
         <div class="container" id="main_container">
 
             <!-- <form action="/submitQuiz" id="form" method="post"> -->
-            <form id="form" method="POST" enctype="multipart/form-data">
+            <form id="form" method="POST" enctype="multipart/form-data" data-quiz-id="<%= quiz._id %>">
                 <div class="questions">
 
 
@@ -1289,18 +1310,18 @@ const colors = [
 
 
                     <!-- title  -->
-                    <br><br><br>
+                    <br><br><br><br>
 
-                    <div class="pagination">
+                    <div class="pagination" style="display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;">
                         <button type="button" class="pagination-btn chevron" onclick="prevPage()">
-                            
                         </button>
+                        
 
                         <% for (let i = 0; i < questions.length; i++) { %>
                             <button type="button"
                                 class="py-2  pagination-btn <%= questions[i].isAnswered ? 'answered' : '' %>"
                                 onclick="goToQuestion('<%= i %>')"
-                                style="width: 45px;">
+                                style="width: 45px; margin: 2px;">
                                 <%= i + 1 %>
                             </button>
                             <% } %>
@@ -1368,7 +1389,7 @@ const colors = [
 
                     <div class="questionContainer">
                         <% questions.forEach((question, i)=> { %>
-                            <div class="question" id="question_<%= i %>" style="display: none;">
+                            <div class="question" id="question_<%= i %>" data-question-index="<%= i %>" style="display: none;">
                                 <div class="first">
                                     <div class="input-question">
                                         <%= question.questionText %>
@@ -1378,13 +1399,13 @@ const colors = [
                                     </span>
                                 </div>
                                 <br>
-                                <div class="options">
+                                <div class="options" data-type="<%= question.questionType %>">
                                     <% if (question.questionType==='MCQ' || question.questionType==='checkbox' ) { %>
                                         <% question.options.forEach((option, j)=> { %>
                                             <div class="form-check" style="display: flex; align-items: center;">
                                                 <input class="input_check"
                                                     type="<%= question.questionType === 'MCQ' ? 'radio' : 'checkbox' %>"
-                                                    name="answers[]" value="<%= j %>" <%=question.selectedOption===j
+                                                    name="answers_<%= i %>" value="<%= j %>" <%=question.selectedOption===j
                                                     ? 'checked' : '' %> >
                                                 <div style="flex-grow: 1; padding: 5px;">
                                                     <%= option.optionText %>
@@ -1402,30 +1423,42 @@ const colors = [
                                             <%= question.answerText %>
                                         </textarea>
                                         <% } else if (question.questionType === 'matching') { %>
+                                            <div class="options" data-type="matching">
                                             <div class="matching-container ms-4 mt-3">
                                               <div class="row position-relative">
                                                 <div class="col-5 left-side">
-                                                  <!-- Left side items -->
-                                                  <% const shuffledLeft = [...question.matchingPairs].map((pair, idx) => ({
-                                                    text: pair.left.text,
-                                                    image: pair.left.image,
-                                                    originalIndex: idx
-                                                  })).sort(() => Math.random() - 0.5) %>
-                                                  
-                                                  <% shuffledLeft.forEach((item, idx) => { %>
-                                                    <div class="matching-item mb-3" data-original-index="<%= item.originalIndex %>" data-color="<%= colors[idx % colors.length] %>">
+                                                    <% 
+                                                    let validItemCount = 0;
+                                                    // Filter and map valid items
+                                                    const validLeftItems = question.matchingPairs
+                                                      .filter(pair => pair.left.text && pair.left.text.trim() !== '')
+                                                      .map((pair, idx) => ({
+                                                        text: pair.left.text,
+                                                        image: pair.left.image,
+                                                        originalIndex: pair.originalIndex || idx
+                                                      }));
+                                                      
+                                                    // Create shuffled array from validLeftItems
+                                                    let shuffledLeft = [...validLeftItems].sort(() => Math.random() - 0.5);
+                                                    
+                                                    // Render shuffled items
+                                                    shuffledLeft.forEach((item, idx) => { 
+                                                    %>
+                                                      <div class="matching-item mb-3" 
+                                                           data-original-index="<%= item.originalIndex %>" 
+                                                           data-color="<%= colors[idx % colors.length] %>">
                                                         <div class="form-control d-flex align-items-center" style="width: 100%;">
-                                                            <span class="number-badge" style="background-color: <%= colors[idx % colors.length] %>">
-                                                                <%= idx + 1 %>
-                                                            </span>
-                                                            <span><%= item.text %></span>                                                        
-                                                            <% if (item.image?.url) { %>
-                                                          <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
-                                                        <% } %>
+                                                          <span class="number-badge" style="background-color: <%= colors[idx % colors.length] %>">
+                                                            <%= idx + 1 %>
+                                                          </span>
+                                                          <span><%= item.text %></span>
+                                                          <% if (item.image?.url) { %>
+                                                            <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
+                                                          <% } %>
+                                                        </div>
                                                       </div>
-                                                    </div>
-                                                  <% }) %>
-                                                </div>
+                                                    <% }); %>
+                                                  </div>
                                           
                                                 <div class="col-2">
                                                   <div class="matching-lines"></div>
@@ -1453,11 +1486,14 @@ const colors = [
                                               </div>
                                           
                                               <!-- Hidden inputs to store answers -->
+                                               
                                               <input type="hidden" name="matching_answers_<%= i %>">
                                               <input type="hidden" name="matching_left_order_<%= i %>" value="<%= JSON.stringify(shuffledLeft.map(i => i.originalIndex)) %>">
                                               <input type="hidden" name="matching_right_order_<%= i %>" value="<%= JSON.stringify(shuffledRight.map(i => i.originalIndex)) %>">
                                             </div>
+                                </div>
                                           <% } %>
+                                          
                                 </div>
                             </div>
                             <% }) %>
@@ -1699,25 +1735,312 @@ const colors = [
             //         return '';
             //     }
 
-            function saveAnswersToLocalStorage() {
-    const quizId = document.querySelector('#quizId').value;
+            const QuizStorage = {
+    // เพิ่มการ debounce เพื่อลดการบันทึกถี่เกินไป
+    debounceTimeout: null,
+
+    debounce(func, wait = 300) {
+        clearTimeout(this.debounceTimeout);
+        this.debounceTimeout = setTimeout(func, wait);
+    },
+
+    saveImmediate(quizId, questionIndex, type, value) {
+    try {
+      const key = this.getKey(quizId);
+      let answers = this.getAllAnswers(quizId);
+      
+      // เพิ่มการจัดการสำหรับ matching type
+      if (type === 'matching') {
+        // value ควรเป็น array ของ matches ในรูปแบบ [{leftIndex: number, rightIndex: number}]
+        answers[questionIndex] = {
+          type,
+          value: value.map(match => ({
+            leftIndex: match.leftIndex,
+            rightIndex: match.rightIndex
+          })),
+          timestamp: Date.now()
+        };
+      } else {
+        answers[questionIndex] = { type, value, timestamp: Date.now() };
+      }
+      
+      localStorage.setItem(key, JSON.stringify(answers));
+      console.log(`Saved answer for question ${questionIndex}:`, value);
+    } catch (error) {
+      console.error('Error saving answer:', error);
+    }
+  },
+
+    getAllAnswers(quizId) {
+        return safeLocalStorageOperation(() => {
+            const key = this.getKey(quizId);
+            return JSON.parse(localStorage.getItem(key) || '{}');
+        }) || {};
+    },
+
+    getKey(quizId) {
+        return `quiz_${quizId}_answers_v2`; // เพิ่ม version เพื่อป้องกันการชนกับข้อมูลเก่า
+    }
+};
+
+const matchingStorage = {
+  // เก็บ matches ปัจจุบันสำหรับแต่ละคำถาม
+  currentMatches: new Map(),
+
+  // บันทึก match ใหม่
+  saveMatch(questionIndex, leftIndex, rightIndex) {
+    const matches = this.currentMatches.get(questionIndex) || [];
+    
+    // ลบ matches เก่าที่มี leftIndex หรือ rightIndex ซ้ำ
+    const filteredMatches = matches.filter(match => 
+      match.leftIndex !== leftIndex && match.rightIndex !== rightIndex
+    );
+    
+    // เพิ่ม match ใหม่
+    filteredMatches.push({ leftIndex, rightIndex });
+    this.currentMatches.set(questionIndex, filteredMatches);
+    
+    // บันทึกลง localStorage
+    QuizStorage.saveImmediate(
+      document.getElementById('form').dataset.quizId,
+      questionIndex,
+      'matching',
+      filteredMatches
+    );
+  },
+
+  // โหลด matches จาก localStorage
+  loadMatches(questionIndex, answers) {
+    if (!answers[questionIndex] || answers[questionIndex].type !== 'matching') return;
+    
+    const matches = answers[questionIndex].value;
+    if (!Array.isArray(matches)) return;
+    
+    this.currentMatches.set(questionIndex, matches);
+    return matches;
+  }
+};
+
+function saveAllAnswers() {
+    const quizId = document.getElementById('form').dataset.quizId;
     const answers = {};
-    
-    // Save matching answers
-    matchingAnswers.forEach((value, key) => {
-        answers[`matching_${quizId}_${key}`] = value;
+
+    document.querySelectorAll('.question').forEach((question) => {
+        const questionId = question.id.split('_')[1];
+        if (!questionId) return;
+
+        const optionsDiv = question.querySelector('.options');
+        if (!optionsDiv) return;
+
+        const type = optionsDiv.dataset.type;
+        let value = null;
+
+        try {
+            switch (type) {
+                case 'MCQ':
+                    // แก้ไขการเลือก radio button โดยใช้ name ที่ถูกต้อง
+                    const radio = question.querySelector(`input[name="answers_${questionId}"]:checked`);
+                    value = radio ? radio.value : null;
+                    break;
+
+                case 'checkbox':
+                    const checked = Array.from(question.querySelectorAll('input[type="checkbox"]:checked'));
+                    value = checked.map(cb => cb.value);
+                    break;
+
+                case 'Paragraph':
+                case 'short_answ':
+                    const textarea = question.querySelector('textarea');
+                    value = textarea ? textarea.value.trim() : '';
+                    break;
+
+                    case 'matching':
+                    // เก็บข้อมูลการจับคู่ทั้งหมด รวมถึงสีและเส้น
+                    const container = question.querySelector('.matching-container');
+                    const matches = [];
+                    
+                    // เก็บข้อมูลเส้นที่เชื่อมต่อ
+                    container.querySelectorAll('.matching-line').forEach(line => {
+                        matches.push({
+                            left: parseInt(line.dataset.left),
+                            right: parseInt(line.dataset.right),
+                            color: line.style.backgroundColor
+                        });
+                    });
+                    
+                    value = matches;
+                    break;
+            }
+
+            if (value !== null) {
+                answers[questionId] = {
+                    type,
+                    value,
+                    questionIndex: parseInt(questionId)
+                };
+            }
+
+        } catch (error) {
+            console.error(`Error saving question ${questionId}:`, error);
+        }
     });
-    
-    localStorage.setItem(`quiz_${quizId}_answers`, JSON.stringify(answers));
+
+    try {
+        localStorage.setItem(`quiz_${quizId}_answers`, JSON.stringify(answers));
+        console.log('Saved answers:', answers);
+    } catch (error) {
+        console.error('Storage save error:', error);
+    }
 }
 
+
+function loadSavedAnswers() {
+    const quizId = document.getElementById('form').dataset.quizId;
+    try {
+        const saved = localStorage.getItem(`quiz_${quizId}_answers`);
+        if (!saved) return;
+
+        const answers = JSON.parse(saved);
+        console.log('Loading answers:', answers); // Debug log
+
+        // ใช้ Object.entries เพื่อวนลูปผ่านคำตอบที่บันทึกไว้
+        Object.entries(answers).forEach(([index, data]) => {
+            if (!data || !data.type) return;
+
+            // ใช้ ID ในการค้นหา question
+            const question = document.querySelector(`#question_${index}`);
+            if (!question) {
+                console.log(`Question ${index} not found`); // Debug log
+                return;
+            }
+
+            try {
+                if (data.type === 'matching' && Array.isArray(data.value)) {
+                    // ล้างเส้นเก่า
+                    const container = question.querySelector('.matching-container');
+                    const linesContainer = container.querySelector('.matching-lines');
+                    linesContainer.innerHTML = '';
+
+                    // วาดเส้นใหม่
+                    data.value.forEach(match => {
+                        const leftItem = container.querySelector(`.left-side .matching-item[data-original-index="${match.left}"]`);
+                        const rightItem = container.querySelector(`.right-side .matching-item[data-original-index="${match.right}"]`);
+
+                        if (leftItem && rightItem) {
+                            // กำหนดสีและสถานะ matched
+                            leftItem.classList.add('matched');
+                            rightItem.classList.add('matched');
+
+                     // สร้างเส้นใหม่
+                     const line = document.createElement('div');
+                            line.className = 'matching-line';
+                            line.dataset.left = match.left;
+                            line.dataset.right = match.right;
+                            line.style.backgroundColor = match.color;
+                            
+                            // คำนวณตำแหน่งและความยาวเส้น
+                            drawMatchingLine(leftItem, rightItem);
+                            
+                            // เพิ่มเข้า matchingAnswers Map
+                            if (!matchingAnswers.has(index)) {
+                                matchingAnswers.set(index, []);
+                            }
+                            matchingAnswers.get(index).push(match);
+                        }
+                    });
+                }
+                          
+                switch (data.type) {
+                    case 'MCQ':
+                        if (data.value !== null) {
+                            const radio = question.querySelector(`input[value="${data.value}"]`);
+                            if (radio) radio.checked = true;
+                        }
+                        break;
+
+                    case 'checkbox':
+                        if (Array.isArray(data.value)) {
+                            data.value.forEach(val => {
+                                const checkbox = question.querySelector(`input[value="${val}"]`);
+                                if (checkbox) checkbox.checked = true;
+                            });
+                        }
+                        break;
+
+                    case 'Paragraph':
+                    case 'short_answ':
+                        const textarea = question.querySelector('textarea');
+                        if (textarea && data.value) textarea.value = data.value;
+                        break;
+
+                        case 'matching':
+                    const matches = matchingAnswers.get(questionId);
+                                 if (matches) {
+                                     value = [...matches]; // Create a copy of matches array
+                         } else {
+                         console.error(`No matching answers found for question ${questionId}`);
+                        }
+                         break;
+                }
+            } catch (error) {
+                console.error(`Error loading question ${index}:`, error);
+            }
+        });
+    } catch (error) {
+        console.error('Error loading answers:', error);
+    }
+}
+
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    loadSavedAnswers();
+    
+    const form = document.getElementById('form');
+    
+    // บันทึกเมื่อมีการเปลี่ยนแปลงค่า
+    form.addEventListener('change', saveAllAnswers);
+    
+    // บันทึกเมื่อพิมพ์ข้อความ
+    form.addEventListener('input', (e) => {
+        if (e.target.matches('textarea')) {
+            saveAllAnswers();
+        }
+    });
+});
+
+// Override matching functions
+const originalCreateMatch = window.createMatch;
+window.createMatch = function(questionIndex, leftItem, rightItem) {
+  try {
+    originalCreateMatch.call(this, questionIndex, leftItem, rightItem);
+    
+    // บันทึก match ใหม่
+    matchingStorage.saveMatch(
+      questionIndex,
+      parseInt(leftItem.dataset.originalIndex),
+      parseInt(rightItem.dataset.originalIndex)
+    );
+  } catch (error) {
+    console.error('Error in createMatch:', error);
+  }
+};
+
 function restoreMatching(questionIndex, matches) {
+    if (!Array.isArray(matches)) return;
+    
     const container = document.querySelector(`#question_${questionIndex} .matching-container`);
     if (!container) return;
 
+    // Clear existing matches
+    const linesContainer = container.querySelector('.matching-lines');
+    if (linesContainer) linesContainer.innerHTML = '';
+
+    // Restore matches
     matches.forEach(match => {
         const leftItem = container.querySelector(`.left-side .matching-item[data-original-index="${match.left}"]`);
         const rightItem = container.querySelector(`.right-side .matching-item[data-original-index="${match.right}"]`);
+        
         if (leftItem && rightItem) {
             leftItem.classList.add('matched');
             rightItem.classList.add('matched');
@@ -1726,25 +2049,11 @@ function restoreMatching(questionIndex, matches) {
     });
 }
 
-function loadAnswersFromLocalStorage() {
-    const quizId = document.querySelector('#quizId').value;
-    const savedAnswers = localStorage.getItem(`quiz_${quizId}_answers`);
-    
-    if (savedAnswers) {
-        const answers = JSON.parse(savedAnswers);
-        Object.entries(answers).forEach(([key, value]) => {
-            if (key.startsWith('matching_')) {
-                const questionIndex = key.split('_')[2];
-                matchingAnswers.set(questionIndex, value);
-                restoreMatching(questionIndex, value);
-            }
-        });
-    }
-}
-
             document.addEventListener('DOMContentLoaded', () => {
                 renderQuestions();
             });
+
+           
 
             function updateQuestionCount() {
                 const questionCountElement = document.getElementById('question-count');
@@ -1830,8 +2139,10 @@ async function submitQuiz(quizId) {
             
             const questionId = questionDiv.id.split('_')[1];
             const questionType = questionDiv.querySelector('input[type="radio"]') ? 'MCQ' : 
-                               questionDiv.querySelector('input[type="checkbox"]') ? 'checkbox' : 
-                               questionDiv.querySelector('textarea') ? 'text' : null;
+                   questionDiv.querySelector('input[type="checkbox"]') ? 'checkbox' : 
+                   questionDiv.querySelector('.matching-container') ? 'matching' :
+                   questionDiv.querySelector('textarea.short-answer') ? 'short_answ' :
+                   questionDiv.querySelector('textarea') ? 'Paragraph' : null;
 
             if (questionType === 'MCQ') {
                 const selectedOption = questionDiv.querySelector('input[type="radio"]:checked');
@@ -1843,7 +2154,26 @@ async function submitQuiz(quizId) {
             } else if (questionType === 'text') {
                 const textArea = questionDiv.querySelector('textarea');
                 answers[questionId] = textArea ? textArea.value.trim() : null;
-            }
+            } else if (questionType === 'matching') {
+    // Get matching pairs data
+    const matchingAnswers = [];
+    const matchingRows = questionDiv.querySelectorAll('.matching-row');
+    
+    matchingRows.forEach(row => {
+        const leftIndex = parseInt(row.getAttribute('data-left-index'));
+        const rightSelect = row.querySelector('select');
+        
+        if (rightSelect && rightSelect.value) {
+            const rightIndex = parseInt(rightSelect.value);
+            matchingAnswers.push({
+                leftIndex,
+                rightIndex
+            });
+        }
+    });
+    
+    answers[questionId] = matchingAnswers;
+}
         });
 
         // ส่งคำตอบไปยังเซิร์ฟเวอร์
@@ -1858,6 +2188,22 @@ async function submitQuiz(quizId) {
         const result = await response.json();
 
         if (result.success) {
+            try {
+                // ลบข้อมูลแบบทดสอบนี้
+                localStorage.removeItem(`quiz_${quizId}_answers`);
+                localStorage.removeItem(`quiz_${quizId}_answers_v2`);
+                
+                // ลบข้อมูล matching answers ถ้ามี
+                localStorage.removeItem(`quiz_${quizId}_matching`);
+                
+                // Clear matching answers from memory
+                matchingAnswers.clear();
+                
+                console.log('Cleared quiz data from localStorage');
+            } catch (err) {
+                console.error('Error clearing localStorage:', err);
+            }
+
             Swal.fire({
                 title: 'ส่งแบบทดสอบสำเร็จ!',
                 text: `คะแนนของคุณคือ ${result.score}`,
@@ -1878,6 +2224,28 @@ async function submitQuiz(quizId) {
     }
 }     
 
+function checkQuestionAnswered(questionDiv) {
+    const questionType = questionDiv.querySelector('.options').dataset.type;
+    
+    switch (questionType) {
+        case 'MCQ':
+            return !!questionDiv.querySelector('input[type="radio"]:checked');
+        case 'checkbox':
+            return !!questionDiv.querySelector('input[type="checkbox"]:checked');
+        case 'Paragraph':
+        case 'short_answ':
+            const textarea = questionDiv.querySelector('textarea');
+            return textarea && textarea.value.trim() !== '';
+        case 'matching':
+            const questionIndex = questionDiv.id.split('_')[1];
+            const matches = matchingAnswers.get(questionIndex);
+            return matches && matches.length > 0;
+        default:
+            return false;
+    }
+}
+
+
 function goToQuestion(index) {
     // ซ่อนคำถามทั้งหมด
     document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
@@ -1885,83 +2253,64 @@ function goToQuestion(index) {
     // แสดงคำถามที่ถูกเลือก
     document.getElementById('question_' + index).style.display = 'block';
     
-    // ลบ active class จากปุ่มทั้งหมด
-    document.querySelectorAll('.pagination-btn').forEach(btn => {
-        btn.style.backgroundColor = '';
+    // ดึงข้อมูลคำตอบจาก localStorage
+    const quizId = document.getElementById('form').dataset.quizId;
+    const savedAnswers = safeLocalStorageOperation(() => {
+        return JSON.parse(localStorage.getItem(`quiz_${quizId}_answers`)) || {};
     });
-    
-    // เพิ่ม active class ให้ปุ่มปัจจุบัน (ยกเว้นปุ่ม chevron)
-    const currentBtn = document.querySelector(`.pagination-btn:nth-child(${parseInt(index) + 2})`);
-    if (currentBtn && !currentBtn.classList.contains('chevron')) {
-        currentBtn.style.backgroundColor = '#8A2BE2';
-        currentBtn.style.color = 'white';
-    }
+
+    // อัพเดทสถานะปุ่มทั้งหมด
+    document.querySelectorAll('.pagination-btn').forEach(btn => {
+        if (btn.classList.contains('chevron')) return;
+
+        const btnIndex = parseInt(btn.textContent) - 1;
+        const answer = savedAnswers[btnIndex];
+        
+        // เช็คว่ามีคำตอบหรือไม่
+        const hasAnswer = answer && answer.value && (
+            (answer.type === 'MCQ' && answer.value !== null) ||
+            (answer.type === 'checkbox' && Array.isArray(answer.value) && answer.value.length > 0) ||
+            (answer.type === 'matching' && Array.isArray(answer.value) && answer.value.length > 0) ||
+            ((answer.type === 'Paragraph' || answer.type === 'short_answ') && answer.value.trim() !== '')
+        );
+
+        if (parseInt(index) === btnIndex) {
+            // ข้อที่กำลังดูอยู่
+            btn.style.backgroundColor = '#8A2BE2'; // สีม่วงเข้ม
+            btn.style.color = 'white';
+        } else if (hasAnswer) {
+            // ข้อที่มีคำตอบแล้ว
+            btn.style.backgroundColor = '#c3a2e2'; // สีม่วงอ่อน
+            btn.style.color = 'white';
+        } else {
+            // ข้อที่ยังไม่ได้ตอบ
+            btn.style.backgroundColor = '#D9D9D9'; // สีเทา
+            btn.style.color = 'black';
+        }
+    });
 }
 
+// เพิ่ม Event Listener สำหรับการบันทึกคำตอบ
+document.addEventListener('change', function(e) {
+    if (e.target.matches('input[type="radio"], input[type="checkbox"], textarea')) {
+        saveAllAnswers();
+        const currentQuestion = e.target.closest('.question');
+        if (currentQuestion) {
+            const index = currentQuestion.id.split('_')[1];
+            goToQuestion(index); // อัพเดทสีปุ่มหลังจากตอบคำถาม
+        }
+    }
+});
+
+// เรียกใช้ตอนโหลดหน้า
+document.addEventListener('DOMContentLoaded', () => {
+    goToQuestion(0);
+    loadSavedAnswers();
+});
+
             goToQuestion(0);
-
-            // let currentPage = 0;
-            // const questionsPerPage = 10;
-            // const totalPages = Math.ceil(questions.length / questionsPerPage);
-
-            // function goToQuestion(index) {
-            //     document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
-            //     document.getElementById('question_' + index).style.display = 'block';
-            // }
-
-            // function updatePagination() {
-            //     const paginationContainer = document.querySelector('.pagination');
-            //     paginationContainer.innerHTML = '';
-
-            //     // Add left chevron
-            //     const leftChevron = document.createElement('button');
-            //     leftChevron.type = 'button';
-            //     leftChevron.className = 'pagination-btn chevron';
-            //     leftChevron.innerHTML = '<i class="bi bi-chevron-left"></i>';
-            //     leftChevron.onclick = prevPage;
-            //     paginationContainer.appendChild(leftChevron);
-
-            //     // Add page numbers
-            //     const start = currentPage * questionsPerPage;
-            //     const end = Math.min(start + questionsPerPage, questions.length);
-            //     for (let i = start; i < end; i++) {
-            //         const btn = document.createElement('button');
-            //         btn.type = 'button';
-            //         btn.className = `pagination-btn ${questions[i].isAnswered ? 'answered' : ''}`;
-            //         btn.innerHTML = '' + (i + 1);
-            //         btn.onclick = () => goToQuestion(i);
-            //         paginationContainer.appendChild(btn);
-            //     }
-
-            //     // Add right chevron
-            //     const rightChevron = document.createElement('button');
-            //     rightChevron.type = 'button';
-            //     rightChevron.className = 'pagination-btn chevron';
-            //     rightChevron.innerHTML = '<i class="bi bi-chevron-right"></i>';
-            //     rightChevron.onclick = nextPage;
-            //     paginationContainer.appendChild(rightChevron);
-            // }
-
-            // function prevPage() {
-            //     if (currentPage > 0) {
-            //         currentPage--;
-            //         updatePagination();
-            //     }
-            // }
-
-            // function nextPage() {
-            //     if (currentPage < totalPages - 1) {
-            //         currentPage++;
-            //         updatePagination();
-            //     }
-            // }
-
-            // // Initialize pagination
-            // updatePagination();
-            // goToQuestion(0);
-
             let selectedItem = null;
-const matchingAnswers = new Map();
+            const matchingAnswers = new Map();
 
 function initializeMatching() {
     matchingAnswers.clear();
@@ -2037,23 +2386,28 @@ function redrawAllLines() {
 const debouncedRedraw = debounce(redrawAllLines, 150);
 window.addEventListener('resize', debouncedRedraw);
 function createMatch(questionIndex, leftItem, rightItem) {
+    // Remove any existing matches for these items
     removeExistingMatches(questionIndex, leftItem, rightItem);
-    
+
+    // Create new match
     const match = {
         left: parseInt(leftItem.dataset.originalIndex),
-        right: parseInt(rightItem.dataset.originalIndex)
+        right: parseInt(rightItem.dataset.originalIndex) 
     };
 
+    // Store in matchingAnswers map
     if (!matchingAnswers.has(questionIndex)) {
         matchingAnswers.set(questionIndex, []);
     }
     matchingAnswers.get(questionIndex).push(match);
 
+    // Update UI
     leftItem.classList.add('matched');
     rightItem.classList.add('matched');
     drawMatchingLine(leftItem, rightItem);
-    updateMatchingAnswers(questionIndex);
-    saveAnswersToLocalStorage();
+
+    // Save to localStorage immediately
+    saveAllAnswers();
 }
 
 function drawMatchingLine(leftItem, rightItem) {
@@ -2132,6 +2486,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+window.onerror = function(msg, url, line) {
+    console.error(`Error: ${msg}\nURL: ${url}\nLine: ${line}`);
+    return false;
+};
+
+function logStorageError(e) {
+    console.error('LocalStorage Error:', e);
+}
+
+// Wrap localStorage operations in try-catch
+function safeLocalStorageOperation(operation) {
+    try {
+        return operation();
+    } catch (e) {
+        logStorageError(e);
+        return null;
+    }
+}
 
         </script>
 

@@ -8,34 +8,37 @@ const moment = require('moment');
 
 async function getSubjectsForNav(userId) {
     try {
-      const userData = await User.findById(userId);
-      let subject = [];
-      
-      if (!userData) {
-        return [];
-      }
-  
-      if (userData.role === 'student') {
-        const studentData = await Student.findOne({ user: userId })
-          .populate('subjects.subjectMongooseId');
+        const userData = await User.findById(userId);
+        let subjects = [];
         
-        // Check if studentData and subjects exist
-        if (studentData && studentData.subjects) {
-          subject = studentData.subjects.map(subject => subject.subjectMongooseId);
+        if (!userData) {
+            return [];
         }
-      } else {
-        // For teachers and admins
-        subject = await Subject.find()
-          .sort({ semester: 1 })
-          .populate("lessonArray") || [];
-      }
-      
-      return subject;
+
+        if (userData.role === 'student') {
+            const studentData = await Student.findOne({ user: userId })
+                .populate('subjects.subjectMongooseId');
+            
+            if (studentData && studentData.subjects) {
+                subjects = studentData.subjects
+                    .filter(subject => 
+                        subject.subjectMongooseId && 
+                        !subject.subjectMongooseId.isArchived)
+                    .map(subject => subject.subjectMongooseId);
+            }
+        } else {
+            // For teachers and admins, filter out archived subjects
+            subjects = await Subject.find({ isArchived: false })
+                .sort({ semester: 1 })
+                .populate("lessonArray") || [];
+        }
+        
+        return subjects;
     } catch (error) {
-      console.error('Error in getSubjectsForNav:', error);
-      return []; // Return empty array on error
+        console.error('Error in getSubjectsForNav:', error);
+        return [];
     }
-  }
+}
 
 
 const studentIndex = async (req, res) => {
@@ -50,12 +53,12 @@ const studentIndex = async (req, res) => {
         const navSubjects = await getSubjectsForNav(req.session.userId);
         const getUserLessons = userData
         const theme = req.session.theme || 'light';
+        const activeSubjectsCount = await Subject.countDocuments({ isArchived: false });
         const isSidebarOpen = false;
 
-        // console.log(getUserLessons);
 
         // res.json(userData);
-        res.render("studentIndex", { getUserLessons, userData, theme, isSidebarOpen,navSubjects });
+        res.render("studentIndex", { getUserLessons, userData, theme, isSidebarOpen,navSubjects,activeSubjectsCount });
     } catch (err) {
         console.error(err);
         res.status(500).send("เกิดข้อผิดพลาด");

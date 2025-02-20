@@ -43,10 +43,12 @@ async function getSubjectsForNav(userId) {
         return [];
       }
       
-      subject = studentData.subjects.map(subject => subject.subjectMongooseId);
-    } else {
-      subject = await Subject.find();
-    }
+      subject = studentData.subjects
+      .map(subject => subject.subjectMongooseId)
+      .filter(subject => !subject.isArchived); // กรองวิชาที่ถูกจัดเก็บออกไป
+  } else {
+    subject = await Subject.find({ isArchived: false }); // กรองวิชาที่ถูกจัดเก็บออกไป
+  }
 
     return subject;
   } catch (error) {
@@ -485,10 +487,15 @@ exports.eachQuiz = async (req, res) => {
     const userRole = userData.role; // ดึงบทบาทจาก userData เช่น 'student' หรือ 'teacher'
     const totalPoints = quiz.questions.reduce((total, question) => total + question.points, 0);
 
+
     let studentScore = 0;
     let attemptCount = 0;
+    let highestScore = 0;
+    let canAttempt = true;
+    let bestAttempt = null;
 
-    if (userRole === 'student' && isResultPage) {
+
+    if (userRole === 'student') {
       // Initialize attempts array if undefined
       if (!quiz.attempts) {
           quiz.attempts = [];
@@ -496,15 +503,25 @@ exports.eachQuiz = async (req, res) => {
   
       // Find student attempt with proper null checks
       const studentAttempt = quiz.attempts.find(attempt => 
-          attempt && attempt.studentDbId && 
-          attempt.studentDbId.toString() === req.session.userId
+        attempt && attempt.studentDbId && 
+        attempt.studentDbId.toString() === student._id.toString()  // เปลี่ยนจาก req.session.userId เป็น student._id
       );
-  
-      if (studentAttempt) {
-          studentScore = studentAttempt.score || 0;
-          attemptCount = studentAttempt.attemptNumber || 0;
-      }
+
+
+
+  if (studentAttempt && studentAttempt.eachAttempt) {
+    attemptCount = studentAttempt.eachAttempt.length;
+    // Find attempt with highest score
+    bestAttempt = studentAttempt.eachAttempt.reduce((best, current) => {
+      return (!best || current.totalScore > best.totalScore) ? current : best;
+    }, null);
+    
+    highestScore = bestAttempt ? bestAttempt.totalScore : 0;
   }
+
+  canAttempt = attemptCount < quiz.attemptLimit;
+
+}
 
     // จัดเรียง foundQuestions ตามวันที่สร้าง
     // questions.sort((a, b) => {
@@ -601,12 +618,16 @@ exports.eachQuiz = async (req, res) => {
           releaseWhenLocal,
           deadlineLocal,
           theme,
+          bestAttempt,
           isSidebarOpen,
           navSubjects
         });
       }
     } else if (userRole === 'student') {
       if (isTestPage) {
+        if(!canAttempt) {
+          res.redirect(`/studentIndex/eachQuiz?quizId=${quizId}`);
+        }
         res.render("quiz_test", {
           mytitle: "quizTestPage",
           quiz,
@@ -620,6 +641,8 @@ exports.eachQuiz = async (req, res) => {
           timeLimitMilliseconds,
           timeLimitFormatted,
           theme,
+          canAttempt,
+          attemptCount,
           isSidebarOpen,
           navSubjects
         });
@@ -638,9 +661,11 @@ exports.eachQuiz = async (req, res) => {
           timeLimitMilliseconds,
           timeLimitFormatted,
           totalPoints,
-          studentScore,
+          studentScore: highestScore,
           attemptCount,
-          percentage: (studentScore / totalPoints) * 100,
+          canAttempt,
+          bestAttempt,
+          percentage: (highestScore / totalPoints) * 100,
           theme,
           isSidebarOpen,
           navSubjects
@@ -682,8 +707,10 @@ exports.eachQuiz = async (req, res) => {
           releaseWhenLocal,
           deadlineLocal,
           totalPoints,
-          studentScore,
+          studentScore: highestScore,
           attemptCount,
+          canAttempt,
+          bestAttempt,
           percentage: (studentScore / totalPoints) * 100,
           theme,
           isSidebarOpen,

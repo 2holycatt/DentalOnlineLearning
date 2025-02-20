@@ -12,7 +12,6 @@ const matchingOptionSchema = new mongoose.Schema({
     left: {
         text: {
             type: String,
-            required: true,
             trim: true
         },
         image: {
@@ -21,7 +20,6 @@ const matchingOptionSchema = new mongoose.Schema({
         },
         index: {
             type: Number,
-            required: true
         }
     },
     right: {
@@ -46,8 +44,7 @@ const matchingOptionSchema = new mongoose.Schema({
     },
     correctMatch: {
         leftIndex: {
-            type: Number,
-            required: true
+            type: Number
         },
         rightIndex: {
             type: Number,

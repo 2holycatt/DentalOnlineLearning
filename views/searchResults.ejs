@@ -367,17 +367,9 @@
                                                             <% 
     // Filter subjects based on user role
     let subjectsToDisplay = [];
-    if (userData.role === 'student') {
-        // For students, only show enrolled subjects
-        subjectsToDisplay = allSubjectsToShow.filter(subject => 
-            userData.student.subjects.some(s => 
-                s.subjectMongooseId.toString() === subject._id.toString()
-            )
-        );
-    } else {
-        // For teachers/admin show all subjects
-        subjectsToDisplay = allSubjectsToShow;
-    }
+   
+    subjectsToDisplay = allSubjectsToShow;
+    
     
     subjectsToDisplay.forEach(subject => { 
         const subjectLessons = matchingLessons.filter(l => 
@@ -397,7 +389,8 @@
                                                                     subject.subjectId.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                                                     subject.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                                                     subject.semester.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                                                    subject.section.toLowerCase().includes(searchQuery.toLowerCase())) { %>
+                                                                    subject.section.toLowerCase().includes(searchQuery.toLowerCase())) 
+                                                                    { %>
                                                                     <div class="result mb-4">
                                                                         <h4 class="result-title">
                                                                             <a href="/eachSubject?subjectDbId=<%= subject._id %>" class="text-decoration-none result-title">

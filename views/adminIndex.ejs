@@ -319,7 +319,7 @@
     <p class="fw-bold fs-3 text-primary classroom-p">ห้องเรียน</p>
   </div>
   <div class="row px-3 py-4 secondDiv">
-    <% recentSubjects.forEach(subject => { %>
+    <% navSubjects.slice(0, 3).forEach(subject => { %>
       <div class="col-16 col-lg-4 box" data-aos="fade-up" data-aos-duration="1000" >
         <a href="/eachSubject?subjectDbId=<%= subject._id %>" class="text-decoration-none">
 
@@ -367,7 +367,7 @@
   </div>
    <div class="d-flex justify-content-end  mb-4" >
 
-        <a href="/subjects" class="me-4">ดูรายวิชาทั้งหมด..(<%= activeSubjectsCount %> วิชา)</a>
+        <a href="/subjects" class="me-4">ดูรายวิชาทั้งหมด..(<%= navSubjects.length %> วิชา)</a>
 
     </div>
   <%- include("./partials/footer.ejs") %>

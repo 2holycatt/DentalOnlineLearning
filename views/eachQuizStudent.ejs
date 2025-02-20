@@ -615,7 +615,7 @@
             จำนวนครั้งที่เข้าทำได้:
 
             
-            <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;"> <%=quiz.attemptLimit%> ครั้ง</span>
+            <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;"> <%= quiz.attemptLimit - attemptCount %> ครั้ง</span>
             จำนวนข้อ:
             <span class="fw-normal fs-6 text-primary " style="margin-right: 1em !important;"> <%= questions.length %> ข้อ</span>
             
@@ -624,33 +624,20 @@
                
                 <br><hr><br>
               
-                <% 
-                // Check quiz attempt status once at the top
-                const hasAttempt = student && quiz.attempts?.some(attempt => 
-                    attempt?.studentDbId?.toString() === student._id?.toString() && 
-                    attempt.eachAttempt?.length > 0
-                );
-                
-                let studentAttempt;
-                let lastAttempt;
-                let percentage;
-                
-                if (hasAttempt) {
-                    studentAttempt = quiz.attempts.find(a => 
-                        a.studentDbId.toString() === student._id.toString()
-                    );
-                    if (studentAttempt?.eachAttempt?.length > 0) {
-                        lastAttempt = studentAttempt.eachAttempt[studentAttempt.eachAttempt.length - 1];
-                        percentage = (lastAttempt.score / totalPoints) * 100;
-                    }
-                }
-                %>
+               
                      
                   <p class="fw-normal w-auto fs-6 mx-2">สถานะ:
-                    <span class="fw-normal fs-6 <%= hasAttempt ? 'text-success' : 'text-danger' %>" 
-                          style="margin-right: 1em !important;">
-                        <%= hasAttempt ? 'ทำแล้ว' : 'ยังไม่ได้ทำ' %>
-                    </span>
+                    
+                          <% if (attemptCount > 0) { %>
+                            <span class="fw-normal fs-6 text-success %>" 
+                              style="margin-right: 1em !important;">
+                            ทำแล้ว <%= attemptCount%> ครั้ง
+                        <% } else { %>
+                          <span class="fw-normal fs-6  text-danger %>" 
+                            style="margin-right: 1em !important;">
+                            ยังไม่ได้ทำ
+                        <% } %>
+                                          </span>
                
                     <% if (quiz.releaseWhen) { %>
                     
@@ -673,13 +660,13 @@
           
 
          <br>
-         <% if (hasAttempt && lastAttempt) { %>
+         <% if (attemptCount > 0) { %>
           <div class="d-flex justify-content-center">
               <div class="score-display text-center mx-2">
                   <p>คะแนนที่ทำได้: <br><br>
                   <h2>
-                      <%= lastAttempt.score %>/<%= totalPoints %>
-                      <span class="fs-4">
+                    <%= bestAttempt ? bestAttempt.totalScore : 0 %>/<%= totalPoints %>
+                    <span class="fs-4">
                           (<%= percentage.toFixed(0) %>%)
                           <a class="fs-6 text-primary a-hover" href="/studentIndex/eachQuiz?quizId=<%= quiz._id %>/rdetail" target="_blank">
                               ดูรายละเอียด
@@ -691,13 +678,22 @@
           </div>
           <br>
           <div class="d-flex justify-content-center my-2">
+            <% if (canAttempt) { %>
               <a href="javascript:void(0)" 
                  onclick="confirmStartQuiz('<%= quiz._id %>')" 
                  class="add-button btn btn-secondary" 
                  style="background-color: #8A2BE2 !important; padding: 0.8rem !important;">
-                  ทำแบบทดสอบอีกครั้ง
-              </a>
+                 <%= attemptCount > 0 ? 'ทำแบบทดสอบอีกครั้ง' : 'เริ่มทำแบบทดสอบ' %>
+                </a>
           </div>
+          <% } else { %>
+            <button class="btn btn-secondary"   style="background-color: #8A2BE2 !important; padding: 0.8rem !important;"
+              disabled>
+              หมดสิทธิ์การทำแบบทดสอบแล้ว
+            </button>
+          </div>
+
+          <% } %>
       <% } else { %>
           <div class="d-flex justify-content-center my-2">
               <a href="javascript:void(0)" 

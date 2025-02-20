@@ -210,8 +210,15 @@
     }
 
     .lesson-content{
-      height: fit-content !important;
+      transition: all 0.3s ease;
+   
+      height: 220px !important;
     }
+    .lesson-content:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(187, 134, 252, 0.2);
+    border-color: #bb86fc;
+}
     body.light {
       background-color: #ffffff;
       color: #000000;
@@ -317,149 +324,58 @@
   <div class="classroomDiv col-12 w-100" id="forUpdown" data-aos="fade-right" data-aos-duration="1000">
     <p class="fw-bold fs-3 text-primary classroom-p">ห้องเรียน</p>
   </div>
-  <div class="row px-3 py-5 secondDiv">
-    <div class="col-4 box" data-aos="fade-up" data-aos-duration="1000">
-      <p class="fw-bold mx-3 fs-5" style="border-left: 0.25em solid #0D6EFD !important;
-      padding-left: 0.25em !important;
-      color: #5A6A85;">บทเรียน</p>
-      <div class="lesson-content p-2 mx-3  w-auto my-2" style="height: fit-content;">
-        <div class="px-3 my-3">
-          <div class="setColumn">
-            <!-- <a href="/adminIndex/eachLessons?lessonId=">
-              <div class="card-1 text-bg-white mb-4" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
-                <div class="card-header bg-white px-2 py-1 fw-bold text-primary" style="width: fit-content; border-bottom-right-radius: 0.5em; position: absolute; ">
-                  บทเรียน
-                </div>
-                <div class="card-body-1 d-flex justify-content-center p-4">
-                  <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของบทเรียน" style="height: 100%; width: 50%; object-fit: cover; max-width: 15.125em; max-height: 8.8125em ;">
-                </div>
-              </div>
-            </a> -->
-            <div class="setColumn-p-lesson fw-bold">
-              <p>ชื่อ</p>
-              <p>Post</p>
+  <div class="row px-3 py-4 secondDiv">
+    <% navSubjects.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)).slice(0, 3).forEach(subject => { %>   
+         <div class="col-16 col-lg-4 box" data-aos="fade-up" data-aos-duration="1000" >
+        <a href="/eachSubject?subjectDbId=<%= subject._id %>" class="text-decoration-none">
+
+        <div class="lesson-content  mx-3 bg-white w-auto my-2" style=" overflow-y: auto;">
+          <div class="px-3 my-3">
+            <div class="setColumn h-100 d-flex flex-column justify-content-between position-relative" >
+       
+           
+              <div class="setColumn-p-lesson fw-bold fs-5" >
+                <p class="mb-0">
+                  <%= subject.subjectId + ' ' + subject.subjectName %>
+              </p>
+              <p class="mb-0">
+                  <%= subject.semester + ' กลุ่มที่: ' + subject.section %>
+              </p>
+              
               <!-- <p>Times</p> -->
             </div>
-            <a href="/adminIndex/eachLessons?lessonId=" class="a-link">
-              <div class="setColumn-p-lesson-2">
-                <p>ส่วนประกอบฟันเทียม</p>
-                <p>15/03/2567</p>
-                <!-- <p>30 น.</p> -->
+              <div class="setColumn-p-lesson-2" style="color:#bb86fc;">
+                <p>บทเรียน</p>
+                <p><%= subject.lessonArray.length %></p>
               </div>
-            </a>
-            <a href="/adminIndex/eachLessons?lessonId=" class="a-link">
-              <div class="setColumn-p-lesson-2">
-                <p>ส่วนประกอบฟันเทียม</p>
-                <p>15/03/2567</p>
-                <!-- <p>30 น.</p> -->
+              <div class="setColumn-p-lesson-2" style="color:#bb86fc;">
+                <p>แบบทดสอบ</p>
+                <p><%= subject.quizArray.length %></p>
               </div>
-            </a>
-            <a href="/adminIndex/eachLessons?lessonId=" class="a-link">
-              <div class="setColumn-p-lesson-2">
-                <p>ส่วนประกอบฟันเทียม</p>
-                <p>15/03/2567</p>
+              <div class="setColumn-p-lesson-2" style="color:#bb86fc;">
+                <p>งานที่มอบหมาย</p>
+                <p><%= subject.Assignments.length %></p>
               </div>
-            </a>
+              <br>
+              <div class="setColumn-p-lesson-2 d-flex justify-content-end" style="color:#bb86fc;">
+                แก้ไขล่าสุดเมื่อ <%= new Date(subject.updatedAt).toLocaleDateString('th-TH') %>
+              </div>
+          
+          
           </div>
         </div>
       </div>
+    </a>
     </div>
-    <div class="col-4 box" data-aos="fade-up" data-aos-duration="1000">
-      <p class="fw-bold mx-3 fs-5" style="border-left: 0.25em solid #0D6EFD !important;
-      padding-left: 0.25em !important;
-      color: #5A6A85;">แบบทดสอบ</p>
-      <div class="lesson-content p-2 mx-3  w-auto my-2">
-        <div class="px-3 my-3">
-          <div class="setColumn">
-            <!-- <a href="/adminIndex/eachLessons?lessonId=">
-              <div class="card-1 text-bg-white mb-4" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
-                <div class="card-header bg-white px-2 py-1 fw-bold text-primary" style="width: fit-content; border-bottom-right-radius: 0.5em; position: absolute; ">
-                  บทเรียน
-                </div>
-                <div class="card-body-1 d-flex justify-content-center p-4">
-                  <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของบทเรียน" style="height: 100%; width: 50%; object-fit: cover; max-width: 15.125em; max-height: 8.8125em ;">
-                </div>
-              </div>
-            </a> -->
-            <div class="setColumn-p fw-bold">
-              <p>ชื่อ</p>
-              <p>Deadline</p>
-              <p>Times</p>
-            </div>
-            <a href="/adminIndex/eachLessons?lessonId=" class="a-link">
-              <div class="setColumn-p-2">
-                <p>ส่วนประกอบฟันเทียม</p>
-                <p>15/03/2567</p>
-                <p>30 น.</p>
-              </div>
-            </a>
-            <a href="/adminIndex/eachLessons?lessonId=" class="a-link">
-              <div class="setColumn-p-2">
-                <p>ส่วนประกอบฟันเทียม</p>
-                <p>15/03/2567</p>
-                <p>30 น.</p>
-              </div>
-            </a>
-            <a href="/adminIndex/eachLessons?lessonId=" class="a-link">
-              <div class="setColumn-p-2">
-                <p>ส่วนประกอบฟันเทียม</p>
-                <p>15/03/2567</p>
-                <p>30 น.</p>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-4 box" data-aos="fade-up" data-aos-duration="1000">
-      <p class="fw-bold mx-3 fs-5" style="border-left: 0.25em solid #0D6EFD !important;
-      padding-left: 0.25em !important;
-      color: #5A6A85;">งานที่มอบหมาย</p>
-      <div class="lesson-content p-2 mx-3  w-auto my-2">
-        <div class="px-3 my-3">
-          <div class="setColumn">
-            <!-- <a href="/adminIndex/eachLessons?lessonId=">
-              <div class="card-1 text-bg-white mb-4" style="max-width: 15.125em; max-height: 8.8125em ; position: relative;">
-                <div class="card-header bg-white px-2 py-1 fw-bold text-primary" style="width: fit-content; border-bottom-right-radius: 0.5em; position: absolute; ">
-                  บทเรียน
-                </div>
-                <div class="card-body-1 d-flex justify-content-center p-4">
-                  <img src="/images/indexMed/DENTISTRY_KKU.svg.png" class="card-img" alt="รูปของบทเรียน" style="height: 100%; width: 50%; object-fit: cover; max-width: 15.125em; max-height: 8.8125em ;">
-                </div>
-              </div>
-            </a> -->
-            <div class="setColumn-p fw-bold">
-              <p>ชื่อ</p>
-              <p>Post Date</p>
-              <p>Deadline</p>
-            </div>
-            <a href="/adminIndex/eachLessons?lessonId=" class="a-link">
-              <div class="setColumn-p-2">
-                <p>ส่วนประกอบฟันเทียม</p>
-                <p>15/03/2567</p>
-                <p>30 น.</p>
-              </div>
-            </a>
-            <a href="/adminIndex/eachLessons?lessonId=" class="a-link">
-              <div class="setColumn-p-2">
-                <p>ส่วนประกอบย่อย</p>
-                <p>15/03/2567</p>
-                <p>30 น.</p>
-              </div>
-            </a>
-            <a href="/adminIndex/eachLessons?lessonId=" class="a-link">
-              <div class="setColumn-p-2">
-                <p>เหล็กดัดฟัน</p>
-                <p>15/03/2567</p>
-                <p>30 น.</p>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-    
+    <% }) %>
+  
+   
   </div>
+   <div class="d-flex justify-content-end  mb-4" >
+
+        <a href="/subjects" class="me-4">ดูรายวิชาทั้งหมด..(<%= navSubjects.length %> วิชา)</a>
+
+    </div>
   <%- include("./partials/footer.ejs") %>
   <!-- <div class="row">
     <div class="col-12 mx-5 d-flex">

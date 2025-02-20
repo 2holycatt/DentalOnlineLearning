@@ -1831,10 +1831,15 @@ function savechanges() {
             <textarea placeholder='บรรยายไม่จำเป็นต้องระบุคำตอบ คุณสามารถดูคำตอบและให้คะแนนทีหลังได้' class="form-control mt-2" name="answer_${index}" rows="2" style='width:100%' disabled>${question.answerText || ''}</textarea>
         `;
     } else if (question.questionType === 'matching') {
-    answerContent = `
+        answerContent = `
         <div class="matching-pairs-container">
             <div class="mb-3">แบบจับคู่ สามารถปรับคะแนนแต่ละคู่ได้</div>
-            ${question.matchingPairs.map((pair, pairIndex) => `
+            ${question.matchingPairs.map((pair, pairIndex) => {
+                // ตรวจสอบว่า left text เป็นค่าว่างหรือไม่
+                const isLeftEmpty = !pair.left.text || pair.left.text.trim() === '';
+                const pointsValue = isLeftEmpty ? 0 : (pair.points || 1);
+                
+                return `
                 <div class="matching-pair d-flex align-items-center mb-3">
                     <div class="pair-number me-2" style="min-width: 30px;">
                         ${pairIndex + 1}.
@@ -1842,10 +1847,10 @@ function savechanges() {
                     <div class="pair-content flex-grow-1">
                         <div class="d-flex">
                             <div class="left-side me-3">
-                                <input type="text" class="form-control" value="${pair.left.text}" disabled>
+                                <input type="text" class="form-control" value="${pair.left.text || ''}" disabled>
                             </div>
                             <div class="right-side">
-                                <input type="text" class="form-control" value="${pair.right.text}" disabled>
+                                <input type="text" class="form-control" value="${pair.right.text || ''}" disabled>
                             </div>
                         </div>
                     </div>
@@ -1853,15 +1858,16 @@ function savechanges() {
                         <input type="number" 
                             class="form-control form-control-sm" 
                             style="width: 70px;"
-                            value="${pair.points || 1}"
+                            value="${pointsValue}"
                             min="0"
+                            ${isLeftEmpty ? 'disabled' : ''}
                             onchange="updatePairPoints(${currentQuestionIndex}, ${pairIndex}, this.value)"
                             placeholder="คะแนน">
                     </div>
                 </div>
-            `).join('')}
+            `}).join('')}
          
-    `;
+    </div>`;
                 } else if (question.questionType === 'short_answ') {
                     answerContent = `
             <div id="shortAnswerContainer">
@@ -1893,7 +1899,7 @@ function savechanges() {
         pointsDisplay = `
             <div style="display: flex; align-items: center;">
                 <input type="number" class="form-control" id="questionPoints" 
-                    value="${question.points}" min="1" 
+                    value="${question.points}" min="0" 
                     style="width: 4rem; height: 2rem; font-size:15px;">
                 <span style="margin: 0; margin-left: 10px; font-size:15px; color:lightgray;">
                     คะแนน
@@ -1991,29 +1997,92 @@ function removeMatchingPair(questionIndex, pairIndex) {
     // Remove the pair
     question.matchingPairs.splice(pairIndex, 1);
 
-    // Update correctMatch indices
-    question.matchingPairs.forEach((pair, idx) => {
-        pair.correctMatch = idx;
+  // Update correctMatch indices
+  question.matchingPairs.forEach((pair, idx) => {
+        pair.correctMatch = {
+            leftIndex: pair.left.index !== null ? idx : null,
+            rightIndex: idx
+        };
     });
+
+    
+    // Update total points for the question
+    question.points = calculateMatchingTotalPoints(question);
 
     // Re-render the question
     renderQuestions();
+    calculateTotalPoints();
     autosave();
 }
 
 function updateMatchingPair(questionIndex, pairIndex, side) {
     const input = document.querySelector(`#matching_pairs_${questionIndex} .matching-pair:nth-child(${pairIndex + 1}) .${side}-side input`);
-    questions[questionIndex].matchingPairs[pairIndex][side] = {
-        text: input.value,
+    const newText = input.value;
+    const question = questions[questionIndex]; // เพิ่มบรรทัดนี้
+    const pair = question.matchingPairs[pairIndex];
+    
+    // อัพเดตค่าใน questions array
+    pair[side] = {
+        text: newText,
         image: null,
         index: pairIndex
     };
+
+    // หากเป็นด้าน left และค่าว่างเปล่า ให้ซ่อน pair number ทันที
+    if (side === 'left') {
+        // อัพเดตคะแนนของคู่
+        pair.points = newText && newText.trim() !== '' ? Math.max(1, pair.points || 1) : 0;
+
+        const pairElement = input.closest('.matching-pair');
+        const pairNumberElement = pairElement.querySelector('.pair-number');
+        
+        pairNumberElement.style.minWidth = '30px';
+        pairNumberElement.style.visibility = (!newText || newText.trim() === '') ? 'hidden' : 'visible';
+        
+        // อัพเดตหมายเลขทั้งหมดใหม่แบบ real-time
+        let validPairCount = 0;
+        const allPairs = document.querySelectorAll(`#matching_pairs_${questionIndex} .matching-pair`);
+        allPairs.forEach((pair) => {
+            const leftInput = pair.querySelector('.left-side input');
+            const pairNumber = pair.querySelector('.pair-number');
+            if (leftInput && leftInput.value && leftInput.value.trim() !== '') {
+                validPairCount++;
+                pairNumber.textContent = `${validPairCount}.`;
+                pairNumber.style.visibility = 'visible';
+            } else {
+                pairNumber.style.visibility = 'hidden';
+            }
+        });
+
+        // อัพเดตคะแนนรวมของคำถาม
+        questions[questionIndex].points = calculateMatchingTotalPoints(question);
+    }
+
+    renderQuestions();
+    calculateTotalPoints();
     autosave();
+}
+function updatePairNumbers(questionIndex) {
+    const pairs = document.querySelectorAll(`#matching_pairs_${questionIndex} .matching-pair`);
+    let validPairCount = 0;
+
+    pairs.forEach((pair) => {
+        const leftInput = pair.querySelector('.left-side input');
+        const pairNumber = pair.querySelector('.pair-number');
+        
+        if (leftInput && leftInput.value && leftInput.value.trim() !== '') {
+            validPairCount++;
+            pairNumber.textContent = `${validPairCount}.`;
+            pairNumber.style.display = 'visible';
+        } else {
+            pairNumber.style.display = 'hidden';
+        }
+    });
 }
 
 function updatePairPoints(questionIndex, pairIndex, points) {
     const question = questions[questionIndex];
-    question.matchingPairs[pairIndex].points = parseInt(points) || 1;
+    question.matchingPairs[pairIndex].points = parseInt(points) || 0;
     
     // Update total points for the question
     question.points = calculateMatchingTotalPoints(question);
@@ -2023,9 +2092,44 @@ function updatePairPoints(questionIndex, pairIndex, points) {
     autosave();
 }
 
+function addRightSideOnly(questionIndex) {
+    const question = questions[questionIndex];
+    
+    if (!question.matchingPairs) {
+        question.matchingPairs = [];
+    }
+
+    // Add new right side only pair
+    const newIndex = question.matchingPairs.length;
+    question.matchingPairs.push({
+        left: {
+            text: '',
+            image: null,
+            index: null // Set index to null for left side
+        },
+        right: {
+            text: 'ด้านขวา',
+            image: null,
+            index: newIndex
+        },
+        points: 0, // No points for right side only
+        correctMatch: {
+            leftIndex: null, // Set leftIndex to null for right side only
+            rightIndex: newIndex
+        }
+    });
+
+    question.points = calculateMatchingTotalPoints(question);
+
+    // Re-render question display
+    renderQuestions();
+    calculateTotalPoints();
+    autosave();
+}
+
 function calculateMatchingTotalPoints(question) {
     if (!question.matchingPairs) return 0;
-    return question.matchingPairs.reduce((total, pair) => total + (parseInt(pair.points) || 1), 0);
+    return question.matchingPairs.reduce((total, pair) => total + (parseInt(pair.points) || 0), 0);
 }
 
 function renderMatchingPairs(question, questionIndex) {
@@ -2036,16 +2140,18 @@ function renderMatchingPairs(question, questionIndex) {
                     <div class="pair-number me-2" style="min-width: 30px;">
                         ${pairIndex + 1}.
                     </div>
-                    <div class="left-side me-3">
-                        <input type="text" class="input-question" 
-                            value="${pair.left.text}"
-                            onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'left')">
-                        ${pair.left.image?.url ? `
-                            <img src="${pair.left.image.url}" class="mt-2" style="max-width: 100px;">
+                    <div class="left-side me-3" style="${!pair.left || !pair.left.text ? 'display: none;' : ''}">
+                        ${pair.left ? `
+                            <input type="text" class="input-matching" 
+                                value="${pair.left.text}"
+                                onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'left')">
+                            ${pair.left.image?.url ? `
+                                <img src="${pair.left.image.url}" class="mt-2" style="max-width: 100px;">
+                            ` : ''}
                         ` : ''}
                     </div>
                     <div class="right-side me-3">
-                        <input type="text" class="input-question"
+                        <input type="text" class="input-matching"
                             value="${pair.right.text}"
                             onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'right')">
                         ${pair.right.image?.url ? `
@@ -2060,6 +2166,9 @@ function renderMatchingPairs(question, questionIndex) {
             `).join('')}
             <button class="btn btn-outline-primary" onclick="addMatchingPair(${questionIndex})">
                 เพิ่มคู่จับคู่ <i class="bi bi-plus"></i>
+            </button>
+            <button class="btn btn-outline-secondary" onclick="addRightSideOnly(${questionIndex})">
+                เพิ่มตัวเลือกหลอก <i class="bi bi-plus"></i>
             </button>
         </div>`;
 }
@@ -2228,38 +2337,45 @@ function saveAnswer() {
                 } else if (question.questionType === 'short_answ') {
                     return `<textarea class="form-control  mt-3 mb-2" name="answer_${questionIndex}" rows="1" style="width:50%;" disabled placeholder="ข้อความคำตอบสั้นๆ"></textarea>`;
             } else if (question.questionType === 'matching') {
-                return `
+
+                 let validPairCount = 0;
+    
+      return `
         <div class="matching-pairs" id="matching_pairs_${questionIndex}">
-            ${question.matchingPairs.map((pair, pairIndex) => `
-                <div class="matching-pair d-flex align-items-center mb-3">
-                    <div class="pair-number pt-2" style="min-width: 30px;">
-                        ${pairIndex + 1}.
-                    </div>
-                    <div class="left-side me-3">
-                        
-                        <input type="text" class="input-matching" 
-                            value="${pair.left.text}"
-                            onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'left')">
-                        ${pair.left.image?.url ? `
-                            <img src="${pair.left.image.url}" class="mt-2" style="max-width: 100px;">
-                        ` : ''}
-                    </div>
-                    <div class="right-side me-3">
-                        <input type="text" class="input-matching"
-                            value="${pair.right.text}"
-                            onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'right')">
-                        ${pair.right.image?.url ? `
-                            <img src="${pair.right.image.url}" class="mt-2" style="max-width: 100px;">
-                        ` : ''}
-                    </div>
-                    <a onclick="removeMatchingPair(${questionIndex}, ${pairIndex})" 
-                       style="margin-top:8px; margin-left: 8px; font-size:1.6rem; cursor:pointer;">
-                        <i class="bi bi-x"></i>
-                    </a>
-                </div>
-            `).join('')}
+            ${question.matchingPairs.map((pair, pairIndex) => {
+                const hasValidLeftText = pair.left.text && pair.left.text.trim() !== '';
+                if (hasValidLeftText) {
+                    validPairCount++;
+                }
+                return `
+                        <div class="matching-pair d-flex align-items-center mb-3">
+            <div class="pair-number pt-2" 
+                 style="min-width: 30px; margin-right: 10px; visibility: ${!hasValidLeftText ? 'hidden' : 'visible'}">
+                ${validPairCount}.
+            </div>
+            <div class="left-side me-3">
+                <input type="text" class="input-matching" 
+                    value="${pair.left.text || ''}"
+                    onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'left')"
+                    oninput="updateMatchingPair(${questionIndex}, ${pairIndex}, 'left')">
+            </div>
+            <div class="right-side me-3">
+                <input type="text" class="input-matching"
+                    value="${pair.right.text || ''}"
+                    onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'right')">
+            </div>
+            <a onclick="removeMatchingPair(${questionIndex}, ${pairIndex})" 
+               style="margin-top:8px; margin-left: 8px; font-size:1.6rem; cursor:pointer;">
+                <i class="bi bi-x"></i>
+            </a>
+        </div>
+    `;
+}).join('')}
             <button class="btn btn-outline-primary" onclick="addMatchingPair(${questionIndex})">
                 เพิ่มคู่จับคู่ <i class="bi bi-plus"></i>
+            </button>
+              <button class="btn btn-outline-secondary" onclick="addRightSideOnly(${questionIndex})">
+                เพิ่มตัวเลือกหลอก <i class="bi bi-plus"></i>
             </button>
         </div>`;
 }
