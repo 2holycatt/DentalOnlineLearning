@@ -141,9 +141,61 @@ const questionSchema = new mongoose.Schema({
     open: {
         type: Boolean,
         default: true
-    }
-    
+    },
+   
 });
+
+const eachAttemptSchema = new mongoose.Schema({
+    answers: [{
+        questionId: String,
+        answer: mongoose.Schema.Types.Mixed,
+        type: {
+            type: String,
+            enum: ['MCQ', 'checkbox', 'Paragraph', 'short_answ', 'matching'],
+            required: true
+        }, 
+        isCorrect: Boolean,
+        points: Number,
+        matchingAnswers: [{
+            leftIndex: Number,
+            rightIndex: Number,
+            isCorrect: Boolean,
+            pointsEarned: Number
+        }]
+    }],
+    totalScore: {
+        type: Number,
+        default: function() {
+            return this.answers.reduce((sum, answer) => sum + (answer.points || 0), 0);
+        }
+    },
+    attemptNumber: {
+        type: Number,
+        default: 1
+    },
+    startedAt: {
+        type: Date,
+        default: Date.now
+    },
+    submittedAt: {
+        type: Date,
+        default: Date.now
+    },
+    duration: {
+        type: Number  
+    }
+}, { toJSON: { getters: true } });
+
+eachAttemptSchema.pre('save', function(next) {
+    this.totalScore = this.answers.reduce((sum, answer) => sum + (answer.points || 0), 0);
+    next();
+});
+
+// เพิ่ม method สำหรับคำนวณ totalScore
+eachAttemptSchema.methods.calculateTotalScore = function() {
+    return this.answers.reduce((sum, answer) => sum + (answer.points || 0), 0);
+};
+
 
 // เพิ่ม schema สำหรับเก็บข้อมูลจำนวนครั้งที่เข้าทำแบบทดสอบของนักเรียน
 const attemptSchema = new mongoose.Schema({
@@ -160,42 +212,10 @@ const attemptSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-        eachAttempt:[{
-            answers: [{
-                questionId: String,
-                answer: mongoose.Schema.Types.Mixed,
-                isCorrect: Boolean,
-                points: Number,
-                matchingAnswers: [{
-                    leftIndex: Number,
-                    rightIndex: Number,
-                    isCorrect: Boolean,
-                    pointsEarned: Number
-                }]
-            }],
-            totalScore: {
-                type: Number,
-                default: 0
-            },
-            maxPossibleScore: {
-                type: Number,
-                default: 0
-            },
-            attemptNumber: {
-                type: Number,
-                default: 1
-            },
-            startedAt: {
-                type: Date,
-                default: Date.now
-            },
-            submittedAt: {
-                type: Date
-            },
-            duration: {
-                type: Number  
-            }
-    }]
+    studentNickname: {
+        type: String,
+    },
+        eachAttempt:[eachAttemptSchema]
   });
 
 const quizSchema = new mongoose.Schema({
@@ -278,6 +298,10 @@ const quizSchema = new mongoose.Schema({
         default: null
     },
     isReleased: {
+        type: Boolean,
+        default: false
+    },
+    isShuffled: {
         type: Boolean,
         default: false
     }

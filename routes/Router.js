@@ -256,9 +256,12 @@ router.post('/upload-question-image', adminQuizController.uploadQuestionImage);
 router.get('/getQuestions',teacherMiddleware, adminManageQuestions.getQuestions);
 router.post('/addQuestion',teacherMiddleware, adminManageQuestions.addQuestion);
 router.get('/deleteQuestion',teacherMiddleware, adminManageQuestions.deleteQuestion);
+router.post('/updateQuizScores', teacherMiddleware, adminEditDeleteQuizController.updateQuizScores);
 router.post('/studentIndex/submitQuiz/:quizId', studentQuizController.submitQuiz);
 
 
+//Shuffle Quiz
+router.post('/updateQuizShuffleState', adminQuizController.updateQuizShuffleState);
 
 //Profile
 router.get('/profile',profileController.profileIndex);

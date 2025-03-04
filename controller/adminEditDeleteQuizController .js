@@ -4,6 +4,7 @@ const SchoolYear = require("../models/schoolYear");
 const User = require("../models/user.model");
 const mongoose = require('mongoose');
 
+
 const Notification = require("../models/notification");
 const { createNotification } = require('./notificationController');
 const { sendEmail } = require('../service/notification');
@@ -13,29 +14,36 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 
 const deleteQuiz = async (req, res) => {
-
   try {
-      const getQuiz_id = req.query.quizId;
-      const subjectDbId = req.query.subjectId;
+    const getQuiz_id = req.query.quizId;
 
-      // หา Quiz ที่ต้องการลบ
-      const getQuiz = await Quiz.findById(getQuiz_id)
+    // หา Quiz ที่ต้องการลบ
+    const getQuiz = await Quiz.findById(getQuiz_id)
       .populate('subject.subjectMongooseId');
 
-      if (!getQuiz) {
-          return res.status(404).send('Quiz not found');
-      }
-      await Subject.findByIdAndUpdate(
-        getQuiz.subject.subjectMongooseId._id,
-        { $pull: { quizArray: getQuiz_id } }
-      );
-      // ลบ quiz
-      await Quiz.findByIdAndDelete(getQuiz_id);
+    if (!getQuiz) {
+      return res.status(404).send('Quiz not found');
+    }
 
-      res.redirect(`/eachSubject?subjectDbId=${subjectDbId}`);
+    // เก็บ subjectMongooseId ก่อนลบ quiz
+    const subjectMongooseId = getQuiz.subject.subjectMongooseId._id;
+
+    // ลบ quiz จาก array ใน subject
+    await Subject.findByIdAndUpdate(
+      subjectMongooseId,
+      { $pull: { quizArray: getQuiz_id } }
+    );
+
+    // ลบ quiz
+    await Quiz.findByIdAndDelete(getQuiz_id);
+
+    // redirect โดยใช้ subjectMongooseId จาก quiz
+    res.redirect(`/eachSubject?subjectDbId=${subjectMongooseId}`);
+
   } catch (error) {
-      console.error('Error deleting quiz:', error);
-      res.status(500).send('Internal Server Error');
+    console.error('Error deleting quiz:', error);
+    // ในกรณีที่เกิด error ให้ redirect กลับไปหน้า subjects
+    res.redirect('/subjects');
   }
 };
 
@@ -70,26 +78,33 @@ const updateQuiz = async (req, res) => {
 
         // Handle different question types
         if (q.questionType === 'matching') {
-          questionData.matchingPairs = q.matchingPairs.map((pair, index) => ({
-            left: {
-              text: pair.left.text,
-              image: pair.left.image || null,
-              index: index
-            },
-            right: {
-              text: pair.right.text,
-              image: pair.right.image || null,
-              index: index
-            },
-            points: pair.points || 1,
-            correctMatch: {
-              leftIndex: index,
-              rightIndex: index
-            }
-          }));
-          questionData.answer = questionData.matchingPairs.map(pair => ({
-            leftIndex: pair.correctMatch.leftIndex,
-            rightIndex: pair.correctMatch.rightIndex
+          questionData.matchingPairs = q.matchingPairs.map((pair, index) => {
+              // ตรวจสอบว่าเป็นตัวเลือกหลอกหรือไม่
+              const isEmptyLeft = !pair.left.text || pair.left.text.trim() === '';
+              
+              return {
+                  left: {
+                      text: pair.left.text || '',
+                      image: pair.left.image || null,
+                      index: isEmptyLeft ? null : index
+                  },
+                  right: {
+                      text: pair.right.text,
+                      image: pair.right.image || null,
+                      index: index
+                  },
+                  points: isEmptyLeft ? 0 : (pair.points || 1), // ถ้าด้านซ้ายว่างให้คะแนนเป็น 0
+                  correctMatch: {
+                      leftIndex: isEmptyLeft ? null : index,
+                      rightIndex: index
+                  }
+              };
+          });
+          questionData.answer = questionData.matchingPairs
+          .filter(pair => pair.left.index !== null) // กรองเฉพาะคู่ที่มี left.index
+          .map(pair => ({
+              leftIndex: pair.correctMatch.leftIndex,
+              rightIndex: pair.correctMatch.rightIndex
           }));
         } else if (q.questionType === 'MCQ') {
           questionData.options = q.options;
@@ -463,11 +478,64 @@ const makeEdit4 = async function (req, res, next) {
   }
 }
 
+const updateQuizScores = async (req, res) => {
+  try {
+      const { quizId, studentDbId, attemptIndex, scores, totalScore } = req.body;
+      
+      const quiz = await Quiz.findById(quizId);
+      if (!quiz) {
+          return res.status(404).json({ 
+              success: false, 
+              message: 'ไม่พบแบบทดสอบ' 
+          });
+      }
+
+      const studentAttempt = quiz.attempts.find(a => 
+          a.studentDbId.toString() === studentDbId
+      );
+
+      if (!studentAttempt) {
+          return res.status(404).json({ 
+              success: false, 
+              message: 'ไม่พบการทำแบบทดสอบของนักศึกษา' 
+          });
+      }
+
+      // อัพเดตคะแนนแต่ละข้อ
+      scores.forEach(score => {
+          const answer = studentAttempt.eachAttempt[attemptIndex].answers
+              .find(a => a.questionId === score.questionId);
+          if (answer) {
+              answer.points = score.points;
+              // ไม่ต้องอัพเดต type เพราะใช้ type เดิม
+          }
+      });
+
+      // อัพเดต totalScore
+      studentAttempt.eachAttempt[attemptIndex].totalScore = totalScore;
+      
+      await quiz.save();
+
+      res.json({ 
+          success: true,
+          message: 'บันทึกคะแนนเรียบร้อยแล้ว'
+      });
+
+  } catch (error) {
+      console.error('Error updating scores:', error);
+      res.status(500).json({ 
+          success: false, 
+          message: 'เกิดข้อผิดพลาดในการบันทึกคะแนน',
+          error: error.message 
+      });
+  }
+};
 
 module.exports = {
   deleteQuiz,
   editLesson,
   updateQuiz,
+  updateQuizScores,
   makeEdit,
   makeEdit2,
   makeEdit3,

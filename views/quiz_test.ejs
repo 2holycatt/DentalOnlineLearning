@@ -23,8 +23,7 @@ const colors = [
     <title>
         <%=quiz.quizname%>
     </title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+ 
   <link rel="stylesheet" href="/css/getMoreAddContent.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
   <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
@@ -176,7 +175,62 @@ const colors = [
           border: none;
           border-bottom: 1px solid lightgray;
         }
-    
+        textarea.auto-expand {
+    overflow: hidden !important;
+    resize: none;
+    box-sizing: border-box;
+    transition: height 0.1s ease-out;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 8px 12px;
+}
+
+/* สำหรับ short answer */
+textarea.short-text-area {
+    width: 50% !important;
+    min-height: 38px;
+    height: 38px;
+}
+
+/* สำหรับ paragraph */
+textarea.long-text-area {
+    width: 90% !important;
+    min-height: 120px;
+    height: 120px;
+}
+
+    textarea.auto-expand:focus {
+        outline: none;
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    textarea {
+    resize: none;
+    overflow-y: auto;
+    caret-color: auto; /* แสดง cursor */
+    cursor: text; /* แสดง cursor แบบ text */
+    text-align: left; /* จัดข้อความชิดซ้าย */
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: .2px;
+    line-height: 20px;
+    flex-shrink: 1;
+    background-color: transparent;
+    border: none;
+    display: block;
+    height: 24px;
+    min-height: 24px;
+    line-height: 24px;
+    margin: 0;
+    outline: none;
+    padding: 0;
+    resize: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    z-index: 0;
+    overflow-y: visible;
+    overflow-x: hidden;
+}
         .answer_key input {
           width: 10%;
         }
@@ -1387,10 +1441,35 @@ const colors = [
                         <span id="all-points-count" class="grey d-none"></span>
                     </div>
 
+                    <% if (quiz && quiz.questions && quiz.questions.length > 0) { %>
+                      <%
+    // ฟังก์ชันสำหรับสุ่มลำดับอาร์เรย์
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // สร้าง array ของ index สำหรับคำถาม
+    let questionIndexes = Array.from({length: quiz.questions.length}, (_, i) => i);
+    
+    // ถ้า isShuffled เป็น true ให้สุ่มลำดับคำถาม
+    if (quiz.isShuffled) {
+        questionIndexes = shuffleArray(questionIndexes);
+    }
+    %>
                     <div class="questionContainer">
-                        <% questions.forEach((question, i)=> { %>
-                            <div class="question" id="question_<%= i %>" data-question-index="<%= i %>" style="display: none;">
-                                <div class="first">
+                      <% questionIndexes.forEach((originalIndex, displayIndex) => { 
+                        const question = quiz.questions[originalIndex];
+                    %>              
+                    <div class="question" id="question_<%= displayIndex %>" 
+                      data-question-id="<%= question._id %>"
+                      data-question-index="<%= displayIndex %>" 
+                      data-original-index="<%= originalIndex %>"
+                      style="display: none;">
+                                                      <div class="first">
                                     <div class="input-question">
                                         <%= question.questionText %>
                                     </div>
@@ -1400,28 +1479,44 @@ const colors = [
                                 </div>
                                 <br>
                                 <div class="options" data-type="<%= question.questionType %>">
-                                    <% if (question.questionType==='MCQ' || question.questionType==='checkbox' ) { %>
-                                        <% question.options.forEach((option, j)=> { %>
-                                            <div class="form-check" style="display: flex; align-items: center;">
-                                                <input class="input_check"
-                                                    type="<%= question.questionType === 'MCQ' ? 'radio' : 'checkbox' %>"
-                                                    name="answers_<%= i %>" value="<%= j %>" <%=question.selectedOption===j
-                                                    ? 'checked' : '' %> >
-                                                <div style="flex-grow: 1; padding: 5px;">
-                                                    <%= option.optionText %>
-                                                </div>
-                                            </div>
+                                  <% if (question.questionType === 'MCQ' || question.questionType === 'checkbox') { 
+                                    // สร้าง array ของ index สำหรับตัวเลือก
+                                    let optionIndexes = Array.from({length: question.options.length}, (_, i) => i);
+                                    
+                                    // ถ้า isShuffled เป็น true ให้สุ่มลำดับตัวเลือก
+                                    if (quiz.isShuffled) {
+                                        optionIndexes = shuffleArray(optionIndexes);
+                                    }
+                                %>
+                                    <% optionIndexes.forEach((optionIndex) => { 
+                                        const option = question.options[optionIndex];
+                                    %>
+                                    <div class="form-check" style="display: flex; align-items: center;">
+                                      <input class="input_check"
+                                          type="<%= question.questionType === 'MCQ' ? 'radio' : 'checkbox' %>"
+                                          name="answers_<%= displayIndex %>" 
+                                          value="<%= optionIndex %>"
+                                          data-original-index="<%= optionIndex %>"
+                                          <%= question.selectedOption === optionIndex ? 'checked' : '' %>>
+                                      <div style="flex-grow: 1; padding: 5px;">
+                                          <%= option.optionText %>
+                                      </div>
+                                  </div>
                                             <% }) %>
-                                                <% } else if (question.questionType==='Paragraph' ) { %>
-                                                    <textarea class="form-control mx-4 mt-2" name="answers[<%= i %>]"
-                                                        rows="1" style="width:90%;">
-                                            <%= question.answerText %> 
-                                        </textarea>
-                                                    <% } else if (question.questionType==='short_answ' ) { %>
-                                                        <textarea class="form-control ms-4 mt-2"
-                                                            name="answers[<%= i %>]" rows="1" style="width:50%;">
-                                            <%= question.answerText %>
-                                        </textarea>
+                                            <% } else if (question.questionType==='Paragraph' ) { %>
+                                              <textarea class="form-control long-text-area auto-expand mx-4 mt-2"            
+                                              name="answers[<%= displayIndex %>]"
+                                              rows="5" 
+                                              style="width:90%; resize: none; overflow-y: auto; min-height: 120px;"
+                                              placeholder="พิมพ์คำตอบของคุณที่นี่..."
+                                          ><%= question.answerText || '' %></textarea>
+                                                <% } else if (question.questionType==='short_answ' ) { %>
+                                                  <textarea class="form-control short-text-area auto-expand ms-4 mt-2"
+                                                  name="answers[<%= displayIndex %>]" 
+                                                  rows="1" 
+                                                  style="width:50%; resize: none; overflow-y: auto; min-height: 38px;"
+                                                  placeholder="พิมพ์คำตอบของคุณที่นี่..."
+                                              ><%= question.answerText || '' %></textarea>
                                         <% } else if (question.questionType === 'matching') { %>
                                             <div class="options" data-type="matching">
                                             <div class="matching-container ms-4 mt-3">
@@ -1487,9 +1582,13 @@ const colors = [
                                           
                                               <!-- Hidden inputs to store answers -->
                                                
-                                              <input type="hidden" name="matching_answers_<%= i %>">
-                                              <input type="hidden" name="matching_left_order_<%= i %>" value="<%= JSON.stringify(shuffledLeft.map(i => i.originalIndex)) %>">
-                                              <input type="hidden" name="matching_right_order_<%= i %>" value="<%= JSON.stringify(shuffledRight.map(i => i.originalIndex)) %>">
+                                              <input type="hidden" name="matching_answers_<%= displayIndex %>">
+                                              <input type="hidden" 
+                                                     name="matching_left_order_<%= displayIndex %>" 
+                                                     value="<%= JSON.stringify(shuffledLeft.map(item => item.originalIndex)) %>">
+                                              <input type="hidden" 
+                                                     name="matching_right_order_<%= displayIndex %>" 
+                                                     value="<%= JSON.stringify(shuffledRight.map(item => item.originalIndex)) %>">
                                             </div>
                                 </div>
                                           <% } %>
@@ -1497,6 +1596,11 @@ const colors = [
                                 </div>
                             </div>
                             <% }) %>
+                            <% } else { %>
+  <div class="no-questions">
+    <p>ไม่พบข้อมูลคำถาม</p>
+  </div>
+<% } %>
                     </div>
 
                     <div class="d-flex" style="padding: 0 2rem;">
@@ -1673,67 +1777,7 @@ const colors = [
         <script>
 
 
-            let questions = [
-                {
-                    questionText: 'คำถามไม่ระบุชื่อ',
-                    options: [{ optionText: 'ตัวเลือก 1' }],
-                    questionType: 'MCQ',
-                    answer: false,
-                    points: 1,
-                    open: true
-                }
-            ];
-
-
-            //   function renderQuestions() {
-            //     const container = document.getElementById('questionContainer');
-            //     container.innerHTML = '';
-
-            //     questions.forEach((question, i) => {
-            //       const questionDiv = document.createElement('div');
-            //       questionDiv.className = 'question';
-            //       questionDiv.id = `question_${i}`;
-
-            //       questionDiv.innerHTML = `
-            //                 <div class="first">
-            //                   <div class="input-question "  >
-            //     ${question.questionText}
-            // </div> 
-
-
-            //                     <span class="grey  ms-4" >${question.points} คะแนน</span>
-
-            //                 </div>
-            //                 <br>
-
-            //                 <div class="options" id="options_${i}">
-            //                     ${renderOptions(question, i)}
-            //                 </div>
-
-
-
-            //             `;
-
-            //       container.appendChild(questionDiv);
-            //     });
-            //   }
-
-            //     function renderOptions(question, questionIndex) {
-            //         if (question.questionType === 'MCQ' || question.questionType === 'checkbox') {
-            //             return question.options.map((option, i) => `
-            //             <div class="form-check p-0" style="display: flex; align-items: center;">
-            //                 <input class="input_check" type="${question.questionType === 'MCQ' ? 'radio' : 'checkbox'}" name="Answ_${questionIndex}" value="${i}">
-            //                 <div name="option_${questionIndex}_${i}" style="flex-grow: 1; padding: 5px;">
-            //     ${option.optionText}
-            // </div>                </div>
-            //         `).join('');
-            //         } else if (question.questionType === 'Paragraph') {
-            //             return `<textarea class="form-control mt-3 mb-2" name="answer_${questionIndex}" rows="1" style="width:90%;" readonly></textarea>`;
-            //         } else if (question.questionType === 'short_answ') {
-            //             return `<textarea class="form-control mt-3 mb-2" name="answer_${questionIndex}" rows="1" style="width:50%;" readonly></textarea>`;
-            //         }
-            //         return '';
-            //     }
+    let questions = <%- JSON.stringify(questions) %>;
 
             const QuizStorage = {
     // เพิ่มการ debounce เพื่อลดการบันทึกถี่เกินไป
@@ -1825,172 +1869,120 @@ function saveAllAnswers() {
     const quizId = document.getElementById('form').dataset.quizId;
     const answers = {};
 
-    document.querySelectorAll('.question').forEach((question) => {
-        const questionId = question.id.split('_')[1];
-        if (!questionId) return;
+    document.querySelectorAll('.question').forEach(questionDiv => {
+        const originalIndex = questionDiv.dataset.originalIndex;
+        if (!originalIndex) return;
 
-        const optionsDiv = question.querySelector('.options');
+        const optionsDiv = questionDiv.querySelector('.options');
         if (!optionsDiv) return;
 
-        const type = optionsDiv.dataset.type;
+        const questionType = optionsDiv.dataset.type;
         let value = null;
 
         try {
-            switch (type) {
+            switch (questionType) {
                 case 'MCQ':
-                    // แก้ไขการเลือก radio button โดยใช้ name ที่ถูกต้อง
-                    const radio = question.querySelector(`input[name="answers_${questionId}"]:checked`);
-                    value = radio ? radio.value : null;
+                    const radio = questionDiv.querySelector('input[type="radio"]:checked');
+                    if (radio) {
+                        value = radio.dataset.originalIndex;
+                    }
                     break;
 
                 case 'checkbox':
-                    const checked = Array.from(question.querySelectorAll('input[type="checkbox"]:checked'));
-                    value = checked.map(cb => cb.value);
+                    const checked = Array.from(questionDiv.querySelectorAll('input[type="checkbox"]:checked'));
+                    value = checked.map(cb => cb.dataset.originalIndex);
                     break;
 
                 case 'Paragraph':
                 case 'short_answ':
-                    const textarea = question.querySelector('textarea');
+                    const textarea = questionDiv.querySelector('textarea');
                     value = textarea ? textarea.value.trim() : '';
                     break;
 
-                    case 'matching':
-                    // เก็บข้อมูลการจับคู่ทั้งหมด รวมถึงสีและเส้น
-                    const container = question.querySelector('.matching-container');
-                    const matches = [];
-                    
-                    // เก็บข้อมูลเส้นที่เชื่อมต่อ
-                    container.querySelectorAll('.matching-line').forEach(line => {
-                        matches.push({
-                            left: parseInt(line.dataset.left),
-                            right: parseInt(line.dataset.right),
-                            color: line.style.backgroundColor
-                        });
-                    });
-                    
-                    value = matches;
+                case 'matching':
+                    // ใช้ originalIndex สำหรับ matching pairs
+                    value = Array.from(questionDiv.querySelectorAll('.matching-line')).map(line => ({
+                        left: parseInt(line.dataset.left),
+                        right: parseInt(line.dataset.right)
+                    }));
                     break;
             }
 
             if (value !== null) {
-                answers[questionId] = {
-                    type,
-                    value,
-                    questionIndex: parseInt(questionId)
+                answers[originalIndex] = {
+                    type: questionType,
+                    value: value
                 };
             }
 
         } catch (error) {
-            console.error(`Error saving question ${questionId}:`, error);
+            console.error(`Error saving question ${originalIndex}:`, error);
         }
     });
 
     try {
-        localStorage.setItem(`quiz_${quizId}_answers`, JSON.stringify(answers));
-        console.log('Saved answers:', answers);
+        localStorage.setItem(`quiz_${quizId}_answers_v2`, JSON.stringify(answers));
     } catch (error) {
         console.error('Storage save error:', error);
     }
 }
 
-
 function loadSavedAnswers() {
     const quizId = document.getElementById('form').dataset.quizId;
     try {
-        const saved = localStorage.getItem(`quiz_${quizId}_answers`);
+        const saved = localStorage.getItem(`quiz_${quizId}_answers_v2`);
         if (!saved) return;
 
         const answers = JSON.parse(saved);
-        console.log('Loading answers:', answers); // Debug log
 
-        // ใช้ Object.entries เพื่อวนลูปผ่านคำตอบที่บันทึกไว้
-        Object.entries(answers).forEach(([index, data]) => {
-            if (!data || !data.type) return;
+        document.querySelectorAll('.question').forEach(questionDiv => {
+            // ดึง original index จาก data attribute
+            const originalIndex = questionDiv.dataset.originalIndex;
+            if (!originalIndex) return;
 
-            // ใช้ ID ในการค้นหา question
-            const question = document.querySelector(`#question_${index}`);
-            if (!question) {
-                console.log(`Question ${index} not found`); // Debug log
-                return;
-            }
+            // ดึงคำตอบที่บันทึกไว้โดยใช้ original index
+            const savedAnswer = answers[originalIndex];
+            if (!savedAnswer) return;
 
-            try {
-                if (data.type === 'matching' && Array.isArray(data.value)) {
-                    // ล้างเส้นเก่า
-                    const container = question.querySelector('.matching-container');
-                    const linesContainer = container.querySelector('.matching-lines');
-                    linesContainer.innerHTML = '';
+            const optionsDiv = questionDiv.querySelector('.options');
+            const questionType = optionsDiv?.dataset.type;
 
-                    // วาดเส้นใหม่
-                    data.value.forEach(match => {
-                        const leftItem = container.querySelector(`.left-side .matching-item[data-original-index="${match.left}"]`);
-                        const rightItem = container.querySelector(`.right-side .matching-item[data-original-index="${match.right}"]`);
+            switch (questionType) {
+                case 'MCQ':
+                    // หา input radio ที่มี data-original-index ตรงกับคำตอบที่บันทึกไว้
+                    const radio = questionDiv.querySelector(`input[type="radio"][data-original-index="${savedAnswer.value}"]`);
+                    if (radio) radio.checked = true;
+                    break;
 
-                        if (leftItem && rightItem) {
-                            // กำหนดสีและสถานะ matched
-                            leftItem.classList.add('matched');
-                            rightItem.classList.add('matched');
+                case 'checkbox':
+                    if (Array.isArray(savedAnswer.value)) {
+                        savedAnswer.value.forEach(val => {
+                            const checkbox = questionDiv.querySelector(`input[type="checkbox"][data-original-index="${val}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+                    break;
 
-                     // สร้างเส้นใหม่
-                     const line = document.createElement('div');
-                            line.className = 'matching-line';
-                            line.dataset.left = match.left;
-                            line.dataset.right = match.right;
-                            line.style.backgroundColor = match.color;
-                            
-                            // คำนวณตำแหน่งและความยาวเส้น
-                            drawMatchingLine(leftItem, rightItem);
-                            
-                            // เพิ่มเข้า matchingAnswers Map
-                            if (!matchingAnswers.has(index)) {
-                                matchingAnswers.set(index, []);
-                            }
-                            matchingAnswers.get(index).push(match);
-                        }
-                    });
-                }
-                          
-                switch (data.type) {
-                    case 'MCQ':
-                        if (data.value !== null) {
-                            const radio = question.querySelector(`input[value="${data.value}"]`);
-                            if (radio) radio.checked = true;
-                        }
-                        break;
+                case 'Paragraph':
+                case 'short_answ':
+                    const textarea = questionDiv.querySelector('textarea');
+                    if (textarea && savedAnswer.value) {
+                        textarea.value = savedAnswer.value;
+                        adjustHeight(textarea);
+                    }
+                    break;
 
-                    case 'checkbox':
-                        if (Array.isArray(data.value)) {
-                            data.value.forEach(val => {
-                                const checkbox = question.querySelector(`input[value="${val}"]`);
-                                if (checkbox) checkbox.checked = true;
-                            });
-                        }
-                        break;
-
-                    case 'Paragraph':
-                    case 'short_answ':
-                        const textarea = question.querySelector('textarea');
-                        if (textarea && data.value) textarea.value = data.value;
-                        break;
-
-                        case 'matching':
-                    const matches = matchingAnswers.get(questionId);
-                                 if (matches) {
-                                     value = [...matches]; // Create a copy of matches array
-                         } else {
-                         console.error(`No matching answers found for question ${questionId}`);
-                        }
-                         break;
-                }
-            } catch (error) {
-                console.error(`Error loading question ${index}:`, error);
+                case 'matching':
+                    if (Array.isArray(savedAnswer.value)) {
+                        restoreMatching(originalIndex, savedAnswer.value);
+                    }
+                    break;
             }
         });
     } catch (error) {
         console.error('Error loading answers:', error);
     }
 }
-
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
@@ -2012,18 +2004,21 @@ document.addEventListener('DOMContentLoaded', () => {
 // Override matching functions
 const originalCreateMatch = window.createMatch;
 window.createMatch = function(questionIndex, leftItem, rightItem) {
-  try {
-    originalCreateMatch.call(this, questionIndex, leftItem, rightItem);
-    
-    // บันทึก match ใหม่
-    matchingStorage.saveMatch(
-      questionIndex,
-      parseInt(leftItem.dataset.originalIndex),
-      parseInt(rightItem.dataset.originalIndex)
-    );
-  } catch (error) {
-    console.error('Error in createMatch:', error);
-  }
+    try {
+        originalCreateMatch.call(this, questionIndex, leftItem, rightItem);
+        
+        // บันทึก match ใหม่
+        matchingStorage.saveMatch(
+            questionIndex,
+            parseInt(leftItem.dataset.originalIndex),
+            parseInt(rightItem.dataset.originalIndex)
+        );
+
+        // อัพเดทสีปุ่ม pagination
+        goToQuestion(questionIndex);
+    } catch (error) {
+        console.error('Error in createMatch:', error);
+    }
 };
 
 function restoreMatching(questionIndex, matches) {
@@ -2049,9 +2044,7 @@ function restoreMatching(questionIndex, matches) {
     });
 }
 
-            document.addEventListener('DOMContentLoaded', () => {
-                renderQuestions();
-            });
+           
 
            
 
@@ -2080,7 +2073,6 @@ function restoreMatching(questionIndex, matches) {
                 updateQuestionCount();
                 calculateTotalPoints();
                 updateQuestionPoints
-                renderQuestions();
             });
 
 
@@ -2132,97 +2124,131 @@ function restoreMatching(questionIndex, matches) {
 
 async function submitQuiz(quizId) {
     try {
+        const answers = [];
+        let hasAtLeastOneAnswer = false;
+
         // รวบรวมคำตอบ
-        const answers = {};
         document.querySelectorAll('.question').forEach((questionDiv, index) => {
             if (index === 0) return; // ข้ามส่วนหัวของแบบทดสอบ
-            
-            const questionId = questionDiv.id.split('_')[1];
-            const questionType = questionDiv.querySelector('input[type="radio"]') ? 'MCQ' : 
-                   questionDiv.querySelector('input[type="checkbox"]') ? 'checkbox' : 
-                   questionDiv.querySelector('.matching-container') ? 'matching' :
-                   questionDiv.querySelector('textarea.short-answer') ? 'short_answ' :
-                   questionDiv.querySelector('textarea') ? 'Paragraph' : null;
 
-            if (questionType === 'MCQ') {
-                const selectedOption = questionDiv.querySelector('input[type="radio"]:checked');
-                answers[questionId] = selectedOption ? selectedOption.value : null;
-            } else if (questionType === 'checkbox') {
-                const selectedOptions = Array.from(questionDiv.querySelectorAll('input[type="checkbox"]:checked'))
-                    .map(input => input.value);
-                answers[questionId] = selectedOptions;
-            } else if (questionType === 'text') {
-                const textArea = questionDiv.querySelector('textarea');
-                answers[questionId] = textArea ? textArea.value.trim() : null;
-            } else if (questionType === 'matching') {
-    // Get matching pairs data
-    const matchingAnswers = [];
-    const matchingRows = questionDiv.querySelectorAll('.matching-row');
-    
-    matchingRows.forEach(row => {
-        const leftIndex = parseInt(row.getAttribute('data-left-index'));
-        const rightSelect = row.querySelector('select');
-        
-        if (rightSelect && rightSelect.value) {
-            const rightIndex = parseInt(rightSelect.value);
-            matchingAnswers.push({
-                leftIndex,
-                rightIndex
-            });
-        }
-    });
-    
-    answers[questionId] = matchingAnswers;
-}
+            const questionId = questionDiv.dataset.questionId;
+            const originalIndex = questionDiv.dataset.originalIndex;
+            const optionsDiv = questionDiv.querySelector('.options');
+            
+            if (!optionsDiv || !questionId) return;
+            
+            const questionType = optionsDiv.dataset.type;
+            let answer = null;
+
+            try {
+                switch (questionType) {
+                    case 'MCQ':
+                        const selectedRadio = questionDiv.querySelector('input[type="radio"]:checked');
+                        if (selectedRadio) {
+                            answer = {
+                                questionId,
+                                type: 'MCQ',
+                                answer: parseInt(selectedRadio.dataset.originalIndex)
+                            };
+                            hasAtLeastOneAnswer = true;
+                        }
+                        break;
+
+                    case 'checkbox':
+                        const checkedBoxes = Array.from(questionDiv.querySelectorAll('input[type="checkbox"]:checked'));
+                        if (checkedBoxes.length > 0) {
+                            answer = {
+                                questionId,
+                                type: 'checkbox',
+                                answer: checkedBoxes.map(cb => parseInt(cb.dataset.originalIndex))
+                            };
+                            hasAtLeastOneAnswer = true;
+                        }
+                        break;
+
+                    case 'Paragraph':
+                    case 'short_answ':
+                        const textarea = questionDiv.querySelector('textarea');
+                        const textValue = textarea ? textarea.value.trim() : '';
+                        if (textValue) {
+                            answer = {
+                                questionId,
+                                type: questionType,
+                                answer: textValue
+                            };
+                            hasAtLeastOneAnswer = true;
+                        }
+                        break;
+
+                    case 'matching':
+                        const matchLines = Array.from(questionDiv.querySelectorAll('.matching-line'));
+                        if (matchLines.length > 0) {
+                            answer = {
+                                questionId,
+                                type: 'matching',
+                                answer: matchLines.map(line => ({
+                                    leftIndex: parseInt(line.dataset.left),
+                                    rightIndex: parseInt(line.dataset.right)
+                                }))
+                            };
+                            hasAtLeastOneAnswer = true;
+                        }
+                        break;
+                }
+
+                if (answer !== null) {
+                    answers.push(answer);
+                }
+
+            } catch (error) {
+                console.error(`Error processing question ${questionId}:`, error);
+            }
         });
 
-        // ส่งคำตอบไปยังเซิร์ฟเวอร์
+        if (!hasAtLeastOneAnswer) {
+            throw new Error('กรุณาตอบคำถามอย่างน้อย 1 ข้อ');
+        }
+
+        console.log('Answers to submit:', answers); // ตรวจสอบคำตอบก่อนส่ง
+
         const response = await fetch(`/studentIndex/submitQuiz/${quizId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ quizId, answers })
+            body: JSON.stringify({
+                quizId,
+                answers
+            })
         });
 
         const result = await response.json();
 
         if (result.success) {
-            try {
-                // ลบข้อมูลแบบทดสอบนี้
-                localStorage.removeItem(`quiz_${quizId}_answers`);
-                localStorage.removeItem(`quiz_${quizId}_answers_v2`);
-                
-                // ลบข้อมูล matching answers ถ้ามี
-                localStorage.removeItem(`quiz_${quizId}_matching`);
-                
-                // Clear matching answers from memory
-                matchingAnswers.clear();
-                
-                console.log('Cleared quiz data from localStorage');
-            } catch (err) {
-                console.error('Error clearing localStorage:', err);
-            }
+            // Clear localStorage
+            localStorage.removeItem(`quiz_${quizId}_answers`);
+            localStorage.removeItem(`quiz_${quizId}_answers_v2`);
+            localStorage.removeItem(`quiz_${quizId}_matching`);
 
             Swal.fire({
                 title: 'ส่งแบบทดสอบสำเร็จ!',
-                text: `คะแนนของคุณคือ ${result.score}`,
                 icon: 'success'
             }).then(() => {
                 window.location.href = `/studentIndex/eachQuiz?quizId=${quizId}`;
             });
         } else {
-            throw new Error(result.message);
+            throw new Error(result.message || 'เกิดข้อผิดพลาดในการส่งแบบทดสอบ');
         }
 
     } catch (error) {
+        console.error('Submit error:', error);
         Swal.fire({
             title: 'เกิดข้อผิดพลาด!',
             text: error.message || 'ไม่สามารถส่งแบบทดสอบได้',
             icon: 'error'
         });
     }
-}     
+}
 
 function checkQuestionAnswered(questionDiv) {
     const questionType = questionDiv.querySelector('.options').dataset.type;
@@ -2256,15 +2282,21 @@ function goToQuestion(index) {
     // ดึงข้อมูลคำตอบจาก localStorage
     const quizId = document.getElementById('form').dataset.quizId;
     const savedAnswers = safeLocalStorageOperation(() => {
-        return JSON.parse(localStorage.getItem(`quiz_${quizId}_answers`)) || {};
+        return JSON.parse(localStorage.getItem(`quiz_${quizId}_answers_v2`)) || {};
     });
 
-    // อัพเดทสถานะปุ่มทั้งหมด
+    // อัปเดตสถานะปุ่มทั้งหมด
     document.querySelectorAll('.pagination-btn').forEach(btn => {
         if (btn.classList.contains('chevron')) return;
 
         const btnIndex = parseInt(btn.textContent) - 1;
-        const answer = savedAnswers[btnIndex];
+        // หา question div ที่สอดคล้องกับปุ่ม
+        const questionDiv = document.querySelector(`.question[data-question-index="${btnIndex}"]`);
+        if (!questionDiv) return;
+
+        // ดึง originalIndex จาก question div
+        const originalIndex = questionDiv.dataset.originalIndex;
+        const answer = savedAnswers[originalIndex];
         
         // เช็คว่ามีคำตอบหรือไม่
         const hasAnswer = answer && answer.value && (
@@ -2288,19 +2320,29 @@ function goToQuestion(index) {
             btn.style.color = 'black';
         }
     });
+
+    // อัปเดต URL โดยไม่ต้อง refresh หน้า
+    const url = new URL(window.location.href);
+    url.searchParams.set('question', index);
+    window.history.pushState({}, '', url);
 }
 
-// เพิ่ม Event Listener สำหรับการบันทึกคำตอบ
+// เพิ่ม Event Listener สำหรับการบันทึกคำตอบและอัปเดตสี pagination
 document.addEventListener('change', function(e) {
     if (e.target.matches('input[type="radio"], input[type="checkbox"], textarea')) {
+        const questionDiv = e.target.closest('.question');
+        if (!questionDiv) return;
+
+        // บันทึกคำตอบ
         saveAllAnswers();
-        const currentQuestion = e.target.closest('.question');
-        if (currentQuestion) {
-            const index = currentQuestion.id.split('_')[1];
-            goToQuestion(index); // อัพเดทสีปุ่มหลังจากตอบคำถาม
-        }
+
+        // อัปเดตสีปุ่ม pagination
+        const index = questionDiv.dataset.questionIndex;
+        goToQuestion(index);
     }
 });
+
+
 
 // เรียกใช้ตอนโหลดหน้า
 document.addEventListener('DOMContentLoaded', () => {
@@ -2504,6 +2546,95 @@ function safeLocalStorageOperation(operation) {
         return null;
     }
 }
+
+function adjustHeight(textarea) {
+    // รีเซ็ตความสูงก่อน
+    textarea.style.height = '0px';
+    
+    // ดึงค่าความสูงขั้นต่ำตามประเภท textarea
+    const minHeight = textarea.classList.contains('short-text-area') ? 38 : 120;
+    
+    // ดึงค่าความสูงที่บันทึกไว้จาก localStorage
+    const quizId = document.getElementById('form').dataset.quizId;
+    const textareaId = textarea.name;
+    const savedHeightKey = `textarea_height_${quizId}_${textareaId}`;
+    const savedHeight = parseInt(localStorage.getItem(savedHeightKey)) || minHeight;
+    
+    // คำนวณความสูงที่ต้องการ
+    const scrollHeight = textarea.scrollHeight;
+    const currentContent = textarea.value;
+    
+    if (!currentContent) {
+        textarea.style.height = `${minHeight}px`;
+        localStorage.removeItem(savedHeightKey);
+    } else {
+        // ใช้ความสูงที่มากที่สุดระหว่าง minHeight, scrollHeight และ savedHeight
+        const newHeight = Math.max(scrollHeight, minHeight, savedHeight);
+        textarea.style.height = `${newHeight}px`;
+        // บันทึกความสูงลง localStorage
+        localStorage.setItem(savedHeightKey, newHeight);
+    }
+}
+
+// เพิ่มในส่วนของ DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    const autoExpandTextareas = document.querySelectorAll('textarea.auto-expand');
+    
+    autoExpandTextareas.forEach(textarea => {
+        // ปรับความสูงเมื่อพิมพ์
+        textarea.addEventListener('input', function() {
+            adjustHeight(this);
+        });
+
+        // ปรับความสูงเมื่อกด Enter
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                setTimeout(() => adjustHeight(this), 0);
+            }
+        });
+
+        // ปรับความสูงเมื่อลบข้อความ
+        textarea.addEventListener('keyup', function(e) {
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                adjustHeight(this);
+            }
+        });
+
+        // ปรับความสูงเมื่อวางข้อความ
+        textarea.addEventListener('paste', function() {
+            setTimeout(() => adjustHeight(this), 0);
+        });
+
+        // ปรับความสูงเริ่มต้นถ้ามีข้อความ
+        if (textarea.value) {
+            adjustHeight(textarea);
+        }
+    });
+    
+    // เพิ่ม MutationObserver เพื่อตรวจจับการเปลี่ยนแปลงของเนื้อหา
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'characterData' || mutation.type === 'childList') {
+                const textarea = mutation.target.closest('textarea');
+                if (textarea && textarea.classList.contains('auto-expand')) {
+                    adjustHeight(textarea);
+                }
+            }
+        });
+    });
+
+    // เริ่มสังเกตการณ์การเปลี่ยนแปลง
+    autoExpandTextareas.forEach(textarea => {
+        observer.observe(textarea, {
+            childList: true,
+            characterData: true,
+            subtree: true
+        });
+    });
+});
+
+    
+
 
         </script>
 

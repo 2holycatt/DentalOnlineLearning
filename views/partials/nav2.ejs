@@ -170,9 +170,23 @@
 .grey {
         color: gray ;
       }
-
+.purple{
+    color: #9146ff  !important
+}
       .dark .grey {
         color: rgb(231, 231, 231)  ;
+      }
+      .dark .purple{
+        color: #b98aff !important;
+      }
+      .dark .a-li .purple {
+    color: #b98aff !important; /* สีที่อ่อนกว่าสำหรับ dark theme */
+}
+.dark .text-success{
+        color: rgb(54, 194, 54) !important;
+      }
+      .dark .text-danger{
+        color: rgb(255, 75, 75) !important;
       }
     </style>
 </head>
@@ -228,6 +242,7 @@
                          <% } %>
                      </ul>
                  </li>
+                
              </ul>
          </li>
                 <li class="li-a show-drop">
@@ -245,17 +260,21 @@
                 </li>
                 <% if (hasUnread) { %>
                     <li id="teacherNotification" class="li-a a-li">
-                      <a href="/adminIndex/teacherNotification" class="a-li bell-animatio"><span class="text-success">แจ้งเตือน</spanc>
+                      <a href="/adminIndex/teacherNotification" class="a-li bell-animatio"><span class="text-success"></spanc>
                           <i class="bi bi-bell-fill text-success mx-2"></i>
                       </a>
               
                       <% } else { %>
                     <li id="teacherNotification" class="li-a a-li">
-                      <a href="/adminIndex/teacherNotification" class="a-li ">แจ้งเตือน <i class="bi bi-bell-fill mx-1"></i></a>
+                      <a href="/adminIndex/teacherNotification" class="a-li "> <i class="bi bi-bell-fill mx-1"></i></a>
                       
                     </li>
                     <% } %>
+                    <li class="a-li d-flex">
+                        <a href="#" class="a-li purple" >แบบจำลอง 3D</a>
+                     </li>
             </ul>
+           
         </div>
         <div class="header_search">
             <button class="search_button" onclick="searchQuiz()">

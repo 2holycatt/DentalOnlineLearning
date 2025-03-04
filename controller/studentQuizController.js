@@ -17,7 +17,16 @@ const Subject = require("../models/subjects");
 
 exports.submitQuiz = async (req, res) => {
     try {
+        console.log('Received request body:', req.body);
         const { quizId, answers } = req.body;
+
+        if (!answers || !Array.isArray(answers) || answers.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'ไม่พบข้อมูลคำตอบ หรือข้อมูลคำตอบไม่ถูกต้อง'
+            });
+        }
+        
         const userId = req.session.userId;
 
         // หาข้อมูลนักศึกษาและ populate ข้อมูลที่จำเป็น
@@ -32,6 +41,7 @@ exports.submitQuiz = async (req, res) => {
         console.log('Student data:', {
             id: student._id,
             name: `${student.user.fname} ${student.user.lname}`,
+            nickname: student.nickname,
             studentId: student.studentId
         });
         // หาแบบทดสอบ
@@ -45,98 +55,89 @@ exports.submitQuiz = async (req, res) => {
         const attemptAnswers = [];
 
         // Inside the forEach loop for each question
-Object.keys(answers).forEach(questionId => {
-    const question = quiz.questions.id(questionId);
-    if (!question) return;
+        for (const answer of answers) {
+            const question = quiz.questions.id(answer.questionId);
+            if (!question) continue;
 
-    let isCorrect = false;
-    let points = 0;
-    let matchingAnswers = [];
+            let isCorrect = false;
+            let points = 0;
+            let matchingAnswers = [];
 
-    switch (question.questionType) {
-        case 'MCQ':
-            isCorrect = answers[questionId] === question.answer;
-            points = isCorrect ? question.points : 0;
-            break;
-            
-        case 'checkbox':
-            // For checkbox questions, compare arrays
-            if (Array.isArray(question.answer) && Array.isArray(answers[questionId])) {
-                // Check if all selected options are correct and no extra options
-                const correctAnswers = new Set(question.answer);
-                const submittedAnswers = new Set(answers[questionId]);
-                
-                // All submitted answers must be in correct answers AND count must match
-                isCorrect = 
-                    answers[questionId].every(ans => correctAnswers.has(ans)) && 
-                    correctAnswers.size === submittedAnswers.size;
-                points = isCorrect ? question.points : 0;
-            }
-            break;
-            
-        case 'Paragraph':
-        case 'short_answ':
-            // For text answers, compare with possible answer texts or key
-            if (question.answerTexts && question.answerTexts.length > 0) {
-                const normalizedAnswer = answers[questionId].toLowerCase().trim();
-                isCorrect = question.answerTexts.some(text => 
-                    normalizedAnswer === text.toLowerCase().trim()
-                );
-            } else if (question.answerKey) {
-                // Simple case-insensitive match if using answerKey
-                isCorrect = answers[questionId].toLowerCase().trim() === 
-                            question.answerKey.toLowerCase().trim();
-            }
-            points = isCorrect ? question.points : 0;
-            break;
-            
-        case 'matching':
-            if (Array.isArray(answers[questionId]) && Array.isArray(question.matchingPairs)) {
-                let matchScore = 0;
-                
-                // Process each submitted match
-                matchingAnswers = answers[questionId].map(match => {
-                    const { leftIndex, rightIndex } = match;
-                    
-                    // Find the corresponding pair in the question
-                    const matchPair = question.matchingPairs.find(p => 
-                        p.left.index === leftIndex || p.right.index === rightIndex
-                    );
-                    
-                    const pairIsCorrect = matchPair && 
-                        matchPair.correctMatch.leftIndex === leftIndex && 
-                        matchPair.correctMatch.rightIndex === rightIndex;
-                    
-                    // Add points for this pair if correct
-                    const pairPoints = pairIsCorrect ? (matchPair ? matchPair.points : 1) : 0;
-                    matchScore += pairPoints;
-                    
-                    return {
-                        leftIndex,
-                        rightIndex,
-                        isCorrect: pairIsCorrect,
-                        pointsEarned: pairPoints
-                    };
-                });
-                
-                points = matchScore;
-                // A matching question is fully correct if all pairs are matched correctly
-                isCorrect = matchScore === question.matchingPairs.reduce(
-                    (sum, pair) => sum + (pair.points || 1), 0
-                );
-            }
-            break;
+            switch (answer.type) {
+                case 'MCQ':
+                    isCorrect = answer.answer === question.answer;
+                    points = isCorrect ? question.points : 0;
+                    break;
+
+                case 'checkbox':
+                    if (Array.isArray(question.answer) && Array.isArray(answer.answer)) {
+                        const correctAnswers = new Set(question.answer);
+                        const submittedAnswers = new Set(answer.answer);
+                        isCorrect = 
+                            answer.answer.every(ans => correctAnswers.has(ans)) && 
+                            correctAnswers.size === submittedAnswers.size;
+                        points = isCorrect ? question.points : 0;
+                    }
+                    break;
+
+                case 'Paragraph':
+                case 'short_answ':
+                    if (question.answerTexts?.length > 0) {
+                        const normalizedAnswer = answer.answer.toLowerCase().trim();
+                        isCorrect = question.answerTexts.some(text => 
+                            normalizedAnswer === text.toLowerCase().trim()
+                        );
+                    } else if (question.answerKey) {
+                        isCorrect = answer.answer.toLowerCase().trim() === 
+                                  question.answerKey.toLowerCase().trim();
+                    }
+                    points = isCorrect ? question.points : 0;
+                    break;
+
+                case 'matching':
+                    if (Array.isArray(answer.answer) && Array.isArray(question.matchingPairs)) {
+                        let matchScore = 0;
+                        matchingAnswers = answer.answer.map(match => {
+                            const matchPair = question.matchingPairs.find(p => 
+                                p.left.index === match.leftIndex || 
+                                p.right.index === match.rightIndex
+                            );
+                            
+                            const pairIsCorrect = matchPair && 
+                                matchPair.correctMatch.leftIndex === match.leftIndex && 
+                                matchPair.correctMatch.rightIndex === match.rightIndex;
+                            
+                            const pairPoints = pairIsCorrect ? 
+                                (matchPair?.points || 1) : 0;
+                            
+                            matchScore += pairPoints;
+                            
+                            return {
+                                leftIndex: match.leftIndex,
+                                rightIndex: match.rightIndex,
+                                isCorrect: pairIsCorrect,
+                                pointsEarned: pairPoints
+                            };
+                        });
+                        
+                        points = matchScore;
+                        isCorrect = matchScore === question.matchingPairs.reduce(
+                            (sum, pair) => sum + (pair.points || 1), 0
+                        );
+                    }
+                    break;
     }
 
-    totalScore += points;
+    totalScore = attemptAnswers.reduce((sum, answer) => sum + (answer.points || 0), 0);;
     attemptAnswers.push({
-        questionId,
-        answer: answers[questionId],
+        questionId: answer.questionId,
+        answer: answer.answer,
+        type: answer.type,
         isCorrect,
         points,
         matchingAnswers: matchingAnswers.length > 0 ? matchingAnswers : undefined
     });
-});
+}
 
         // Initialize attempts array if undefined
         if (!quiz.attempts) {
@@ -152,7 +153,7 @@ Object.keys(answers).forEach(questionId => {
     // Update existing attempt
     existingAttempt.eachAttempt.push({
         answers: attemptAnswers,
-        score: totalScore,
+        totalScore: totalScore,
         attemptNumber: existingAttempt.eachAttempt.length + 1,
         submittedAt: new Date()
     });
@@ -162,9 +163,10 @@ Object.keys(answers).forEach(questionId => {
         studentDbId: student._id,
         studentId: student.studentId || '',
         studentName: student.user.fname + ' ' + student.user.lname,
+        studentNickname: student.nickname || '',
         eachAttempt: [{
             answers: attemptAnswers,
-            score: totalScore,
+            totalScore: totalScore,
             attemptNumber: 1,
             submittedAt: new Date()
         }]
@@ -175,6 +177,7 @@ Object.keys(answers).forEach(questionId => {
 
 await quiz.save();
 
+console.log('Processed answers:', attemptAnswers); // เพิ่ม log เพื่อตรวจสอบคำตอบที่ประมวลผลแล้ว
 
 // Update student model using findOneAndUpdate
 await Student.findOneAndUpdate(

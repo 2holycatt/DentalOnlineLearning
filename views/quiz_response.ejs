@@ -1407,19 +1407,41 @@
                             <!-- ตารางการตอบกลับ -->
 
                             <div class="scores d-flex justify-content-center">
+                                <% 
+                                let minScore = 0;
+                                let maxScore = 0;
+                                let avgScore = 0;
+                                let totalPoints = quiz.questions.reduce((sum, q) => sum + q.points, 0);
+                            
+                                if (quiz.attempts && quiz.attempts.length > 0) {
+                                    // Get highest score for each student
+                                    let highestScores = quiz.attempts.map(attempt => {
+                                        return attempt.eachAttempt.reduce((max, curr) => {
+                                            return curr.totalScore > max ? curr.totalScore : max;
+                                        }, 0);
+                                    });
+                            
+                                    minScore = Math.min(...highestScores);
+                                    maxScore = Math.max(...highestScores);
+                                    avgScore = (highestScores.reduce((sum, score) => sum + score, 0) / highestScores.length).toFixed(2);
+                                }
+                                %>
                                 <div class="score-display text-center mx-2 d-flex">
-                                    <div class="me-2">ค่าต่ำสุด: <br>
-                                        <span class=" grey ms-2">0</span>
+                                    <div class="me-2">คะแนนต่ำสุด: <br>
+                                        <span class="grey ms-2"><%= minScore %> / <%= totalPoints %> 
+                                        (<%= ((minScore/totalPoints) * 100).toFixed(0) %>%)</span>
                                     </div>
                                 </div>
                                 <div class="score-display text-center mx-2 d-flex">
-                                    <div class="me-2">ค่าเฉลี่ย: <br>
-                                        <span class=" grey ms-2">10</span>
+                                    <div class="me-2">คะแนนเฉลี่ย: <br>
+                                        <span class="grey ms-2"><%= avgScore %> / <%= totalPoints %>
+                                        (<%= ((avgScore/totalPoints) * 100).toFixed(0) %>%)</span>
                                     </div>
                                 </div>
                                 <div class="score-display text-center mx-2 d-flex">
-                                    <div class="me-2">ค่าสูงสุด: <br>
-                                        <span class=" grey ms-2">20</span>
+                                    <div class="me-2">คะแนนสูงสุด: <br>
+                                        <span class="grey ms-2"><%= maxScore %> / <%= totalPoints %>
+                                        (<%= ((maxScore/totalPoints) * 100).toFixed(0) %>%)</span>
                                     </div>
                                 </div>
                             </div>
@@ -1439,35 +1461,26 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- แสดงตัวอย่างข้อมูล -->
-                                    <tr onclick="window.open('/adminIndex/eachQuiz?quizId=<%= quiz._id %>/rdetail', '_blank')" style="cursor: pointer;">
-                                        <td>12345678</td> <!-- รหัสนักศึกษา -->
-                                        <td>สมชาย ใจดี</td> <!-- ชื่อนักศึกษา -->
-                                         <td>
-                                           โอม
-
-                                        </td>
-                                        <td>3</td>
-                                        <td> 20/<%= totalPoints %> <span>(83%)</td> <!-- คะแนน -->
-                                       
-                                    </tr>
-                                    <tr onclick="window.location.href='(/adminIndex/eachQuiz?quizId=<%= quiz._id %>/rdetail', '_blank')" style="cursor: pointer;">
-                                        <td>87654321</td>
-                                        <td>สมหญิง เก่งกล้า</td>
-                                         <td>
-                                            อ้อย
-
-                                        </td>
-                                        <td>1</td>
-                                        <td>
-                                            <%= studentScore %>/<%= totalPoints %> <span>(<%= percentage.toFixed(0) %>%)
-                                        </td>
-                                       
-                                    </tr>
-                                    <!-- เพิ่มข้อมูลนักศึกษาเพิ่มเติมได้ตามต้องการ -->
+                                    <% if (quiz.attempts && quiz.attempts.length > 0) { %>
+                                        <% quiz.attempts.forEach(attempt => { %>
+                                            <tr onclick="window.open('/adminIndex/eachQuiz?quizId=<%= quiz._id %>&rdetail=true&studentDbId=<%= attempt.studentDbId %>', '_blank')" style="cursor: pointer;">                                              
+                                                <td><%= attempt.studentId || '-' %></td>
+                                                <td><%= attempt.studentName || '-' %></td>
+                                                <td><%= attempt.studentNickname || '-' %></td>
+                                                <td><%= attempt.eachAttempt.length %></td>
+                                                <td>
+                                                
+                                                    <% const studentHighscore = Math.max(...attempt.eachAttempt.map(a => a.totalScore)); %>
+                                                    <%= `${studentHighscore} / ${totalPoints} (${((studentHighscore/totalPoints) * 100).toFixed(0)}%)` %>                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="5" class="text-center grey">ยังไม่มีนักศึกษาทำแบบทดสอบนี้</td>
+                                        </tr>
+                                    <% } %>
                                 </tbody>
                             </table>
-                            <!-- จบการแสดงตารางการตอบกลับ -->
                           
                         </div>
                         <br>
@@ -1476,14 +1489,7 @@
         </div>
 
         <script>
-            // ฟังก์ชันสำหรับปุ่มดูรายละเอียด
-            function viewDetail(studentId) {
-                // ในตัวอย่างนี้ฟังก์ชันจะใช้เพื่อแจ้งเตือนรหัสนักศึกษา
-                alert('ดูรายละเอียดของรหัสนักศึกษา: ' + studentId);
-                // คุณสามารถแก้ไขเพื่อให้เปลี่ยนเส้นทางไปยังหน้ารายละเอียดได้
-                // ตัวอย่าง:
-                // window.location.href = `/adminIndex/eachQuiz?quizId=12345/rdetail&studentId=${studentId}`;
-            }
+      
         </script>
 
 

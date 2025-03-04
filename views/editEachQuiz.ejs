@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit-<%=quiz.quizname%></title>
+    <link rel="icon" href="/images/indexMed/Ellipse9.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -13,6 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -21,7 +23,6 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
-    <link rel="icon" href="/images/indexMed/Ellipse9.png" type="image/x-icon">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap');
@@ -166,15 +167,16 @@
         .container {
             display: flex;
             margin-top: 12px;
-            width: 200%;
+            width: 80%;
+            max-width: 1200px;
             justify-content: center;
         }
 
         .question,
         .quiz {
             background-color: white;
-            margin: 30px;
-            padding: 41px;
+            margin: 15px;  
+            padding: 15px 25px; 
             border-radius: 14px;
             position: relative;
             border-left: 6px solid #ffffff;
@@ -207,7 +209,7 @@
             padding: 3px;
             text-decoration: none;
             /* margin: 0 24px; */
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .double_item:hover {
@@ -217,8 +219,8 @@
         }
 
         .options {
-            padding-top: 8px;
-            padding-bottom: 8px;
+            padding-top: 4px;
+            padding-bottom: 4px;
             display: flex;
             flex-direction: column;
         }
@@ -886,8 +888,14 @@
             border: none;
             outline: none;
             border-bottom: 1px lightgray solid;
+            font-size: 0.9rem;
+
             /* margin: 0 24px; */
         }
+
+        .select {
+            font-size: 0.9rem;
+            }
 
         .dark .input-question {
             border: none;
@@ -917,7 +925,9 @@
             display: -webkit-flex;
             display: flex;
             border-top: 1px solid rgb(218, 220, 224);
-            height: 64px;
+            height: 50px;  /* ลดความสูงจาก 64px */
+            padding: 8px 0;
+            margin-top: 8px;
             -webkit-box-pack: justify;
             -webkit-justify-content: space-between;
             justify-content: space-between;
@@ -1009,13 +1019,70 @@
             border: 1px solid lightgray;
         }
 
-        .question:active {
-            /* background-color: #b2ebf2; */
-            /* เปลี่ยนสีพื้นหลังเมื่อกำลังลาก */
-            box-shadow: 0 8px 24px rgb(103, 58, 183);
-            /* เงาเมื่อถูกลาก */
-        }
+        .drag-handle {
+    cursor: grab;
+    padding: 10px;
+    font-size: 0.9rem;
+    background: white;
+    border-radius: 4px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
 
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.question input,
+.question textarea,
+.question select {
+    pointer-events: auto; /* อนุญาตให้ใช้งาน input ได้ */
+    user-select: text;    /* อนุญาตให้เลือกข้อความใน input ได้ */
+}
+
+.sortable-ghost {
+    opacity: 0.3;
+    background: #f8f9fa;
+    border: 2px dashed #ccc;
+    user-select: none;
+    pointer-events: none;
+}
+
+.sortable-drag {
+    opacity: 0 !important;
+    user-select: none !important;
+    pointer-events: none !important;
+}
+
+.sortable-chosen {
+    background: white;
+}
+
+.dragging {
+    cursor: grabbing;
+}
+
+.dark .drag-handle {
+    background-color: var(--secondary-color);
+    border-bottom: 1px solid #444;
+}
+
+.question {
+    cursor: default !important; /* ยกเลิก cursor: grab จาก question */
+    transition: all 0.3s ease;
+    user-select: none;
+}
+       
+
+        .sortable-ghost .drag-handle {
+    background-color: #e9ecef;
+}
+
+.dark .sortable-ghost .drag-handle {
+    background-color: #333;
+}
         .dragging {
             opacity: 0.8;
             /* ลดความโปร่งแสงขณะลาก */
@@ -1050,12 +1117,82 @@
             color: var(--text-color);
             width: 300px;
         }
+        #questionContainer {
+    font-size: 0.9rem; /* กำหนดขนาด font มาตรฐาน */
+}
 
+#questionContainer .question {
+    font-size: 0.9rem;
+}
+
+#questionContainer input,
+#questionContainer select,
+#questionContainer textarea,
+#questionContainer button,
+#questionContainer .input-matching,
+#questionContainer .input-question,
+#questionContainer .select,
+#questionContainer .form-control,
+#questionContainer .answer_key,
+#questionContainer .grey,
+#questionContainer .double_item {
+    font-size: 0.9rem;
+}
+
+/* ปรับขนาด icons */
+#questionContainer .bi {
+    font-size: 1rem;
+}
+
+/* ปรับขนาด pair number ในแบบจับคู่ */
+#questionContainer .pair-number {
+    font-size: 0.9rem;
+}
+
+/* ปรับขนาด points display */
+#questionContainer .add_footer .grey {
+    font-size: 0.9rem;
+}
+
+/* ปรับ font size ปุ่มต่างๆ */
+#questionContainer .btn {
+    font-size: 0.9rem;
+}
+
+/* ปรับ font size ของ placeholder */
+#questionContainer input::placeholder,
+#questionContainer textarea::placeholder {
+    font-size: 0.9rem;
+}
+
+
+
+        
         @media screen and (max-width: 768px) {
             body {
-                width: 120%;
+                width: 100%;
             }
-
+            .container {
+             width: 95%;
+             }
+             .question, .quiz {
+        margin: 10px;
+        padding: 10px 15px;
+    }
+    
+    .input-question {
+        width: 50% !important;
+    }
+    
+    .select {
+        width: 40% !important;
+    }
+    #questionContainer,
+    #questionContainer * {
+        font-size: 0.85rem;
+    }
+    
+  
             .above-nav-status {
                 display: none;
             }
@@ -1199,14 +1336,31 @@
                         <hr><br>
                         <p class="fw-normal w-auto fs-6 mx-2">สถานะ:
                             <span class="fw-normal fs-6 text-danger"
-                                style="margin-right: 1em !important;">ยังไม่ได้ปล่อย</span>
+                                style="margin-right: 1em !important;">ยังไม่ได้เผยแพร่</span>
                         </p>
                     </div>
+                    
+                    <br>
 
-                    <div style="margin: 0 4rem;">
+                    <div style="margin: 0 4rem;" class="d-flex align-items-center justify-content-between">
+                        <div>
                         <span id="question-count" class="me-2 fs-5">คำถามทั้งหมด: 1 คำถาม</span>
                         <span id="all-points-count" class="grey">( รวม 1 คะแนน)</span>
+                        </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   role="switch" 
+                                   id="shuffleAllQuestions" 
+                                   onchange="toggleShuffleAll(this)"
+                                   <%= quiz.isShuffled ? 'checked' : '' %>>
+                            <label class="form-check-label grey" for="shuffleAllQuestions">
+                                สุ่มลำดับคำถาม
+                            </label>
+                        </div>
                     </div>
+                    
 
                     <div id="questionContainer">
                         
@@ -1669,13 +1823,61 @@ function savechanges() {
             }
 
             function addQuestionType(index, type) {
-                questions[index].questionType = type;
-                updateQuestionCount();
-                calculateTotalPoints();
-                renderQuestions();
-                console.log(questions);
-                autosave();
-            }
+    // เก็บค่าคะแนนเดิมไว้
+    const currentPoints = questions[index].points || 1;
+    
+    // อัพเดทประเภทคำถาม
+    questions[index].questionType = type;
+    
+    // สร้างตัวเลือกเริ่มต้นตามประเภท
+    switch(type) {
+        case 'matching':
+            questions[index].matchingPairs = [{
+                left: {
+                    text: 'ด้านซ้าย',
+                    image: null,
+                    index: 0
+                },
+                right: {
+                    text: 'ด้านขวา',
+                    image: null,
+                    index: 0
+                },
+                points: 1,
+                correctMatch: {
+                    leftIndex: 0,
+                    rightIndex: 0
+                }
+            }];
+            questions[index].options = []; // ล้างตัวเลือกเดิม
+            break;
+
+        case 'MCQ':
+        case 'checkbox':
+            questions[index].options = [{
+                optionText: 'ตัวเลือก 1'
+            }];
+            questions[index].matchingPairs = []; // ล้างคู่จับคู่เดิม
+            break;
+
+        case 'Paragraph':
+        case 'short_answ':
+            questions[index].options = []; // ล้างตัวเลือกเดิม
+            questions[index].matchingPairs = []; // ล้างคู่จับคู่เดิม
+            break;
+    }
+
+    // คืนค่าคะแนนเดิม
+    if (type !== 'matching') {
+        questions[index].points = currentPoints;
+    }
+
+    updateQuestionCount();
+    calculateTotalPoints();
+    renderQuestions();
+    console.log('Changed question type:', type);
+    autosave();
+}
 
             function removeOption(i, j) {
                 var RemoveOptionQuestion = [...questions];
@@ -1704,15 +1906,71 @@ function savechanges() {
                 }
             }
 
-            function deleteQuestion(i) {
-                if (questions.length > 1) {
-                    questions.splice(i, 1);
-                    updateQuestionCount();
-                    calculateTotalPoints();
-                    renderQuestions();
-                    autosave();
-                }
+            let deletedQuestionHistory = []; // เพิ่มตัวแปรเก็บประวัติคำถามที่ถูกลบ
+
+function deleteQuestion(i) {
+    if (questions.length > 1) {
+        // เก็บคำถามที่จะลบไว้ในประวัติ
+        const deletedQuestion = questions[i];
+        deletedQuestionHistory.push({
+            question: deletedQuestion,
+            index: i
+        });
+
+        // ลบคำถาม
+        questions.splice(i, 1);
+        updateQuestionCount();
+        calculateTotalPoints();
+        renderQuestions();
+        autosave();
+
+        // แสดง SweetAlert2
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'bottom-end',
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
             }
+        });
+
+        Toast.fire({
+            title: 'ลบคำถามแล้ว',
+            html: '<a href="#" onclick="undoDelete()" style="text-decoration: underline; color: #3085d6;">เลิกทำ</a>'
+        });
+    }
+}
+
+function undoDelete() {
+    if (event) {
+        event.preventDefault();
+    }
+
+    if (deletedQuestionHistory.length > 0) {
+        const lastDeleted = deletedQuestionHistory.pop();
+        questions.splice(lastDeleted.index, 0, lastDeleted.question);
+        updateQuestionCount();
+        calculateTotalPoints();
+        renderQuestions();
+        autosave();
+
+        // แสดง SweetAlert2 เมื่อยกเลิกการลบสำเร็จ
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'bottom-end',
+            showConfirmButton: false,
+            timer: 3000,
+        });
+
+        Toast.fire({
+            icon: 'success',
+            title: 'ยกเลิกการลบคำถามแล้ว'
+        });
+    }
+}
 
             function addQuestion() {
                 questions.push({
@@ -1781,6 +2039,133 @@ function savechanges() {
                     question.answer = [];
                 }
             });
+
+            //Shuffle
+            function shuffleQuestionsAndOptions() {
+                const container = document.querySelector('.questionContainer');
+                if (!container) return;
+
+                // สุ่มลำดับข้อคำถาม
+                const questions = Array.from(container.getElementsByClassName('question'));
+                for (let i = questions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    container.insertBefore(questions[j], questions[i]);
+                }
+
+                // สุ่มตัวเลือกในแต่ละข้อ
+                questions.forEach(question => {
+                    // สุ่มตัวเลือกแบบ MCQ และ checkbox
+                    const optionsContainer = question.querySelector('.options');
+                    if (optionsContainer) {
+                        const options = Array.from(optionsContainer.getElementsByClassName('form-check'));
+                        if (options.length > 0) {
+                            for (let i = options.length - 1; i > 0; i--) {
+                                const j = Math.floor(Math.random() * (i + 1));
+                                optionsContainer.insertBefore(options[j], options[i]);
+                            }
+                        }
+
+                        // สุ่มตัวเลือกแบบจับคู่
+                        const matchingContainer = question.querySelector('.matching-container');
+                        if (matchingContainer) {
+                            // สุ่มด้านซ้าย
+                            const leftItems = Array.from(matchingContainer.querySelectorAll('.left-side .matching-item'));
+                            for (let i = leftItems.length - 1; i > 0; i--) {
+                                const j = Math.floor(Math.random() * (i + 1));
+                                leftItems[i].parentNode.insertBefore(leftItems[j], leftItems[i]);
+                            }
+
+                            // สุ่มด้านขวา
+                            const rightItems = Array.from(matchingContainer.querySelectorAll('.right-side .matching-item'));
+                            for (let i = rightItems.length - 1; i > 0; i--) {
+                                const j = Math.floor(Math.random() * (i + 1));
+                                rightItems[i].parentNode.insertBefore(rightItems[j], rightItems[i]);
+                            }
+                        }
+                    }
+                });
+            }
+
+            let shuffledQuestions = [...questions];
+
+            // Add shuffle function
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+
+            // เพิ่มฟังก์ชัน toggleShuffleAll
+            function toggleShuffleAll(checkbox) {
+    const quizId = '<%= quiz._id %>';
+    
+    // Show saving status
+    const saveStatus = document.getElementById('saveStatus');
+    saveStatus.style.display = 'inline-block';
+    saveStatus.querySelector('.status-text').textContent = 'กำลังบันทึก...';
+    saveStatus.querySelector('i').classList.remove('bi-cloud-check-fill', 'bi-cloud-slash-fill');
+    saveStatus.querySelector('i').classList.add('bi-cloud-arrow-up-fill');
+    
+    // Show loading state in label
+    const label = checkbox.nextElementSibling;
+    const originalText = label.textContent;
+    label.textContent = checkbox.checked ? 'กำลังเปิดการสุ่ม...' : 'กำลังปิดการสุ่ม...';
+    
+    // Send request to update shuffle state
+    fetch('/updateQuizShuffleState', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            quizId: quizId,
+            isShuffled: checkbox.checked
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update checkbox state and label
+            label.textContent = originalText;
+            
+            // Show success status
+            saveStatus.querySelector('.status-text').textContent = 'บันทึกแล้ว';
+            saveStatus.querySelector('i').classList.remove('bi-cloud-arrow-up-fill');
+            saveStatus.querySelector('i').classList.add('bi-cloud-check-fill');
+            
+            // Hide status after 2 seconds
+            setTimeout(() => {
+                saveStatus.style.display = 'none';
+            }, 2000);
+        } else {
+            // Revert checkbox if update failed
+            checkbox.checked = !checkbox.checked;
+            label.textContent = originalText;
+            
+            // Show error status
+            saveStatus.querySelector('.status-text').textContent = 'บันทึกไม่สำเร็จ';
+            saveStatus.querySelector('i').classList.remove('bi-cloud-arrow-up-fill');
+            saveStatus.querySelector('i').classList.add('bi-cloud-slash-fill');
+            
+            Swal.fire('Error', 'Failed to update shuffle state', 'error');
+        }
+    })
+    .catch(error => {
+        // Revert checkbox on error
+        checkbox.checked = !checkbox.checked;
+        label.textContent = originalText;
+        
+        // Show error status
+        saveStatus.querySelector('.status-text').textContent = 'บันทึกไม่สำเร็จ';
+        saveStatus.querySelector('i').classList.remove('bi-cloud-arrow-up-fill');
+        saveStatus.querySelector('i').classList.add('bi-cloud-slash-fill');
+        
+        Swal.fire('Error', 'Failed to update shuffle state', 'error');
+    });
+}
 
             function calculateTotalPoints() {
                 const totalPoints = questions.reduce((sum, question) => sum + question.points, 0);
@@ -2016,9 +2401,10 @@ function removeMatchingPair(questionIndex, pairIndex) {
 }
 
 function updateMatchingPair(questionIndex, pairIndex, side) {
+    event.preventDefault();
     const input = document.querySelector(`#matching_pairs_${questionIndex} .matching-pair:nth-child(${pairIndex + 1}) .${side}-side input`);
     const newText = input.value;
-    const question = questions[questionIndex]; // เพิ่มบรรทัดนี้
+    const question = questions[questionIndex];
     const pair = question.matchingPairs[pairIndex];
     
     // อัพเดตค่าใน questions array
@@ -2031,14 +2417,19 @@ function updateMatchingPair(questionIndex, pairIndex, side) {
     // หากเป็นด้าน left และค่าว่างเปล่า ให้ซ่อน pair number ทันที
     if (side === 'left') {
         // อัพเดตคะแนนของคู่
-        pair.points = newText && newText.trim() !== '' ? Math.max(1, pair.points || 1) : 0;
+        const isLeftEmpty = !newText || newText.trim() === '';
+        pair.points = isLeftEmpty ? 0 : (pair.points || 1);
 
         const pairElement = input.closest('.matching-pair');
         const pairNumberElement = pairElement.querySelector('.pair-number');
         
+
         pairNumberElement.style.minWidth = '30px';
-        pairNumberElement.style.visibility = (!newText || newText.trim() === '') ? 'hidden' : 'visible';
+        pairNumberElement.style.visibility = isLeftEmpty ? 'hidden' : 'visible';
         
+
+
+
         // อัพเดตหมายเลขทั้งหมดใหม่แบบ real-time
         let validPairCount = 0;
         const allPairs = document.querySelectorAll(`#matching_pairs_${questionIndex} .matching-pair`);
@@ -2054,11 +2445,17 @@ function updateMatchingPair(questionIndex, pairIndex, side) {
             }
         });
 
+        updatePairNumbers(questionIndex);
+
         // อัพเดตคะแนนรวมของคำถาม
-        questions[questionIndex].points = calculateMatchingTotalPoints(question);
+        question.points = calculateMatchingTotalPoints(question);
+    // อัพเดตการแสดงคะแนนในส่วน footer
+    const footerPointsSpan = document.querySelector(`#question_${questionIndex} .add_footer .grey`);
+        if (footerPointsSpan) {
+            footerPointsSpan.textContent = `(${question.points} คะแนน)`;
+        }
     }
 
-    renderQuestions();
     calculateTotalPoints();
     autosave();
 }
@@ -2105,7 +2502,7 @@ function addRightSideOnly(questionIndex) {
         left: {
             text: '',
             image: null,
-            index: null // Set index to null for left side
+            index: null 
         },
         right: {
             text: 'ด้านขวา',
@@ -2129,7 +2526,12 @@ function addRightSideOnly(questionIndex) {
 
 function calculateMatchingTotalPoints(question) {
     if (!question.matchingPairs) return 0;
-    return question.matchingPairs.reduce((total, pair) => total + (parseInt(pair.points) || 0), 0);
+    
+    // คำนวณคะแนนรวมเฉพาะคู่ที่มี left text และไม่เป็นค่าว่าง
+    return question.matchingPairs.reduce((total, pair) => {
+        const isValidPair = pair.left && pair.left.text && pair.left.text.trim() !== '';
+        return total + (isValidPair ? (parseInt(pair.points) || 1) : 0);
+    }, 0);
 }
 
 function renderMatchingPairs(question, questionIndex) {
@@ -2144,7 +2546,8 @@ function renderMatchingPairs(question, questionIndex) {
                         ${pair.left ? `
                             <input type="text" class="input-matching" 
                                 value="${pair.left.text}"
-                                onchange="updateMatchingPair(${questionIndex}, ${pairIndex}, 'left')">
+                                onchange="event.preventDefault(); updateMatchingPair(${questionIndex}, ${pairIndex}, 'left')">
+                                    oninput="event.preventDefault(); updateMatchingPair(${questionIndex}, ${pairIndex}, 'left')">
                             ${pair.left.image?.url ? `
                                 <img src="${pair.left.image.url}" class="mt-2" style="max-width: 100px;">
                             ` : ''}
@@ -2223,11 +2626,11 @@ function saveAnswer() {
 
             let sortableInitialized = false; // ตัวแปรเพื่อเช็คว่า Sortable ถูกติดตั้งหรือยัง
 
-            function renderQuestions() {
-                const container = document.getElementById('questionContainer');
-                container.innerHTML = '';
+            function renderQuestions(questionsToRender = questions) {
+    const container = document.getElementById('questionContainer');
+    container.innerHTML = '';
 
-                questions.forEach((question, i) => {
+    questionsToRender.forEach((question, i)  => {
                     const questionDiv = document.createElement('div');
                     questionDiv.className = 'question grab';
                     questionDiv.id = `question_${i}`;
@@ -2240,9 +2643,14 @@ function saveAnswer() {
                      </div>
                     ` + questionDiv.innerHTML;
                  }
-
+                 
+                 if (question.questionType === 'matching') {
+            question.points = calculateMatchingTotalPoints(question);
+        }
 
                     questionDiv.innerHTML = `
+                    <div class="drag-handle d-flex justify-content-center"><i class="bi bi-grip-horizontal"></i>
+                    </div>
             <div class="first">
                 <input class="input-question" type="text" style="width: 60%;" name="questions_${i}" value="${question.questionText}" oninput="changeQuestion(this.value, ${i})">
                 <button type="button" class="btn imagebutton" data-toggle="modal" data-target="#exampleModalLong" onclick="selectedbody('question_${i}')">
@@ -2258,7 +2666,8 @@ function saveAnswer() {
                     <option value="short_answ" ${question.questionType === 'short_answ' ? 'selected' : ''}>เติมคำตอบสั้นๆ</option>
                      <option value="matching" ${question.questionType === 'matching' ? 'selected' : ''}>จับคู่</option>
                 </select>
-            </div>
+                </div>
+           
             <div class="options" id="options_${i}">
                 ${renderOptions(question, i)}
             </div>
@@ -2287,34 +2696,128 @@ function saveAnswer() {
                 calculateTotalPoints();
 
                 if (!sortableInitialized) {
-                    initializeSortable(); // เรียกใช้งาน Sortable แค่ครั้งแรก
-                    sortableInitialized = true; // ทำเครื่องหมายว่าได้ติดตั้ง Sortable แล้ว
+                    initializeSortable();
+                    sortableInitialized = true;
                 }
+                if (localStorage.getItem('isShuffled') === 'true') {
+                    questions = questionsToRender;
+                }
+
+                calculateTotalPoints();
             }
 
+
+
+            let sortableInstance = null;
+
             function initializeSortable() {
-                const container = document.getElementById('questionContainer');
-                Sortable.create(container, {
-                    animation: 150,
-                    onStart: function (evt) {
-                        const draggedItem = evt.item;
-                        draggedItem.classList.add('dragging'); // เพิ่มคลาส dragging
-                        draggedItem.style.zIndex = 1000; // เพิ่ม z-index เพื่อให้แน่ใจว่าคำถามที่ลากอยู่ด้านบน
+    const container = document.getElementById('questionContainer');
+    console.log('Initializing Sortable...'); 
+
+    if (!container) {
+        console.error('Cannot find questionContainer');
+        return;
+    }
+
+    if (sortableInstance) {
+        sortableInstance.destroy();
+    }
+
+    sortableInstance = Sortable.create(container, {
+        animation: 150,
+        handle: '.drag-handle',
+        ghostClass: 'sortable-ghost', // เพิ่มคลาสสำหรับเงา
+        dragClass: 'sortable-drag',   // เพิ่มคลาสสำหรับตัวที่กำลังลาก
+        chosenClass: 'sortable-chosen',
+        forceFallback: true,
+        scroll: true,
+        scrollSensitivity: 30,
+        scrollSpeed: 10,
+        fallbackTolerance: 3,
+
+
+        onStart: function(evt) {
+            console.log('Drag started:', evt.oldIndex);
+            const draggedItem = evt.item;
+            draggedItem.classList.add('dragging');
+        },
+
+        onEnd: async function(evt) {
+            console.log('Drag ended:', evt.oldIndex, '->', evt.newIndex);
+            const draggedItem = evt.item;
+            draggedItem.classList.remove('dragging');
+
+            const oldIndex = evt.oldIndex;
+            const newIndex = evt.newIndex;
+
+            if (oldIndex === newIndex) return;
+
+            // อัพเดตลำดับใน array
+            const movedQuestion = questions.splice(oldIndex, 1)[0];
+            questions.splice(newIndex, 0, movedQuestion);
+
+             // แสดงสถานะกำลังบันทึก
+             const saveStatus = document.getElementById('saveStatus');
+            saveStatus.style.display = 'inline-block';
+            saveStatus.querySelector('.status-text').textContent = 'กำลังบันทึก...';
+            saveStatus.querySelector('i').classList.remove('bi-cloud-check-fill', 'bi-cloud-slash-fill');
+            saveStatus.querySelector('i').classList.add('bi-cloud-arrow-up-fill');
+
+            try {
+                // ดึงข้อมูลที่จำเป็นทั้งหมด
+                const quizName = document.getElementById('editQuizname').textContent;
+                const timeLimit = JSON.parse(document.getElementById('timeLimit').value);
+                const attemptLimit = document.getElementById('attemptLimit').value;
+
+                const response = await fetch('/updateQuiz', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
                     },
-                    onEnd: function (evt) {
-                        const oldIndex = evt.oldIndex;
-                        const newIndex = evt.newIndex;
-                        const movedQuestion = questions.splice(oldIndex, 1)[0];
-                        questions.splice(newIndex, 0, movedQuestion);
-                        renderQuestions();
-                    },
-                    onRemove: function (evt) {
-                        const draggedItem = evt.item;
-                        draggedItem.classList.remove('dragging'); // ลบคลาส dragging
-                        draggedItem.style.zIndex = ''; // รีเซ็ต z-index
-                    }
+                    body: JSON.stringify({
+                        quizId: '<%= quiz._id %>',
+                        quizname: quizName, // เพิ่ม quizname
+                        timeLimit: {  // เพิ่ม timeLimit object
+                            value: timeLimit.value,
+                            display: timeLimit.display
+                        },
+                        attemptLimit: parseInt(attemptLimit),
+                        questions: questions
+                    })
                 });
+
+                const data = await response.json();
+                if (data.success) {
+                    // อัพเดตไอคอนและข้อความเมื่อบันทึกสำเร็จ
+                    saveStatus.querySelector('.status-text').textContent = 'บันทึกแล้ว';
+                    saveStatus.querySelector('i').classList.remove('bi-cloud-arrow-up-fill');
+                    saveStatus.querySelector('i').classList.add('bi-cloud-check-fill');
+                    
+                    // ซ่อนสถานะหลังจาก 2 วินาที
+                    setTimeout(() => {
+                        saveStatus.style.display = 'none';
+                    }, 5000);
+                } else {
+                    throw new Error('Failed to update quiz');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                
+                // แสดงสถานะเมื่อบันทึกไม่สำเร็จ
+                saveStatus.querySelector('.status-text').textContent = 'บันทึกไม่สำเร็จ';
+                saveStatus.querySelector('i').classList.remove('bi-cloud-arrow-up-fill');
+                saveStatus.querySelector('i').classList.add('bi-cloud-slash-fill');
+                
+                // คืนค่าตำแหน่งเดิม
+                questions.splice(newIndex, 1);
+                questions.splice(oldIndex, 0, movedQuestion);
+                renderQuestions();
             }
+        }
+    });
+
+    console.log('Sortable initialized successfully');
+}
 
             function renderOptions(question, questionIndex) {
                 if (question.questionType === 'MCQ' || question.questionType === 'checkbox') {
@@ -2384,12 +2887,15 @@ function saveAnswer() {
             }
 
             document.addEventListener('DOMContentLoaded', () => {
+                console.log('DOM loaded');
                 updateQuestionCount();
                 calculateTotalPoints();
                 updateQuestionPoints
                 renderQuestions();
-
+                initializeSortable();
             });
+
+            
             function showImageButton(questionIndex, optionIndex) {
                 const button = document.getElementById(`imageButton_${questionIndex}_${optionIndex}`);
                 if (button) {

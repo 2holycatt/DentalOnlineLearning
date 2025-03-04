@@ -176,6 +176,64 @@ const colors = [
       border: none;
       border-bottom: 1px solid lightgray;
     }
+    textarea.auto-expand {
+    overflow: hidden !important; /* ปิด scroll ทั้งหมด */
+    resize: none;
+    box-sizing: border-box;
+    min-height: 38px;
+    width: 100%;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 8px 12px;
+    line-height: 1.5;
+    transition: height 0.1s ease-in-out;
+}
+
+/* สำหรับ short answer */
+textarea.short-text-area {
+    width: 50% !important;
+    min-height: 38px;
+}
+
+/* สำหรับ long answer (Paragraph) */
+textarea.long-text-area {
+    width: 90% !important;
+    min-height: 120px;
+}
+
+    textarea.auto-expand:focus {
+        outline: none;
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    textarea {
+    resize: none;
+    overflow-y: auto;
+    caret-color: auto; /* แสดง cursor */
+    cursor: text; /* แสดง cursor แบบ text */
+    text-align: left; /* จัดข้อความชิดซ้าย */
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: .2px;
+    line-height: 20px;
+    flex-shrink: 1;
+    background-color: transparent;
+    border: none;
+    display: block;
+    height: 24px;
+    min-height: 24px;
+    line-height: 24px;
+    margin: 0;
+    outline: none;
+    padding: 0;
+    resize: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    z-index: 0;
+    overflow-y: visible;
+    overflow-x: hidden;
+}
+
 
     .answer_key input {
       width: 10%;
@@ -1381,113 +1439,166 @@ const colors = [
             <span id="all-points-count" class="grey d-none"></span>
           </div>
 
+          <% if (quiz && quiz.questions && quiz.questions.length > 0) { %>
+            <%
+// ฟังก์ชันสำหรับสุ่มลำดับอาร์เรย์
+function shuffleArray(array) {
+for (let i = array.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [array[i], array[j]] = [array[j], array[i]];
+}
+return array;
+}
+
+// สร้าง array ของ index สำหรับคำถาม
+let questionIndexes = Array.from({length: quiz.questions.length}, (_, i) => i);
+
+// ถ้า isShuffled เป็น true ให้สุ่มลำดับคำถาม
+if (quiz.isShuffled) {
+questionIndexes = shuffleArray(questionIndexes);
+}
+%>
           <div class="questionContainer">
-            <% questions.forEach((question, i)=> { %>
-              <div class="question" id="question_<%= i %>">
-                <div class="first">
-                  <div>
-                    <!-- <%= i + 1 %>)  -->
-                    <%= question.questionText %>
-                  </div>
-                  <span class="grey ms-4">
-                    <%= question.points %> คะแนน
-                  </span>
-                </div>
-                <br>
-                <div class="options">
-                  <% if (question.questionType==='MCQ' || question.questionType==='checkbox' ) { %>
-                    <% question.options.forEach((option, j)=> { %>
-                      <div class="form-check" style="display: flex; align-items: center;">
-                        <input class="input_check"
-                          type="<%= question.questionType === 'MCQ' ? 'radio' : 'checkbox' %>" name="Answ_<%= i %>"
-                          value="<%= j %>" >
-                        <div style="flex-grow: 1; padding: 5px;">
-                          <%= option.optionText %>
-                        </div>
-                      </div>
-                      <% }) %>
-                        <% } else if (question.questionType==='Paragraph' ) { %>
-                          <textarea class="form-control mx-4 mt-2" name="answer_<%= i %>" rows="1"
-                            style="width:90%;" readonly></textarea>
-                          <% } else if (question.questionType==='short_answ' ) { %>
-                            <textarea class="form-control ms-4 mt-2" name="answer_<%= i %>" rows="1"
-                              style="width:50%;" readonly></textarea>
-                              <% } else if (question.questionType === 'matching') { %>
-                                <div class="options" data-type="matching">
-                                <div class="matching-container ms-4 mt-3">
-                                  <div class="row position-relative">
-                                    <div class="col-5 left-side">
-                                      <!-- Left side items -->
-                                      <% 
-                              let validItemCount = 0;
-                              // Filter and map valid items
-                              const validLeftItems = question.matchingPairs
-                                .filter(pair => pair.left.text && pair.left.text.trim() !== '')
-                                .map((pair, idx) => ({
-                                  text: pair.left.text,
-                                  image: pair.left.image,
-                                  originalIndex: pair.originalIndex || idx
-                                }));
-                                
-                              // Create shuffled array from validLeftItems
-                              let shuffledLeft = [...validLeftItems].sort(() => Math.random() - 0.5);
-                              
-                              // Render shuffled items
-                              shuffledLeft.forEach((item, idx) => { 
-                              %>
-                                <div class="matching-item mb-3" 
-                                    data-original-index="<%= item.originalIndex %>" 
-                                    data-color="<%= colors[idx % colors.length] %>">
-                                  <div class="form-control d-flex align-items-center" style="width: 100%;">
-                                    <span class="number-badge" style="background-color: <%= colors[idx % colors.length] %>">
-                                      <%= idx + 1 %>
-                                    </span>
-                                    <span><%= item.text %></span>
-                                    <% if (item.image?.url) { %>
-                                      <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
-                                    <% } %>
-                                  </div>
-                                </div>
-                              <% }); %>
-                                    </div>
-                              
-                                    <div class="col-2">
-                                      <div class="matching-lines"></div>
-                                    </div>
-                              
-                                    <div class="col-5 right-side">
-                                      <!-- Right side items -->
-                                      <% const shuffledRight = [...question.matchingPairs].map((pair, idx) => ({
-                                        text: pair.right.text,
-                                        image: pair.right.image,
-                                        originalIndex: idx
-                                      })).sort(() => Math.random() - 0.5) %>
-                              
-                                      <% shuffledRight.forEach((item, idx) => { %>
-                                        <div class="matching-item mb-3" data-original-index="<%= item.originalIndex %>">
-                                          <div class="form-control" style="width: 100%;">
-                                            <%= String.fromCharCode(65 + idx) %>. <%= item.text %>
-                                            <% if (item.image?.url) { %>
-                                              <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
-                                            <% } %>
-                                          </div>
-                                        </div>
-                                      <% }) %>
-                                    </div>
-                                  </div>
-                              
-                                  <!-- Hidden inputs to store answers -->
-                                   
-                                  <input type="hidden" name="matching_answers_<%= i %>">
-                                  <input type="hidden" name="matching_left_order_<%= i %>" value="<%= JSON.stringify(shuffledLeft.map(i => i.originalIndex)) %>">
-                                  <input type="hidden" name="matching_right_order_<%= i %>" value="<%= JSON.stringify(shuffledRight.map(i => i.originalIndex)) %>">
-                                </div>
-                    </div>
-                              <% } %>
-                            </div>
+            <% questionIndexes.forEach((originalIndex, displayIndex) => { 
+              const question = quiz.questions[originalIndex];
+          %>              
+          <div class="question" id="question_<%= displayIndex %>" 
+            data-question-index="<%= displayIndex %>" 
+            data-original-index="<%= originalIndex %>"
+            style="display: none;">
+                                            <div class="first">
+                          <div class="input-question">
+                              <%= question.questionText %>
                           </div>
-                          <% }) %>
+                          <span class="grey ms-4">
+                              <%= question.points %> คะแนน
+                          </span>
+                      </div>
+                      <br>
+                      <div class="options" data-type="<%= question.questionType %>">
+                        <% if (question.questionType === 'MCQ' || question.questionType === 'checkbox') { 
+                          // สร้าง array ของ index สำหรับตัวเลือก
+                          let optionIndexes = Array.from({length: question.options.length}, (_, i) => i);
+                          
+                          // ถ้า isShuffled เป็น true ให้สุ่มลำดับตัวเลือก
+                          if (quiz.isShuffled) {
+                              optionIndexes = shuffleArray(optionIndexes);
+                          }
+                      %>
+                          <% optionIndexes.forEach((optionIndex) => { 
+                              const option = question.options[optionIndex];
+                          %>
+                          <div class="form-check" style="display: flex; align-items: center;">
+                            <input class="input_check"
+                                type="<%= question.questionType === 'MCQ' ? 'radio' : 'checkbox' %>"
+                                name="answers_<%= displayIndex %>" 
+                                value="<%= optionIndex %>"
+                                data-original-index="<%= optionIndex %>"
+                                <%= question.selectedOption === optionIndex ? 'checked' : '' %>>
+                            <div style="flex-grow: 1; padding: 5px;">
+                                <%= option.optionText %>
+                            </div>
+                        </div>
+                                  <% }) %>
+                                      <% } else if (question.questionType==='Paragraph' ) { %>
+                                        <textarea class="form-control auto-expand long-text-area mx-4 mt-2"            
+                                        name="answers[<%= displayIndex %>]"
+                                        rows="5" 
+                                        style="width:90%; resize: none; overflow-y: auto; min-height: 120px;"
+                                        placeholder="พิมพ์คำตอบของคุณที่นี่..."
+                                    ><%= question.answerText || '' %></textarea>
+                                          <% } else if (question.questionType==='short_answ' ) { %>
+                                            <textarea class="form-control auto-expand short-text-area ms-4 mt-2"
+                                            name="answers[<%= displayIndex %>]" 
+                                            rows="1" 
+                                            style="width:50%; resize: none; overflow-y: auto; min-height: 38px;"
+                                            placeholder="พิมพ์คำตอบของคุณที่นี่..."
+                                        ><%= question.answerText || '' %></textarea>
+                              <% } else if (question.questionType === 'matching') { %>
+                                  <div class="options" data-type="matching">
+                                  <div class="matching-container ms-4 mt-3">
+                                    <div class="row position-relative">
+                                      <div class="col-5 left-side">
+                                          <% 
+                                          let validItemCount = 0;
+                                          // Filter and map valid items
+                                          const validLeftItems = question.matchingPairs
+                                            .filter(pair => pair.left.text && pair.left.text.trim() !== '')
+                                            .map((pair, idx) => ({
+                                              text: pair.left.text,
+                                              image: pair.left.image,
+                                              originalIndex: pair.originalIndex || idx
+                                            }));
+                                            
+                                          // Create shuffled array from validLeftItems
+                                          let shuffledLeft = [...validLeftItems].sort(() => Math.random() - 0.5);
+                                          
+                                          // Render shuffled items
+                                          shuffledLeft.forEach((item, idx) => { 
+                                          %>
+                                            <div class="matching-item mb-3" 
+                                                 data-original-index="<%= item.originalIndex %>" 
+                                                 data-color="<%= colors[idx % colors.length] %>">
+                                              <div class="form-control d-flex align-items-center" style="width: 100%;">
+                                                <span class="number-badge" style="background-color: <%= colors[idx % colors.length] %>">
+                                                  <%= idx + 1 %>
+                                                </span>
+                                                <span><%= item.text %></span>
+                                                <% if (item.image?.url) { %>
+                                                  <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
+                                                <% } %>
+                                              </div>
+                                            </div>
+                                          <% }); %>
+                                        </div>
+                                
+                                      <div class="col-2">
+                                        <div class="matching-lines"></div>
+                                      </div>
+                                
+                                      <div class="col-5 right-side">
+                                        <!-- Right side items -->
+                                        <% const shuffledRight = [...question.matchingPairs].map((pair, idx) => ({
+                                          text: pair.right.text,
+                                          image: pair.right.image,
+                                          originalIndex: idx
+                                        })).sort(() => Math.random() - 0.5) %>
+                                
+                                        <% shuffledRight.forEach((item, idx) => { %>
+                                          <div class="matching-item mb-3" data-original-index="<%= item.originalIndex %>">
+                                            <div class="form-control" style="width: 100%;">
+                                              <%= String.fromCharCode(65 + idx) %>. <%= item.text %>
+                                              <% if (item.image?.url) { %>
+                                                <img src="<%= item.image.url %>" class="mt-2" style="max-width: 100px;">
+                                              <% } %>
+                                            </div>
+                                          </div>
+                                        <% }) %>
+                                      </div>
+                                    </div>
+                                
+                                    <!-- Hidden inputs to store answers -->
+                                     
+                                    <input type="hidden" name="matching_answers_<%= displayIndex %>">
+                                    <input type="hidden" 
+                                           name="matching_left_order_<%= displayIndex %>" 
+                                           value="<%= JSON.stringify(shuffledLeft.map(item => item.originalIndex)) %>">
+                                    <input type="hidden" 
+                                           name="matching_right_order_<%= displayIndex %>" 
+                                           value="<%= JSON.stringify(shuffledRight.map(item => item.originalIndex)) %>">
+                                  </div>
+                      </div>
+                                <% } %>
+                                
+                      </div>
                   </div>
+                  <% }) %>
+                  <% } else { %>
+<div class="no-questions">
+<p>ไม่พบข้อมูลคำถาม</p>
+</div>
+<% } %>
+          </div>
 
                   <div class="d-flex" style="padding: 0 2rem;">
 
@@ -1663,768 +1774,827 @@ const colors = [
     <script>
 
 
-      let questions = [
-          {
-              questionText: 'คำถามไม่ระบุชื่อ',
-              options: [{ optionText: 'ตัวเลือก 1' }],
-              questionType: 'MCQ',
-              answer: false,
-              points: 1,
-              open: true
+      let questions = <%- JSON.stringify(questions) %>;
+
+                  const QuizStorage = {
+          // เพิ่มการ debounce เพื่อลดการบันทึกถี่เกินไป
+          debounceTimeout: null,
+      
+          debounce(func, wait = 300) {
+              clearTimeout(this.debounceTimeout);
+              this.debounceTimeout = setTimeout(func, wait);
+          },
+      
+          saveImmediate(quizId, questionIndex, type, value) {
+          try {
+            const key = this.getKey(quizId);
+            let answers = this.getAllAnswers(quizId);
+            
+            // เพิ่มการจัดการสำหรับ matching type
+            if (type === 'matching') {
+              // value ควรเป็น array ของ matches ในรูปแบบ [{leftIndex: number, rightIndex: number}]
+              answers[questionIndex] = {
+                type,
+                value: value.map(match => ({
+                  leftIndex: match.leftIndex,
+                  rightIndex: match.rightIndex
+                })),
+                timestamp: Date.now()
+              };
+            } else {
+              answers[questionIndex] = { type, value, timestamp: Date.now() };
+            }
+            
+            localStorage.setItem(key, JSON.stringify(answers));
+            console.log(`Saved answer for question ${questionIndex}:`, value);
+          } catch (error) {
+            console.error('Error saving answer:', error);
           }
-      ];
-
-
-      //   function renderQuestions() {
-      //     const container = document.getElementById('questionContainer');
-      //     container.innerHTML = '';
-
-      //     questions.forEach((question, i) => {
-      //       const questionDiv = document.createElement('div');
-      //       questionDiv.className = 'question';
-      //       questionDiv.id = `question_${i}`;
-
-      //       questionDiv.innerHTML = `
-      //                 <div class="first">
-      //                   <div class="input-question "  >
-      //     ${question.questionText}
-      // </div> 
-
-
-      //                     <span class="grey  ms-4" >${question.points} คะแนน</span>
-
-      //                 </div>
-      //                 <br>
-
-      //                 <div class="options" id="options_${i}">
-      //                     ${renderOptions(question, i)}
-      //                 </div>
-
-
-
-      //             `;
-
-      //       container.appendChild(questionDiv);
-      //     });
-      //   }
-
-      const QuizStorage = {
-// เพิ่มการ debounce เพื่อลดการบันทึกถี่เกินไป
-debounceTimeout: null,
-
-debounce(func, wait = 300) {
-  clearTimeout(this.debounceTimeout);
-  this.debounceTimeout = setTimeout(func, wait);
-},
-
-saveImmediate(quizId, questionIndex, type, value) {
-try {
-const key = this.getKey(quizId);
-let answers = this.getAllAnswers(quizId);
-
-// เพิ่มการจัดการสำหรับ matching type
-if (type === 'matching') {
-  // value ควรเป็น array ของ matches ในรูปแบบ [{leftIndex: number, rightIndex: number}]
-  answers[questionIndex] = {
-    type,
-    value: value.map(match => ({
-      leftIndex: match.leftIndex,
-      rightIndex: match.rightIndex
-    })),
-    timestamp: Date.now()
-  };
-} else {
-  answers[questionIndex] = { type, value, timestamp: Date.now() };
-}
-
-localStorage.setItem(key, JSON.stringify(answers));
-console.log(`Saved answer for question ${questionIndex}:`, value);
-} catch (error) {
-console.error('Error saving answer:', error);
-}
-},
-
-getAllAnswers(quizId) {
-  return safeLocalStorageOperation(() => {
-      const key = this.getKey(quizId);
-      return JSON.parse(localStorage.getItem(key) || '{}');
-  }) || {};
-},
-
-getKey(quizId) {
-  return `quiz_${quizId}_answers_v2`; // เพิ่ม version เพื่อป้องกันการชนกับข้อมูลเก่า
-}
-};
-
-const matchingStorage = {
-// เก็บ matches ปัจจุบันสำหรับแต่ละคำถาม
-currentMatches: new Map(),
-
-// บันทึก match ใหม่
-saveMatch(questionIndex, leftIndex, rightIndex) {
-const matches = this.currentMatches.get(questionIndex) || [];
-
-// ลบ matches เก่าที่มี leftIndex หรือ rightIndex ซ้ำ
-const filteredMatches = matches.filter(match => 
-match.leftIndex !== leftIndex && match.rightIndex !== rightIndex
-);
-
-// เพิ่ม match ใหม่
-filteredMatches.push({ leftIndex, rightIndex });
-this.currentMatches.set(questionIndex, filteredMatches);
-
-// บันทึกลง localStorage
-QuizStorage.saveImmediate(
-document.getElementById('form').dataset.quizId,
-questionIndex,
-'matching',
-filteredMatches
-);
-},
-
-// โหลด matches จาก localStorage
-loadMatches(questionIndex, answers) {
-if (!answers[questionIndex] || answers[questionIndex].type !== 'matching') return;
-
-const matches = answers[questionIndex].value;
-if (!Array.isArray(matches)) return;
-
-this.currentMatches.set(questionIndex, matches);
-return matches;
-}
-};
-
-function saveAllAnswers() {
-const quizId = document.getElementById('form').dataset.quizId;
-const answers = {};
-
-document.querySelectorAll('.question').forEach((question) => {
-  const questionId = question.id.split('_')[1];
-  if (!questionId) return;
-
-  const optionsDiv = question.querySelector('.options');
-  if (!optionsDiv) return;
-
-  const type = optionsDiv.dataset.type;
-  let value = null;
-
-  try {
-      switch (type) {
-          case 'MCQ':
-              // แก้ไขการเลือก radio button โดยใช้ name ที่ถูกต้อง
-              const radio = question.querySelector(`input[name="answers_${questionId}"]:checked`);
-              value = radio ? radio.value : null;
-              break;
-
-          case 'checkbox':
-              const checked = Array.from(question.querySelectorAll('input[type="checkbox"]:checked'));
-              value = checked.map(cb => cb.value);
-              break;
-
-          case 'Paragraph':
-          case 'short_answ':
-              const textarea = question.querySelector('textarea');
-              value = textarea ? textarea.value.trim() : '';
-              break;
-
-              case 'matching':
-              const matches = matchingAnswers.get(questionId);
-          if (matches) {
-    value = [...matches]; // Create a copy of matches array
-                  } else {
-              console.error(`No matching answers found for question ${questionId}`);
-               }
-           break;
-      }
-
-      answers[questionId] = {
-          type,
-          value,
-          questionIndex: parseInt(questionId)
+        },
+      
+          getAllAnswers(quizId) {
+              return safeLocalStorageOperation(() => {
+                  const key = this.getKey(quizId);
+                  return JSON.parse(localStorage.getItem(key) || '{}');
+              }) || {};
+          },
+      
+          getKey(quizId) {
+              return `quiz_${quizId}_answers_v2`; // เพิ่ม version เพื่อป้องกันการชนกับข้อมูลเก่า
+          }
       };
-
-  } catch (error) {
-      console.error(`Error saving question ${questionId}:`, error);
-  }
-});
-
-try {
-  localStorage.setItem(`quiz_${quizId}_answers`, JSON.stringify(answers));
-  console.log('Saved answers:', answers);
-} catch (error) {
-  console.error('Storage save error:', error);
-}
-}
-
-
-function loadSavedAnswers() {
-const quizId = document.getElementById('form').dataset.quizId;
-try {
-  const saved = localStorage.getItem(`quiz_${quizId}_answers`);
-  if (!saved) return;
-
-  const answers = JSON.parse(saved);
-  console.log('Loading answers:', answers); // Debug log
-
-  // ใช้ Object.entries เพื่อวนลูปผ่านคำตอบที่บันทึกไว้
-  Object.entries(answers).forEach(([index, data]) => {
-      if (!data || !data.type) return;
-
-      // ใช้ ID ในการค้นหา question
-      const question = document.querySelector(`#question_${index}`);
-      if (!question) {
-          console.log(`Question ${index} not found`); // Debug log
-          return;
+      
+      const matchingStorage = {
+        // เก็บ matches ปัจจุบันสำหรับแต่ละคำถาม
+        currentMatches: new Map(),
+      
+        // บันทึก match ใหม่
+        saveMatch(questionIndex, leftIndex, rightIndex) {
+          const matches = this.currentMatches.get(questionIndex) || [];
+          
+          // ลบ matches เก่าที่มี leftIndex หรือ rightIndex ซ้ำ
+          const filteredMatches = matches.filter(match => 
+            match.leftIndex !== leftIndex && match.rightIndex !== rightIndex
+          );
+          
+          // เพิ่ม match ใหม่
+          filteredMatches.push({ leftIndex, rightIndex });
+          this.currentMatches.set(questionIndex, filteredMatches);
+          
+          // บันทึกลง localStorage
+          QuizStorage.saveImmediate(
+            document.getElementById('form').dataset.quizId,
+            questionIndex,
+            'matching',
+            filteredMatches
+          );
+        },
+      
+        // โหลด matches จาก localStorage
+        loadMatches(questionIndex, answers) {
+          if (!answers[questionIndex] || answers[questionIndex].type !== 'matching') return;
+          
+          const matches = answers[questionIndex].value;
+          if (!Array.isArray(matches)) return;
+          
+          this.currentMatches.set(questionIndex, matches);
+          return matches;
+        }
+      };
+      
+      function saveAllAnswers() {
+          const quizId = document.getElementById('form').dataset.quizId;
+          const answers = {};
+      
+          document.querySelectorAll('.question').forEach(questionDiv => {
+              const originalIndex = questionDiv.dataset.originalIndex;
+              if (!originalIndex) return;
+      
+              const optionsDiv = questionDiv.querySelector('.options');
+              if (!optionsDiv) return;
+      
+              const questionType = optionsDiv.dataset.type;
+              let value = null;
+      
+              try {
+                  switch (questionType) {
+                      case 'MCQ':
+                          const radio = questionDiv.querySelector('input[type="radio"]:checked');
+                          if (radio) {
+                              value = radio.dataset.originalIndex;
+                          }
+                          break;
+      
+                      case 'checkbox':
+                          const checked = Array.from(questionDiv.querySelectorAll('input[type="checkbox"]:checked'));
+                          value = checked.map(cb => cb.dataset.originalIndex);
+                          break;
+      
+                      case 'Paragraph':
+                      case 'short_answ':
+                          const textarea = questionDiv.querySelector('textarea');
+                          value = textarea ? textarea.value.trim() : '';
+                          break;
+      
+                      case 'matching':
+                          // ใช้ originalIndex สำหรับ matching pairs
+                          value = Array.from(questionDiv.querySelectorAll('.matching-line')).map(line => ({
+                              left: parseInt(line.dataset.left),
+                              right: parseInt(line.dataset.right)
+                          }));
+                          break;
+                  }
+      
+                  if (value !== null) {
+                      answers[originalIndex] = {
+                          type: questionType,
+                          value: value
+                      };
+                  }
+      
+              } catch (error) {
+                  console.error(`Error saving question ${originalIndex}:`, error);
+              }
+          });
+      
+          try {
+              localStorage.setItem(`quiz_${quizId}_answers_v2`, JSON.stringify(answers));
+          } catch (error) {
+              console.error('Storage save error:', error);
+          }
       }
-
-      try {
-  if (data.type === 'matching' && Array.isArray(data.value)) {
-    // โหลดและวาด matching lines
-    const matches = matchingStorage.loadMatches(index, answers);
-    if (matches) {
-      restoreMatching(index, matches);
-    }
-  }
-          switch (data.type) {
+      
+      function loadSavedAnswers() {
+          const quizId = document.getElementById('form').dataset.quizId;
+          try {
+              const saved = localStorage.getItem(`quiz_${quizId}_answers_v2`);
+              if (!saved) return;
+      
+              const answers = JSON.parse(saved);
+      
+              document.querySelectorAll('.question').forEach(questionDiv => {
+                  // ดึง original index จาก data attribute
+                  const originalIndex = questionDiv.dataset.originalIndex;
+                  if (!originalIndex) return;
+      
+                  // ดึงคำตอบที่บันทึกไว้โดยใช้ original index
+                  const savedAnswer = answers[originalIndex];
+                  if (!savedAnswer) return;
+      
+                  const optionsDiv = questionDiv.querySelector('.options');
+                  const questionType = optionsDiv?.dataset.type;
+      
+                  switch (questionType) {
+                      case 'MCQ':
+                          // หา input radio ที่มี data-original-index ตรงกับคำตอบที่บันทึกไว้
+                          const radio = questionDiv.querySelector(`input[type="radio"][data-original-index="${savedAnswer.value}"]`);
+                          if (radio) radio.checked = true;
+                          break;
+      
+                      case 'checkbox':
+                          if (Array.isArray(savedAnswer.value)) {
+                              savedAnswer.value.forEach(val => {
+                                  const checkbox = questionDiv.querySelector(`input[type="checkbox"][data-original-index="${val}"]`);
+                                  if (checkbox) checkbox.checked = true;
+                              });
+                          }
+                          break;
+      
+                      case 'Paragraph':
+                      case 'short_answ':
+                          const textarea = questionDiv.querySelector('textarea');
+                          if (textarea && savedAnswer.value) {
+                              textarea.value = savedAnswer.value;
+                               adjustHeight(textarea);
+                          }
+                          break;
+      
+                      case 'matching':
+                          if (Array.isArray(savedAnswer.value)) {
+                              restoreMatching(originalIndex, savedAnswer.value);
+                          }
+                          break;
+                  }
+              });
+          } catch (error) {
+              console.error('Error loading answers:', error);
+          }
+      }
+      
+      // Event Listeners
+      document.addEventListener('DOMContentLoaded', () => {
+          loadSavedAnswers();
+          
+          const form = document.getElementById('form');
+          
+          // บันทึกเมื่อมีการเปลี่ยนแปลงค่า
+          form.addEventListener('change', saveAllAnswers);
+          
+          // บันทึกเมื่อพิมพ์ข้อความ
+          form.addEventListener('input', (e) => {
+              if (e.target.matches('textarea')) {
+                  saveAllAnswers();
+              }
+          });
+      });
+      
+      // Override matching functions
+      const originalCreateMatch = window.createMatch;
+      window.createMatch = function(questionIndex, leftItem, rightItem) {
+          try {
+              originalCreateMatch.call(this, questionIndex, leftItem, rightItem);
+              
+              // บันทึก match ใหม่
+              matchingStorage.saveMatch(
+                  questionIndex,
+                  parseInt(leftItem.dataset.originalIndex),
+                  parseInt(rightItem.dataset.originalIndex)
+              );
+      
+              // อัพเดทสีปุ่ม pagination
+              goToQuestion(questionIndex);
+          } catch (error) {
+              console.error('Error in createMatch:', error);
+          }
+      };
+      
+      function restoreMatching(questionIndex, matches) {
+          if (!Array.isArray(matches)) return;
+          
+          const container = document.querySelector(`#question_${questionIndex} .matching-container`);
+          if (!container) return;
+      
+          // Clear existing matches
+          const linesContainer = container.querySelector('.matching-lines');
+          if (linesContainer) linesContainer.innerHTML = '';
+      
+          // Restore matches
+          matches.forEach(match => {
+              const leftItem = container.querySelector(`.left-side .matching-item[data-original-index="${match.left}"]`);
+              const rightItem = container.querySelector(`.right-side .matching-item[data-original-index="${match.right}"]`);
+              
+              if (leftItem && rightItem) {
+                  leftItem.classList.add('matched');
+                  rightItem.classList.add('matched');
+                  drawMatchingLine(leftItem, rightItem);
+              }
+          });
+      }
+      
+                 
+      
+                 
+      
+                  function updateQuestionCount() {
+                      const questionCountElement = document.getElementById('question-count');
+                      questionCountElement.innerHTML = ` ${questions.length} คำถาม`;
+                  }
+      
+                  questions.forEach(question => {
+                      if (question.questionType === 'checkbox' && !Array.isArray(question.answer)) {
+                          question.answer = [];
+                      }
+                  });
+      
+                  function calculateTotalPoints() {
+                      const totalPoints = questions.reduce((sum, question) => sum + question.points, 0);
+                      document.getElementById('all-points-count').innerText = `( ${totalPoints} คะแนน)`;
+                  }
+                  function updateQuestionPoints(index, newPoints) {
+                      // ปรับคะแนนในอาร์เรย์ questions
+                      questions[index].points = Number(newPoints);
+                      // คำนวณคะแนนรวมใหม่
+                      calculateTotalPoints();
+                  }
+                  document.addEventListener('DOMContentLoaded', () => {
+                      updateQuestionCount();
+                      calculateTotalPoints();
+                      updateQuestionPoints
+                  });
+      
+      
+                  function goToResultPage(quizId) {
+      
+                      window.location.href = `/studentIndex/eachQuiz?quizId=${quizId}`;
+                  }
+      
+                  function confirmSubmitQuiz(quizId) {
+                      console.log("Quiz ID being submitted:", quizId); // ตรวจสอบว่า quizId มีค่าถูกต้อง
+                      const unansweredQuestions = [];
+                      document.querySelectorAll('.question').forEach((question, index) => {
+                       if (index === 0) return; // ข้ามส่วนหัวของแบบทดสอบ
+              
+                       const questionType = question.querySelector('input[type="radio"]') ? 'MCQ' : 
+                                 question.querySelector('input[type="checkbox"]') ? 'checkbox' : 
+                                 question.querySelector('textarea') ? 'text' : null;
+                                 
+                      const isAnswered = questionType === 'MCQ' ? question.querySelector('input[type="radio"]:checked') :
+                                questionType === 'checkbox' ? question.querySelector('input[type="checkbox"]:checked') :
+                                questionType === 'text' ? question.querySelector('textarea').value.trim() !== '' : 
+                                false;
+                                
+                      if (!isAnswered) {
+                       unansweredQuestions.push(index);
+              }
+          });
+      
+          const confirmMessage = unansweredQuestions.length > 0 ? 
+              `คุณยังไม่ได้ตอบคำถามข้อที่: ${unansweredQuestions.join(', ')}<br>ต้องการส่งแบบทดสอบหรือไม่?` :
+              'คุณต้องการส่งแบบทดสอบนี้หรือไม่?';
+      
+      
+                      Swal.fire({
+                          title: 'คุณแน่ใจหรือไม่?',
+                          html: "คุณต้องการส่งแบบทดสอบนี้หรือไม่?<br>โปรดตรวจสอบว่าคุณกรอกคำตอบแล้วทุกข้อ",
+                          icon: 'warning',
+                          showCancelButton: true,
+                          confirmButtonColor: '#3085d6',
+                          cancelButtonColor: '#d33',
+                          confirmButtonText: 'ใช่, ส่งเลย!',
+                          cancelButtonText: 'ยกเลิก'
+                      }).then((result) => {
+                          if (result.isConfirmed) {
+                              submitQuiz(quizId);
+          }
+        });
+      }
+      
+      async function submitQuiz(quizId) {
+          try {
+              // รวบรวมคำตอบ
+              const answers = {};
+              document.querySelectorAll('.question').forEach((questionDiv, index) => {
+                  if (index === 0) return; // ข้ามส่วนหัวของแบบทดสอบ
+                  
+                  const questionId = questionDiv.id.split('_')[1];
+                  const questionType = questionDiv.querySelector('input[type="radio"]') ? 'MCQ' : 
+                         questionDiv.querySelector('input[type="checkbox"]') ? 'checkbox' : 
+                         questionDiv.querySelector('.matching-container') ? 'matching' :
+                         questionDiv.querySelector('textarea.short-answer') ? 'short_answ' :
+                         questionDiv.querySelector('textarea') ? 'Paragraph' : null;
+      
+                  if (questionType === 'MCQ') {
+                      const selectedOption = questionDiv.querySelector('input[type="radio"]:checked');
+                      answers[questionId] = selectedOption ? selectedOption.value : null;
+                  } else if (questionType === 'checkbox') {
+                      const selectedOptions = Array.from(questionDiv.querySelectorAll('input[type="checkbox"]:checked'))
+                          .map(input => input.value);
+                      answers[questionId] = selectedOptions;
+                  } else if (questionType === 'text') {
+                      const textArea = questionDiv.querySelector('textarea');
+                      answers[questionId] = textArea ? textArea.value.trim() : null;
+                  } else if (questionType === 'matching') {
+          // Get matching pairs data
+          const matchingAnswers = [];
+          const matchingRows = questionDiv.querySelectorAll('.matching-row');
+          
+          matchingRows.forEach(row => {
+              const leftIndex = parseInt(row.getAttribute('data-left-index'));
+              const rightSelect = row.querySelector('select');
+              
+              if (rightSelect && rightSelect.value) {
+                  const rightIndex = parseInt(rightSelect.value);
+                  matchingAnswers.push({
+                      leftIndex,
+                      rightIndex
+                  });
+              }
+          });
+          
+          answers[questionId] = matchingAnswers;
+      }
+              });
+      
+              // ส่งคำตอบไปยังเซิร์ฟเวอร์
+              const response = await fetch(`/studentIndex/submitQuiz/${quizId}`, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ quizId, answers })
+              });
+      
+              const result = await response.json();
+      
+              if (result.success) {
+                  try {
+                      // ลบข้อมูลแบบทดสอบนี้
+                      localStorage.removeItem(`quiz_${quizId}_answers`);
+                      localStorage.removeItem(`quiz_${quizId}_answers_v2`);
+                      
+                      // ลบข้อมูล matching answers ถ้ามี
+                      localStorage.removeItem(`quiz_${quizId}_matching`);
+                      
+                      // Clear matching answers from memory
+                      matchingAnswers.clear();
+                      
+                      console.log('Cleared quiz data from localStorage');
+                  } catch (err) {
+                      console.error('Error clearing localStorage:', err);
+                  }
+      
+                  Swal.fire({
+                      title: 'ส่งแบบทดสอบสำเร็จ!',
+                      text: `คะแนนของคุณคือ ${result.score}`,
+                      icon: 'success'
+                  }).then(() => {
+                      window.location.href = `/studentIndex/eachQuiz?quizId=${quizId}`;
+                  });
+              } else {
+                  throw new Error(result.message);
+              }
+      
+          } catch (error) {
+              Swal.fire({
+                  title: 'เกิดข้อผิดพลาด!',
+                  text: error.message || 'ไม่สามารถส่งแบบทดสอบได้',
+                  icon: 'error'
+              });
+          }
+      }     
+      
+      function checkQuestionAnswered(questionDiv) {
+          const questionType = questionDiv.querySelector('.options').dataset.type;
+          
+          switch (questionType) {
               case 'MCQ':
-                  if (data.value !== null) {
-                      const radio = question.querySelector(`input[value="${data.value}"]`);
-                      if (radio) radio.checked = true;
-                  }
-                  break;
-
+                  return !!questionDiv.querySelector('input[type="radio"]:checked');
               case 'checkbox':
-                  if (Array.isArray(data.value)) {
-                      data.value.forEach(val => {
-                          const checkbox = question.querySelector(`input[value="${val}"]`);
-                          if (checkbox) checkbox.checked = true;
-                      });
-                  }
-                  break;
-
+                  return !!questionDiv.querySelector('input[type="checkbox"]:checked');
               case 'Paragraph':
               case 'short_answ':
-                  const textarea = question.querySelector('textarea');
-                  if (textarea && data.value) textarea.value = data.value;
-                  break;
-
-                  case 'matching':
-              const matches = matchingAnswers.get(questionId);
-                           if (matches) {
-                               value = [...matches]; // Create a copy of matches array
-                   } else {
-                   console.error(`No matching answers found for question ${questionId}`);
-                  }
-                   break;
+                  const textarea = questionDiv.querySelector('textarea');
+                  return textarea && textarea.value.trim() !== '';
+              case 'matching':
+                  const questionIndex = questionDiv.id.split('_')[1];
+                  const matches = matchingAnswers.get(questionIndex);
+                  return matches && matches.length > 0;
+              default:
+                  return false;
           }
-      } catch (error) {
-          console.error(`Error loading question ${index}:`, error);
       }
-  });
-} catch (error) {
-  console.error('Error loading answers:', error);
-}
-}
-
-
-// Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-loadSavedAnswers();
-
-const form = document.getElementById('form');
-
-// บันทึกเมื่อมีการเปลี่ยนแปลงค่า
-form.addEventListener('change', saveAllAnswers);
-
-// บันทึกเมื่อพิมพ์ข้อความ
-form.addEventListener('input', (e) => {
-  if (e.target.matches('textarea')) {
-      saveAllAnswers();
-  }
-});
-});
-
-// Override matching functions
-const originalCreateMatch = window.createMatch;
-window.createMatch = function(questionIndex, leftItem, rightItem) {
-try {
-originalCreateMatch.call(this, questionIndex, leftItem, rightItem);
-
-// บันทึก match ใหม่
-matchingStorage.saveMatch(
-questionIndex,
-parseInt(leftItem.dataset.originalIndex),
-parseInt(rightItem.dataset.originalIndex)
-);
-} catch (error) {
-console.error('Error in createMatch:', error);
-}
-};
-
-function restoreMatching(questionIndex, matches) {
-if (!Array.isArray(matches)) return;
-
-const container = document.querySelector(`#question_${questionIndex} .matching-container`);
-if (!container) return;
-
-// Clear existing matches
-const linesContainer = container.querySelector('.matching-lines');
-if (linesContainer) linesContainer.innerHTML = '';
-
-// Restore matches
-matches.forEach(match => {
-  const leftItem = container.querySelector(`.left-side .matching-item[data-original-index="${match.left}"]`);
-  const rightItem = container.querySelector(`.right-side .matching-item[data-original-index="${match.right}"]`);
-  
-  if (leftItem && rightItem) {
-      leftItem.classList.add('matched');
-      rightItem.classList.add('matched');
-      drawMatchingLine(leftItem, rightItem);
-  }
-});
-}
-
-      document.addEventListener('DOMContentLoaded', () => {
-          renderQuestions();
-      });
-
-     
-
-      function updateQuestionCount() {
-          const questionCountElement = document.getElementById('question-count');
-          questionCountElement.innerHTML = ` ${questions.length} คำถาม`;
-      }
-
-      questions.forEach(question => {
-          if (question.questionType === 'checkbox' && !Array.isArray(question.answer)) {
-              question.answer = [];
-          }
-      });
-
-      function calculateTotalPoints() {
-          const totalPoints = questions.reduce((sum, question) => sum + question.points, 0);
-          document.getElementById('all-points-count').innerText = `( ${totalPoints} คะแนน)`;
-      }
-      function updateQuestionPoints(index, newPoints) {
-          // ปรับคะแนนในอาร์เรย์ questions
-          questions[index].points = Number(newPoints);
-          // คำนวณคะแนนรวมใหม่
-          calculateTotalPoints();
-      }
-      document.addEventListener('DOMContentLoaded', () => {
-          updateQuestionCount();
-          calculateTotalPoints();
-          updateQuestionPoints
-          renderQuestions();
-      });
-
-
-      function goToResultPage(quizId) {
-
-          window.location.href = `/studentIndex/eachQuiz?quizId=${quizId}`;
-      }
-
-      function confirmSubmitQuiz(quizId) {
-          console.log("Quiz ID being submitted:", quizId); // ตรวจสอบว่า quizId มีค่าถูกต้อง
-          const unansweredQuestions = [];
-          document.querySelectorAll('.question').forEach((question, index) => {
-           if (index === 0) return; // ข้ามส่วนหัวของแบบทดสอบ
-  
-           const questionType = question.querySelector('input[type="radio"]') ? 'MCQ' : 
-                     question.querySelector('input[type="checkbox"]') ? 'checkbox' : 
-                     question.querySelector('textarea') ? 'text' : null;
-                     
-          const isAnswered = questionType === 'MCQ' ? question.querySelector('input[type="radio"]:checked') :
-                    questionType === 'checkbox' ? question.querySelector('input[type="checkbox"]:checked') :
-                    questionType === 'text' ? question.querySelector('textarea').value.trim() !== '' : 
-                    false;
-                    
-          if (!isAnswered) {
-           unansweredQuestions.push(index);
-  }
-});
-
-const confirmMessage = unansweredQuestions.length > 0 ? 
-  `คุณยังไม่ได้ตอบคำถามข้อที่: ${unansweredQuestions.join(', ')}<br>ต้องการส่งแบบทดสอบหรือไม่?` :
-  'คุณต้องการส่งแบบทดสอบนี้หรือไม่?';
-
-
-          Swal.fire({
-              title: 'คุณแน่ใจหรือไม่?',
-              html: "คุณต้องการส่งแบบทดสอบนี้หรือไม่?<br>โปรดตรวจสอบว่าคุณกรอกคำตอบแล้วทุกข้อ",
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'ใช่, ส่งเลย!',
-              cancelButtonText: 'ยกเลิก'
-          }).then((result) => {
-              if (result.isConfirmed) {
-                  submitQuiz(quizId);
-}
-});
-}
-
-async function submitQuiz(quizId) {
-try {
-  // รวบรวมคำตอบ
-  const answers = {};
-  document.querySelectorAll('.question').forEach((questionDiv, index) => {
-      if (index === 0) return; // ข้ามส่วนหัวของแบบทดสอบ
       
-      const questionId = questionDiv.id.split('_')[1];
-      const questionType = questionDiv.querySelector('input[type="radio"]') ? 'MCQ' : 
-                         questionDiv.querySelector('input[type="checkbox"]') ? 'checkbox' : 
-                         questionDiv.querySelector('textarea') ? 'text' : null;
-
-      if (questionType === 'MCQ') {
-          const selectedOption = questionDiv.querySelector('input[type="radio"]:checked');
-          answers[questionId] = selectedOption ? selectedOption.value : null;
-      } else if (questionType === 'checkbox') {
-          const selectedOptions = Array.from(questionDiv.querySelectorAll('input[type="checkbox"]:checked'))
-              .map(input => input.value);
-          answers[questionId] = selectedOptions;
-      } else if (questionType === 'text') {
-          const textArea = questionDiv.querySelector('textarea');
-          answers[questionId] = textArea ? textArea.value.trim() : null;
+      
+      function goToQuestion(index) {
+          // ซ่อนคำถามทั้งหมด
+          document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
+          
+          // แสดงคำถามที่ถูกเลือก
+          document.getElementById('question_' + index).style.display = 'block';
+          
+          // ดึงข้อมูลคำตอบจาก localStorage
+          const quizId = document.getElementById('form').dataset.quizId;
+          const savedAnswers = safeLocalStorageOperation(() => {
+              return JSON.parse(localStorage.getItem(`quiz_${quizId}_answers_v2`)) || {};
+          });
+      
+          // อัปเดตสถานะปุ่มทั้งหมด
+          document.querySelectorAll('.pagination-btn').forEach(btn => {
+              if (btn.classList.contains('chevron')) return;
+      
+              const btnIndex = parseInt(btn.textContent) - 1;
+              // หา question div ที่สอดคล้องกับปุ่ม
+              const questionDiv = document.querySelector(`.question[data-question-index="${btnIndex}"]`);
+              if (!questionDiv) return;
+      
+              // ดึง originalIndex จาก question div
+              const originalIndex = questionDiv.dataset.originalIndex;
+              const answer = savedAnswers[originalIndex];
+              
+              // เช็คว่ามีคำตอบหรือไม่
+              const hasAnswer = answer && answer.value && (
+                  (answer.type === 'MCQ' && answer.value !== null) ||
+                  (answer.type === 'checkbox' && Array.isArray(answer.value) && answer.value.length > 0) ||
+                  (answer.type === 'matching' && Array.isArray(answer.value) && answer.value.length > 0) ||
+                  ((answer.type === 'Paragraph' || answer.type === 'short_answ') && answer.value.trim() !== '')
+              );
+      
+              if (parseInt(index) === btnIndex) {
+                  // ข้อที่กำลังดูอยู่
+                  btn.style.backgroundColor = '#8A2BE2'; // สีม่วงเข้ม
+                  btn.style.color = 'white';
+              } else if (hasAnswer) {
+                  // ข้อที่มีคำตอบแล้ว
+                  btn.style.backgroundColor = '#c3a2e2'; // สีม่วงอ่อน
+                  btn.style.color = 'white';
+              } else {
+                  // ข้อที่ยังไม่ได้ตอบ
+                  btn.style.backgroundColor = '#D9D9D9'; // สีเทา
+                  btn.style.color = 'black';
+              }
+          });
+      
+          // อัปเดต URL โดยไม่ต้อง refresh หน้า
+          const url = new URL(window.location.href);
+          url.searchParams.set('question', index);
+          window.history.pushState({}, '', url);
       }
-  });
-
-  // ส่งคำตอบไปยังเซิร์ฟเวอร์
-  const response = await fetch(`/studentIndex/submitQuiz/${quizId}`, {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ quizId, answers })
-  });
-
-  const result = await response.json();
-
-  if (result.success) {
-      Swal.fire({
-          title: 'ส่งแบบทดสอบสำเร็จ!',
-          text: `คะแนนของคุณคือ ${result.score}`,
-          icon: 'success'
-      }).then(() => {
-          window.location.href = `/studentIndex/eachQuiz?quizId=${quizId}`;
+      
+      // เพิ่ม Event Listener สำหรับการบันทึกคำตอบและอัปเดตสี pagination
+      document.addEventListener('change', function(e) {
+          if (e.target.matches('input[type="radio"], input[type="checkbox"], textarea')) {
+              const questionDiv = e.target.closest('.question');
+              if (!questionDiv) return;
+      
+              // บันทึกคำตอบ
+              saveAllAnswers();
+      
+              // อัปเดตสีปุ่ม pagination
+              const index = questionDiv.dataset.questionIndex;
+              goToQuestion(index);
+          }
       });
-  } else {
-      throw new Error(result.message);
-  }
+      
+      
+      
+      // เรียกใช้ตอนโหลดหน้า
+      document.addEventListener('DOMContentLoaded', () => {
+          goToQuestion(0);
+          loadSavedAnswers();
+      });
+      
+                  goToQuestion(0);
+                  let selectedItem = null;
+                  const matchingAnswers = new Map();
+      
+      function initializeMatching() {
+          matchingAnswers.clear();
+          document.querySelectorAll('.matching-container').forEach(container => {
+              const linesContainer = container.querySelector('.matching-lines');
+              linesContainer.innerHTML = '';
+          });
+      }
+      
+      function handleMatchingClick(item) {
+          const questionIndex = item.closest('.question').id.split('_')[1];
+          
+          if (selectedItem === item) {
+              item.classList.remove('selected');
+              selectedItem = null;
+              return;
+          }
+      
+          if (!selectedItem) {
+              selectedItem = item;
+              item.classList.add('selected');
+          } else {
+              const firstSide = selectedItem.closest('.col-5');
+              const secondSide = item.closest('.col-5');
+      
+              if (firstSide !== secondSide) {
+                  createMatch(
+                      questionIndex,
+                      firstSide.classList.contains('left-side') ? selectedItem : item,
+                      firstSide.classList.contains('left-side') ? item : selectedItem
+                  );
+              }
+      
+              selectedItem.classList.remove('selected');
+              item.classList.remove('selected');
+              selectedItem = null;
+          }
+      }
+      
+      function debounce(func, wait) {
+          let timeout;
+          return function executedFunction(...args) {
+              const later = () => {
+                  clearTimeout(timeout);
+                  func(...args);
+              };
+              clearTimeout(timeout);
+              timeout = setTimeout(later, wait);
+          };
+      }
+      
+      function redrawAllLines() {
+          document.querySelectorAll('.matching-container').forEach(container => {
+              const questionIndex = container.closest('.question').id.split('_')[1];
+              const lines = container.querySelector('.matching-lines');
+              const matches = matchingAnswers.get(questionIndex) || [];
+              
+              // Clear existing lines
+              lines.innerHTML = '';
+              
+              // Redraw each match
+              matches.forEach(match => {
+                  const leftItem = container.querySelector(`.left-side .matching-item[data-original-index="${match.left}"]`);
+                  const rightItem = container.querySelector(`.right-side .matching-item[data-original-index="${match.right}"]`);
+                  if (leftItem && rightItem) {
+                      drawMatchingLine(leftItem, rightItem);
+                  }
+              });
+          });
+      }
+      
+      
+      const debouncedRedraw = debounce(redrawAllLines, 150);
+      window.addEventListener('resize', debouncedRedraw);
+      function createMatch(questionIndex, leftItem, rightItem) {
+          // Remove any existing matches for these items
+          removeExistingMatches(questionIndex, leftItem, rightItem);
+      
+          // Create new match
+          const match = {
+              left: parseInt(leftItem.dataset.originalIndex),
+              right: parseInt(rightItem.dataset.originalIndex) 
+          };
+      
+          // Store in matchingAnswers map
+          if (!matchingAnswers.has(questionIndex)) {
+              matchingAnswers.set(questionIndex, []);
+          }
+          matchingAnswers.get(questionIndex).push(match);
+      
+          // Update UI
+          leftItem.classList.add('matched');
+          rightItem.classList.add('matched');
+          drawMatchingLine(leftItem, rightItem);
+      
+          // Save to localStorage immediately
+          saveAllAnswers();
+      }
+      
+      function drawMatchingLine(leftItem, rightItem) {
+          const container = leftItem.closest('.matching-container');
+          const linesContainer = container.querySelector('.matching-lines');
+          const line = document.createElement('div');
+          line.className = 'matching-line';
+      
+          const leftRect = leftItem.getBoundingClientRect();
+          const rightRect = rightItem.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
+      
+          const startX = leftRect.right - containerRect.left;
+          const startY = leftRect.top + (leftRect.height / 2) - containerRect.top;
+          const endX = rightRect.left - containerRect.left;
+          const endY = rightRect.top + (rightRect.height / 2) - containerRect.top;
+      
+          const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+          const angle = Math.atan2(endY - startY, endX - startX);
+      
+          const color = leftItem.dataset.color;
+      
+          Object.assign(line.style, {
+              backgroundColor: color,
+              width: `${length}px`,
+              left: `${startX}px`,
+              top: `${startY}px`,
+              transform: `rotate(${angle}rad)`,
+              position: 'absolute'
+          });
+      
+          line.dataset.left = leftItem.dataset.originalIndex;
+          line.dataset.right = rightItem.dataset.originalIndex;
+      
+          linesContainer.appendChild(line);
+      }
+      
+      function removeExistingMatches(questionIndex, leftItem, rightItem) {
+          if (!matchingAnswers.has(questionIndex)) return;
+      
+          const matches = matchingAnswers.get(questionIndex);
+          const leftIndex = parseInt(leftItem.dataset.originalIndex);
+          const rightIndex = parseInt(rightItem.dataset.originalIndex);
+      
+          const container = leftItem.closest('.matching-container');
+          container.querySelectorAll(`.matching-line[data-left="${leftIndex}"], .matching-line[data-right="${rightIndex}"]`)
+              .forEach(line => line.remove());
+      
+          container.querySelectorAll('.matching-item').forEach(item => {
+              if (parseInt(item.dataset.originalIndex) === leftIndex || 
+                  parseInt(item.dataset.originalIndex) === rightIndex) {
+                  item.classList.remove('matched');
+              }
+          });
+      
+          matchingAnswers.set(questionIndex, 
+              matches.filter(match => match.left !== leftIndex && match.right !== rightIndex)
+          );
+      }
+      
+      function updateMatchingAnswers(questionIndex) {
+          const input = document.querySelector(`input[name="matching_answers_${questionIndex}"]`);
+          if (input) {
+              input.value = JSON.stringify(matchingAnswers.get(questionIndex) || []);
+          }
+      }
+      
+      
+      
+      // Initialize when page loads
+      document.addEventListener('DOMContentLoaded', () => {
+          initializeMatching();
+          
+          document.querySelectorAll('.matching-item').forEach(item => {
+              item.addEventListener('click', () => handleMatchingClick(item));
+          });
+      });
+      
+      window.onerror = function(msg, url, line) {
+          console.error(`Error: ${msg}\nURL: ${url}\nLine: ${line}`);
+          return false;
+      };
+      
+      function logStorageError(e) {
+          console.error('LocalStorage Error:', e);
+      }
+      
+      // Wrap localStorage operations in try-catch
+      function safeLocalStorageOperation(operation) {
+          try {
+              return operation();
+          } catch (e) {
+              logStorageError(e);
+              return null;
+          }
+      }
 
-} catch (error) {
-  Swal.fire({
-      title: 'เกิดข้อผิดพลาด!',
-      text: error.message || 'ไม่สามารถส่งแบบทดสอบได้',
-      icon: 'error'
-  });
-}
-}     
-
-function goToQuestion(index) {
-    // ซ่อนคำถามทั้งหมด
-    document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
+      function adjustHeight(textarea) {
+    // รีเซ็ตความสูงก่อน
+    textarea.style.height = '0px';
     
-    // แสดงคำถามที่ถูกเลือก
-    document.getElementById('question_' + index).style.display = 'block';
+    // ดึงค่าความสูงขั้นต่ำตามประเภท textarea
+    const minHeight = textarea.classList.contains('short-text-area') ? 38 : 120;
     
-    // ดึงข้อมูลคำตอบจาก localStorage
+    // ดึงค่าความสูงที่บันทึกไว้จาก localStorage
     const quizId = document.getElementById('form').dataset.quizId;
-    const savedAnswers = safeLocalStorageOperation(() => {
-        return JSON.parse(localStorage.getItem(`quiz_${quizId}_answers`)) || {};
-    });
+    const textareaId = textarea.name;
+    const savedHeightKey = `textarea_height_${quizId}_${textareaId}`;
+    const savedHeight = parseInt(localStorage.getItem(savedHeightKey)) || minHeight;
+    
+    // คำนวณความสูงที่ต้องการ
+    const scrollHeight = textarea.scrollHeight;
+    const currentContent = textarea.value;
+    
+    if (!currentContent) {
+        textarea.style.height = `${minHeight}px`;
+        localStorage.removeItem(savedHeightKey);
+    } else {
+        // ใช้ความสูงที่มากที่สุดระหว่าง minHeight, scrollHeight และ savedHeight
+        const newHeight = Math.max(scrollHeight, minHeight, savedHeight);
+        textarea.style.height = `${newHeight}px`;
+        // บันทึกความสูงลง localStorage
+        localStorage.setItem(savedHeightKey, newHeight);
+    }
+}
 
-    // อัพเดทสถานะปุ่มทั้งหมด
-    document.querySelectorAll('.pagination-btn').forEach(btn => {
-        if (btn.classList.contains('chevron')) return;
+      document.addEventListener('DOMContentLoaded', () => {
+    const autoExpandTextareas = document.querySelectorAll('textarea.auto-expand');
+    
+    autoExpandTextareas.forEach(textarea => {
+        // ปรับความสูงเมื่อพิมพ์
+        textarea.addEventListener('input', function() {
+            adjustHeight(this);
+        });
 
-        const btnIndex = parseInt(btn.textContent) - 1;
-        const answer = savedAnswers[btnIndex];
-        
-        // เช็คว่ามีคำตอบหรือไม่
-        const hasAnswer = answer && answer.value && (
-            (answer.type === 'MCQ' && answer.value !== null) ||
-            (answer.type === 'checkbox' && Array.isArray(answer.value) && answer.value.length > 0) ||
-            (answer.type === 'matching' && Array.isArray(answer.value) && answer.value.length > 0) ||
-            ((answer.type === 'Paragraph' || answer.type === 'short_answ') && answer.value.trim() !== '')
-        );
+        // ปรับความสูงเมื่อกด Enter
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                setTimeout(() => adjustHeight(this), 0);
+            }
+        });
 
-        if (parseInt(index) === btnIndex) {
-            // ข้อที่กำลังดูอยู่
-            btn.style.backgroundColor = '#8A2BE2'; // สีม่วงเข้ม
-            btn.style.color = 'white';
-        } else if (hasAnswer) {
-            // ข้อที่มีคำตอบแล้ว
-            btn.style.backgroundColor = '#c3a2e2'; // สีม่วงอ่อน
-            btn.style.color = 'white';
-        } else {
-            // ข้อที่ยังไม่ได้ตอบ
-            btn.style.backgroundColor = '#D9D9D9'; // สีเทา
-            btn.style.color = 'black';
+        // ปรับความสูงเมื่อลบข้อความ
+        textarea.addEventListener('keyup', function(e) {
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                adjustHeight(this);
+            }
+        });
+
+        // ปรับความสูงเมื่อวางข้อความ
+        textarea.addEventListener('paste', function() {
+            setTimeout(() => adjustHeight(this), 0);
+        });
+
+        // ปรับความสูงเริ่มต้นถ้ามีข้อความ
+        if (textarea.value) {
+            adjustHeight(textarea);
         }
     });
-}
+    
+    // เพิ่ม MutationObserver เพื่อตรวจจับการเปลี่ยนแปลงของเนื้อหา
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'characterData' || mutation.type === 'childList') {
+                const textarea = mutation.target.closest('textarea');
+                if (textarea && textarea.classList.contains('auto-expand')) {
+                    adjustHeight(textarea);
+                }
+            }
+        });
+    });
 
-      goToQuestion(0);
-
-      // let currentPage = 0;
-      // const questionsPerPage = 10;
-      // const totalPages = Math.ceil(questions.length / questionsPerPage);
-
-      // function goToQuestion(index) {
-      //     document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
-      //     document.getElementById('question_' + index).style.display = 'block';
-      // }
-
-      // function updatePagination() {
-      //     const paginationContainer = document.querySelector('.pagination');
-      //     paginationContainer.innerHTML = '';
-
-      //     // Add left chevron
-      //     const leftChevron = document.createElement('button');
-      //     leftChevron.type = 'button';
-      //     leftChevron.className = 'pagination-btn chevron';
-      //     leftChevron.innerHTML = '<i class="bi bi-chevron-left"></i>';
-      //     leftChevron.onclick = prevPage;
-      //     paginationContainer.appendChild(leftChevron);
-
-      //     // Add page numbers
-      //     const start = currentPage * questionsPerPage;
-      //     const end = Math.min(start + questionsPerPage, questions.length);
-      //     for (let i = start; i < end; i++) {
-      //         const btn = document.createElement('button');
-      //         btn.type = 'button';
-      //         btn.className = `pagination-btn ${questions[i].isAnswered ? 'answered' : ''}`;
-      //         btn.innerHTML = '' + (i + 1);
-      //         btn.onclick = () => goToQuestion(i);
-      //         paginationContainer.appendChild(btn);
-      //     }
-
-      //     // Add right chevron
-      //     const rightChevron = document.createElement('button');
-      //     rightChevron.type = 'button';
-      //     rightChevron.className = 'pagination-btn chevron';
-      //     rightChevron.innerHTML = '<i class="bi bi-chevron-right"></i>';
-      //     rightChevron.onclick = nextPage;
-      //     paginationContainer.appendChild(rightChevron);
-      // }
-
-      // function prevPage() {
-      //     if (currentPage > 0) {
-      //         currentPage--;
-      //         updatePagination();
-      //     }
-      // }
-
-      // function nextPage() {
-      //     if (currentPage < totalPages - 1) {
-      //         currentPage++;
-      //         updatePagination();
-      //     }
-      // }
-
-      // // Initialize pagination
-      // updatePagination();
-      // goToQuestion(0);
-
-      let selectedItem = null;
-const matchingAnswers = new Map();
-
-function initializeMatching() {
-matchingAnswers.clear();
-document.querySelectorAll('.matching-container').forEach(container => {
-  const linesContainer = container.querySelector('.matching-lines');
-  linesContainer.innerHTML = '';
+    // เริ่มสังเกตการณ์การเปลี่ยนแปลง
+    autoExpandTextareas.forEach(textarea => {
+        observer.observe(textarea, {
+            childList: true,
+            characterData: true,
+            subtree: true
+        });
+    });
 });
-}
-
-function handleMatchingClick(item) {
-const questionIndex = item.closest('.question').id.split('_')[1];
-
-if (selectedItem === item) {
-  item.classList.remove('selected');
-  selectedItem = null;
-  return;
-}
-
-if (!selectedItem) {
-  selectedItem = item;
-  item.classList.add('selected');
-} else {
-  const firstSide = selectedItem.closest('.col-5');
-  const secondSide = item.closest('.col-5');
-
-  if (firstSide !== secondSide) {
-      createMatch(
-          questionIndex,
-          firstSide.classList.contains('left-side') ? selectedItem : item,
-          firstSide.classList.contains('left-side') ? item : selectedItem
-      );
-  }
-
-  selectedItem.classList.remove('selected');
-  item.classList.remove('selected');
-  selectedItem = null;
-}
-}
-
-function debounce(func, wait) {
-let timeout;
-return function executedFunction(...args) {
-  const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-  };
-  clearTimeout(timeout);
-  timeout = setTimeout(later, wait);
-};
-}
-
-function redrawAllLines() {
-document.querySelectorAll('.matching-container').forEach(container => {
-  const questionIndex = container.closest('.question').id.split('_')[1];
-  const lines = container.querySelector('.matching-lines');
-  const matches = matchingAnswers.get(questionIndex) || [];
-  
-  // Clear existing lines
-  lines.innerHTML = '';
-  
-  // Redraw each match
-  matches.forEach(match => {
-      const leftItem = container.querySelector(`.left-side .matching-item[data-original-index="${match.left}"]`);
-      const rightItem = container.querySelector(`.right-side .matching-item[data-original-index="${match.right}"]`);
-      if (leftItem && rightItem) {
-          drawMatchingLine(leftItem, rightItem);
-      }
-  });
-});
-}
-
-
-const debouncedRedraw = debounce(redrawAllLines, 150);
-window.addEventListener('resize', debouncedRedraw);
-function createMatch(questionIndex, leftItem, rightItem) {
-// Remove any existing matches for these items
-removeExistingMatches(questionIndex, leftItem, rightItem);
-
-// Create new match
-const match = {
-  left: parseInt(leftItem.dataset.originalIndex),
-  right: parseInt(rightItem.dataset.originalIndex) 
-};
-
-// Store in matchingAnswers map
-if (!matchingAnswers.has(questionIndex)) {
-  matchingAnswers.set(questionIndex, []);
-}
-matchingAnswers.get(questionIndex).push(match);
-
-// Update UI
-leftItem.classList.add('matched');
-rightItem.classList.add('matched');
-drawMatchingLine(leftItem, rightItem);
-
-// Save to localStorage immediately
-saveAllAnswers();
-}
-
-function drawMatchingLine(leftItem, rightItem) {
-const container = leftItem.closest('.matching-container');
-const linesContainer = container.querySelector('.matching-lines');
-const line = document.createElement('div');
-line.className = 'matching-line';
-
-const leftRect = leftItem.getBoundingClientRect();
-const rightRect = rightItem.getBoundingClientRect();
-const containerRect = container.getBoundingClientRect();
-
-const startX = leftRect.right - containerRect.left;
-const startY = leftRect.top + (leftRect.height / 2) - containerRect.top;
-const endX = rightRect.left - containerRect.left;
-const endY = rightRect.top + (rightRect.height / 2) - containerRect.top;
-
-const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-const angle = Math.atan2(endY - startY, endX - startX);
-
-const color = leftItem.dataset.color;
-
-Object.assign(line.style, {
-  backgroundColor: color,
-  width: `${length}px`,
-  left: `${startX}px`,
-  top: `${startY}px`,
-  transform: `rotate(${angle}rad)`,
-  position: 'absolute'
-});
-
-line.dataset.left = leftItem.dataset.originalIndex;
-line.dataset.right = rightItem.dataset.originalIndex;
-
-linesContainer.appendChild(line);
-}
-
-function removeExistingMatches(questionIndex, leftItem, rightItem) {
-if (!matchingAnswers.has(questionIndex)) return;
-
-const matches = matchingAnswers.get(questionIndex);
-const leftIndex = parseInt(leftItem.dataset.originalIndex);
-const rightIndex = parseInt(rightItem.dataset.originalIndex);
-
-const container = leftItem.closest('.matching-container');
-container.querySelectorAll(`.matching-line[data-left="${leftIndex}"], .matching-line[data-right="${rightIndex}"]`)
-  .forEach(line => line.remove());
-
-container.querySelectorAll('.matching-item').forEach(item => {
-  if (parseInt(item.dataset.originalIndex) === leftIndex || 
-      parseInt(item.dataset.originalIndex) === rightIndex) {
-      item.classList.remove('matched');
-  }
-});
-
-matchingAnswers.set(questionIndex, 
-  matches.filter(match => match.left !== leftIndex && match.right !== rightIndex)
-);
-}
-
-function updateMatchingAnswers(questionIndex) {
-const input = document.querySelector(`input[name="matching_answers_${questionIndex}"]`);
-if (input) {
-  input.value = JSON.stringify(matchingAnswers.get(questionIndex) || []);
-}
-}
-
-
-
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', () => {
-initializeMatching();
-
-document.querySelectorAll('.matching-item').forEach(item => {
-  item.addEventListener('click', () => handleMatchingClick(item));
-});
-});
-
-window.onerror = function(msg, url, line) {
-console.error(`Error: ${msg}\nURL: ${url}\nLine: ${line}`);
-return false;
-};
-
-function logStorageError(e) {
-console.error('LocalStorage Error:', e);
-}
-
-// Wrap localStorage operations in try-catch
-function safeLocalStorageOperation(operation) {
-try {
-  return operation();
-} catch (e) {
-  logStorageError(e);
-  return null;
-}
-}
-
-  </script>
+              </script>
     <button id="backToEditBtn" onclick="goToEditPage()">🖉</button>
 
 </body>

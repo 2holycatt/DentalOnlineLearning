@@ -12,6 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 
   <link rel="stylesheet" href="sweetalert2.min.css">
 
@@ -799,6 +800,7 @@
         border: none !important;
 
       }
+  
 
       .text-areas-indent {
         text-indent: 2em;
@@ -1283,14 +1285,12 @@
         color: #ba55d3 !important;
       }
 
-    .form-control{
-      border: none;
-    }
 
       .matching-pairs-container {
   border-radius: 8px;
   padding: 15px;
 }
+
 
 .matching-pair .form-control {
   background: white;
@@ -1302,6 +1302,28 @@
   border: none;
   cursor: default;
 }
+
+    .bi-check2 {
+            color: greenyellow !important;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            visibility: visible;
+    }
+
+    .d-none {
+        display: none !important;
+    }
+
+    .form-check {
+        position: relative;
+        padding-right: 30px; /* ให้มีพื้นที่สำหรับไอคอน */
+    }
+
+    .matching-pair .right-side,
+    .matching-pair .left-side {
+        transition: background-color 0.3s ease;
+        border-radius: 4px;
+    }
       @media screen and (max-width: 768px) {
         .above-nav-status {
           display: none;
@@ -1337,7 +1359,7 @@
             <div class="manange-bar p-4 bg-white w-100">
               
               <div class="fw-normal fs-6  ms-2"> 
-                <span><i class="bi bi-card-checklist me-2" style="color: #8A2BE2;"></i> </span>
+                <span><i class="bi bi-card-checklist me-2 purple" ></i> </span>
                 <a class="link" href="/eachSubject?subjectDbId=<%=subject._id%>">
                 <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%></a> 
              
@@ -1498,14 +1520,23 @@
             <br>
             <% if (quiz.questions.length> 0) { %>
 
-              <div style="margin: 1.2rem !important;">
-                <span id="question-count" class="me-2 fs-5">
+              <div style="margin: 1.2rem !important;" class="d-flex align-items-center justify-content-between">
+                <div>
+                  <span id="question-count" class="me-2 fs-5">
                   <%= questions.length %> ข้อ
                 </span>
                 <span id="all-points-count" class="grey">
                   (<%= questions.reduce((total, question)=> total + question.points, 0) %> คะแนน)
                 </span>
               </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input me-1" type="checkbox" role="switch" 
+                       id="showAnswers" onchange="toggleShowAnswers(this)">
+                <label class="form-check-label grey" for="showAnswers">
+                    แสดงเฉลย
+                </label>
+            </div>
+        </div>
 
               <div class="questionContainer">
                 <% questions.forEach((question, i)=> { %>
@@ -1526,27 +1557,44 @@
                             <input class="input_check"
                               type="<%= question.questionType === 'MCQ' ? 'radio' : 'checkbox' %>" name="Answ_<%= i %>"
                               value="<%= j %>" disabled>
-                            <div style="flex-grow: 1; padding: 5px;">
-                              <%= option.optionText %>
+                              <div style="flex-grow: 1; padding: 5px; display: flex; justify-content: space-between; align-items: center;">
+                                <span><%= option.optionText %></span>
+                                <i class="bi bi-check2 d-none" style="color: #28a745; margin-left: 10px;"></i>
                             </div>
                           </div>
                           <% }) %>
                             <% } else if (question.questionType==='Paragraph' ) { %>
-                              <textarea class="form-control mx-4 mt-2" name="answer_<%= i %>" rows="1"
-                                style="width:90%;" readonly></textarea>
+                              <textarea class="form-control ps-2 py-1 me-4 mt-2" name="answer_<%= i %>" rows="1"
+                                style="width:90%;resize: none; overflow-y: auto;color: gray;" readonly>ข้อความคำตอบแบบยาว</textarea>
                               <% } else if (question.questionType==='short_answ' ) { %>
-                                <textarea class="form-control ms-4 mt-2" name="answer_<%= i %>" rows="1"
-                                  style="width:50%;" readonly></textarea>
-                                
+                                <div>
+                                  <textarea class="form-control ps-2 py-1 me-4 mt-2" name="answer_<%= i %>" rows="1" style="width:50%;resize: none; overflow-y: auto;color: gray;" readonly>ข้อความคำตอบสั้นๆ</textarea>
+                                  <div class="mt-2 answer-text" style="display: none;">
+                                      <span class="grey">คำตอบที่ถูกต้อง: </span>
+                                      <% if (question.answerTexts && question.answerTexts.length > 0) { %>
+                                          <span style="color: #28a745;"><%= question.answerTexts.join(', ') %></span>
+                                      <% } else { %>
+                                          <span class="grey">ยังไม่ได้กำหนดคำตอบ</span>
+                                      <% } %>
+                                  </div>
+                              </div>
+                              
                     <% } else if (question.questionType==='matching' ) { %>
                       <div class="matching-pairs-container ms-2 mt-1">
-                        <% question.matchingPairs.forEach((pair, pairIndex) => { %>
+                        <% 
+                        let validPairCount = 0;
+                        question.matchingPairs.forEach((pair, pairIndex) => { 
+                          const hasLeftText = pair.left && pair.left.text && pair.left.text.trim() !== '';
+                          if (hasLeftText) {
+                            validPairCount++;
+                          }
+                        %>                        
                           <div class="matching-pair d-flex align-items-center mb-3">
                             <div class="pair-number me-2" style="min-width: 30px;">
-                              <%= pairIndex + 1 %>.
+                              <%= hasLeftText ? validPairCount + '.' : '' %>
                             </div>
                             <div class="left-side ">
-                              <div class="form-control" style="min-width: 200px;">
+                              <div class="" style="min-width: 200px;">
                                 <%= pair.left.text %>
                               </div>
                               <% if (pair.left.image?.url) { %>
@@ -1554,7 +1602,7 @@
                               <% } %>
                             </div>
                             <div class="right-side">
-                              <div class="form-control" style="min-width: 200px;">
+                              <div class="" style="min-width: 200px;">
                                 <%= pair.right.text %>
                               </div>
                               <% if (pair.right.image?.url) { %>
@@ -1589,6 +1637,10 @@
 
     </div>
     <%- include("./partials/footer.ejs")%>
+    <script>
+      // แปลงข้อมูลคำถามและคำตอบเป็น JavaScript object
+      window.questions = <%- JSON.stringify(questions) %>;
+  </script>
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       
       <script>
@@ -1959,6 +2011,62 @@
           calculateTotalPoints();
         }
 
+        function toggleShowAnswers(checkbox) {
+    const questions = document.querySelectorAll('.question');
+    
+    questions.forEach((questionDiv, questionIndex) => {
+        const question = window.questions[questionIndex];
+        
+        if (question.questionType === 'MCQ' || question.questionType === 'checkbox') {
+            const options = questionDiv.querySelectorAll('.form-check');
+            
+            options.forEach((option, optionIndex) => {
+                const checkIcon = option.querySelector('.bi-check2');
+                const input = option.querySelector('input');
+                
+                if (checkbox.checked) {
+                    if (question.questionType === 'MCQ') {
+                        if (optionIndex === parseInt(question.answer)) {
+                            checkIcon.classList.remove('d-none');
+                            input.checked = true;
+                        }
+                    } else if (question.questionType === 'checkbox' && 
+                             Array.isArray(question.answer)) {
+                        if (question.answer.includes(optionIndex)) {
+                            checkIcon.classList.remove('d-none');
+                            input.checked = true;
+                        }
+                    }
+                } else {
+                    checkIcon.classList.add('d-none');
+                    input.checked = false;
+                }
+            });
+        } else if (question.questionType === 'short_answ') {
+            // จัดการแสดงคำตอบสำหรับ short answer
+            const answerText = questionDiv.querySelector('.answer-text');
+            if (answerText) {
+                answerText.style.display = checkbox.checked ? 'block' : 'none';
+            }
+          }
+    });
+
+    // บันทึกสถานะใน localStorage
+    localStorage.setItem('showAnswers', checkbox.checked);
+}
+
+// เพิ่ม event listener เมื่อโหลดหน้า
+document.addEventListener('DOMContentLoaded', () => {
+    const showAnswersCheckbox = document.getElementById('showAnswers');
+    if (showAnswersCheckbox) {
+        // โหลดสถานะจาก localStorage
+        const showAnswers = localStorage.getItem('showAnswers') === 'true';
+        showAnswersCheckbox.checked = showAnswers;
+        if (showAnswers) {
+            toggleShowAnswers(showAnswersCheckbox);
+        }
+    }
+});
 
       </script>
 

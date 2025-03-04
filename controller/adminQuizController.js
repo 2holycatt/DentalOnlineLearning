@@ -413,6 +413,7 @@ exports.eachQuiz = async (req, res) => {
   try {
     let quizId = req.query.quizId;
     // ตรวจสอบว่ามี '/edit' หรือไม่
+    const studentDbId = req.query.studentDbId;
 
     const student = await Student.findOne({ user: req.session.userId });
 
@@ -438,7 +439,7 @@ exports.eachQuiz = async (req, res) => {
       quizId = quizId.split('/preview')[0]; // แยก '/preview' ออก
     }
 
-    const isResultDetailPage = quizId.includes('/rdetail');
+    const isResultDetailPage = req.query.rdetail === 'true';
     if (isResultDetailPage) {
       quizId = quizId.split('/rdetail')[0]; // แยก '/resultDetail' ออก
     }
@@ -456,7 +457,82 @@ exports.eachQuiz = async (req, res) => {
     if (isEditPage && req.xhr) { // เช็คว่าเป็นการร้องขอผ่าน AJAX หรือไม่
       return res.json({ success: true, questions: quiz.questions });
     }
+    if (isResultDetailPage && studentDbId) {
+      const studentAttempt = quiz.attempts.find(attempt => 
+        attempt.studentDbId.toString() === studentDbId
+      );
 
+      if (!studentAttempt) {
+        return res.status(404).send("Student attempt not found");
+      }
+
+      const student = await Student.findById(studentDbId).populate('user');
+      if (!student) {
+        return res.status(404).send("Student not found");
+      }
+
+      // Find best attempt
+      const bestAttempt = studentAttempt.eachAttempt.reduce((best, current) => {
+        return (!best || current.totalScore > best.totalScore) ? current : best;
+      }, null);
+
+      const userData = await User.findById(req.session.userId);
+      const quizzes = await Quiz.find().sort({ createdAt: 1 }).exec();
+      const subject = quiz.subject.subjectMongooseId;
+      const questions = quiz.questions;
+      const options = quiz.questions.options;
+      const releaseWhenLocal = quiz.releaseWhen ? moment.utc(quiz.releaseWhen).format('DD/MM/YYYY, เวลา HH:mm') : null;
+      const deadlineLocal = quiz.deadline ? moment.utc(quiz.deadline).format('DD/MM/YYYY, เวลา HH:mm') : null;
+  
+      const timeLimitMilliseconds = quiz.timeLimit.value * 1000; // แปลงเป็น milliseconds
+      const timeLimitFormatted = formatTime(timeLimitMilliseconds);
+  
+      function formatTime(milliseconds) {
+        const totalSeconds = Math.floor(milliseconds / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+  
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }
+  
+      console.log("Release When (local):", releaseWhenLocal);
+      console.log("Deadline (local):", deadlineLocal);
+  
+      const theme = req.session.theme || 'light';
+      const isSidebarOpen = false;
+  
+      const userRole = userData.role; 
+      const totalPoints = quiz.questions.reduce((total, question) => total + question.points, 0);
+  
+
+
+      // Render result detail page
+      return res.render("quiz_resultDetail", {
+        mytitle: "Quiz Result Detail",
+          quiz,
+          quizzes,
+          questions: quiz.questions,
+          options,
+          userData,
+          subject,
+          releaseWhenLocal,
+          deadlineLocal,
+          timeLimitMilliseconds,
+          timeLimitFormatted,
+          totalPoints, 
+          student,
+          studentAttempt,
+          bestAttempt,
+          studentDbId: studentAttempt, // Pass the student attempt data
+          studentScore: studentAttempt.eachAttempt[0].totalScore, // Get the score from the first attempt
+          attemptCount: studentAttempt.eachAttempt.length,
+          percentage: (bestAttempt.totalScore / totalPoints) * 100,
+          theme,
+          isSidebarOpen,
+          navSubjects
+      });
+    }
 
     const userData = await User.findById(req.session.userId);
     const quizzes = await Quiz.find().sort({ createdAt: 1 }).exec();
@@ -492,7 +568,6 @@ exports.eachQuiz = async (req, res) => {
     let attemptCount = 0;
     let highestScore = 0;
     let canAttempt = true;
-    let bestAttempt = null;
 
 
     if (userRole === 'student') {
@@ -548,6 +623,30 @@ exports.eachQuiz = async (req, res) => {
 
         });
       } else if (isViewPage) {
+        const shouldShuffle = req.query.shuffle === 'true';
+            let questionsToShow = [...quiz.questions];
+            
+            if (shouldShuffle) {
+                // Shuffle questions and their options
+                questionsToShow = questionsToShow
+                    .map(q => ({...q, sort: Math.random()}))
+                    .sort((a, b) => a.sort - b.sort)
+                    .map(q => {
+                        if (q.options) {
+                            q.options = q.options
+                                .map(opt => ({...opt, sort: Math.random()}))
+                                .sort((a, b) => a.sort - b.sort);
+                        }
+                        if (q.matchingPairs) {
+                            q.matchingPairs = q.matchingPairs
+                                .map(pair => ({...pair, sort: Math.random()}))
+                                .sort((a, b) => a.sort - b.sort);
+                        }
+                        delete q.sort;
+                        return q;
+                    });
+            }
+            
         res.render("quiz_preview_test", {
           mytitle: "viewEachQuiz",
           quiz,
@@ -562,7 +661,9 @@ exports.eachQuiz = async (req, res) => {
           timeLimitFormatted,
           theme,
           isSidebarOpen,
-          navSubjects
+          navSubjects,
+          questions: questionsToShow,
+          isShuffled: shouldShuffle
         });
       } else if (isResponsePage) {
         res.render("quiz_response", {
@@ -585,7 +686,17 @@ exports.eachQuiz = async (req, res) => {
           isSidebarOpen,
           navSubjects
         });
-      } else if (isResultDetailPage) { // เพิ่มเงื่อนไขสำหรับ render หน้า rdetail
+      } else if (isResultDetailPage) {
+        const studentDbId = req.query.studentDbId;
+  
+  
+  const studentAttempt = quiz.attempts.find(
+    attempt => attempt.studentDbId.toString() === studentDbId
+  );
+
+  if (!studentAttempt) {
+    return res.status(404).send("Student attempt not found");
+  } 
         res.render("quiz_resultDetailResponse", {
           mytitle: "Quiz Result Detail Response",
           quiz,
@@ -599,9 +710,12 @@ exports.eachQuiz = async (req, res) => {
           timeLimitMilliseconds,
           timeLimitFormatted,
           totalPoints,
-          studentScore,
-          attemptCount,
-          percentage: (studentScore / totalPoints) * 100,
+          studentAttempt,
+          bestAttempt,
+          studentDbId: studentAttempt, // Pass the student attempt data
+          studentScore: studentAttempt.eachAttempt[0].totalScore, // Get the score from the first attempt
+          attemptCount: studentAttempt.eachAttempt.length,
+          percentage: (studentAttempt.eachAttempt[0].totalScore / totalPoints) * 100,
           theme,
           isSidebarOpen,
           navSubjects
@@ -618,7 +732,6 @@ exports.eachQuiz = async (req, res) => {
           releaseWhenLocal,
           deadlineLocal,
           theme,
-          bestAttempt,
           isSidebarOpen,
           navSubjects
         });
@@ -993,9 +1106,43 @@ exports.uploadQuestionImage = async (req, res) => {
   }
 };
 
+exports.updateQuizShuffleState = async (req, res) => {
+  try {
+      const { quizId, isShuffled } = req.body;
+      
+      // ตรวจสอบความถูกต้องของ quizId
+      if (!mongoose.Types.ObjectId.isValid(quizId)) {
+          return res.status(400).json({
+              success: false,
+              message: 'รหัสแบบทดสอบไม่ถูกต้อง'
+          });
+      }
 
+      // ค้นหาและอัพเดทแบบทดสอบ
+      const quiz = await Quiz.findById(quizId);
+      if (!quiz) {
+          return res.status(404).json({
+              success: false,
+              message: 'ไม่พบแบบทดสอบ'
+          });
+      }
 
+      // อัพเดทสถานะ isShuffled
+      quiz.isShuffled = isShuffled;
+      await quiz.save();
 
+      // ส่งการตอบกลับ
+      res.json({
+          success: true,
+          message: 'อัพเดทสถานะการสุ่มคำถามเรียบร้อยแล้ว',
+          isShuffled: quiz.isShuffled
+      });
 
-
-
+  } catch (error) {
+      console.error('Error updating shuffle state:', error);
+      res.status(500).json({
+          success: false,
+          message: 'เกิดข้อผิดพลาดในการอัพเดทสถานะการสุ่มคำถาม'
+      });
+  }
+};
