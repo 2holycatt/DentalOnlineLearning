@@ -221,7 +221,7 @@
     }
 
     .lesson-bar {
-      border-left: 0.25em solid #007bff !important;
+      border-left: 0.25em solid #8A2BE2 !important;
       padding-left: 0.5em !important;
       margin-right: 0.5em !important;
 
@@ -327,12 +327,73 @@
     .set-bg {
       border-radius: 0.5em;
     }
+    .dark .above-nav-status {
+        background-color: var(--secondary-color) !important;
+        border-right: 1px solid #494949;
+      }
+
+      .status-a {
+        color: #404258 !important;
+      }
+
+      .list-lesson-p {
+        color: #8A2BE2;
+      }
+
+      .list-lesson-p-span {
+        color: #4B0082;
+      }
+
+      .each-lesson {
+        border-top: 0.1em solid #8A2BE2;
+      }
+
+      .aside-right {
+        background-color: var(--bg-color) !important;
+        height: 100%;
+      }
+
+      .manange-bar {
+        border-radius: 0.5em;
+        justify-content: space-between !important;
+
+      }
+
+      .add-button {
+        border-radius: 0.5em !important;
+        height: auto !important;
+      }
+
+      .lesson-content {
+        height: fit-content !important;
+        border-radius: 1em !important;
+        justify-content: center !important;
+      }
+
+      .dark .manange-bar,
+      .dark .lesson-content {
+        background-color: var(--secondary-color) !important;
+      }
+
+      .lesson-nothing {
+        margin: 25% 0 !important;
+        padding: 0 !important;
+      }
+
+      .each-lesson-a {
+        text-decoration: none !important;
+      }
+
+      .each-lesson-a:hover .each-lesson {
+        border-left: 0.2em solid #8A2BE2 !important;
+      }
+      
   </style>
 
 </head>
 
 <body>
-  <%- include("./partials/nav.ejs")%>
+  <%- include("./partials/nav2.ejs")%>
   <!-- <div class="above-nav d-flex px-4 py-3">
     <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
       <i class="bi bi-house mx-2"></i>
@@ -396,8 +457,11 @@
           <div class="col-4 p-2 set-bg">
             <div class="row">
               <div class="col-12 img-square">
-                <img class="shadow-sm" src="<%=findStudent.user.img%>" alt="รูปโปรไฟล์">
-              </div>
+                <% if(findStudent.user.img) { %>
+                  <img class="shadow-sm" src="/uploads/<%=findStudent.user.img%>" alt="รูปโปรไฟล์">
+                <% } else { %>
+                  <img class="shadow-sm" src="/images/default-profile.png" alt="รูปโปรไฟล์">
+                <% } %>              </div>
               <div class="col-12">
                 <p class="fw-bold fs-4 text-center mt-2"><%=findStudent.user.name%></p>
                 <p class="fw-bold text-center text-primary"><%=findStudent.studentId%></p>

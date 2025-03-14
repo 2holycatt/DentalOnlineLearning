@@ -30,9 +30,9 @@
 
         .switch_theme {
             position: relative;
-            width: 60px;
+            width: 45px;
             /* กำหนดความกว้างของ switch */
-            height: 30px;
+            height: 20px;
             /* กำหนดความสูงของ switch */
             display: inline-block;
             background-color: var(--dark);
@@ -51,13 +51,14 @@
 
         .switch_theme .slider {
             position: absolute;
-            top: 0;
+            top: -2px;
             left: 0;
             right: 0;
             bottom: 0;
             background-color: var(--dark);
             border-radius: 50px;
             transition: 0.3s;
+            
         }
 
         .switch_theme .slider::before {
@@ -65,9 +66,9 @@
             /* ไอคอนพระอาทิตย์ (FontAwesome) */
             font-family: "FontAwesome";
             position: absolute;
-            top: 3px;
+            top: -1px;
             /* ปรับตำแหน่งด้านบน */
-            left: 3px;
+            left: 0px;
             /* ปรับตำแหน่งด้านซ้าย */
             width: 24px;
             /* ขนาดของไอคอน */
@@ -167,6 +168,17 @@
              left: 70%;
              display: none;
 }
+.dropdown-toggle::after {
+    display: none; /* ซ่อน dropdown arrow เดิม */
+}
+
+.bi-chevron-down {
+    transition: transform 0.3s;
+}
+
+.show .bi-chevron-down {
+    transform: rotate(180deg); /* หมุนไอคอนเมื่อเปิด dropdown */
+}
 .grey {
         color: gray ;
       }
@@ -220,16 +232,17 @@
                                 รายวิชาทั้งหมด
                             </a>
                         </li>
-                        <a class="dropdown-item dropdown-toggle d-flex justify-content-between align-items-center grey" 
+                        <a class="dropdown-item dropdown-toggle d-flex justify-content-between align-items-center a-li" 
                         href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                          รายวิชา
-                        
+                         <i class="bi bi-chevron-down"></i>
+
                      </a>
                      <ul class="dropdown-menu dropdown-submenu">
                          <% if (typeof navSubjects !== 'undefined' && navSubjects.length > 0) { %>
                              <% navSubjects.forEach(subject => { %>
                                  <li>
-                                     <a class="dropdown-item p-1" href="/eachSubject?subjectDbId=<%= subject._id %>">
+                                     <a class="dropdown-item p-1 a-li" href="/eachSubject?subjectDbId=<%= subject._id %>">
                                          <%= subject.subjectId %> <%= subject.subjectName %> 
                                          <%= subject.semester %> กลุ่มที่: <%= subject.section %>
                                      </a>
@@ -258,6 +271,9 @@
                         <li class="drop-li my-1"><a class="a-li" href="/adminIndex/setPermission">การกำหนดสิทธิ์</a></li>
                     </ul>
                 </li>
+                <li class="a-li d-flex">
+                    <a href="#" class="a-li" >แบบจำลอง 3D</a>
+                 </li>
                 <% if (hasUnread) { %>
                     <li id="teacherNotification" class="li-a a-li">
                       <a href="/adminIndex/teacherNotification" class="a-li bell-animatio"><span class="text-success"></spanc>
@@ -270,9 +286,7 @@
                       
                     </li>
                     <% } %>
-                    <li class="a-li d-flex">
-                        <a href="#" class="a-li purple" >แบบจำลอง 3D</a>
-                     </li>
+                  
             </ul>
            
         </div>
@@ -291,14 +305,14 @@
 
         <div class="header_right">
             <!-- Theme Toggle Switch -->
-            <label class="switch_theme">
+            <label class="switch_theme ">
                 <input type="checkbox" class="theme_toggle" onchange="toggleTheme()" <%=theme==='dark' ? 'checked' : ''
                     %>>
                 <span class="slider round"></span>
             </label>
 
             <!-- Profile Button -->
-            <button onclick="toggleMenu()" class="profile_button">
+            <button onclick="toggleMenu()" class="profile_button ms-3 me-2 ">
                 <img src="/<%= userData.img %>" alt="Profile Image" class="profile-icon mx-4 my-3"
                     style="height: 40px;">
             </button>

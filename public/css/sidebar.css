@@ -1,7 +1,41 @@
 /* Sidebar.css */
 
 /* พื้นฐานของ Sidebar */
+.dropdown-toggle::after {
+    display: none; /* ซ่อน dropdown arrow เดิม */
+}
 
+.bi-chevron-down {
+    transition: transform 0.3s ease;
+    margin-left: auto;
+}
+.menu-header.active .bi-chevron-down {
+    transform: rotate(180deg);
+}
+.menu-content {
+    display: none;
+    padding-left: 1rem;
+}
+.show .bi-chevron-down {
+    transform: rotate(180deg); /* หมุนไอคอนเมื่อเปิด dropdown */
+}
+.a-li {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    text-decoration: none;
+    color: gray;
+    transition: 0.3s;
+}
+.dark .a-li {
+    color: lightgray;
+}
+
+.a-li:hover {
+    color: #8A2BE2 !important;
+}
 .sidebar {
     position: fixed;
     top: 0;
@@ -103,9 +137,9 @@ body.dark .sidebar .sidebar_nav li a:hover {
 
 .switch_theme_sidebar {
     position: relative;
-    width: 60px;
+    width: 45px;
     /* กำหนดความกว้างของ switch */
-    height: 30px;
+    height: 20px;
     /* กำหนดความสูงของ switch */
     display: inline-block;
     background-color: var(--dark);
@@ -138,9 +172,9 @@ body.dark .sidebar .sidebar_nav li a:hover {
     /* ไอคอนพระอาทิตย์ (FontAwesome) */
     font-family: "FontAwesome";
     position: absolute;
-    top: 3px;
+    top: -2px;
     /* ปรับตำแหน่งด้านบน */
-    left: 3px;
+    left: 0px;
     /* ปรับตำแหน่งด้านซ้าย */
     width: 24px;
     /* ขนาดของไอคอน */
@@ -309,7 +343,10 @@ body.dark .icon-dark {
     color: #8A2BE2 !important;
     transition: 0.3s;
 }
-
+.submenu {
+    list-style: none;
+    padding-left: 1rem;
+}
 .submenu .a:hover {
     color: #8A2BE2 !important;
     transition: 0.3s;

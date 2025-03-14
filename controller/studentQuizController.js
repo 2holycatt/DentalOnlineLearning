@@ -18,7 +18,7 @@ const Subject = require("../models/subjects");
 exports.submitQuiz = async (req, res) => {
     try {
         console.log('Received request body:', req.body);
-        const { quizId, answers } = req.body;
+        const { quizId, answers, duration } = req.body;
 
         if (!answers || !Array.isArray(answers) || answers.length === 0) {
             return res.status(400).json({
@@ -155,7 +155,9 @@ exports.submitQuiz = async (req, res) => {
         answers: attemptAnswers,
         totalScore: totalScore,
         attemptNumber: existingAttempt.eachAttempt.length + 1,
-        submittedAt: new Date()
+        submittedAt: new Date(),
+        duration: duration // เพิ่มบันทึกเวลาที่ใช้
+
     });
 } else  {
     // Create new attempt with required fields
@@ -168,7 +170,8 @@ exports.submitQuiz = async (req, res) => {
             answers: attemptAnswers,
             totalScore: totalScore,
             attemptNumber: 1,
-            submittedAt: new Date()
+            submittedAt: new Date(),
+            duration: duration
         }]
     };
     console.log('New attempt data:', newAttempt);

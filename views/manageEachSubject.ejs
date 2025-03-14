@@ -683,13 +683,13 @@
               <div class="col-12 mt-2 row">
                 <div class="col">
                   <p class="fw-bold fs-6 my-1">
-                    <i class="bi bi-book-half text-primary me-1"></i>
+                    <i class="bi bi-book-half purple me-1"></i>
                     บทเรียน
                     <span class="text-secondary fw-normal">
                       /
                     </span>
                     จำนวน:
-                    <span class="text-primary fw-normal">
+                    <span class="purple fw-normal">
                       <%=subject.lessonArray.length%>
                     </span>
                   </p>
@@ -768,13 +768,13 @@
               <div class="col-12 mt-2 row">
                 <div class="col">
                   <p class="fw-bold fs-6 my-1">
-                    <i class="bi-3 bi-card-checklist me-1 text-primary"></i>
+                    <i class="bi-3 bi-card-checklist me-1 purple"></i>
                     แบบทดสอบ
                     <span class="text-secondary fw-normal">
                       /
                     </span>
                     จำนวน:
-                    <span class="text-primary fw-normal">
+                    <span class="purple fw-normal">
                       <%= subject.quizArray ? subject.quizArray.length : 0 %>
                     </span>
                   </p>
@@ -870,13 +870,13 @@
               <div class="col-12 mt-2 row">
                 <div class="col">
                   <p class="fw-bold fs-6 my-1">
-                    <i class="me-1 bi-2 bi bi-list-task text-primary"></i>
+                    <i class="me-1 bi-2 bi bi-list-task purple"></i>
                     งานที่มอบหมาย
                     <span class="text-secondary fw-normal">
                       /
                     </span>
                     จำนวน:
-                    <span class="text-primary fw-normal">
+                    <span class="purple fw-normal">
                         <%= subject.Assignments ? subject.Assignments.length : 0 %>
                     </span>
                   </p>
@@ -903,7 +903,7 @@
               <div class=" col-12 my-2 row">
                 <% if (subject.Assignments.length > 0) { %>
                   <div class="file-example w-100">
-                  <div class="list-div text-primary row ">
+                  <div class="list-div purple row ">
                     <p class="fw-bold my-3 col-3 text-center">
                       ชื่อ
                     </p>
@@ -955,13 +955,13 @@
               <div class=" col-12 mt-2 row">
                 <div class="col">
                   <p class="fw-bold fs-6 my-1">
-                    <i class="bi bi-people-fill text-primary me-1"></i></i>
+                    <i class="bi bi-people-fill purple me-1"></i></i>
                     นักศึกษาที่ลงทะเบียนเรียน
                     <span class="text-secondary fw-normal">
                       /
                     </span>
                     จำนวน:
-                    <span class="text-primary fw-normal">
+                    <span class="purple fw-normal">
                       <%=subject.students.length%>
                     </span>
                   </p>
@@ -991,7 +991,7 @@
               <div class="col-12 row">
                 <% if (subject.students.length> 0) {%>
                   <div class="file-example w-100">
-                    <div class="list-div text-primary row">
+                    <div class="list-div purple row">
                       <p class="fw-bold my-3 col-1">
                         เลขที่
                       </p>

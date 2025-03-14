@@ -40,7 +40,18 @@ const subjectYearSchema = new Schema(
         students: [{
             type: mongoose.Schema.ObjectId,
             ref: 'Student',
-            default: 0
+            default: 0,
+            weeks: [
+                {
+                    week: {
+                        type: String
+                    },
+                    scorePerWeek: {
+                        type: Number,
+                        default: 0
+                    }
+                }
+            ]
         }
         ],
         quizArray: [{

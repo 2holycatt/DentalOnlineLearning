@@ -15,7 +15,7 @@
 
 <body>
   <div id="blur-container">
-    <%- include("./partials/nav.ejs")%>
+    <%- include("./partials/nav2.ejs")%>
     <!-- <div class="above-nav d-flex px-4 py-3">
       <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
         <i class="bi bi-house mx-2"></i>
@@ -49,11 +49,11 @@
             <div class="col-8 mb-3">
               <p class="fs-6 fw-bold"><i class="bi bi-person-fill text-primary fs-5"></i> รหัสนักศึกษา:
                 <span class="fw-normal">
-                  <%=getSubmitDetail.user.student.studentId%>
+                  <%= getSubmitDetail?.user?.student?.studentId || 'ไม่พบข้อมูล' %>
                 </span>
                   ชื่อ-นามสกุล
                 <span class="fw-normal">
-                  <%=getSubmitDetail.user.name%>
+                  <%= getSubmitDetail?.user?.name || 'ไม่พบข้อมูล' %>
                 </span>
               </p>
             </div>
@@ -109,7 +109,7 @@
               <div class="row">
                 <div class="col-7">
                   <a class="file-a" href="/studentIndex/showFileArray2?id=<%=getSubmitDetail._id%>&index=<%=index%>">
-                    <%=index+1%>. <%=file.file.slice(67)%>
+                    <%= index+1 %>. <%= file?.file ? file.file.slice(67) : 'ไม่พบชื่อไฟล์' %>
                   </a>
 
                   <!-- <a href="/adminIndex/delFile?assignId=<%=getSubmitDetail._id%>&fileIndex=<%=index%>" class="text-danger fs-6 delFile">ลบ</a> -->

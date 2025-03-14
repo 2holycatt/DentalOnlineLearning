@@ -2124,6 +2124,12 @@ function restoreMatching(questionIndex, matches) {
 
 async function submitQuiz(quizId) {
     try {
+
+        clearInterval(timerInterval);
+
+        const currentDurationKey = localStorage.getItem('current_duration_key');
+        const currentDuration = parseInt(localStorage.getItem(currentDurationKey)) || 0;
+
         const answers = [];
         let hasAtLeastOneAnswer = false;
 
@@ -2218,7 +2224,8 @@ async function submitQuiz(quizId) {
             },
             body: JSON.stringify({
                 quizId,
-                answers
+                answers,
+                duration: currentDuration
             })
         });
 
@@ -2229,6 +2236,8 @@ async function submitQuiz(quizId) {
             localStorage.removeItem(`quiz_${quizId}_answers`);
             localStorage.removeItem(`quiz_${quizId}_answers_v2`);
             localStorage.removeItem(`quiz_${quizId}_matching`);
+            localStorage.removeItem(currentDurationKey);
+            localStorage.removeItem('current_duration_key');
 
             Swal.fire({
                 title: 'ส่งแบบทดสอบสำเร็จ!',
@@ -2249,6 +2258,12 @@ async function submitQuiz(quizId) {
         });
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    startTimer(); // เริ่มนับเวลาใหม่ทุกครั้งที่โหลดหน้า
+});
+
+
 
 function checkQuestionAnswered(questionDiv) {
     const questionType = questionDiv.querySelector('.options').dataset.type;
@@ -2633,7 +2648,78 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+    // เพิ่มตัวแปรสำหรับเก็บเวลา
+    let timeLimit = <%= quiz.timeLimit.value %>; // รับค่า timeLimit จาก server
+    let duration = parseInt(localStorage.getItem('quiz_duration')) || 0; // ดึงเวลาที่ใช้ไปแล้วจาก localStorage
+    let remainingTime = timeLimit - duration; // คำนวณเวลาที่เหลือ
+    let timerInterval;
+
+
+    function getDurationKey(quizId) {
+    const timestamp = new Date().getTime(); // ใช้ timestamp เป็นตัวแยกแต่ละครั้ง
+    return `quiz_${quizId}_duration_${timestamp}`;
+}
+
+// ฟังก์ชันเริ่มจับเวลา
+function startTimer() {
+    // สร้าง key ใหม่สำหรับการทำครั้งนี้
+    const quizId = document.getElementById('form').dataset.quizId;
+    const durationKey = getDurationKey(quizId);
     
+    // บันทึก key ปัจจุบันไว้ใช้ตอนส่งคำตอบ
+    localStorage.setItem('current_duration_key', durationKey);
+    
+    timeLimit = <%= quiz.timeLimit.value %>; // รับค่า timeLimit จาก server
+    duration = 0; // เริ่มนับใหม่ทุกครั้ง
+    remainingTime = timeLimit;
+
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        duration++;
+        remainingTime--;
+        
+        // บันทึก duration ด้วย key ใหม่
+        localStorage.setItem(durationKey, duration.toString());
+        
+        // อัพเดทการแสดงผล
+        updateTimerDisplay();
+        
+        if (remainingTime <= 0) {
+            clearInterval(timerInterval);
+            handleTimeUp();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const hours = Math.floor(remainingTime / 3600);
+    const minutes = Math.floor((remainingTime % 3600) / 60);
+    const seconds = remainingTime % 60;
+    
+    const timerElement = document.getElementById('countdownTimer');
+    timerElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    
+    // เพิ่มการแสดงสีเตือนเมื่อเวลาใกล้หมด
+    if (remainingTime <= 300) { // น้อยกว่า 5 นาที
+        timerElement.style.color = '#dc3545'; // สีแดง
+    } else if (remainingTime <= 600) { // น้อยกว่า 10 นาที
+        timerElement.style.color = '#ffc107'; // สีเหลือง
+    }
+}
+
+function handleTimeUp() {
+    Swal.fire({
+        title: 'หมดเวลาทำแบบทดสอบ!',
+        text: 'ระบบจะทำการส่งคำตอบอัตโนมัติ',
+        icon: 'warning',
+        showConfirmButton: false,
+        timer: 2000
+    }).then(() => {
+        const quizId = document.getElementById('form').dataset.quizId;
+        submitQuiz(quizId);
+    });
+}
+
 
 
         </script>

@@ -677,12 +677,12 @@
        }
    
        .lesson-bar {
-         border-left: 0.25em solid #007bff !important;
+        border-left: 0.25em solid #8A2BE2 !important;
          padding-left: 0.5em !important;
          margin-right: 0.5em !important;
    
        }
-   
+     
        .a-add{
          color: #007bff !important;
        }
@@ -725,7 +725,7 @@
       <%- include("./partials/lessonsList.ejs", { pageName: pageName })%>
       <div class="row allContent " style="width: 80%;">
         <div class="col-12 oldContent  aside-right px-4 py-4" style="width: 100% !important;">
-          <div class="manange-bar px-4 py-3  w-100" style="margin-bottom: 1.5em !important;">
+          <div class="manange-bar px-4 py-3 m-3 w-100 bg-white" style="margin-bottom: 1.5em !important;">
             <div class="d-flex justify-content-between align-items-center" >
               <div class="fw-normal fs-6 lesson-bar ms-2 d-flex justify-content-between w-100">
                 <div class="d-flex">
@@ -819,7 +819,7 @@
           <% if (paginatedLayouts.length > 0) { %>
           <% paginatedLayouts.forEach(Layout => {%>
           <% if (Layout.name == "Layout01") {%>
-          <div class="hide-layout-11 lesson-content py-2  my-1">
+          <div class="hide-layout-11 lesson-content py-2  my-1 bg-white">
             <div class="d-flex mx-4">
               <p class="fw-bold fs-4 my-3 setpBorder">แก้ไขเนื้อหา รูปแบบที่ 1</p>
             </div>
@@ -887,7 +887,7 @@
             </form>
           </div>
           <% } else if (Layout.name == "Layout02") {%>
-          <div class="lesson-content py-2  my-4">
+          <div class="lesson-content py-2  my-4 bg-white">
             <div class="d-flex mx-4">
               <p class="fw-bold fs-4 my-3 setpBorder">แก้ไขเนื้อหา รูปแบบที่ 2</p>
             </div>
@@ -968,7 +968,7 @@
             <!--  ส่วนที่ลบไป -->
           </div>
           <% } else if (Layout.name == "Layout03") {%>
-          <div class="lesson-content py-2  my-4">
+          <div class="lesson-content py-2  my-4 bg-white">
             <div class="d-flex mx-4">
               <p class="fw-bold fs-4 my-3 setpBorder">แก้ไขเนื้อหา รูปแบบที่ 3</p>
             </div>
@@ -1015,7 +1015,7 @@
 
           </div>
           <% } else if (Layout.name == "Layout04") {%>
-          <div class="lesson-content  my-4">
+          <div class="lesson-content  my-4 bg-white">
             <form action="/adminIndex/makeEdit4" method="post" enctype="multipart/form-data">
               <input class="d-none" type="text" name="_id" value="<%= lesson._id %>">
               <div class="IandMain d-grid">
@@ -1055,7 +1055,7 @@
             </form>
           </div>
           <% } else if (Layout.name == "pdfFiles") { %>
-          <div class="lesson-content py-2  my-4">
+          <div class="lesson-content py-2  my-4 bg-white">
             <div class="d-flex mx-4">
               <p class="fw-bold fs-4 my-3 setpBorder">แก้ไขไฟล์ PDF</p>
 
@@ -1081,7 +1081,7 @@
 
           </div>
           <% } else if (Layout.name == "TextEditor"){ %>
-            <div class="lesson-content p-4 my-4  w-100 h-auto">
+            <div class="lesson-content p-4 my-4  w-100 h-auto bg-white">
               <!-- <div class="add-content-header">
                 <p class="fw-bold fs-4 my-2 mx-2">เพิ่มเนื้อหา: <span class="text-primary">ปรับแต่งข้อความ</span> </p>
               </div>

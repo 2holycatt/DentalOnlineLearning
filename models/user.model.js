@@ -8,6 +8,11 @@ const userSchema = new Schema({
         unique: true,
         required: [true, 'Please provide email']
     },
+    prefix: {  
+        type: String,
+        enum: ['นาย', 'นาง', 'นางสาว'],
+        required: [true, 'กรุณาระบุคำนำหน้า']
+    },
     fname: {
         type: String,
         default: "default",
@@ -28,7 +33,7 @@ const userSchema = new Schema({
     },
     img: {
         type: String,
-        default: 'https://ui-avatars.com/api/?background=random&color=fff&name=User&size=200&font-size=0.5'
+        default: 'userProfile.png'
     },
     note: {
         type: String,

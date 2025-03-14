@@ -113,27 +113,36 @@
 .purple{
     color: #9146ff  !important
       }
-      .dark .a-li .purple {
+.dark .a-li .purple {
     color: #b98aff !important; 
       }
+      
+.bi-chevron-down {
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.menu-header.active .bi-chevron-down {
+    transform: rotate(180deg);
+}   
 </style>
   <div class="above-nav-status p-4" style="width: 20%;">
-    <a class="fs-6 ms-2 my-2 a-li grey" href="/studentIndex">
-      หน้าหลัก
+    <a class="fs-6 ms-0 my-2 a-li grey" href="/studentIndex">
+      <i class="bi bi-house-fill me-2"></i>หน้าหลัก
   </a>
-    <p class="fs-6 fw-bold bold-menus" >
+    <p class="fs-6 fw-bold" >
       ห้องเรียน
     </p>
     <div class="menues">
       <p class="menues-sub fs-6 my-2">
         <div class="ms-2 my-1">
           <a class="a-li grey" href="/subjects">
-           รายวิชาทั้งหมด
+            <i class="bi bi-journals ms-3 me-2"></i>รายวิชาทั้งหมด
        </a>
         </div>
         <div class="menu-item">
           <div class="menu-header ms-2 my-1" onclick="toggleSubjects(this)">
-            <span class="a-li grey">รายวิชา <i class="bi bi-chevron-down"></i></span>
+            <span class="a-li"><i class="bi bi-journal ms-3 me-2"></i>รายวิชา <i class="bi bi-chevron-down"></i></span>
             
           </div>
           
@@ -158,20 +167,21 @@
         </div>
       </p>
     </div>
+    <li class="a-li d-flex my-1">
+      <a href="#" class="a-li " ><i class="bi bi-badge-3d-fill me-2"></i>แบบจำลอง 3D</a>
+   </li>
     <% if (hasUnread) { %>
-      <li id="teacherNotification" class="mx-2">
-        <a href="/adminIndex/teacherNotification" class="a-list-8 bell-animatio"><span class="text-success">แจ้งเตือน</spanc>
+      <li id="teacherNotification" class="mx-0">
+        <a href="/adminIndex/teacherNotification" class="a-list-8 bell-animatio a-li"><span class="text-success">แจ้งเตือน</spanc>
             <i class="bi-8 bi-bell-fill text-success mx-2"></i>
         </a>
   
         <% } else { %>
-      <li id="teacherNotification" class="mx-2">
-        <a href="/adminIndex/teacherNotification" class="a-list-8">แจ้งเตือน <i class="bi bi-bell-fill mx-1"></i></a>
+      <li id="teacherNotification" class="mx-0">
+        <a href="/adminIndex/teacherNotification" class="a-list-8 a-li"><i class="bi bi-bell-fill me-2"></i>แจ้งเตือน </a>
       </li>
       <% } %>
-      <li class="a-li d-flex m-2">
-        <a href="#" class="a-li purple" >แบบจำลอง 3D</a>
-     </li>
+   
   </div>
 
   <script>

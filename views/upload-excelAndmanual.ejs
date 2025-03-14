@@ -92,10 +92,10 @@
 
       }
 
-      .studentDetail-a:hover>.list-div-data {
+      /* .studentDetail-a:hover>.list-div-data {
         color: #0053ac !important;
         transition: 0.3s;
-      }
+      } */
 
       .above-nav {
         background-color: white !important;
@@ -230,7 +230,11 @@
         color: #8A2BE2 !important;
 
       }
+      .dark .a-list-5,
+      .darl .bi-5 {
+        color: #b98aff !important;
 
+      }
       .grey {
         color: gray !important;
       }
@@ -239,10 +243,17 @@
         color: lightgray !important
       }
 
-      .studentDetail-a :hover {
+      /* .studentDetail-a :hover {
         color: #0053ac !important;
-      }
+      } */
+      .list-div-data:hover {
+        background-color:#f4f4f9 ;
 
+      }
+      .dark .list-div-data:hover {
+        background-color:#555 ;
+
+      }
       @media screen and (max-width: 768px) {
         .above-nav-status {
           display: none;
@@ -283,7 +294,7 @@
           </div>
           <% } else if (allStudents.docs.length> 0) {%>
             <div class="lesson-content p-4 bg-white w-100 my-2 h-auto">
-              <div class="list-div text-primary row">
+              <div class="list-div purple row">
                 <p class="fw-bold my-3 col-2 text-center">
                   รหัสนักศึกษา
                 </p>
@@ -317,7 +328,7 @@
                       <%= student.user?.major || '-' %>
                     </p>
                     <p
-                      class="fw-normal my-3 col-2 text-center <%= student.user?.studentFromKku ? 'text-warning' : 'text-primary' %>">
+                      class="fw-normal my-3 col-2 text-center <%= student.user?.studentFromKku ? 'text-kku' : 'grey' %>">
                       <%= student.user?.studentFromKku ? 'มหาวิทยาลัยขอนแก่น' : 'ภายนอก' %>
                     </p>
                   </div>

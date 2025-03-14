@@ -114,17 +114,56 @@ async function countTodayLessonAccess(subjectId) {
 const adminDashboard = async (req, res) => {
     try {
         const subjectId = req.query.subjectId; // รับ subjectId จาก query string
+        const contentType = req.query.contentType || 'lesson';
+        let chartData = [];
+        let chartLabels = [];
+
+        if (contentType === 'quiz') {
+            const subject = await Subject.findById(subjectId)
+              .populate('quizArray');
+            
+            if (subject && subject.quizArray) {
+              chartLabels = subject.quizArray.map(quiz => quiz.quizname);
+              chartData = subject.quizArray.map(quiz => 
+                quiz.attempts ? quiz.attempts.length : 0
+              );
+            }
+          } 
+          else if (contentType === 'assignment') {
+            const subject = await Subject.findById(subjectId)
+              .populate('Assignments');
+            
+            if (subject && subject.Assignments) {
+              chartLabels = subject.Assignments.map(assign => assign.name);
+              chartData = subject.Assignments.map(assign => assign.sentCount || 0);
+            }
+          }
 
         let latestSubject;
         if (subjectId) {
-            latestSubject = await Subject.findOne({ _id: subjectId }).populate("lessonArray");
+          latestSubject = await Subject.findOne({ _id: subjectId })
+            .populate("lessonArray")
+            .populate("quizArray")
+            .populate("Assignments");
         } else {
-            // latestSubject = await Subject.findOne({ _id: "66a5b280abf2f346ab789a54" }).populate("lessonArray");
-            latestSubject = await Subject.findOne().populate("lessonArray").sort({ createdAt: -1 });
+          latestSubject = await Subject.findOne()
+            .populate("lessonArray")
+            .populate("quizArray")
+            .populate("Assignments")
+            .sort({ createdAt: -1 });
         }
 
         if (latestSubject != null) {
             // ดึงข้อมูล subject ทั้งหมดเพื่อแสดงใน dropdown
+            let specificData = [];
+            if (contentType === 'quiz') {
+                specificData = latestSubject.quizArray || [];
+            } else if (contentType === 'assignment') {
+                specificData = latestSubject.Assignments || [];
+            } else {
+                specificData = latestSubject.lessonArray || [];
+            }
+
             const subjects = await Subject.find().sort({ "createdAt": 1 });
 
             const lessonProgressList = await lessonProgress.find({ subjectMongooseId: latestSubject._id }).populate('lesson'); // populate เฉพาะฟิลด์ lessonName จาก lesson model
@@ -250,8 +289,12 @@ const adminDashboard = async (req, res) => {
             // res.json(progressData)
             console.log(lessonLabels);
             res.render('teacherDashboard', {
-                subjects,
-                latestSubject,
+                subjects: [],
+                latestSubject: null,
+                contentType, 
+                chartData,
+                chartLabels,
+                contentType,
                 lessonLabels,
                 progressData,
                 studentAmount,
@@ -261,6 +304,7 @@ const adminDashboard = async (req, res) => {
                 userData,
                 theme,
                 isSidebarOpen,
+                specificData,
                 countToday: calculateTodayProgress.todayCount, // ส่งค่าจำนวนผู้เข้าถึงในวันนี้
                 yesterdayCount: calculateTodayProgress.yesterdayCount, // ส่งค่าจำนวนผู้เข้าถึงเมื่อวาน
                 difference: calculateTodayProgress.difference, // ส่งค่าเปอร์เซ็นต์การเปลี่ยนแปลง
@@ -277,9 +321,20 @@ const adminDashboard = async (req, res) => {
             let lessonLabels = [];
             let progressData = [];
             let studentAmount = [];
-            res.render('teacherDashboard', { latestSubject, subjects, lessonLabels, progressData, studentAmount,userData, theme, isSidebarOpen });
+            res.render('teacherDashboard', { 
+                latestSubject, 
+                subjects, 
+                lessonLabels, 
+                progressData, 
+                studentAmount,
+                userData, 
+                theme, 
+                isSidebarOpen, 
+                contentType,
+                chartData: [], // เพิ่ม chartData
+                chartLabels: [] // เพิ่ม chartLabels
+            });
         }
-
 
         // res.json(latestSubject)
     } catch (err) {
@@ -293,8 +348,19 @@ const adminDashboard = async (req, res) => {
         let lessonLabels = [];
         let progressData = [];
         let studentAmount = [];
-        res.render('teacherDashboard', { latestSubject, subjects, lessonLabels, progressData, studentAmount,userData, theme, isSidebarOpen });
-
+        res.render('teacherDashboard', { 
+            latestSubject: null, 
+            subjects: [],
+            lessonLabels, 
+            progressData, 
+            studentAmount,
+            userData, 
+            theme, 
+            isSidebarOpen,
+            contentType: 'lesson' ,
+            chartData: [], // เพิ่ม chartData
+            chartLabels: [] // เพิ่ม chartLabels
+          });
     }
 }
 
@@ -307,6 +373,9 @@ const progressHistory = async (req, res) => {
 }
 
 const moreDetailChart = async (req, res) => {
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
     try {
         const subjectId = req.query.subjectId;
         const findSubject = await Subject.findById(subjectId).populate({
@@ -397,7 +466,10 @@ const moreDetailChart = async (req, res) => {
             subjectId,
             paginateProgress,
             subjects,
-            findSubject
+            findSubject,
+            theme,
+            isSidebarOpen,
+            userData
         });
         // studentArray.forEach(student => {
         //     // Find the matching progress object in eachLessonProgress
@@ -426,6 +498,9 @@ const moreDetailChart = async (req, res) => {
 }
 
 const studentDetail = async (req, res) => {
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
     try {
         const studentId = req.query.studentId;
         const subjectId = req.query.subjectId;
@@ -486,7 +561,10 @@ const studentDetail = async (req, res) => {
             subjectId,
             studentId,
             allFinishedProgressLesson,
-            timeSpent
+            timeSpent,
+            userData,
+            theme,
+            isSidebarOpen
         })
     } catch (err) {
         console.log(err);

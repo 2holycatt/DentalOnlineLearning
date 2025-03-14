@@ -348,7 +348,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: ฟ;
       /* ทำให้สูงเต็มหน้าจอ */
     }
 
@@ -560,6 +559,7 @@
       }
       .a-hover:hover{
         color: #0055b1 !important;
+        text-decoration: none !important;
       }
       .dark .a-hover:hover{
         color: #4f93e0 !important;
@@ -567,6 +567,7 @@
       .dark .text-success{
         color: rgb(54, 194, 54) !important;
       }
+      
     @media screen and (max-width: 768px) {
       .above-nav-status{
         display: none;
@@ -613,14 +614,14 @@
               </p><br>
           
           <p class="fw-normal w-auto fs-6 " style="margin-left: 0.5em !important;">เวลาในการทำแบบทดสอบ: 
-            <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;"><%=quiz.timeLimit.display%>
+            <span class="fw-normal fs-6 purple" style="margin-right: 1em !important;"><%=quiz.timeLimit.display%>
             </span>
             จำนวนครั้งที่เข้าทำได้:
 
             
-            <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;"> <%= quiz.attemptLimit - attemptCount %> ครั้ง</span>
+            <span class="fw-normal fs-6 purple" style="margin-right: 1em !important;"><%= quiz.attemptLimit - attemptCount %> / <%=quiz.attemptLimit %> ครั้ง</span>
             จำนวนข้อ:
-            <span class="fw-normal fs-6 text-primary " style="margin-right: 1em !important;"> <%= questions.length %> ข้อ</span>
+            <span class="fw-normal fs-6 purple " style="margin-right: 1em !important;"> <%= questions.length %> ข้อ</span>
             
           </p>
             <div>
@@ -673,7 +674,7 @@
                     <%= bestAttempt ? bestAttempt.totalScore : 0 %> / <%= totalPoints %>
                     <span class="fs-4">
                         (<%= bestAttempt ? ((bestAttempt.totalScore / totalPoints) * 100).toFixed(0) : 0 %>%)
-                          <a class="fs-6 text-primary a-hover ms-2" 
+                          <a class="fs-6 text-primary a-hover ms-2"  style="text-decoration: underline;"
                           href="/studentIndex/eachQuiz?quizId=<%= quiz._id %>&rdetail=true&studentDbId=<%= student._id %>" 
                           target="_blank">
                            ดูรายละเอียด

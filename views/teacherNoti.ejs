@@ -87,6 +87,44 @@
         color: #8A2BE2 !important;
         
       }
+      .dark .a-list-8,
+    .dark .bi-8 {
+        color: #b98aff !important;
+      }
+      .eachNoti {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    min-height: 100px; /* กำหนดความสูงขั้นต่ำ */
+    height: auto; /* ให้ปรับความสูงอัตโนมัติตามเนื้อหา */
+  }
+
+  .lesson-content {
+    min-height: fit-content; /* ให้ความสูงปรับตามเนื้อหา */
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* ระยะห่างระหว่าง notifications */
+  }
+
+  .notificationArray {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .row.my-3 {
+    margin: 0 !important; /* ลบ margin ที่ไม่จำเป็น */
+    height: auto;
+    align-items: center;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
     @media screen and (max-width: 768px) {
          .above-nav-status{
            display: none;
@@ -131,7 +169,6 @@
           </a> -->
         </div>
       </div>
-      <% if (notifications.docs.length > 0) { %>
       <div class="my-4 row">
         <div class="col-6 py-2">
           <label for="sortTime">เรียงตามวันที่: </label>
@@ -144,53 +181,34 @@
           <a href="#addForm" class="text-primary py-2 px-2">ดูการแจ้งเตือนทั้งหมด</i></a>
         </div>
       </div>
-      <% notifications.docs.forEach(noti => { %>
-      <div class="lesson-content bg-white w-100 p-4 my-4" style="height: fit-content;">
+      <div class="lesson-content bg-white w-100 p-4 my-4">
         <div class="row set-border-bottom">
           <div class="col-6">
             <p class="fw-normal">
               <i class="bi bi-bell text-primary fs-5"></i>
-              <span class="mx-1 fs-6 py-1"><%=noti.date%>
-              </span>
+              <span class="mx-1 fs-6 py-1">7 มีนาคม 2568</span>
             </p>
           </div>
         </div>
-        <% const getAllNotices = noti.notifications%>
-        <div class="notificationArray">
-          <% getAllNotices.forEach((a, index) => { %>
-          <div class="row my-3" data-id="<%= noti._id %>" data-noti-id="<%= a._id %>">
-            <div class="col-8 eachNoti">
-              <img src="https://media.themoviedb.org/t/p/w500/1iDRxID6mHf8rftDG0kLWzfXvQA.jpg" alt="รูปโปรไฟล์ผู้ใช้">
-              <div class="content">
-                <p class="fw-bold"><%=a.name%></p>
-                <p class=""><%=a.about%></p>
-                <p class="time"><%=a.time%></p>
-
-              </div>
+        
+        <div class="row my-3">
+          <div class="col-8 eachNoti">
+            <img src="https://media.themoviedb.org/t/p/w500/1iDRxID6mHf8rftDG0kLWzfXvQA.jpg" alt="รูปโปรไฟล์ผู้ใช้">
+            <div class="content">
+              <p class="fw-bold">แบบทดสอบถูกเพิ่ม</p>
+              <p class="">แบบทดสอบ 'แบบทดสอบเบื้องต้น เรื่อง ฟันเทียม' ถูกเพิ่มใน<br> รายวิชา  DT01 ส่วนประกอบของฟันเทียมบางส่วน 2567 กลุ่มที่: 1 แล้ว</p>
+              <p class="time">09:00</p>
             </div>
-            <% if (a.isRead === false) { %>
-            <div class="col-4 mark-as-read-each">
-              <a href="/markAsRead?index=<%=index%>&notiId=<%=noti._id%>" class="mask-each-read fs-4 text-success" style="margin-right: 2em !important;"><i class="bi bi-check-circle-fill"></i>
-              </a>
-            </div>
-            <% } else if (a.isRead === true) { %>
-            <div class="col-4 mark-as-read-each">
-              <a class="fs-4 text-secondary" style="margin-right: 2em !important;"><i class="bi bi-check-circle-fill"></i>
-              </a>
-            </div>
-            <% } %>
           </div>
-          <% }); %>
+          <div class="col-4 mark-as-read-each">
+            <a href="#" class="mask-each-read fs-4 text-success" style="margin-right: 2em !important;">
+              <i class="bi bi-check-circle-fill"></i>
+            </a>
+          </div>
         </div>
       </div>
-      <% });%>
-      <% } else if (notifications.length < 1 ) {%>
-      <div class="my-4 row">
-        <div class="col-2 py-2">
-          <p>ยังไม่มีการแจ้งเตือนใด ๆ จากระบบ</p>
-        </div>
-      </div>
-      <% } %>
+     
+      
 <br>
       <div class="d-flex justify-content-end">
         <nav aria-label="Page navigation example">

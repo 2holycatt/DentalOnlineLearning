@@ -218,6 +218,12 @@
        color: #8A2BE2 !important;
        
      }
+     .dark .a-list-7,
+     .dark .bi-7 {
+      color: #b98aff !important;
+       
+     }
+
      .grey {
             color: gray !important;
         }
@@ -225,6 +231,13 @@
         .dark .grey {
             color: lightgray !important
         }
+        .truncate-text{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: block;
+  }
      @media screen and (max-width: 768px) {
        .above-nav-status{
          display: none;
@@ -278,7 +291,7 @@
         <div class="row pb-2" style="border-bottom: 1px solid #EAEFF4; align-items: center;">
           <div class="col-12 mb-3">
             <p class="fs-5 fw-bold ">
-              <i class="bi bi-info-circle-fill text-primary"></i>
+              <i class="bi bi-info-circle-fill purple"></i>
               <span class="mx-2">หมายเหตุ: </span>
               <!-- <span class="fs-6 fw-light mx-2" style="color: #5A6A85;">(3 x 8) แถว/คอลัมน์ แรก</span> -->
             </p>
@@ -295,7 +308,7 @@
           </div>
           <div class="col">
             <p class="fs-5 fw-bold ">
-              <i class="bi bi-people-fill text-primary"></i><span class="mx-2">รายชื่อนักศึกษา </span>
+              <i class="bi bi-people-fill purple"></i><span class="mx-2">รายชื่อนักศึกษา </span>
               <!-- <span class="fs-6 fw-light mx-2" style="color: #5A6A85;">(3 x 8) แถว/คอลัมน์ แรก</span> -->
             </p>
 
@@ -339,7 +352,7 @@
           <form action="/adminIndex/setPermissionStudentLists" method="post">
             <% if (students.docs.length > 0) { %>
             <div class="file-example w-100">
-              <div class="list-div text-primary row">
+              <div class="list-div purple row">
                 <p class="fw-bold my-3 col-1 text-center">
                   #
                 </p>
@@ -372,7 +385,7 @@
                 <p class="fw-normal my-3 col-2 grey">
                   <%=student.studentId%>
                 </p>
-                <p class="fw-normal my-3 col-3 grey">
+                <p class="fw-normal my-3 col-3 grey truncate-text" title="<%=student.user.fname%> <%=student.user.lname%>">
                   <%=student.user.fname%> <%=student.user.lname%>
                 </p>
                 <p class="fw-normal my-3 col-3 grey">
@@ -382,11 +395,11 @@
                   <%=student.user.major%>
                 </p>
                 <% if (student.user.studentFromKku == true) { %>
-                <p class="fw-normal my-3 col-2" style="color: #8B4513 !important;">
+                <p class="fw-normal my-3 col-2 text-kku" >
                   มหาวิทยาลัยขอนแก่น
                 </p>
                 <% } else if (student.user.studentFromKku == false) { %>
-                <p class="fw-normal my-3 col-2 text-primary">
+                <p class="fw-normal my-3 col-2 grey">
                   ภายนอก
                 </p>
                 <% } %>

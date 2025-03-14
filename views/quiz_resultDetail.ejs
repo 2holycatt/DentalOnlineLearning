@@ -924,8 +924,12 @@
         }
 
         .lesson-bar {
-            border-left: 0.25em solid #387bef !important;
+            border-left: 0.25em solid #9146ff  !important;
             padding-left: 0.5em !important;
+        }
+        .dark .lesson-bar{
+            border-left: 0.25em solid #b98aff  !important;
+
         }
 
         .comment-table tr th {
@@ -1352,6 +1356,16 @@
 .dark .save-btn {
     background-color: #198754;
 }
+
+.dark .text-primary {
+    color: #5AA7FF !important;
+}
+.purple{
+    color: #9146ff  !important
+}
+.dark .purple{
+        color: #b98aff !important;
+      }
         @media screen and (max-width: 768px) {
             .above-nav-status {
                 display: none;
@@ -1429,7 +1443,7 @@
                     <!-- title  -->
 
                     <div class="question">
-                        <p class="fw-normal fs-6 lesson-bar ms-2">การตอบกลับแบบทดสอบ:  
+                        <p class="fw-normal fs-6 lesson-bar ms-2">รายละเอียดการทำแบบทดสอบ:  
                             <%= studentDbId.studentId %> 
                             <%= studentDbId.studentName %>
                         </p>
@@ -1459,6 +1473,23 @@
                                 </p>
                             </div>
                             </p>
+                            <p class="fw-normal w-auto fs-6 mb-2" style="margin-left: 0.5em !important;">เวลาในการทำแบบทดสอบ:
+                                <span class="fw-normal fs-6 purple" style="margin-right: 1em !important;">
+                                 
+                                  <%=quiz.timeLimit.display%>
+                                </span>
+                
+                                จำนวนครั้งที่เข้าทำได้:
+                
+                
+                                <span class="fw-normal fs-6 purple" style="margin-right: 1em !important;">
+                                  
+                                  <%=quiz.attemptLimit%> ครั้ง
+                                </span>
+                
+                               
+                
+                              </p>
 
 
 
@@ -1477,7 +1508,7 @@
                         </form>
                         <hr>
                         <div>
-                            <select onchange="showAttemptResult(this.value)">
+                            <select onchange="showAttemptResult(this.value)" class="px-2 py-1">
                               <% studentAttempt.eachAttempt.forEach((attempt, index) => { %>
                                 <option value="<%= index %>">
                                     ครั้งที่ <%= index + 1 %> 
@@ -1489,7 +1520,7 @@
                                         hour: '2-digit',
                                         minute: '2-digit',
                                         hour12: false
-                                        }) %> น.)
+                                        }) %> น. )
                                     </option>
                                 <% }); %>
                             </select>
@@ -1506,7 +1537,7 @@
                                 ข้อ <span class="grey"> ( <%= questions.reduce((total, question)=> total +
                                         question.points, 0) %> คะแนน ) </span>
                         </span>
-                        <span> คะแนนที่ทำได้: <span class="grey" id="total-score">
+                        <span class="me-4"> คะแนนที่ทำได้: <span class="grey" id="total-score">
                           <%= (function() {
                               // หาคะแนนรวมจาก answers ทั้งหมดในครั้งที่เลือก
                               const currentAttempt = studentAttempt.eachAttempt[0]; // เริ่มที่ครั้งแรก
@@ -1515,6 +1546,27 @@
                           })() %>
                       </span>
                           </span> 
+
+                          <span> เวลาที่ทำ: <span class="grey duration-display">
+                            <%= (function() {
+                                const currentAttempt = studentAttempt.eachAttempt[0];
+                                if (!currentAttempt || !currentAttempt.duration) return '0 วินาที';
+                                
+                                const duration = parseInt(currentAttempt.duration);
+                                if (isNaN(duration)) return '0 วินาที';
+                                
+                                const hours = Math.floor(duration / 3600);
+                                const minutes = Math.floor((duration % 3600) / 60);
+                                const seconds = duration % 60;
+                                
+                                let timeString = '';
+                                if (hours > 0) timeString += `${hours} ชั่วโมง `;
+                                if (minutes > 0) timeString += `${minutes} นาที `;
+                                if (seconds > 0 || timeString === '') timeString += `${seconds} วินาที`;
+                                
+                                return timeString.trim();
+                            })() %>
+                        </span></span>
                         </div>
                         <div>
                           <% if (userData && userData.role === 'teacher') { %>
@@ -1888,6 +1940,22 @@
 
             let isEditMode = false;
 
+            function formatDuration(seconds) {
+                if (!seconds || isNaN(seconds) || seconds < 0) {
+        return '0 วินาที';
+    }    
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    
+    let timeString = '';
+    if (hours > 0) timeString += `${hours} ชั่วโมง `;
+    if (minutes > 0) timeString += `${minutes} นาที `;
+    if (remainingSeconds > 0 || timeString === '') timeString += `${remainingSeconds} วินาที`;
+    
+    return timeString.trim();
+}
+
             function showAttemptResult(index) {
     const attempt = window.studentAttempt.eachAttempt[index];
     if (!attempt) return;
@@ -1929,13 +1997,34 @@
     });
 
     // อัพเดตคะแนนรวม
+    
     const totalScore = attempt.totalScore;
     const maxScore = <%= totalPoints %>;
     const percentage = ((totalScore / maxScore) * 100).toFixed(0);
     document.querySelector('#total-score').textContent = 
-        `${totalScore}/${maxScore} (${percentage}%)`;
+        `${totalScore} / ${maxScore} ( ${percentage}% )`;
+        const durationDisplay = document.querySelector('.duration-display');
+    if (durationDisplay) {
+        // ตรวจสอบว่ามี duration หรือไม่
+        if (!attempt.duration || attempt.duration === undefined || attempt.duration === null) {
+            durationDisplay.textContent = '0 วินาที';
+        } else {
+            const duration = parseInt(attempt.duration);
+            if (isNaN(duration)) {
+                durationDisplay.textContent = '0 วินาที';
+            } else {
+                durationDisplay.textContent = formatDuration(duration);
+            }
+        }
+    }
 }
 
+jQuery.expr[':'].contains = function(a, i, m) {
+    return jQuery(a).text().includes(m[3]);
+};
+
+console.log('Student Attempt Data:', <%- JSON.stringify(studentAttempt) %>);
+console.log('First Attempt Duration:', <%- JSON.stringify(studentAttempt.eachAttempt[0]?.duration) %>);
 window.studentAttempt = <%- JSON.stringify(studentAttempt) %>;
 
 document.addEventListener('DOMContentLoaded', function() {

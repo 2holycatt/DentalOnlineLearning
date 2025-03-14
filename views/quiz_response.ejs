@@ -1291,7 +1291,7 @@
             }
 
             .score-display {
-                background-color: #d9d9d9;
+                background-color: #f4f4f9;
                 padding: 12px 52px !important;
                 min-width: 100px;
             }
@@ -1306,16 +1306,15 @@
             }
 
             th{
-                color: #0d6efd !important;
                 font-weight: bold;
                 border-bottom: 1px solid #EAEFF4;
             }
-            .dark th{
-                color: #5aa7ff !important;
-            }
+         
             td{
                 border: none;
                 color: gray !important;
+                padding-top: 0.5em !important;
+                padding-bottom: 0.5em !important;
             }
             .dark td{
                 color: lightgray !important;
@@ -1338,22 +1337,55 @@
             tr {
                 margin: 0em 3em;
                 border-bottom: 1px solid #EAEFF4;
+                /* padding-top: 1em !important;   */
+               
       }
       .dark tr{
         border-bottom: 1px solid #555 !important;
       }
       table tr:hover {
-        background-color: #f5f5f5 !important;
+
+        background-color: #f4f4f9 !important;
         cursor: pointer;
     }
 
-    .dark table tr:hover {
+    .dark table tr:hover ,.dark  td:hover {
         background-color: #666 !important;
     }
     table tr:hover td {
         background-color: inherit !important;
     }
 
+    .list-div {
+
+padding-top: 0.5em;
+border-bottom: 1px solid #EAEFF4;
+}
+
+.dark .list-div {
+border-bottom: 1px solid #555;
+}
+
+.list-div-data {
+
+padding-top: 1em;
+border-bottom: 1px solid #EAEFF4;
+text-align: start;
+color: #4e5458 !important;
+
+}
+
+.dark .list-div-data {
+border-bottom: 1px solid #555;
+}
+.list-div-data:hover {
+        background-color:#f4f4f9 ;
+
+      }
+      .dark .list-div-data:hover {
+        background-color:#555 ;
+
+      }
     /* Reset any conflicting backgrounds */
     td, th {
         background-color: transparent;
@@ -1389,7 +1421,7 @@
                     <div class="col-12 aside-right px-4 py-4 bg-white" style="width: 100% !important;">
                         <div class="manange-bar p-4 bg-white w-100">
                             <div class="fw-normal fs-6  ms-2"> 
-                                <span><i class="bi bi-card-checklist me-2" style="color: #8A2BE2;"></i> </span>
+                                <span><i class="bi bi-card-checklist me-2 purple" ></i> </span>
                                 <a class="link" href="/eachSubject?subjectDbId=<%=subject._id%>">
                                 <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%></a> 
                              
@@ -1449,14 +1481,14 @@
 
 
                             <table class="table   table-centered">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">รหัสนักศึกษา</th>
-                                        <th scope="col">ชื่อ</th> 
-                                        <th scope="col">ชื่อเล่น</th>
-                                        <th scope="col">จำนวนครั้งที่ทำ / <%=quiz.attemptLimit%>
+                                <thead >
+                                    <tr >
+                                        <th scope="col" class="purple">รหัสนักศึกษา</th>
+                                        <th scope="col" class="purple">ชื่อ</th> 
+                                        <th scope="col" class="purple">ชื่อเล่น</th>
+                                        <th scope="col" class="purple">จำนวนครั้งที่ทำ / <%=quiz.attemptLimit%>
                                         </th>
-                                        <th scope="col">คะแนนที่ทำได้สูงสุด</th>
+                                        <th scope="col" class="purple">คะแนนที่ทำได้สูงสุด</th>
                                        
                                     </tr>
                                 </thead>
@@ -1473,13 +1505,17 @@
                                                     <% const studentHighscore = Math.max(...attempt.eachAttempt.map(a => a.totalScore)); %>
                                                     <%= `${studentHighscore} / ${totalPoints} (${((studentHighscore/totalPoints) * 100).toFixed(0)}%)` %>                                                </td>
                                             </tr>
+                                            
                                         <% }); %>
                                     <% } else { %>
                                         <tr>
                                             <td colspan="5" class="text-center grey">ยังไม่มีนักศึกษาทำแบบทดสอบนี้</td>
                                         </tr>
+                                    </div>
                                     <% } %>
+                               
                                 </tbody>
+                            
                             </table>
                           
                         </div>

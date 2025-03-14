@@ -27,14 +27,32 @@ const generateStudentId = async () => {
   return `${prefix}${newIdNumber}`;
 };
 
+const generateWeeks = () => {
+  return Array.from({ length: 16 }, (_, index) => ({
+      week: (index + 1).toString(),
+      scorePerWeek: 0
+  }));
+};
 
 const uploadedFile = async (req, res) => {
-  try {
+  
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
+    let userData = null;
+
+    try {
+    // เพิ่มการดึง user data
+    if (req.session.userId) {
+      userData = await User.findById(req.session.userId);
+    }
+
     const filePath = req.file.path;
     const fileParts = req.file.originalname.split('.');
     const fileType = fileParts[fileParts.length - 1];
     // // อ่านไฟล์เป็น buffer
     const fileBuffer = fs.readFileSync(filePath);
+    
+
     if (fileType === "xls") {
       const decodedBuffer = iconv.decode(fileBuffer, 'win874'); // สำหรับการเข้ารหัสภาษาไทยใน Excel 97-2003
 
@@ -98,10 +116,13 @@ const uploadedFile = async (req, res) => {
 
         // const studentProcessLists = [];
 
-        const weeks = Array.from({ length: 16 }, (_, index) => ({
-          week: (index + 1).toString(), // แปลงเป็น string ตาม schema
-          // scorePerWeek และ noteWeek จะใช้ค่าเริ่มต้นจาก schema
-        }));
+        // const weeks = Array.from({ length: 16 }, (_, index) => ({
+        //   week: (index + 1).toString(), // แปลงเป็น string ตาม schema
+        //   // scorePerWeek และ noteWeek จะใช้ค่าเริ่มต้นจาก schema
+        // }));
+
+        const weeks = generateWeeks(); // ใช้ฟังก์ชัน generate weeks
+
 
         async function processStudents(studentLists) {
           for (const student of studentLists) {
@@ -510,29 +531,55 @@ const uploadedFile = async (req, res) => {
       // ส่งข้อความแจ้งเตือนไปยังหน้า EJS
       res.render('upload-file-2', {
         error: 'วิชานี้มีอยู่แล้วในภาคการศึกษานี้',
-        formData: req.body // ส่งข้อมูลฟอร์มกลับไปเพื่อให้ผู้ใช้ไม่ต้องกรอกใหม่
+        formData: req.body ,
+        theme,
+        isSidebarOpen,
+        userData
       });
     } else {
       res.render('upload-file-2', {
         error: 'format ไฟล์ไม่ถูกต้อง',
-        formData: req.body // ส่งข้อมูลฟอร์มกลับไปเพื่อให้ผู้ใช้ไม่ต้องกรอกใหม่
+        formData: req.body,
+        theme,
+        isSidebarOpen,
+        userData
       });
     }
   }
 };
 
 const uploadedForm = async (req, res) => {
+  const theme = req.session.theme || 'light';
+  const isSidebarOpen = false;
+  let userData = null;
   try {
+    if (req.session.userId) {
+      userData = await User.findById(req.session.userId);
+    }
+
     let {
       email,
-      inlineRadioOptions,
+      prefix,
       fname,
       lname,
       externalStudent,
       major,
       nickname,
-      note
+      note,
+      studentId: formStudentId
     } = req.body;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.render('upload-file-2', {
+        error: 'อีเมลนี้มีอยู่ในระบบแล้ว',
+        formData: req.body,
+        theme,
+        isSidebarOpen,
+        userData
+      });
+    }
+
 
     let studentId = "";
     if (!req.body.studentId) {
@@ -542,42 +589,50 @@ const uploadedForm = async (req, res) => {
       studentId = req.body.studentId
     }
 
-    const studentName = inlineRadioOptions + fname + " " + lname;
     // console.log(studentName);
     // console.log(externalStudent);
 
     // const studentId = await generateStudentId();
+      if (externalStudent == "on") {
+        externalStudent = false;
+        let newUser = new User({
+          email,
+          prefix,
+          fname,
+          lname,
+          name: `${prefix}${fname} ${lname}`,
+          major: major,
+          role: "student",
+          studentFromKku: externalStudent,
+          note: note,
+          nickname: nickname
+        });
+        await newUser.save();
 
-    if (externalStudent == "on") {
-      externalStudent = false;
-      let newUser = new User({
-        email,
-        name: studentName,
-        major: major,
-        role: "student",
-        studentFromKku: externalStudent,
-        note: note,
-        nickname: nickname
-      })
-      await newUser.save();
+        const newStudentId = studentId || await generateStudentId();
+    const newStudent = new Student({
+      studentId: newStudentId,
+      user: newUser._id,
+      email,
+      prefix,
+      fname,
+      lname
+    });
+        await newStudent.save();
 
-      const newStudent = new Student({
-        studentId,
-        user: newUser._id
-      })
-      await newStudent.save();
-
-      const updateStudentIdToUser = await User.findByIdAndUpdate(
-        { _id: newUser._id },
-        { $push: { student: newStudent._id } },
-        { new: true }
-      )
-
+        await User.findByIdAndUpdate(
+          newUser._id,
+          { student: newStudent._id },
+          { new: true }
+        );
     } else {
       externalStudent = true;
       let newUser = new User({
         email,
-        name: studentName,
+        prefix,
+        fname,
+        lname,
+        name: `${prefix}${fname} ${lname}`,
         major: major,
         role: "student",
         studentFromKku: externalStudent,
@@ -585,46 +640,47 @@ const uploadedForm = async (req, res) => {
       })
       await newUser.save();
 
-      const newStudent = new Student({
-        studentId,
-        user: newUser._id
-      })
-      await newStudent.save();
+    const newStudent = new Student({
+      studentId: studentId,
+      user: newUser._id,
+      email,
+      prefix,
+      fname,
+      lname
+    });
 
-      const updateStudentIdToUser = await User.findByIdAndUpdate(
-        { _id: newUser._id },
-        { $push: { student: newStudent._id } },
-        { new: true }
-      )
-    }
+    await newStudent.save();
 
-    // console.log(major);
+    // อัพเดท User กับ Student reference
+    await User.findByIdAndUpdate(
+      newUser._id,
+      { student: newStudent._id },
+      { new: true }
+    );
+  }
 
+    return res.redirect('/adminIndex/uploadStudent');
 
-
-    // const getUserId = newUser._id;
-
-    // const newStudent = new Student({
-    //   schoolId: req.body.studentId,
-    //   studentSchoolYear: req.body.schoolYears,
-    //   user: getUserId,
-    // });
-    // await newStudent.save(); // บันทึกข้อมูลลงในฐานข้อมูล
-    res.redirect('/adminIndex/uploadStudent');
   } catch (error) {
     console.error(error);
-    if (error.code === 11000) {
-      return res.render('upload-file-2', {
-        error: 'มีนักศึกษาคนนี้อยู่ในระบบแล้ว',
-        formData: req.body,
-      });
-    }
-    // res.status(500).send('An error occurred');
+    return res.render('upload-file-2', {
+      error: error.code === 11000 ? 'มีนักศึกษาคนนี้อยู่ในระบบแล้ว' : 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
+      formData: req.body,
+      theme,
+      isSidebarOpen,
+      userData
+    });
   }
 };
 
 const studentInformationAccount = async (req, res) => {
+  const theme = req.session.theme || 'light';
+  const isSidebarOpen = false;
   try {
+    let userData = null;
+    if (req.session.userId) {
+      userData = await User.findById(req.session.userId);
+    }
 
     const studentId = req.query.studentId;
     const findStudent = await Student.findOne({ studentId: studentId })
@@ -657,8 +713,14 @@ const studentInformationAccount = async (req, res) => {
 
     // res.json(studentSubjectCalculate);
 
-    res.render("studentInformationAccount", { findStudent, studentSubject, studentUser, studentSubmitAssign, studentSubjectCalculate });
-    // res.render("editStudentAccount", { mytitle: "editStudentAccount", lesson, lessons, foundLayouts });
+    res.render('studentInformationAccount', {
+      findStudent,
+      studentSubject,
+      studentSubjectCalculate,
+      userData, // เพิ่มบรรทัดนี้
+      theme: req.session.theme || 'light', // เพิ่ม theme
+      isSidebarOpen: false // เพิ่ม sidebar state
+    });    
 
   } catch (error) {
     console.error(error);

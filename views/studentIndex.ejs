@@ -273,6 +273,25 @@
     .dark .a-link {
       color: #bb86fc !important;
     }
+    .menu-header {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.bi-chevron-down {
+    transition: transform 0.3s ease;
+    margin-left: auto;
+}
+
+.menu-header.active .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+.menu-content {
+    display: none;
+    padding-left: 1rem;
+}
     @media screen and (max-width: 768px) {
          .above-nav-status{
            display: none;

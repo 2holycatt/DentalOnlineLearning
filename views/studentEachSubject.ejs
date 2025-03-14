@@ -648,13 +648,13 @@
               <div class="col-12 mt-2 row">
                 <div class="col">
                   <p class="fw-bold fs-6 my-1">
-                    <i class="bi bi-book-half text-primary me-1"></i>
+                    <i class="bi bi-book-half purple me-1"></i>
                     บทเรียน
                     <span class="text-secondary fw-normal">
                       /
                     </span>
                     จำนวน:
-                    <span class="text-primary fw-normal">
+                    <span class="purple fw-normal">
                       <%=subject.lessonArray.length%>
                     </span>
                   </p>
@@ -717,14 +717,14 @@
               <div class="col-12 mt-2 row">
                 <div class="col">
                   <p class="fw-bold fs-6 my-1">
-                    <i class="bi-3 bi-card-checklist me-1 text-primary"></i>
+                    <i class="bi-3 bi-card-checklist me-1 purple"></i>
 
                     แบบทดสอบ
                     <span class="text-secondary fw-normal">
                       /
                     </span>
                     จำนวน:
-                    <span class="text-primary fw-normal">
+                    <span class="purple fw-normal">
                       <%= subject.quizArray ? subject.quizArray.filter(quiz => quiz.isReleased).length : 0 %>
                     </span>
                   </p>
@@ -769,13 +769,13 @@
               <div class="col-12 mt-2 row">
                 <div class="col">
                   <p class="fw-bold fs-6 my-1">
-                    <i class="me-1 bi-2 bi bi-list-task text-primary"></i>
+                    <i class="me-1 bi-2 bi bi-list-task purple"></i>
                     งานที่มอบหมาย
                     <span class="text-secondary fw-normal">
                       /
                     </span>
                     จำนวน:
-                    <span class="text-primary fw-normal">
+                    <span class="purple fw-normal">
                         <%= subject.Assignments ? subject.Assignments.length : 0 %>
                     </span>
                   </p>
@@ -785,7 +785,7 @@
               <div class=" col-12 mt-2 row">
                 <% if (subject.Assignments.length > 0) { %>
                   <div class="file-example w-100">
-                  <div class="list-div text-primary row ">
+                  <div class="list-div purple row ">
                     <p class="fw-bold my-3 col-3 text-center">
                       ชื่อ
                     </p>
@@ -796,10 +796,10 @@
                       วันที่หมดเขตส่ง
                     </p>
                     <p class="fw-bold my-3 col-3 text-center">
-                      จำนวนที่นักศึกษาส่งงาน
+                      สถานะการส่ง
                     </p>
                     <p class="fw-bold my-3 col-1 text-center">
-                      คะแนนเต็ม
+                      คะแนน
                     </p>
                   </div>
                   <% subject.Assignments.forEach(assign => { %>
@@ -815,10 +815,10 @@
                             <%= moment(assign.Deadline).format('DD/MM/YYYY HH:mm') %>
                         </p>
                         <p class="fs-6 fw-normal text-center grey col-3">
-                            <%= assign.sentCount %>
+                            submitassign.sendStatus
                         </p>
                         <p class="fs-6 fw-normal text-success text-center col-1">
-                            <%= assign.Score %>
+                             / <%= assign.Score %>
                         </p>
                     </div>
                   </a>

@@ -203,7 +203,6 @@
             <div class="py-4 pe-1 mx-4">
                 <i class="bi bi-clock" style="color: #8A2BE2;"></i>
                 <span id="countdownTimer" class="grey ps-2 pe-4">
-                    <%= timeLimitFormatted %>
                     
                 </span>
             </div>
@@ -269,39 +268,54 @@
             }
         })();
 
-        let timeLimit = <%= timeLimitMilliseconds / 1000 %>; // รับค่า milliseconds จาก backend
-        let countdownElement = document.getElementById("countdownTimer");
+        function formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
 
-        function formatTime(milliseconds) {
-            const totalSeconds = Math.floor(milliseconds / 1000);
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
+// Update timer display
+function updateTimerDisplay(timeLeft) {
+    const timerElement = document.getElementById('countdownTimer');
+    timerElement.textContent = formatTime(timeLeft);
+    
+    // Add color warning when time is low
+    if (timeLeft <= 300) { // Less than 5 minutes
+        timerElement.style.color = '#dc3545'; // Red
+    } else if (timeLeft <= 600) { // Less than 10 minutes
+        timerElement.style.color = '#ffc107'; // Yellow
+    }
+}
 
-            // แสดงผลเป็น 2 หลักเสมอ
-            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+// Initialize timer with quiz time limit
+function initializeTimer(timeLimit) {
+    let timeLeft = timeLimit;
+    
+    function countdown() {
+        if (timeLeft <= 0) {
+            // Time's up - auto submit
+            clearInterval(timerInterval);
+            alert('หมดเวลาทำแบบทดสอบ');
+            confirmSubmitQuiz('<%= quiz._id %>');
+            return;
         }
+        
+        updateTimerDisplay(timeLeft);
+        timeLeft--;
+    }
 
-        function startCountdown() {
-            let interval = setInterval(function () {
-                if (timeLimit <= 0) {
-                    clearInterval(interval);
-                    countdownElement.innerHTML = "Time's up!";
-                } else {
-                    countdownElement.innerHTML = formatTime(timeLimit);
-                    timeLimit -= 1000; // ลดลงทีละวินาที
-                }
-            }, 1000); // อัปเดตทุกวินาที
-        }
+    // Start countdown
+    countdown(); // Run immediately
+    const timerInterval = setInterval(countdown, 1000);
+}
 
-        // เริ่มนับถอยหลังหลังจากโหลดหน้าเสร็จ
-        window.onload = function () {
-            if (timeLimit > 0) {
-                startCountdown();
-            } else {
-                countdownElement.innerHTML = "Time's up!";
-            }
-        };
+// Start timer when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Convert time limit from quiz object to seconds
+    const timeLimit = <%= quiz.timeLimit.value %>;
+    initializeTimer(timeLimit);
+});
 
 
     </script>

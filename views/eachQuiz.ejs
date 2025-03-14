@@ -1373,51 +1373,27 @@
                 <%=quiz.quizdescription%>
               </p><br>
               <p class="fw-normal w-auto fs-6 mb-2" style="margin-left: 0.5em !important;">เวลาในการทำแบบทดสอบ:
-                <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;">
-                  <!-- <select
-                    class="select"
-                    style="font-size: 0.9rem; max-width: 10em;"
-                    required
-                  >
-                    <option id='15min' class="menuItem " value="15min">15 นาที</option>
-                    <option id='30min' class="menuItem " value="30min">30 นาที</option>
-                    <option id='1hour' class="menuItem " value="1hour">1 ชั่วโมง</option>
-                    <option id='2hours' class="menuItem " value="2hours">2 ชั่วโมง</option>
-                    <option id='3hours' class="menuItem " value="3hours">3 ชั่วโมง</option>
-                  </select> -->
+                <span class="fw-normal fs-6 purple" style="margin-right: 1em !important;">
+                 
                   <%=quiz.timeLimit.display%>
                 </span>
 
                 จำนวนครั้งที่เข้าทำได้:
 
 
-                <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;">
-                  <!-- <input
-                    type="number"
-                    value="1"
-                    min="1"
-                    class="input-number"
-                    style="max-width: 3em; text-align: center; font-size: 0.9rem;"
-                  /> -->
+                <span class="fw-normal fs-6 purple" style="margin-right: 1em !important;">
+                  
                   <%=quiz.attemptLimit%> ครั้ง
                 </span>
 
-                <!-- จำนวนข้อ: 
-
-
-                <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;">0 ข้อ</span> -->
+               
 
               </p>
-              <!-- <p class="mx-2" style="color: gray;">
-                <%=quiz.quizdescription%>
-              </p><br> -->
+             
 
               <div class="d-flex">
                 <div class="d-flex w-75">
-                  <!-- <a href="/adminIndex/getMoreAddQuestion?quizId=<%=quiz._id%>"
-                    class="add-button btn btn-primary my-2 p-2">
-                    เพิ่มคำถาม<i class="bi bi-plus-circle-fill ms-2"></i>
-                  </a> -->
+                 
                   <% if (!quiz.releaseWhen) { %>
                     <!-- แสดงปุ่มแก้ไขและเผยแพร่แบบทดสอบ เมื่อยังไม่ได้เผยแพร่ -->
                     <a href="/adminIndex/eachQuiz?quizId=<%= quiz._id %>/edit"

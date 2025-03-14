@@ -235,7 +235,7 @@
       <div class="lesson-content bg-white w-100 py-3 px-4 " style="height: fit-content;">
         <div class="py-3 ps-1  d-flex w-100">
           <div class="fw-normal fs-6 ms-1">
-            <span> <i class="bi bi-list-task me-1" style="cursor: default;color: #8A2BE2;"></i>
+            <span> <i class="bi bi-list-task me-1 purple" style="cursor: default;"></i>
                </span>
             <a class="grey link" href="/eachSubject?subjectDbId=<%=subject._id%>">
               <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
@@ -269,7 +269,7 @@
       <br>
         <div class="row ms-2">
           <div class="col-8">
-            <p class="my-1 w-100 fw-bold text-primary">ไฟล์ที่เกี่ยวข้อง:</p>
+            <p class="my-1 w-100 fw-bold purple">ไฟล์ที่เกี่ยวข้อง:</p>
             <% if (assignment.files.length > 0) { %>
             <div class="row">
               <div class="col-12">
@@ -291,16 +291,16 @@
           <div class="col-4">
             <div class="row ms-2">
               <div class="col-6">
-                <p class="my-1 w-100 text-center fw-bold fs-6 text-primary">คะแนนเต็ม</p>
+                <p class="my-1 w-100 text-center fw-bold fs-6 purple">คะแนนเต็ม</p>
               </div>
               <div class="col-6">
-                <p class="studentSubmit-h my-1  w-100 text-center fw-bold fs-6 text-primary" >จำนวนนักศึกษาที่ส่งงาน</p>
+                <p class="studentSubmit-h my-1  w-100 text-center fw-bold fs-6 purple" >จำนวนนักศึกษาที่ส่งงาน</p>
               </div>
             </div>
             <div class="row">
               <div class="h-auto row">
                 <div class="col-6 setRight p-3 d-flex justify-content-center">
-                  <p class="fw-bold fs-2 text-success"><%=assignment.Score%></p>
+                  <p class="fw-bold fs-2 text-secondary"><%=assignment.Score%></p>
                 </div>
                 <div class="col-6 p-3 d-flex justify-content-center">
                   <p class="fw-bold fs-2 text-secondary"><%=assignment.sentCount%></p>
@@ -313,14 +313,14 @@
         </p> -->
       </div>
       <div class="lesson-content bg-white w-100 p-4 my-4 row" style="height: fit-content;">
-        <div class="col-12">
-          <p class="fs-5 fw-bold"><i class="bi bi-people-fill fs-5 text-success"></i>
+        <div class="col-12 ">
+          <p class="fs-5 fw-bold ms-2"><i class="bi bi-people-fill fs-5 purple"></i>
             รายชื่อนักศึกษาที่ส่งงาน
           </p>
         </div>
         <% if (getSubmitDetail.submitDetail.length > 0) { %>
-        <div class="col-12">
-          <div class="list-div">
+        <div class="col-12 ">
+          <div class="list-div ms-2 purple">
             <p class="fs-6 fw-bold">
               รหัสนักศึกษา
             </p>
@@ -343,10 +343,10 @@
         <a href="/adminIndex/submitDetail?id=<%=assignment._id%>&submitId=<%=detail._id%>" class="data-a ">
           <div class="list-div-data py-3">
             <p class="fs-6 fw-normal">
-              <%=detail.user.student.studentId%>
+                <%= detail.user ? detail.user.studentId : '-' %>
             </p>
             <p class="fs-6 fw-normal">
-              <%=detail.user.name%>
+              <%= detail.user ? `${detail.user.fname || '' } ${detail.user.lname || '' }` : '-' %>
             </p>
             <% const sendDate = new Date(detail.updatedAt).toLocaleString('en-US', {timeZone: 'Asia/Bangkok', hour12: true, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}); %>
             <p class="fs-6 fw-normal text-success">
@@ -380,7 +380,7 @@
           <input type="text" name="assignId" class="d-none" value="<%=assignment._id%>">
           <div class="assignFormContainer p-2 row">
             <div class="col-12 mb-3">
-              <p class="fs-5 fw-bold"><i class="bi bi-pencil-square text-warning fs-5"></i>
+              <p class="fs-5 fw-bold"><i class="bi bi-pencil-square purple fs-5"></i>
                 แก้ไข <%=assignment.name%></p>
             </div>
             <div class="col-6">

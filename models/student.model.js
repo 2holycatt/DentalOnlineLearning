@@ -21,6 +21,11 @@ const studentSchema = new Schema(
             type: String,
             required: true
         },
+        prefix: {  
+            type: String,
+            enum: ['นาย', 'นาง', 'นางสาว'],
+            required: [true, 'กรุณาระบุคำนำหน้า']
+        },
         fname: {
             type: String,
             required: true

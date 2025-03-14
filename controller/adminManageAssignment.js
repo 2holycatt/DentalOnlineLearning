@@ -89,27 +89,50 @@ const assignmentDetail = async (req, res) => {
     const getAssignId = req.query.id;
     const assignment = await Assignments.findById(getAssignId).populate("subject");
     const getSubmitDetail = await Assignments.findById(getAssignId)
-    .populate('subject')  // Populate subject reference
+      .populate('subject')
       .populate({
         path: "submitDetail",
-        populate: {
+        populate: [{
           path: "user",
+          model: 'User',
           populate: {
-            path: "student"
+            path: "student",
+            model: 'Student',
+            select: 'studentId fname lname prefix'
           }
-        }
+        }]
       });
-      const subject = assignment.subject; // Contains subject fields
+      const formattedSubmitDetail = {
+        ...getSubmitDetail._doc,
+        submitDetail: getSubmitDetail.submitDetail.map(detail => ({
+          _id: detail._id,
+          updatedAt: detail.updatedAt,
+          sendStatus: detail.sendStatus || { status: 'ไม่ระบุ' },
+          Score: detail.Score || 0,
+          studentId: detail.user?.student?.studentId || '-',
+          userName: detail.user?.student ? 
+            `${detail.user.student.prefix || ''}${detail.user.student.fname || ''} ${detail.user.student.lname || ''}` : 
+            'ไม่ระบุชื่อ',
+          user: detail.user
+        }))
+      };
+
+    const subject = assignment.subject; 
     const formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
     const formattedDeadline = moment(assignment.Deadline).format('DD/MM/YYYY hh:mm A');
-    // const schoolYear = await SchoolYear.find();
-    // const updatedFiles = assignment.files.map(filePath => {
-    //   const { file } = filePath;
-    //   const fileName = file.slice(33); // นำ string ตั้งแต่ตำแหน่งที่ 33 เป็นต้นไป
-    //   return fileName;
-    // });
+   
 
-    res.render('assignmentDetail', { assignment, formattedStartDate, formattedDeadline, getSubmitDetail,navSubjects,subject,userData,theme,isSidebarOpen });
+    res.render('assignmentDetail', {
+      assignment,
+      formattedStartDate,
+      formattedDeadline,
+      getSubmitDetail: formattedSubmitDetail,
+      navSubjects,
+      subject: assignment.subject,
+      userData,
+      theme,
+      isSidebarOpen
+    });
 
   } catch (error) {
     console.error(error);
@@ -468,6 +491,10 @@ const delAssign = async (req, res) => {
 };
 
 const submitDetail = async (req, res) => {
+  const userData = await User.findById(req.session.userId);
+  const navSubjects = await getSubjectsForNav(req.session.userId);
+  const theme = req.session.theme || 'light';
+  const isSidebarOpen = false;
   try {
     const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
     const getAssignId = req.query.id;
@@ -490,7 +517,7 @@ const submitDetail = async (req, res) => {
         }
       });
 
-    res.render('submitDetail', { schoolYear, lessons, assignment, updatedFiles, formattedStartDate, formattedDeadline, getSubmitDetail });
+    res.render('submitDetail', { schoolYear, lessons, assignment, updatedFiles, formattedStartDate, formattedDeadline, getSubmitDetail, navSubjects, userData, theme, isSidebarOpen });
 
   } catch (error) {
     console.error(error);

@@ -179,12 +179,72 @@
     .cancelAssign {
       display: none;
     }
+    .dark .above-nav-status {
+        background-color: var(--secondary-color) !important;
+        border-right: 1px solid #494949;
+      }
+
+      .status-a {
+        color: #404258 !important;
+      }
+
+      .list-lesson-p {
+        color: #8A2BE2;
+      }
+
+      .list-lesson-p-span {
+        color: #4B0082;
+      }
+
+      .each-lesson {
+        border-top: 0.1em solid #8A2BE2;
+      }
+
+      .aside-right {
+        background-color: var(--bg-color) !important;
+        height: 100%;
+      }
+
+      .manange-bar {
+        border-radius: 0.5em;
+        justify-content: space-between !important;
+
+      }
+
+      .add-button {
+        border-radius: 0.5em !important;
+        height: auto !important;
+      }
+
+      .lesson-content {
+        height: fit-content !important;
+        border-radius: 1em !important;
+        justify-content: center !important;
+      }
+
+      .dark .manange-bar,
+      .dark .lesson-content {
+        background-color: var(--secondary-color) !important;
+      }
+
+      .lesson-nothing {
+        margin: 25% 0 !important;
+        padding: 0 !important;
+      }
+
+      .each-lesson-a {
+        text-decoration: none !important;
+      }
+
+      .each-lesson-a:hover .each-lesson {
+        border-left: 0.2em solid #8A2BE2 !important;
+      }
   </style>
 </head>
 
 <body>
   <div id="blur-container2">
-    <%- include("./partials/nav.ejs")%>
+    <%- include("./partials/nav2.ejs")%>
     <div class="main-content w-100 h-auto row">
       <%- include("./partials/lessonsList.ejs")%>
       <div class="aside-right col-sm-12 col-lg-9 h-auto p-4">
@@ -194,6 +254,7 @@
             ย้อนกลับ <i class="bi bi-x-circle-fill mx-2"></i>
           </a>
         </div>
+        
         <div class="lesson-content p-4 bg-white w-100 my-4" style="height: fit-content !important;">
           <----------- รอให้ฟังก์ชันแก้ไขบัญชีผู้ใช้ของนักศึกษาเสร็จ ----------->
         </div>

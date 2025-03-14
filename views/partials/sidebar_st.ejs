@@ -14,23 +14,56 @@
             <i class="close-btn" onclick="toggleSidebar()">&#x2715;</i> <!-- Icon close (X) -->
         </div>
         <ul class="sidebar_nav">
-            <li><a class="bi-2 bi pb-2" href="/studentIndex" onclick="toggleSidebar()">หน้าหลัก</a></li>
+            <li><a class="bi-2 bi a-li" href="/studentIndex" onclick="toggleSidebar()"> <i class="bi bi-house-fill me-2"></i>หน้าหลัก</a></li>
             <li>
-                <p class="fs-6 fw-bold bold-menus" style="margin-bottom: 1em !important;">
+                <p class="fs-6 fw-bold" style="margin-bottom: 0.5em !important;">
                     ห้องเรียน
                 </p>
-                <ul class="submenu">
-                    <li><a class="bi-1" href="/studentLesson"
-                            onclick="toggleSidebar()"><i class="bi-1 bi bi-book-half mx-2"></i>บทเรียน</a></li>
-                    <li><a class="bi-2" href="/studentAssignment"
-                            onclick="toggleSidebar()"><i class="bi-2 bi bi-list-task mx-2"></i>งานที่ได้รับมอบหมาย</a></li>
-                    <li><a class="bi-3" href="/studentExam"
-                            onclick="toggleSidebar()"><i class="bi-3 bi bi-pencil-square mx-2"></i>แบบทดสอบ</a></li>
-                </ul>
-                <li><a class="bi-2 bi" href="#"  onclick="toggleSidebar()">แจ้งเตือน</a></li>
-                <li class="a-li d-flex">
-                <a href="#" class="a-li purple" >แบบจำลอง 3D</a>
-             </li>
+                <div class="menu-item">
+                    <div class=" my-1">
+                        <a class="a-li grey" href="/subjects" onclick="toggleSidebar()">
+                          <i class="bi bi-journals mx-2"></i>รายวิชาทั้งหมด
+                     </a>
+                      </div>
+                    <div class="menu-header" onclick="toggleSubjects(this)">
+                        <span class="a-li mx-2">
+                            <i class="bi bi-journal me-2"></i>รายวิชา
+                            <i class="bi bi-chevron-down"></i>
+                        </span>
+                    </div>
+                    <div class="menu-content">
+                        <% if (typeof navSubjects !== 'undefined' && navSubjects.length > 0) { %>
+                            <% navSubjects.forEach(subject => { %>
+                                <div class="my-1 ms-2">
+                                    <a class="a-li" href="/eachSubject?subjectDbId=<%= subject._id %>" onclick="toggleSidebar()">
+                                        <%= subject.subjectId %> <%= subject.subjectName %>
+                                        <%= subject.semester %> กลุ่มที่: <%= subject.section %>
+                                    </a>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="my-1">
+                                <span class="a-li">ไม่มีรายวิชา</span>
+                            </div>
+                        <% } %>
+                    </div>
+                    <li class="a-li d-flex">
+                        <a href="#" class="a-li" onclick="toggleSidebar()"><i class="bi bi-badge-3d-fill me-2"></i>แบบจำลอง 3D</a>
+                     </li>
+                <% if (hasUnread) { %>
+                    <li id="teacherNotification" class="li-a a-li">
+                        <a href="/adminIndex/teacherNotification" class="a-li bell-animatio" onclick="toggleSidebar()">
+                            <span class="text-success">
+                                <i class="bi bi-bell-fill me-2"></i>แจ้งเตือน
+                            </span>
+                        </a>
+    
+                        <% } else { %>
+                    <li id="teacherNotification" class="li-a a-li">
+                        <a href="/adminIndex/teacherNotification" class="a-li" onclick="toggleSidebar()">
+                            <i class="bi bi-bell-fill me-2"></i>แจ้งเตือน</a>
+                    </li>
+                    <% } %>
             </li>
             
             <br>

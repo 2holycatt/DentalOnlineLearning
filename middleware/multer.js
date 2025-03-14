@@ -37,7 +37,9 @@ const fileFilter = (req, file, cb) => {
     file.mimetype.startsWith("video/") ||
     file.mimetype === "application/pdf" ||
     file.mimetype === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-    file.mimetype === "application/msword"
+    file.mimetype === "application/msword" || 
+    file.mimetype === 'application/vnd.ms-excel' || 
+    file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   ) {
     cb(null, true);
   } else {

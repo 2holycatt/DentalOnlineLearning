@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const optionSchema = new mongoose.Schema({
     optionText: {
         type: String,
-        required: true,
         trim: true
     }
 });
