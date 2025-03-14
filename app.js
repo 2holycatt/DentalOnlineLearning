@@ -21,7 +21,7 @@ const cors = require('cors');
 const passport = require('passport');
 // const LessonProgress = require('./models/lessonsProgress'); // นำเข้ารุ่น (model) LessonProgress
 const PORT = process.env.PORT || 4000;
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/elearning";
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://admin01:xI9L8fqpHxqi8CQ4@cluster0.nrim6.mongodb.net/test";
 
 // const MongoStore = require('connect-mongo');
 // const authRouter = require('./routes/auth');
