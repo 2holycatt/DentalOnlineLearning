@@ -514,20 +514,10 @@
         <p class="fw-bold fs-3 lesson-bar">แดชบอร์ด (Dashboard)</p>
         <div class="d-flex justify-content-center" style="align-items: center;">
           <label class="mx-2" for="dashboardSelector">แดชบอร์ดของ: </label>
-          <select id="dashboardSelector">
-            <!-- <option value="/adminIndex/adminDashboard" selected>
-              ทั้งหมด
-              </a>
-            </option> -->
-            <option value="/adminIndex">
-              บทเรียน
-            </option>
-            <option value="/adminIndex">
-              แบบทดสอบ
-            </option>
-            <option value="/adminIndex">
-              งานที่มอบหมาย
-            </option>
+          <select id="dashboardSelector" onchange="changeDashboardType(this.value)">
+            <option value="lesson" >บทเรียน</option>
+            <option value="quiz">แบบทดสอบ</option>
+            <option value="assignment">งานที่มอบหมาย</option>
           </select>
         </div>
       </div>
@@ -536,8 +526,15 @@
         <div style="border-bottom: 1px solid #EAEFF4;" class="mb-3">
           <p class="fs-4 fw-bold mb-2 ">
             <i class="bi bi-pie-chart-fill" style='color:#8A2BE2;'></i>
-            <span class="">ภาพรวมของบทเรียน</span>
-            <span class="">(Overview of Lessons)</span>
+            <span class=""> ภาพรวมของ<%= contentType === 'quiz' ? 'แบบทดสอบ' : 
+              contentType === 'assignment' ? 'งานที่มอบหมาย' : 
+              'บทเรียน' %>
+            </span>
+            <span class=""> 
+              (<%= contentType === 'quiz' ? 'Overview of Quizzes' : 
+              contentType === 'assignment' ? 'Overview of Assignments' : 
+              'Overview of Lessons' %>)
+            </span>
           </p>
         </div>
         <% if (latestSubject != null) {%>
