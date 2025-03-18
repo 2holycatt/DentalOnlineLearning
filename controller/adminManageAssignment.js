@@ -82,26 +82,69 @@ const assignmentIndex = async (req, res) => {
 const assignmentDetail = async (req, res) => {
   try {
     // const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
+    const subjects = await Subject.find().populate('Assignments').sort({ createdAt: 1 }).exec();
     const userData = await User.findById(req.session.userId);
     const navSubjects = await getSubjectsForNav(req.session.userId);
     const theme = req.session.theme || 'light';
     const isSidebarOpen = false;
-    const getAssignId = req.query.id;
-    const assignment = await Assignments.findById(getAssignId).populate("subject");
-    const getSubmitDetail = await Assignments.findById(getAssignId)
-      .populate('subject')
-      .populate({
-        path: "submitDetail",
-        populate: [{
-          path: "user",
-          model: 'User',
-          populate: {
-            path: "student",
-            model: 'Student',
-            select: 'studentId fname lname prefix'
-          }
-        }]
-      });
+    const assignId = req.query.id;
+    const assignment = await Assignments.findById(assignId)
+    .populate({
+      path: 'subject',
+      model: 'subject', // Use lowercase 'subject' to match model name
+      select: 'subjectId subjectName semester section'
+    })
+    .populate({
+      path: 'submitDetail',
+      populate: {
+        path: 'user',
+        populate: {
+          path: 'student'
+        }
+      }
+    });
+
+  if (!assignment) {
+    return res.status(404).send('Assignment not found');
+  }
+
+    const getSubmitDetail = {
+      submitDetail: await Promise.all(assignment.submitDetail.map(async (detail) => {
+        if (!detail.user) return detail;
+
+        // หา student id จาก user
+        const student = await Student.findOne({ user: detail.user._id });
+        
+        // คำนวณสถานะการส่งงาน
+        const submittedDate = moment(detail.updatedAt);
+        const deadline = moment(assignment.Deadline);
+        let sendStatus;
+
+        if (submittedDate.isBefore(deadline)) {
+          sendStatus = {
+            status: "ส่งตรงเวลา"
+          };
+        } else {
+          const duration = moment.duration(submittedDate.diff(deadline));
+          sendStatus = {
+            status: "ส่งช้า",
+            day: Math.floor(duration.asDays()),
+            hour: duration.hours(),
+            minute: duration.minutes()
+          };
+        }
+
+        return {
+          ...detail.toObject(),
+          user: {
+            ...detail.user.toObject(),
+            studentId: student ? student.studentId : '-'
+          },
+          sendStatus // เพิ่ม sendStatus เข้าไปในข้อมูล
+        };
+      }))
+    };
+
       const formattedSubmitDetail = {
         ...getSubmitDetail._doc,
         submitDetail: getSubmitDetail.submitDetail.map(detail => ({
@@ -117,20 +160,21 @@ const assignmentDetail = async (req, res) => {
         }))
       };
 
-    const subject = assignment.subject; 
     const formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
     const formattedDeadline = moment(assignment.Deadline).format('DD/MM/YYYY hh:mm A');
    
 
     res.render('assignmentDetail', {
       assignment,
+      subject: assignment.subject, 
       formattedStartDate,
       formattedDeadline,
-      getSubmitDetail: formattedSubmitDetail,
+      getSubmitDetail,
       navSubjects,
       subject: assignment.subject,
       userData,
       theme,
+      
       isSidebarOpen
     });
 
@@ -491,39 +535,71 @@ const delAssign = async (req, res) => {
 };
 
 const submitDetail = async (req, res) => {
-  const userData = await User.findById(req.session.userId);
-  const navSubjects = await getSubjectsForNav(req.session.userId);
-  const theme = req.session.theme || 'light';
-  const isSidebarOpen = false;
   try {
-    const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
-    const getAssignId = req.query.id;
-    const submitId = req.query.submitId;
-    const assignment = await Assignments.findById(getAssignId).populate("schoolYear");;
-    const formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
-    const formattedDeadline = moment(assignment.Deadline).format('DD/MM/YYYY hh:mm A');
-    const schoolYear = await SchoolYear.find();
-    const updatedFiles = assignment.files.map(filePath => {
-      const { file } = filePath;
-      const fileName = file.slice(67); // นำ string ตั้งแต่ตำแหน่งที่ 33 เป็นต้นไป
-      return fileName;
-    });
+    const { id: assignId, submitId } = req.query;
 
+    // ดึงข้อมูล assignment
+    const assignment = await Assignments.findById(assignId);
+
+    // ดึงข้อมูล submitDetail พร้อม populate แบบละเอียด
     const getSubmitDetail = await submitAssign.findById(submitId)
       .populate({
-        path: "user",
+        path: 'user',
+        model: 'User',
         populate: {
-          path: "student",
+          path: 'student',
+          model: 'Student',
+          select: 'studentId fname lname' // เลือกฟิลด์ที่ต้องการจาก Student
         }
       });
 
-    res.render('submitDetail', { schoolYear, lessons, assignment, updatedFiles, formattedStartDate, formattedDeadline, getSubmitDetail, navSubjects, userData, theme, isSidebarOpen });
+    if (!getSubmitDetail) {
+      return res.status(404).send('Submit detail not found');
+    }
+
+    // ดึงข้อมูล student โดยตรง
+    const student = await Student.findOne({ user: getSubmitDetail.user._id })
+      .select('studentId fname lname');
+
+    // Log เพื่อตรวจสอบข้อมูล
+    console.log('Student Data:', student);
+    console.log('Submit Detail Before:', getSubmitDetail);
+
+    // สร้าง user object ใหม่พร้อมข้อมูลที่ต้องการ
+    const userObject = getSubmitDetail.user.toObject();
+    getSubmitDetail.user = {
+      ...userObject,
+      studentId: student?.studentId || userObject?.student?.studentId || 'ไม่พบรหัสนักศึกษา',
+      fname: student?.fname || userObject?.fname || 'ไม่พบชื่อ',
+      lname: student?.lname || userObject?.lname || 'ไม่พบนามสกุล',
+      student: {
+        ...userObject.student,
+        studentId: student?.studentId || 'ไม่พบรหัสนักศึกษา'
+      }
+    };
+
+    console.log('Submit Detail After:', getSubmitDetail);
+
+    // ส่งข้อมูลไปยัง view
+    res.render('submitDetail', {
+      assignment,
+      getSubmitDetail,
+      userData: await User.findById(req.session.userId),
+      theme: req.session.theme || 'light',
+      isSidebarOpen: false,
+      // ส่งข้อมูลเพิ่มเติมเพื่อความแน่ใจ
+      studentData: {
+        studentId: student?.studentId || 'ไม่พบรหัสนักศึกษา',
+        fullName: `${student?.fname || ''} ${student?.lname || ''}`
+      }
+    });
 
   } catch (error) {
-    console.error(error);
+    console.error('Submit Detail Error:', error);
+    console.error('Error Stack:', error.stack);
     res.status(500).send('Server Error');
   }
-}
+};
 
 const checkAssignment = async (req, res) => {
   try {

@@ -1,8 +1,67 @@
+@viewport {
+  width: 1200px;
+  min-width: 1200px;
+}
 * {
   /* font-family: "Prompt" !important; */
   margin: 0 !important;
   padding: 0 !important;
+  box-sizing: border-box;
 }
+
+/* เพิ่ม html styles */
+html {
+  min-width: 590px;
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* แก้ไขส่วน body */
+body {
+  min-width: 590px;
+  width: 100%;
+  margin: 0 auto !important;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* แก้ไขส่วน main-content */
+.main-content {
+  min-width: 590px;
+  width: 100%;
+  margin-top: 5em !important;
+  display: flex;
+}
+
+/* แก้ไขส่วน aside-right */
+.aside-right {
+  width: 80% !important;
+}
+
+/* แก้ไข media query */
+@media (max-width: 1020px) {
+  html,
+  body,
+  .main-content
+   {
+    min-width: 590px;
+    width: 100%;
+    overflow-x: hidden !important;
+  }
+
+  .main-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  html {
+    zoom: 1 !important;
+    -moz-transform: scale(1) !important;
+    -webkit-transform: scale(1) !important;
+    transform: scale(1) !important;
+  }
+}
+
 
 a {
   color: #00B7FF;

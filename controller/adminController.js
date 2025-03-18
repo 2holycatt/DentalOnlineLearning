@@ -136,7 +136,7 @@ const uploadStudent = async (req, res) => {
       limit,
       populate: {
         path: 'user',
-        select: 'fname lname email major studentFromKku'
+        select: 'fname lname nickname email major studentFromKku'
       }
     });
 
@@ -1173,6 +1173,7 @@ const showFile = async (req, res) => {
 
 const logsFile = async (req, res) => {
   try {
+    const navSubjects = await getSubjectsForNav(req.session.userId);
     const userData = await User.findById(req.session.userId);
     const theme = req.session.theme || 'light'; 
     const isSidebarOpen = false; 
@@ -1181,7 +1182,7 @@ const logsFile = async (req, res) => {
     logs(req, res, (data) => {
       // Render หน้า EJS พร้อมข้อมูล logs และข้อมูลผู้ใช้
       // console.log('Logs data:', data); // ตรวจสอบข้อมูลในคอนโซล
-      res.render('logsFile', { logs: data.logs, userData ,theme, isSidebarOpen});
+      res.render('logsFile', { logs: data.logs, userData ,theme, isSidebarOpen,navSubjects});
     });
   } catch (err) {
     console.error(err);
@@ -1808,6 +1809,7 @@ const downloadFile = async (req, res) => {
 const setPermission = async (req, res) => {
   try {
     // const students = await Student.find().populate('user').sort({createdAt:1});
+    const navSubjects = await getSubjectsForNav(req.session.userId);
     const { page = 1, limit = 25 } = req.query;
     const userData = await User.findById(req.session.userId);
     const theme = req.session.theme || 'light'; 
@@ -1826,7 +1828,8 @@ const setPermission = async (req, res) => {
       students,
       userData,
       theme,
-      isSidebarOpen
+      isSidebarOpen,
+      navSubjects
     });
   } catch (err) {
     console.error(err);

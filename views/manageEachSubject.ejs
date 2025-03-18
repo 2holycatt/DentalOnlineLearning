@@ -992,52 +992,62 @@
                 <% if (subject.students.length> 0) {%>
                   <div class="file-example w-100">
                     <div class="list-div purple row">
-                      <p class="fw-bold my-3 col-1">
+                      <!-- <p class="fw-bold my-3 col-1">
                         เลขที่
-                      </p>
+                      </p> -->
                       <p class="fw-bold my-3 col-2">
                         รหัสนักศึกษา
                       </p>
-                      <p class="fw-bold my-3 col-3">
+                      <p class="fw-bold my-3 col-2">
                         ชื่อ - นามสกุล
                       </p>
-                      <p class="fw-bold my-3 col-2">
+                      <p class="fw-bold my-3 col-1">
                         ชื่อเล่น
                       </p>
-                      <p class="fw-bold my-3 col-3">
+                      <p class="fw-bold my-3 col-4">
                         ที่อยู่อีเมล (email)
                       </p>
                       <p class="fw-bold my-3 col-1">
                         คณะ
                       </p>
+                      <p class="fw-bold my-3 col-2">
+                        นักศึกษาจาก
+                      </p>
                     </div>
                     <% const students=subject.students %>
                       <% students.forEach((student, index)=> { %>
+                        <!-- <a href="/adminIndex/studentDetail?studentId=<%= student._id %>&subjectId=<%= subject._id.toString() %>" class="data-a"> -->
+                          <a href="/adminIndex/studentInformationAccount?studentId=<%=student.studentId%>">
                         <div class="list-div-data row">
-                          <p class="grey fw-normal my-3 col-1">
+                          <!-- <p class="grey fw-normal my-3 col-1">
                             <%=index + 1%>
-                          </p>
+                          </p> -->
                           <p class="grey fw-normal my-3 col-2">
                             <%=student.studentId%>
                           </p>
-                          <p class="grey fw-normal my-3 col-3">
+                          <p class="grey fw-normal my-3 col-2">
                             <%=student.user.fname%>
                               <%=student.user.lname%>
                           </p>
-                          <p class="grey fw-normal my-3 col-2">
+                          <p class="grey fw-normal my-3 col-1">
                             <% if (student.user.nickname !=null) { %>
                               <%=student.user.nickname%>
                                 <% } else { %>
                                   -
                                   <% } %>
                           </p>
-                          <p class="grey fw-normal my-3 col-3">
+                          <p class="grey fw-normal my-3 col-4 truncate-text">
                             <%=student.user.email%>
                           </p>
                           <p class="grey fw-normal my-3 col-1">
                             <%=student.user.major%>
                           </p>
+                          <p
+                      class="fw-normal my-3 col-2  <%= student.user?.studentFromKku ? 'text-kku' : 'grey' %>">
+                      <%= student.user?.studentFromKku ? 'มหาวิทยาลัยขอนแก่น' : 'ภายนอก' %>
+                    </p>
                         </div>
+                      </a>
                         <% }); %>
 
                   </div>

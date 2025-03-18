@@ -463,13 +463,19 @@
             </div>
             <% if (paginateStudents.length > 0) { %>
             <% paginateStudents.forEach((student, index) => { %>
-            <a href="/adminIndex/studentDetail?studentId=<%=student._id%>&subjectId=<%=subjectId%>" class="studentDetail-a">
-              <div class="list-div-data">
+              <a href="/adminIndex/studentDetail?studentId=<%= student._id %>&subjectId=<%= subjectId %>" 
+                class="studentDetail-a"
+                <% if (!student._id || !subjectId) { %>
+                  onclick="return false;"
+                  style="pointer-events: none; opacity: 0.5;"
+                <% } %>
+             >
+            <div class="list-div-data">
                 <p class="fw-normal my-3">
                   <%= student.studentId %>
                 </p>
                 <p class="fw-normal my-3">
-                  <%= student.user.name %>
+                  <%= student.user.fname %> <%= student.user.lname %>
                 </p>
                 <p class="fw-normal my-3">
                   <%= student.user.email %>

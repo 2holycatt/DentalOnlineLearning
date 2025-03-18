@@ -25,77 +25,152 @@ const moment = require('moment');
 const Student = require("../models/student.model");
 const User = require("../models/user.model");
 
-
-async function countTodayLessonAccess(subjectId) {
+async function getSubjectsForNav(userId) {
     try {
-        // หา subject ที่มี subjectId ตรงกับที่กำหนด
-        const subject = await Subject.findOne({ _id: subjectId });
+        const userData = await User.findById(userId);
+        let subjects = [];
+        
+        if (!userData) {
+            return [];
+        }
+  
+        if (userData.role === 'student') {
+            const studentData = await Student.findOne({ user: userId })
+                .populate('subjects.subjectMongooseId');
+            
+            if (studentData && studentData.subjects) {
+                subjects = studentData.subjects
+                    .filter(subject => 
+                        subject.subjectMongooseId && 
+                        !subject.subjectMongooseId.isArchived)
+                    .map(subject => subject.subjectMongooseId);
+            }
+        } else {
+            // For teachers and admins, filter out archived subjects
+            subjects = await Subject.find({ isArchived: false })
+                .sort({ semester: 1 })
+                .populate("lessonArray") || [];
+        }
+        
+        return subjects;
+    } catch (error) {
+        console.error('Error in getSubjectsForNav:', error);
+        return [];
+    }
+  }
+
+  async function countTodayAccess(subjectId, contentType) {
+    try {
+        const subject = await Subject.findOne({ _id: subjectId })
+            .populate('quizArray')
+            .populate('Assignments');
+            
         if (!subject) {
             throw new Error('Subject not found');
         }
 
-        // รับค่า lessonArray จาก subject
-        const lessonArray = subject.lessonArray;
-
-        // กำหนดช่วงเวลาสำหรับวันนี้
         const startOfToday = moment().startOf('day').toDate();
         const endOfToday = moment().endOf('day').toDate();
-
-        // กำหนดช่วงเวลาสำหรับเมื่อวาน
         const startOfYesterday = moment().subtract(1, 'days').startOf('day').toDate();
         const endOfYesterday = moment().subtract(1, 'days').endOf('day').toDate();
 
-        // ค้นหาจำนวนผู้เข้าถึงบทเรียนในวันนี้
-        const todayUsers = await lessonProgress.aggregate([
-            {
-                $match: {
-                    lesson: { $in: lessonArray },
-                    updatedAt: { $gte: startOfToday, $lt: endOfToday }
-                }
-            },
-            {
-                $group: {
-                    _id: "$user" // จัดกลุ่มโดยใช้ user _id เพื่อหลีกเลี่ยงการนับซ้ำ
-                }
-            },
-            {
-                $count: "uniqueUserCount"
-            }
-        ]);
+        let todayCount = 0;
+        let yesterdayCount = 0;
+        let resultMessage = "";
 
-        // ค้นหาจำนวนผู้เข้าถึงบทเรียนเมื่อวาน
-        const yesterdayUsers = await lessonProgress.aggregate([
-            {
-                $match: {
-                    lesson: { $in: lessonArray },
-                    updatedAt: { $gte: startOfYesterday, $lt: endOfYesterday }
-                }
-            },
-            {
-                $group: {
-                    _id: "$user"
-                }
-            },
-            {
-                $count: "uniqueUserCount"
-            }
-        ]);
+        if (contentType === 'quiz') {
+            // นับจำนวนผู้ทำแบบทดสอบวันนี้
+            const todayAttempts = subject.quizArray.reduce((sum, quiz) => {
+                return sum + (quiz.attempts || []).filter(attempt => 
+                    moment(attempt.submittedAt).isBetween(startOfToday, endOfToday)
+                ).length;
+            }, 0);
 
-        // คำนวณจำนวนผู้ใช้งานในวันนี้และเมื่อวาน
-        const todayCount = todayUsers.length > 0 ? todayUsers[0].uniqueUserCount : 0;
-        const yesterdayCount = yesterdayUsers.length > 0 ? yesterdayUsers[0].uniqueUserCount : 0;
+            // นับจำนวนผู้ทำแบบทดสอบเมื่อวาน
+            const yesterdayAttempts = subject.quizArray.reduce((sum, quiz) => {
+                return sum + (quiz.attempts || []).filter(attempt => 
+                    moment(attempt.submittedAt).isBetween(startOfYesterday, endOfYesterday)
+                ).length;
+            }, 0);
 
-        // คำนวณความแตกต่างของจำนวนผู้ใช้งาน
+            todayCount = todayAttempts;
+            yesterdayCount = yesterdayAttempts;
+
+        } else if (contentType === 'assignment') {
+            // นับจำนวนผู้ส่งงานวันนี้
+            const todaySubmissions = subject.Assignments.reduce((sum, assignment) => {
+                return sum + (assignment.submitDetail || []).filter(submit => 
+                    moment(submit.submitTime).isBetween(startOfToday, endOfToday)
+                ).length;
+            }, 0);
+
+            // นับจำนวนผู้ส่งงานเมื่อวาน
+            const yesterdaySubmissions = subject.Assignments.reduce((sum, assignment) => {
+                return sum + (assignment.submitDetail || []).filter(submit => 
+                    moment(submit.submitTime).isBetween(startOfYesterday, endOfYesterday)
+                ).length;
+            }, 0);
+
+            todayCount = todaySubmissions;
+            yesterdayCount = yesterdaySubmissions;
+
+        } else {
+            // สำหรับบทเรียน (ใช้โค้ดเดิม)
+            const todayUsers = await lessonProgress.aggregate([
+                {
+                    $match: {
+                        lesson: { $in: subject.lessonArray },
+                        updatedAt: { $gte: startOfToday, $lt: endOfToday }
+                    }
+                },
+                {
+                    $group: { _id: "$user" }
+                },
+                {
+                    $count: "uniqueUserCount"
+                }
+            ]);
+
+            const yesterdayUsers = await lessonProgress.aggregate([
+                {
+                    $match: {
+                        lesson: { $in: subject.lessonArray },
+                        updatedAt: { $gte: startOfYesterday, $lt: endOfYesterday }
+                    }
+                },
+                {
+                    $group: { _id: "$user" }
+                },
+                {
+                    $count: "uniqueUserCount"
+                }
+            ]);
+
+            todayCount = todayUsers.length > 0 ? todayUsers[0].uniqueUserCount : 0;
+            yesterdayCount = yesterdayUsers.length > 0 ? yesterdayUsers[0].uniqueUserCount : 0;
+        }
+
         const difference = todayCount - yesterdayCount;
 
-        // กำหนดข้อความสำหรับผลลัพธ์
-        let resultMessage = "";
+        // สร้างข้อความตามประเภทเนื้อหา
         if (difference > 0) {
-            resultMessage = `เพิ่มขึ้น ${difference} คนจากเมื่อวาน`;
+            resultMessage = contentType === 'quiz' ? 
+                `มีผู้ทำแบบทดสอบเพิ่มขึ้น ${difference} คนจากเมื่อวาน` :
+                contentType === 'assignment' ? 
+                `มีผู้ส่งงานเพิ่มขึ้น ${difference} คนจากเมื่อวาน` :
+                `เพิ่มขึ้น ${difference} คนจากเมื่อวาน`;
         } else if (difference < 0) {
-            resultMessage = `ลดลง ${Math.abs(difference)} คนจากเมื่อวาน`;
+            resultMessage = contentType === 'quiz' ? 
+                `มีผู้ทำแบบทดสอบลดลง ${Math.abs(difference)} คนจากเมื่อวาน` :
+                contentType === 'assignment' ? 
+                `มีผู้ส่งงานลดลง ${Math.abs(difference)} คนจากเมื่อวาน` :
+                `ลดลง ${Math.abs(difference)} คนจากเมื่อวาน`;
         } else {
-            resultMessage = `จำนวนผู้เข้าถึงเท่ากับเมื่อวาน`;
+            resultMessage = contentType === 'quiz' ? 
+                'จำนวนผู้ทำแบบทดสอบเท่ากับเมื่อวาน' :
+                contentType === 'assignment' ? 
+                'จำนวนผู้ส่งงานเท่ากับเมื่อวาน' :
+                'จำนวนผู้เข้าถึงเท่ากับเมื่อวาน';
         }
 
         return {
@@ -107,12 +182,18 @@ async function countTodayLessonAccess(subjectId) {
 
     } catch (error) {
         console.error(error);
-        return 0; // คืนค่า 0 หากเกิดข้อผิดพลาด
+        return {
+            todayCount: 0,
+            yesterdayCount: 0,
+            difference: 0,
+            resultMessage: 'เกิดข้อผิดพลาดในการนับจำนวน'
+        };
     }
 }
 
 const adminDashboard = async (req, res) => {
     try {
+        const navSubjects = await getSubjectsForNav(req.session.userId);
         const subjectId = req.query.subjectId;
         const contentType = req.query.contentType || 'lesson';
         const userData = await User.findById(req.session.userId);
@@ -122,14 +203,6 @@ const adminDashboard = async (req, res) => {
         // ดึงข้อมูล subjects สำหรับ dropdown
         const subjects = await Subject.find().sort({ "createdAt": 1 });
 
-        // เตรียมตัวแปรสำหรับส่งไป view
-        let chartData = [];
-        let chartLabels = [];
-        let additionalData = {};
-        let lessonLabels = []; // เพิ่มตัวแปรนี้
-        let progressData = []; // เพิ่มตัวแปรนี้
-        let lessonFinishedToday = [];
-        // ดึงข้อมูลรายวิชา
         const latestSubject = subjectId ? 
             await Subject.findById(subjectId)
                 .populate("lessonArray")
@@ -140,6 +213,85 @@ const adminDashboard = async (req, res) => {
                 .populate("quizArray")
                 .populate("Assignments")
                 .sort({ createdAt: -1 });
+
+        const findSubject = subjectId ? 
+        await Subject.findById(subjectId).populate({
+            path: "students",
+            populate: {
+                path: "user",
+            }
+        }) : null;
+
+    // ฟังก์ชัน paginate
+    function paginate(array, pageSize, page) {
+        if (!array) return [];
+        return array.slice((page - 1) * pageSize, page * pageSize);
+    }
+
+         // กำหนดค่า pagination
+         const page = parseInt(req.query.page) || 1;
+         const pageSize = 10;
+ 
+         // ดึงข้อมูล lesson progress
+         let eachLessonProgress = [];
+         if (findSubject) {
+             for (const each of findSubject.students) {
+                 let findLessonProgress = await lessonProgress.find({
+                     user: each.user._id,
+                     subjectMongooseId: subjectId
+                 });
+         
+                 let progressData = {
+                     userId: each.user._id,
+                     userProgressSummary: 0,
+                     lessonProgressLength: 0,
+                     totalTimeSpent: 0
+                 };
+         
+                 if (findLessonProgress.length > 0) {
+                     if (contentType === 'quiz') {
+                         // คำนวณสำหรับแบบทดสอบ
+                         const totalQuizzes = latestSubject.quizArray.length;
+                         const completedQuizzes = findLessonProgress.filter(p => p.progress === 100).length;
+                         progressData.userProgressSummary = totalQuizzes > 0 ? 
+                             (completedQuizzes / totalQuizzes) * 100 : 0;
+                     } else if (contentType === 'assignment') {
+                         // คำนวณสำหรับงานที่มอบหมาย
+                         const totalAssignments = latestSubject.Assignments.length;
+                         const completedAssignments = findLessonProgress.filter(p => p.progress === 100).length;
+                         progressData.userProgressSummary = totalAssignments > 0 ? 
+                             (completedAssignments / totalAssignments) * 100 : 0;
+                     } else {
+                         // คำนวณสำหรับบทเรียน
+                         const totalProgress = findLessonProgress.reduce((sum, prog) => sum + prog.progress, 0);
+                         const totalLessons = latestSubject.lessonArray.length;
+                         progressData.userProgressSummary = totalLessons > 0 ? 
+                             totalProgress / totalLessons : 0;
+                     }
+         
+                     progressData.lessonProgressLength = findLessonProgress.length;
+                     progressData.totalTimeSpent = findLessonProgress.reduce((sum, prog) => 
+                         sum + (prog.timeSpentInSeconds || 0), 0) / 60; // แปลงวินาทีเป็นนาที
+                 }
+         
+                 eachLessonProgress.push(progressData);
+             }
+         }
+ 
+         // จัดการ pagination
+         const paginateStudents = findSubject ? paginate(findSubject.students, pageSize, page) : [];
+         const paginateProgress = paginate(eachLessonProgress, pageSize, page);
+
+
+        // เตรียมตัวแปรสำหรับส่งไป view
+        let chartData = [];
+        let chartLabels = [];
+        let additionalData = {};
+        let lessonLabels = []; // เพิ่มตัวแปรนี้
+        let progressData = []; // เพิ่มตัวแปรนี้
+        let lessonFinishedToday = [];
+        // ดึงข้อมูลรายวิชา
+      
 
         if (latestSubject) {
             const today = new Date();
@@ -227,11 +379,12 @@ const adminDashboard = async (req, res) => {
 
         // ดึงข้อมูลการเข้าถึงวันนี้
         const calculateTodayProgress = latestSubject ? 
-            await countTodayLessonAccess(latestSubject._id) : 
-            { todayCount: 0, yesterdayCount: 0, difference: 0, resultMessage: '' };
+        await countTodayAccess(latestSubject._id, contentType) : 
+        { todayCount: 0, yesterdayCount: 0, difference: 0, resultMessage: '' };
 
         // Render dashboard
         res.render('teacherDashboard', {
+            navSubjects,
             subjects,
             latestSubject,
             chartLabels,
@@ -242,17 +395,21 @@ const adminDashboard = async (req, res) => {
             userData,
             theme,
             isSidebarOpen,
+            paginateStudents,
+            paginateProgress,
             countToday: calculateTodayProgress.todayCount,
             yesterdayCount: calculateTodayProgress.yesterdayCount,
             difference: calculateTodayProgress.difference,
             message: calculateTodayProgress.resultMessage,
             lessonFinishedToday,
+            subjectId: subjectId || (latestSubject ? latestSubject._id : null), // เพิ่มบรรทัดนี้
             ...additionalData
         });
 
     } catch (err) {
         console.error('Dashboard Error:', err);
         res.render('teacherDashboard', {
+            navSubjects,
             latestSubject: null,
             subjects: await Subject.find().sort({ "createdAt": 1 }),
             chartLabels: [],
@@ -264,7 +421,10 @@ const adminDashboard = async (req, res) => {
             userData: await User.findById(req.session.userId),
             theme: req.session.theme || 'light',
             isSidebarOpen: false,
-            contentType: req.query.contentType || 'lesson'
+            contentType: req.query.contentType || 'lesson',
+            paginateStudents: [],
+            paginateProgress: [],
+            subjectId: null // เพิ่มบรรทัดนี้
         });
     }
 };
@@ -277,10 +437,22 @@ function calculateTotalProgress(data, studentAmount, totalItems) {
 }
 
 const progressHistory = async (req, res) => {
+    const theme = req.session.theme || 'light'; 
     try {
-        res.render('progressHistory')
+        // แก้ไขจาก res.render('progressHistory', theme)
+        // เป็นการส่ง object ที่มี property theme
+        res.render('progressHistory', {
+            theme: theme,
+            userData: await User.findById(req.session.userId),
+            isSidebarOpen: false
+        });
     } catch (err) {
-        console.log(err);
+        console.error('Progress History Error:', err);
+        res.render('progressHistory', {
+            theme: 'light',
+            userData: null,
+            isSidebarOpen: false
+        });
     }
 }
 
@@ -410,61 +582,71 @@ const moreDetailChart = async (req, res) => {
 }
 
 const studentDetail = async (req, res) => {
-    const userData = await User.findById(req.session.userId);
-    const theme = req.session.theme || 'light'; 
-    const isSidebarOpen = false; 
     try {
+        const userData = await User.findById(req.session.userId);
+        const theme = req.session.theme || 'light';
+        const isSidebarOpen = false;
+        
         const studentId = req.query.studentId;
         const subjectId = req.query.subjectId;
-        const subjects = await Subject.find(
-            { students: studentId }
-        ).sort({ "createdAt": 1 });
 
-        const findStudent = await Student.findOne(
-            {
-                _id: studentId,
-                "subjects.subjectMongooseId": subjectId
-            }
-        ).populate("user");
-        // console.log(findStudent);
-        const subjectHasLessons = await Subject.findById(subjectId).populate("lessonArray");;
-        // res.json(findStudent);
-        // const completedCount = completedLayouts.filter(layoutId => layoutLists.includes(layoutId)).length;
+        // ตรวจสอบว่ามี studentId และ subjectId หรือไม่
+        if (!studentId || !subjectId) {
+            return res.status(400).send('Missing required parameters');
+        }
 
-        // let allLessonProgress;
-        // if ()
-        const allLessonProgress = await lessonProgress.find(
-            {
-                user: findStudent.user._id,
-                subjectMongooseId: subjectId
-            }
-        ).populate("lesson");
+        const subjects = await Subject.find({ students: studentId }).sort({ "createdAt": 1 });
+
+        // แก้ไขการค้นหานักศึกษา
+        const findStudent = await Student.findOne({ _id: studentId })
+            .populate('user')
+            .populate({
+                path: 'subjects.subjectMongooseId',
+                match: { _id: subjectId }
+            });
+
+        if (!findStudent) {
+            return res.status(404).send('Student not found');
+        }
+
+        const subjectHasLessons = await Subject.findById(subjectId).populate("lessonArray");
+        if (!subjectHasLessons) {
+            return res.status(404).send('Subject not found');
+        }
+
+        // ค้นหา lesson progress
+        const allLessonProgress = await lessonProgress.find({
+            user: findStudent.user._id,
+            subjectMongooseId: subjectId
+        }).populate("lesson");
 
         let lessonLabels = [];
         let progressData = [];
         let timeSpent = [];
 
-        subjectHasLessons.lessonArray.forEach((eachLesson, index) => {
+        // ตรวจสอบและจัดการข้อมูลบทเรียน
+        subjectHasLessons.lessonArray.forEach((eachLesson) => {
             const lessonId = eachLesson._id.toString();
-            const foundLessonProgress = allLessonProgress.some(progress => progress.lesson._id.toString() === lessonId);
+            const progress = allLessonProgress.find(p => 
+                p.lesson && p.lesson._id.toString() === lessonId
+            );
 
-            if (foundLessonProgress) {
-                lessonLabels.push(eachLesson.LessonName);
-                progressData.push(allLessonProgress[index].progress);
-                timeSpent.push(allLessonProgress[index].timeSpentInSeconds);
-
-            } else if (!foundLessonProgress) {
-                lessonLabels.push(eachLesson.LessonName);
+            lessonLabels.push(eachLesson.LessonName);
+            if (progress) {
+                progressData.push(progress.progress);
+                timeSpent.push(progress.timeSpentInSeconds);
+            } else {
                 progressData.push(0);
                 timeSpent.push(0);
             }
-        })
-        let total = progressData.reduce((accumulator, currentValue) => {
-            return accumulator + currentValue;
-        }, 0);
+        });
 
-        let allFinishedProgressLesson = (total / subjectHasLessons.lessonArray.length).toFixed(2);
-        // res.json(allLessonProgress);
+        // คำนวณความสำเร็จรวม
+        const total = progressData.reduce((acc, curr) => acc + curr, 0);
+        const allFinishedProgressLesson = subjectHasLessons.lessonArray.length > 0 
+            ? (total / subjectHasLessons.lessonArray.length).toFixed(2)
+            : '0.00';
+
         res.render('studentDetailChart', {
             findStudent,
             lessonLabels,
@@ -477,11 +659,13 @@ const studentDetail = async (req, res) => {
             userData,
             theme,
             isSidebarOpen
-        })
+        });
+
     } catch (err) {
-        console.log(err);
+        console.error('Student Detail Error:', err);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
 
 module.exports = {
     adminDashboard,

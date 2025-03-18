@@ -238,7 +238,10 @@
             <span> <i class="bi bi-list-task me-1 purple" style="cursor: default;"></i>
                </span>
             <a class="grey link" href="/eachSubject?subjectDbId=<%=subject._id%>">
-              <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
+              <%= subject?.subjectId || '-' %> 
+              <%= subject?.subjectName || '-' %> 
+              <%= subject?.semester || '-' %> 
+              กลุ่มที่: <%= subject?.section || '-' %>
             </a> 
             <span>   / งานที่มอบหมาย:  <%=assignment.name%></span> 
 
@@ -342,28 +345,34 @@
         <% submitDetail.forEach(detail => { %>
         <a href="/adminIndex/submitDetail?id=<%=assignment._id%>&submitId=<%=detail._id%>" class="data-a ">
           <div class="list-div-data py-3">
-            <p class="fs-6 fw-normal">
-                <%= detail.user ? detail.user.studentId : '-' %>
+            <p class="fs-6 fw-normal grey">
+  <%= detail.user?.studentId || detail.user?.student?.studentId || '-' %>
             </p>
-            <p class="fs-6 fw-normal">
+            <p class="fs-6 fw-normal grey">
               <%= detail.user ? `${detail.user.fname || '' } ${detail.user.lname || '' }` : '-' %>
             </p>
             <% const sendDate = new Date(detail.updatedAt).toLocaleString('en-US', {timeZone: 'Asia/Bangkok', hour12: true, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}); %>
             <p class="fs-6 fw-normal text-success">
               <%= sendDate.replace(',' , '') %>
             </p>
-            <% const status =  detail.sendStatus.status %>
-            <% if (status == "ส่งตรงเวลา") { %>
-            <p class="fs-6 fw-normal text-success">
-              <%=status %>
-            </p>
-            <% } else if (status == "ส่งช้า") {%>
-            <% const day =  detail.sendStatus.day %>
-            <% const hour =  detail.sendStatus.hour %>
-            <% const minute =  detail.sendStatus.minute %>
-            <p class="fs-6 fw-normal">
-              <span class="text-danger"><%=status %> <%=day%> วัน <%=hour%> ชั่วโมง <%=minute%> นาที</span>
-            </p>
+            <% if (detail.sendStatus) { %>
+              <% const status = detail.sendStatus.status %>
+              <% if (status === "ส่งตรงเวลา") { %>
+                <p class="fs-6 fw-normal text-success">
+                  <%= status %>
+                </p>
+              <% } else if (status === "ส่งช้า") { %>
+                <% const { day, hour, minute } = detail.sendStatus %>
+                <p class="fs-6 fw-normal">
+                  <span class="text-danger">
+                    <%= status %> <%= day %> วัน <%= hour %> ชั่วโมง <%= minute %> นาที
+                  </span>
+                </p>
+              <% } %>
+            <% } else { %>
+              <p class="fs-6 fw-normal text-muted">
+                ไม่มีข้อมูลการส่ง
+              </p>
             <% } %>
             <p class="fs-6 fw-normal text-success text-center">
               <%=  detail.Score %>

@@ -101,6 +101,9 @@ input[type=file]::file-selector-button:hover {
 
 
 }
+.dark .list-div {
+    border-bottom: 1px solid #666;
+}
 
 .list-div-data {
     display: grid;
@@ -108,6 +111,9 @@ input[type=file]::file-selector-button:hover {
     padding-top: 1em;
     border-bottom: 1px solid #EAEFF4;
 
+}
+.dark .list-div-data {
+    border-bottom: 1px solid #666;
 }
 
 .data-a {

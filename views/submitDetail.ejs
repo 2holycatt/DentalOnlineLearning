@@ -10,7 +10,20 @@
   <link rel="stylesheet" href="/css/assignment.css">
   <link rel="stylesheet" href="/css/fixedSwal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty@4/lib/noty.css">
+
   <script src="https://cdn.jsdelivr.net/npm/noty@4/lib/noty.min.js"></script>
+  <style>
+     body.dark {
+          background-color: #212121 !important;
+        }
+        .dark .above-nav-status {
+        background-color:  var(--secondary-color) !important;
+        border-right:1px solid #494949 ;
+      }
+      .dark .manange-bar, .dark .lesson-content{
+        background-color:  var(--secondary-color) !important;
+      }
+  </style>
 </head>
 
 <body>
@@ -47,13 +60,13 @@
         <div class="row assign-head">
           <div class="row">
             <div class="col-8 mb-3">
-              <p class="fs-6 fw-bold"><i class="bi bi-person-fill text-primary fs-5"></i> รหัสนักศึกษา:
-                <span class="fw-normal">
-                  <%= getSubmitDetail?.user?.student?.studentId || 'ไม่พบข้อมูล' %>
+              <p class="fs-6 fw-bold"><i class="bi bi-person-fill purple fs-5"></i> รหัสนักศึกษา:
+                <span class="fw-normal me-2">
+                  <%= studentData.studentId || getSubmitDetail?.user?.student?.studentId || getSubmitDetail?.user?.studentId || 'ไม่พบรหัสนักศึกษา' %>
                 </span>
-                  ชื่อ-นามสกุล
+                  ชื่อ-นามสกุล:
                 <span class="fw-normal">
-                  <%= getSubmitDetail?.user?.name || 'ไม่พบข้อมูล' %>
+                  <%= getSubmitDetail?.user?.fname || 'ไม่พบข้อมูล' %> <%= getSubmitDetail?.user?.lname || 'ไม่พบข้อมูล' %>
                 </span>
               </p>
             </div>

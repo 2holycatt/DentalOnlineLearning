@@ -295,19 +295,22 @@
           <% } else if (allStudents.docs.length> 0) {%>
             <div class="lesson-content p-4 bg-white w-100 my-2 h-auto">
               <div class="list-div purple row">
-                <p class="fw-bold my-3 col-2 text-center">
+                <p class="fw-bold my-3 col-2">
                   รหัสนักศึกษา
                 </p>
-                <p class="fw-bold my-3 col-3 text-center">
+                <p class="fw-bold my-3 col-2 ">
                   ชื่อ - นามสกุล
                 </p>
-                <p class="fw-bold my-3 col-3 text-center">
+                <p class="fw-bold my-3 col-1 ">
+                  ชื่อเล่น
+                </p>
+                <p class="fw-bold my-3 col-4 ">
                   ที่อยู่อีเมล (Email)
                 </p>
-                <p class="fw-bold my-3 col-2 text-center">
+                <p class="fw-bold my-3 col-1">
                   คณะ
                 </p>
-                <p class="fw-bold my-3 col-2 text-center">
+                <p class="fw-bold my-3 col-2 ">
                   นักศึกษาจาก
                 </p>
               </div>
@@ -315,20 +318,23 @@
                 <a href="/adminIndex/studentInformationAccount?studentId=<%=student.studentId%>"
                   class="studentDetail-a">
                   <div class="list-div-data row">
-                    <p class="fw-normal my-3 col-2 grey text-center">
+                    <p class="fw-normal my-3 col-2 grey ">
                       <%= student.studentId || '-' %>
                     </p>
-                    <p class="fw-normal my-3 col-3 grey text-center">
+                    <p class="fw-normal my-3 col-2 grey ">
                       <%= student.user ? `${student.user.fname || '' } ${student.user.lname || '' }` : '-' %>
                     </p>
-                    <p class="fw-normal my-3 col-3 grey text-center">
+                    <p class="fw-normal my-3 col-1 grey ">
+                      <%= student.user && student.user.nickname ? student.user.nickname : '-' %>
+                    </p>
+                    <p class="fw-normal my-3 col-4 grey  truncate-text">
                       <%= student.user?.email || '-' %>
                     </p>
-                    <p class="fw-normal my-3 col-2 grey text-center">
+                    <p class="fw-normal my-3 col-1 grey ">
                       <%= student.user?.major || '-' %>
                     </p>
                     <p
-                      class="fw-normal my-3 col-2 text-center <%= student.user?.studentFromKku ? 'text-kku' : 'grey' %>">
+                      class="fw-normal my-3 col-2  <%= student.user?.studentFromKku ? 'text-kku' : 'grey' %>">
                       <%= student.user?.studentFromKku ? 'มหาวิทยาลัยขอนแก่น' : 'ภายนอก' %>
                     </p>
                   </div>
