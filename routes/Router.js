@@ -176,6 +176,8 @@ router.post('/adminIndex/addStudentListsToSubject', manageStudent.addStudentList
 router.post('/adminIndex/deleteStudentListsFromSubject', manageStudent.deleteStudentListsFromSubject);
 router.post('/adminIndex/editScorePerweek', manageStudent.editScorePerweek);
 router.post('/adminIndex/setPermissionStudentLists', manageStudent.setPermissionStudentLists)
+router.post('/adminIndex/deleteStudents', manageStudent.deleteStudents);
+
 
 // Dashboard Management
 router.post('/updateLessonProgress', dashboardManagement.updateLessonProgress);

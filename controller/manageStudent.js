@@ -34,13 +34,46 @@ const generateWeeks = () => {
   }));
 };
 
-const uploadedFile = async (req, res) => {
-  
-    const theme = req.session.theme || 'light';
-    const isSidebarOpen = false;
-    let userData = null;
+const extractPrefixAndName = (fullName) => {
+  if (!fullName) return { prefix: 'นาย', name: '', fname: '', lname: '' };
 
-    try {
+  const prefixList = ['นางสาว', 'นาง', 'นาย'];
+  let prefix = '';
+  let name = fullName;
+
+  console.log('Processing name:', fullName);
+
+  // ตรวจสอบคำนำหน้าที่มีในรายการ
+  for (const p of prefixList) {
+    if (fullName.startsWith(p)) {
+      prefix = p;
+      name = fullName.substring(p.length).trim();
+      console.log('Found prefix:', prefix, 'name:', name);
+      break;
+    }
+  }
+
+  if (!prefix) {
+    prefix = 'นาย';
+    console.log('No prefix found, using default:', prefix);
+  }
+
+  const nameParts = name.split(' ');
+  const fname = nameParts[0];
+  const lname = nameParts.slice(1).join(' ');
+
+  console.log('Split name result:', { prefix, fname, lname });
+  return { prefix, name, fname, lname };
+};
+
+
+
+const uploadedFile = async (req, res) => {
+  const theme = req.session.theme || 'light';
+  const isSidebarOpen = false;
+  let userData = null;
+
+  try {
     // เพิ่มการดึง user data
     if (req.session.userId) {
       userData = await User.findById(req.session.userId);
@@ -49,307 +82,163 @@ const uploadedFile = async (req, res) => {
     const filePath = req.file.path;
     const fileParts = req.file.originalname.split('.');
     const fileType = fileParts[fileParts.length - 1];
-    // // อ่านไฟล์เป็น buffer
     const fileBuffer = fs.readFileSync(filePath);
-    
 
     if (fileType === "xls") {
-      const decodedBuffer = iconv.decode(fileBuffer, 'win874'); // สำหรับการเข้ารหัสภาษาไทยใน Excel 97-2003
-
-      // สร้างไฟล์ใหม่ด้วยการเข้ารหัสที่ถูกต้อง
+      
+      const decodedBuffer = iconv.decode(fileBuffer, 'win874');
       fs.writeFileSync(filePath, decodedBuffer);
-
-      // อ่านไฟล์ Excel ด้วย xlsx
       const workbook = xlsx.readFile(filePath);
-
-      // สมมติว่าเราต้องการอ่านข้อมูลจากแผ่นแรก
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-
-      // // แปลงข้อมูลใน worksheet เป็น JSON
       const data = xlsx.utils.sheet_to_json(worksheet);
+    
+      // แก้ไขการดึงข้อมูลจาก Excel
       const preSemster = data[0]["รายชื่อนศ.ที่ลงทะเบียน"];
       const splitSemster = preSemster.split(" ");
       const semster = splitSemster[splitSemster.length - 1];
-
+    
       const subject = data[2]['มหาวิทยาลัยขอนแก่น '];
       const subSplit = subject.split(" ");
-      const subPreJoin = subSplit.slice(2, -5);
-      const subjectName = subPreJoin.join(' ');
-      const teachers = data[2]["รายชื่อนศ.ที่ลงทะเบียน"];
-
-      let unitIndex = subSplit.indexOf('หน่วยกิต');
-      let sectionIndex = subSplit.indexOf('กลุ่มที่');
-
-      let courseId = subSplit[1];
-
-      let unit = subSplit.slice(unitIndex, unitIndex + 2).join(' ');
-      let section = subSplit.slice(sectionIndex).join(' ');
-      let splitSection = section.split(' ');
-      let splitUnit = unit.split(' ');
-      // ตัวแปรที่ประมวลผลเสร็จเรียบร้อยแล้ว 
-      // semster
-      // subjectName
-      // courseId
-      // unit
-      // section
-      const checkExistSubject = await Subject.findOne({ subjectId: courseId, semester: semster });
-
-
-      if (!checkExistSubject) {
-        const createSubject = new Subject(
-          {
-            subjectId: courseId,
-            subjectName: subjectName,
-            semester: semster,
-            unit: splitUnit[splitUnit.length - 1],
-            section: splitSection[splitSection.length - 1]
+      const courseId = subSplit[1];
+      
+      // สร้างหรือค้นหา Subject
+      let currentSubject = await Subject.findOne({ subjectId: courseId, semester: semster });
+      if (!currentSubject) {
+        const subPreJoin = subSplit.slice(2, -5);
+        const subjectName = subPreJoin.join(' ');
+        let unitIndex = subSplit.indexOf('หน่วยกิต');
+        let sectionIndex = subSplit.indexOf('กลุ่มที่');
+        let unit = subSplit.slice(unitIndex, unitIndex + 2).join(' ');
+        let section = subSplit.slice(sectionIndex).join(' ');
+        let splitSection = section.split(' ');
+        let splitUnit = unit.split(' ');
+    
+        currentSubject = await Subject.create({
+          subjectId: courseId,
+          subjectName: subjectName,
+          semester: semster,
+          unit: splitUnit[splitUnit.length - 1],
+          section: splitSection[splitSection.length - 1]
+        });
+      }
+    
+      // ดึงรายชื่อนักศึกษา
+      const studentLists = data.slice(6, -3);
+      const weeks = generateWeeks();
+    
+      // ประมวลผลรายชื่อนักศึกษา
+      for (const studentData of studentLists) {
+        try {
+          const updatedValues = Object.values(studentData);
+          const studentNumber = updatedValues[0];
+          const studentId = updatedValues[1];
+          const studentName = updatedValues[2];
+          const rawEmail = updatedValues[3];
+          const studentEmail = rawEmail.includes('@kkumail.com') 
+            ? rawEmail 
+            : `${rawEmail}@kkumail.com`;
+          const studentMajor = updatedValues[4];
+    
+          // แยกข้อมูลชื่อ
+          const { prefix, fname, lname } = extractPrefixAndName(studentName);
+    
+          console.log('Processing student:', {
+            studentId,
+            studentName,
+            prefix,
+            fname,
+            lname,
+            studentEmail
+          });
+    
+          // ค้นหาหรือสร้าง User
+          let user = await User.findOne({ email: studentEmail });
+          if (!user) {
+            user = await User.create({
+              email: studentEmail,
+              prefix: prefix,
+              fname: fname,
+              lname: lname,
+              name: studentName,
+              major: studentMajor,
+              role: "student",
+              studentFromKku: true
+            });
           }
-        )
-        await createSubject.save();
-        const subjectId = createSubject._id;
-
-        const studentLists = [];
-        for (let i = 6; i <= data.length - 3; i++) {
-          studentLists.push(data[i]);
-        }
-
-        // const studentProcessLists = [];
-
-        // const weeks = Array.from({ length: 16 }, (_, index) => ({
-        //   week: (index + 1).toString(), // แปลงเป็น string ตาม schema
-        //   // scorePerWeek และ noteWeek จะใช้ค่าเริ่มต้นจาก schema
-        // }));
-
-        const weeks = generateWeeks(); // ใช้ฟังก์ชัน generate weeks
-
-
-        async function processStudents(studentLists) {
-          for (const student of studentLists) {
-            // const values = Object.values(student);
-            // const firstFiveValues = values.slice(0, 5);
-
-            let updatedData = { ...student };
-
-            // เปลี่ยนค่า __EMPTY_2 โดยเอาข้อความตั้งแต่ @kkumail.com ออก
-            if (updatedData.__EMPTY_2) {
-              updatedData.__EMPTY_2 = updatedData.__EMPTY_2.split('@')[0];
-            }
-
-            // แปลง object เป็น array ของ values อีกครั้ง
-            const updatedValues = Object.values(updatedData);
-            const updatedFirstFiveValues = updatedValues.slice(0, 5);
-
-            // studentProcessLists.push(updatedFirstFiveValues);
-
-            const studentNumber = updatedFirstFiveValues[0];
-            const studentId = updatedFirstFiveValues[1];
-            const studentName = updatedFirstFiveValues[2];
-            const studentEmail = updatedFirstFiveValues[3];
-            const studentMajor = updatedFirstFiveValues[4];
-
-            const findUser = await User.findOne({ email: studentEmail }).populate("student");
-            console.log("user email" + findUser);
-
-            if (!findUser) {
-              // console.log('ยังไม่มี email: '+studentEmail+' นี้ในฐานข้อมูล')
-              const createUser = new User({
-                email: studentEmail,
-                name: studentName,
-                major: studentMajor,
-                role: "student",
-                studentFromKku: true
-              });
-
-              await createUser.save();
-
-              const createStudent = new Student({
-                studentId: studentId,
-                user: createUser._id,
-                subjects: {
-                  subjectMongooseId: subjectId,
-                  subjectId: courseId,
-                  subjectSemster: semster,
-                  weeks: weeks,
-                  studentNumber: studentNumber
-                }
-              })
-
-              await createStudent.save();
-
-              const updateStudentIdToSubject = await Subject.findByIdAndUpdate(
-                subjectId,
-                { $push: { students: createStudent._id } },
-                { new: true }
-              )
-
-              const updateStudentIdToUser = await User.findByIdAndUpdate(
-                createUser._id,
-                { $push: { student: createStudent._id } },
-                { new: true }
-              )
-
-            } else if (findUser) {
-
-              const subjects = {
-                subjectMongooseId: subjectId,
+    
+          // ค้นหาหรือสร้าง Student
+          let student = await Student.findOne({ studentId: studentId });
+          if (!student) {
+            student = await Student.create({
+              studentId: studentId,
+              user: user._id,
+              email: studentEmail,
+              prefix: prefix,
+              fname: fname,
+              lname: lname,
+              subjects: [{
+                subjectMongooseId: currentSubject._id,
                 subjectId: courseId,
                 subjectSemster: semster,
-                weeks: weeks
-              }
-
-              const studentId = findUser.student._id;
-
-              const student = await Student.findOne({
-                studentId: studentId,
-                'subjects.subjectMongooseId': subjectId
-              });
-
-              if (student == null) {
-
-                const updateStudent = await Student.findByIdAndUpdate(
-                  studentId,
-                  { $push: { subjects: subjects } },
-                  { new: true }
-                );
-
-                const updateStudentIdToSubject = await Subject.findByIdAndUpdate(
-                  subjectId,
-                  { $push: { students: studentId } },
-                  { new: true }
-                )
-              }
+                weeks: weeks,
+                studentNumber: studentNumber
+              }]
+            });
+            
+            // อัพเดต User reference
+            await User.findByIdAndUpdate(
+              user._id,
+              { student: student._id },
+              { new: true }
+            );
+          } else {
+            // เพิ่มวิชาให้กับนักศึกษาที่มีอยู่แล้ว
+            const hasSubject = student.subjects.some(s => 
+              s.subjectMongooseId.toString() === currentSubject._id.toString()
+            );
+    
+            if (!hasSubject) {
+              await Student.findByIdAndUpdate(
+                student._id,
+                {
+                  $push: {
+                    subjects: {
+                      subjectMongooseId: currentSubject._id,
+                      subjectId: courseId,
+                      subjectSemster: semster,
+                      weeks: weeks,
+                      studentNumber: studentNumber
+                    }
+                  }
+                },
+                { new: true }
+              );
             }
           }
+    
+          // อัพเดต Subject reference
+          await Subject.findByIdAndUpdate(
+            currentSubject._id,
+            { $addToSet: { students: student._id } },
+            { new: true }
+          );
+    
+        } catch (error) {
+          console.error('Error processing student:', error);
+          continue;
         }
-
-        // เรียกใช้ฟังก์ชัน
-        await processStudents(studentLists);
-
-
-      } else if (checkExistSubject) {
-        const subjectId = checkExistSubject._id;
-
-        const studentLists = [];
-        for (let i = 6; i <= data.length - 3; i++) {
-          studentLists.push(data[i]);
-        }
-
-        // const studentProcessLists = [];
-
-        const weeks = Array.from({ length: 16 }, (_, index) => ({
-          week: (index + 1).toString(), // แปลงเป็น string ตาม schema
-          // scorePerWeek และ noteWeek จะใช้ค่าเริ่มต้นจาก schema
-        }));
-
-        async function processStudents(studentLists) {
-          for (const student of studentLists) {
-            // const values = Object.values(student);
-            // const firstFiveValues = values.slice(0, 5);
-
-            let updatedData = { ...student };
-
-            // เปลี่ยนค่า __EMPTY_2 โดยเอาข้อความตั้งแต่ @kkumail.com ออก
-            if (updatedData.__EMPTY_2) {
-              updatedData.__EMPTY_2 = updatedData.__EMPTY_2.split('@')[0];
-            }
-
-            // แปลง object เป็น array ของ values อีกครั้ง
-            const updatedValues = Object.values(updatedData);
-            const updatedFirstFiveValues = updatedValues.slice(0, 5);
-
-            // studentProcessLists.push(updatedFirstFiveValues);
-
-            const studentNumber = updatedFirstFiveValues[0];
-            const studentId = updatedFirstFiveValues[1];
-            const studentName = updatedFirstFiveValues[2];
-            const studentEmail = updatedFirstFiveValues[3];
-            const studentMajor = updatedFirstFiveValues[4];
-
-            const findUser = await User.findOne({ email: studentEmail }).populate("student");
-            console.log("user email" + findUser);
-
-            if (!findUser) {
-
-              // console.log('ยังไม่มี email: '+studentEmail+' นี้ในฐานข้อมูล')
-              const createUser = new User({
-                email: studentEmail,
-                name: studentName,
-                major: studentMajor,
-                role: "student",
-                studentFromKku: true
-              });
-
-              await createUser.save();
-
-              const createStudent = new Student({
-                studentId: studentId,
-                user: createUser._id,
-                subjects: {
-                  subjectMongooseId: subjectId,
-                  subjectId: courseId,
-                  subjectSemster: semster,
-                  weeks: weeks,
-                  studentNumber: studentNumber
-                }
-              })
-
-              await createStudent.save();
-
-              const updateStudentIdToSubject = await Subject.findByIdAndUpdate(
-                subjectId,
-                { $push: { students: createStudent._id } },
-                { new: true }
-              )
-
-              const updateStudentIdToUser = await User.findByIdAndUpdate(
-                createUser._id,
-                { $push: { student: createStudent._id } },
-                { new: true }
-              )
-
-            } else if (findUser) {
-              const subjectExists = findUser.student.subjects.some(subject => subject.subjectMongooseId.equals(subjectId));
-              if (!subjectExists) {
-                const subjects = {
-                  subjectMongooseId: subjectId,
-                  subjectId: courseId,
-                  subjectSemster: semster,
-                  weeks: weeks
-                }
-
-                const studentId = findUser.student._id;
-
-                const student = await Student.findOne({
-                  studentId: studentId,
-                  'subjects.subjectMongooseId': subjectId
-                });
-
-                if (student == null) {
-
-                  const updateStudent = await Student.findByIdAndUpdate(
-                    studentId,
-                    { $push: { subjects: subjects } },
-                    { new: true }
-                  );
-
-                  const updateStudentIdToSubject = await Subject.findByIdAndUpdate(
-                    subjectId,
-                    { $push: { students: studentId } },
-                    { new: true }
-                  )
-                }
-              }
-
-            }
-          }
-        }
-
-        // เรียกใช้ฟังก์ชัน
-        await processStudents(studentLists);
+      }
+    
+      // ลบไฟล์หลังจากประมวลผลเสร็จ
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
       }
 
-    } else if (fileType === "xlsx") {
+      return res.redirect('/adminIndex/uploadStudent');
+    }
+
+     else if (fileType === "xlsx") {
       const workbook = xlsx.readFile(filePath);
 
       // สมมติว่าเราต้องการอ่านข้อมูลจากแผ่นแรก
@@ -366,185 +255,22 @@ const uploadedFile = async (req, res) => {
 
     }
 
-    // // ตรวจสอบว่า buffer มีข้อมูล
-    // if (fileBuffer.length === 0) {
-    //   throw new Error('File is empty');
-    // }
-
-    // console.log('File size:', fileBuffer.length, 'bytes');
-
-    // // ทดลองใช้ encoding ต่างๆ
-    // const encodings = ['utf-8', 'tis-620', 'windows-874', 'utf-16le', 'utf-16be'];
-    // let workbook;
-    // let correctEncoding;
-
-    // for (let encoding of encodings) {
-    //   try {
-    //     const decodedBuffer = iconv.decode(fileBuffer, encoding);
-    //     workbook = xlsx.read(decodedBuffer, { type: 'string' });
-    //     correctEncoding = encoding;
-    //     break;
-    //   } catch (error) {
-    //     console.log(`Failed to read with ${encoding} encoding`);
-    //   }
-    // }
-
-    // if (!workbook) {
-    //   throw new Error('Unable to read the Excel file with any known encoding');
-    // }
-
-    // console.log('Correct encoding:', correctEncoding);
-
-    // const sheetName = workbook.SheetNames[0];
-    // const sheet = workbook.Sheets[sheetName];
-    // const data = xlsx.utils.sheet_to_json(sheet, { header: 1, raw: false });
 
 
-
-    // res.json(data);
-    fs.unlinkSync(filePath);
-    res.redirect('/adminIndex/uploadStudent');
-    // for (let i = 1; i < data.length; i++) {
-    //   const userData = {
-    //     email: data[i][5],
-    //     prefix: data[i][1],
-    //     name: data[i][2],
-    //     faculty: data[i][3],
-    //     branch: data[i][4],
-    //   };
-    //   const filter = { email: userData.email };
-    //   const update = { $set: userData };
-    //   const options = { upsert: true, returnDocument: 'after' };
-
-    //   const findEmail = await User.findOne(filter).populate({
-    //       path: 'student',
-    //       populate: { path: 'schoolYear' }
-    //     });;
-
-    //   console.log(findEmail);
-    //   if (findEmail == undefined) {
-    //     const newUser = new User(userData);
-    //     await newUser.save();
-    //     const userId = newUser._id;
-    //     const studentData = {
-    //       schoolId: data[i][0],
-    //       yearLevel: data[i][7],
-    //       user: userId
-    //     }
-
-    //     const newStudent = new Student(studentData);
-    //     await newStudent.save(); // บันทึกข้อมูลลงในฐานข้อมูล
-
-    //     const addedStdId = await User.findByIdAndUpdate(
-    //       userId,
-    //       { $push: { student: newStudent._id } },
-    //       { new: true }
-    //     );
-
-    //     const schoolYear = data[i][6];
-    //     const studentId = newStudent._id;
-    //     const checkExists = await SchoolYear.findOne({ schoolYear });
-    //     if (checkExists) {
-    //       const getYear = checkExists.schoolYear;
-    //       const addId = await SchoolYear.findByIdAndUpdate(
-    //         checkExists._id,
-    //         { $push: { students: studentId._id } },
-    //         { new: true }
-    //       );
-
-    //       const addIdStudent = await Student.findByIdAndUpdate(
-    //         studentId._id,
-    //         { $push: { schoolYear: checkExists._id } },
-    //         { new: true }
-    //       );
-    //     } else if (!checkExists) {
-    //       const creataSchoolYear = new SchoolYear({
-    //         schoolYear: schoolYear
-    //       });
-    //       await creataSchoolYear.save()
-    //       const getYear2 = creataSchoolYear.schoolYear;
-    //       const addId = await Student.findByIdAndUpdate(
-    //         studentId._id,
-    //         { $push: { schoolYear: studentId._id } },
-    //         { new: true }
-    //       );
-    //     } const findUser = await User.findById(userId).populate({
-    //       path: 'student',
-    //       populate: { path: 'schoolYear' } // populate ข้อมูล SchoolYear ใน Student ใน User
-    //     });
-
-
-    //     // const findUser = await User.findById(userId).populate('student').populate('schoolYear');
-    //     // console.log("email ไม่ซ้ำกัน");
-    //     // console.log(findUser);
-    //   } else {
-    //     // console.log("email ซ้ำกัน");
-    //     // console.log(findEmail);
-    //     const updatedUser = await User.findOneAndUpdate(filter, update, options);
-    //     // const getStudentId = findEmail.student;
-    //     // const studentData = {
-    //     //   schoolId: data[i][0],
-    //     //   yearLevel: data[i][7],
-    //     // }
-    //     // const updateStud = { $set: studentData };
-    //     // const optionsStd = { upsert: true, returnDocument: 'after' };
-    //     // const updatedStudent = await Student.findByIdAndUpdate(getStudentId, updateStud, optionsStd);
-    //     const schoolYear = data[i][6];
-    //     // console.log("ปีเก่า = "+ findEmail.student.schoolYear.schoolYear);
-    //     // console.log("ปีใหม่ = "+ schoolYear);
-    //     // const convertToStringYear = schoolYear.toString();
-    //     const schoolYearObject = { schoolYear: data[i][6] };
-    //     const oldYear = findEmail.student.schoolYear.schoolYear;
-    //     if (schoolYear != oldYear) {
-    //       const findYear = await SchoolYear.findOne(schoolYearObject);
-    //       if (findYear) {
-    //         const updatedYear = await Student.findByIdAndUpdate(
-    //           { _id: findEmail.student._id },
-    //           { $set: { schoolYear: findYear._id } },
-    //           { new: true }
-    //         );
-    //       } else if (!findYear) {
-    //         const creataSchoolYear = new SchoolYear({
-    //           schoolYear: schoolYear
-    //         });
-    //         await creataSchoolYear.save()
-    //         const getYear2 = creataSchoolYear.schoolYear;
-    //         const addId = await Student.findByIdAndUpdate(
-    //           { _id: findEmail.student._id },
-    //           { $push: { schoolYear: findYear._id } },
-    //           { new: true }
-    //         );
-    //       }
-    //     }
-    //     // const findSchoolYear = await SchoolYear.findOne({schoolYear});
-    //     // const getSchoolYearNumber = await 
-    //     // if (schoolYear != findEmail.student.)
-
-    //   }
-
-    // }
-    // res.redirect('/adminIndex/uploadStudent');
-    // res.json(findEmail);
   } catch (error) {
     console.error(error);
-    if (error.code === 11000) { // รหัสข้อผิดพลาดสำหรับ duplicate key error
-      // ส่งข้อความแจ้งเตือนไปยังหน้า EJS
-      res.render('upload-file-2', {
-        error: 'วิชานี้มีอยู่แล้วในภาคการศึกษานี้',
-        formData: req.body ,
-        theme,
-        isSidebarOpen,
-        userData
-      });
-    } else {
-      res.render('upload-file-2', {
-        error: 'format ไฟล์ไม่ถูกต้อง',
-        formData: req.body,
-        theme,
-        isSidebarOpen,
-        userData
-      });
+    // ลบไฟล์ในกรณีเกิด error
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
     }
+    
+    return res.render('upload-file-2', {
+      error: error.code === 11000 ? 'วิชานี้มีอยู่แล้วในภาคการศึกษานี้' : 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
+      formData: req.body,
+      theme,
+      isSidebarOpen,
+      userData
+    });
   }
 };
 
@@ -893,6 +619,52 @@ const editScorePerweek = async (req, res) => {
     console.log(err);
   }
 }
+
+const deleteStudents = async (req, res) => {
+  try {
+    const { studentIds } = req.body;
+
+    if (!studentIds || studentIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'กรุณาระบุรายชื่อที่ต้องการลบ'
+      });
+    }
+    // ลบข้อมูลนักศึกษาและอัพเดตการอ้างอิง
+    for (const studentId of studentIds) {
+      const student = await Student.findOne({ studentId });
+      if (student) {
+        // ลบการอ้างอิงจาก Subject
+        await Subject.updateMany(
+          { students: student._id },
+          { $pull: { students: student._id } }
+        );
+
+        // ลบ User ที่เกี่ยวข้อง
+        if (student.user) {
+          await User.findByIdAndDelete(student.user);
+        }
+
+        // ลบ Student
+        await Student.findByIdAndDelete(student._id);
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `ลบรายชื่อนักศึกษาจำนวน ${studentIds.length} คนเรียบร้อยแล้ว`
+    });
+  
+  } catch (error) {
+    console.error('Error deleting students:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'เกิดข้อผิดพลาดในการลบข้อมูล'
+    });
+  }
+};
+
+
 module.exports = {
   uploadedFile,
   upload,
@@ -902,7 +674,9 @@ module.exports = {
   addStudentListsToSubject,
   deleteStudentListsFromSubject,
   editScorePerweek,
-  setPermissionStudentLists
+  setPermissionStudentLists,
+  deleteStudents
+
 };
 
 

@@ -559,7 +559,7 @@
     text-decoration: none;
 }
 
-.list-div-data:hover {
+a.data-a .list-div-data:hover {
     background-color: rgba(0, 0, 0, 0.05);
 }
       @media screen and (max-width: 768px) {
@@ -782,7 +782,7 @@
                 </div>
                
               </div>
-              <div class=" col-12 mt-2 row">
+              <div class=" col-12 my-2 row">
                 <% if (subject.Assignments.length > 0) { %>
                   <div class="file-example w-100">
                   <div class="list-div purple row ">
@@ -830,6 +830,92 @@
                   <% }; %>
                 
                 </div>
+              </div>
+
+              <div class=" col-12 mt-2 row">
+                <div class="col">
+                  <p class="fw-bold fs-6 my-1">
+                    <i class="bi bi-people-fill purple me-1"></i></i>
+                    นักศึกษาที่ลงทะเบียนเรียน
+                    <span class="text-secondary fw-normal">
+                      /
+                    </span>
+                    จำนวน:
+                    <span class="purple fw-normal">
+                      <%=subject.students.length%>
+                    </span>
+                  </p>
+                </div>
+                <div class="col d-flex align-items-center justify-content-end">
+                  
+                </div>
+              </div>
+              <div class="col-12 row">
+                <% if (subject.students.length> 0) {%>
+                  <div class="file-example w-100">
+                    <div class="list-div purple row">
+                      <!-- <p class="fw-bold my-3 col-1">
+                        เลขที่
+                      </p> -->
+                      <p class="fw-bold my-3 col-2">
+                        รหัสนักศึกษา
+                      </p>
+                      <p class="fw-bold my-3 col-2">
+                        ชื่อ - นามสกุล
+                      </p>
+                      <p class="fw-bold my-3 col-1">
+                        ชื่อเล่น
+                      </p>
+                      <p class="fw-bold my-3 col-4">
+                        ที่อยู่อีเมล (email)
+                      </p>
+                      <p class="fw-bold my-3 col-1">
+                        คณะ
+                      </p>
+                      <p class="fw-bold my-3 col-2">
+                        นักศึกษาจาก
+                      </p>
+                    </div>
+                    <% const students=subject.students %>
+                      <% students.forEach((student, index)=> { %>
+                        <!-- <a href="/adminIndex/studentDetail?studentId=<%= student._id %>&subjectId=<%= subject._id.toString() %>" class="data-a"> -->
+                        <div class="list-div-data row">
+                          <!-- <p class="grey fw-normal my-3 col-1">
+                            <%=index + 1%>
+                          </p> -->
+                          <p class="grey fw-normal my-3 col-2">
+                            <%=student.studentId%>
+                          </p>
+                          <p class="grey fw-normal my-3 col-2">
+                            <%=student.user.fname%>
+                              <%=student.user.lname%>
+                          </p>
+                          <p class="grey fw-normal my-3 col-1">
+                            <% if (student.user.nickname !=null) { %>
+                              <%=student.user.nickname%>
+                                <% } else { %>
+                                  -
+                                  <% } %>
+                          </p>
+                          <p class="grey fw-normal my-3 col-4 truncate-text">
+                            <%=student.user.email%>
+                          </p>
+                          <p class="grey fw-normal my-3 col-1">
+                            <%=student.user.major%>
+                          </p>
+                          <p
+                      class="fw-normal my-3 col-2  <%= student.user?.studentFromKku ? 'text-kku' : 'grey' %>">
+                      <%= student.user?.studentFromKku ? 'มหาวิทยาลัยขอนแก่น' : 'ภายนอก' %>
+                    </p>
+                        </div>
+                      </a>
+                        <% }); %>
+
+                  </div>
+                  <% } else if (subject.students.length < 1) {%>
+                    <p class="showSubject show<%=subject.subjectId%> mt-3">ยังไม่มีนักศึกษาอยู่ในรายวิชานี้</span>
+                    </p>
+                    <% } %>
               </div>
 
             </div>

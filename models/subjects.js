@@ -30,7 +30,6 @@ const subjectYearSchema = new Schema(
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
-            required: true
         },
         section: {
             type: String,

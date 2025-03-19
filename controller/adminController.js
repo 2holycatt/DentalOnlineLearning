@@ -162,10 +162,11 @@ const uploadStudent = async (req, res) => {
 const uploadStudent2 = async (req, res) => {
   try {
     const userData = await User.findById(req.session.userId);
+    const navSubjects = await getSubjectsForNav(req.session.userId);
     const theme = req.session.theme || 'light'; 
     const isSidebarOpen = false; 
 
-    res.render("upload-file-2", { formData: {}, error: null ,theme,isSidebarOpen,userData});
+    res.render("upload-file-2", { formData: {}, error: null ,theme,isSidebarOpen,userData,navSubjects});
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
