@@ -342,7 +342,7 @@
     </header>
 
     <!-- Sidebar Component -->
-    <%- include('Sidebar', { isOpen: isSidebarOpen, theme: theme }) %> <!-- รวม Sidebar component -->
+    <%- include('sidebar.ejs', { isOpen: isSidebarOpen, theme: theme }) %> <!-- รวม Sidebar component -->
         <script>
             // ฟังก์ชัน JavaScript สำหรับการจัดการ Sidebar และธีม
             function toggleSidebar() {
