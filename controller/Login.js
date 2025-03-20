@@ -14,7 +14,7 @@ const YOUR_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 // const YOUR_REDIRECT_URL = 'https://rpd-dt.onrender.com/auth/google/callback'
 
 
-const YOUR_REDIRECT_URL = 'http://dentalonlinelearning-production.up.railway.app/auth/google/callback'
+const YOUR_REDIRECT_URL = 'https://dentalonlinelearning-production.up.railway.app/auth/google/callback';
 // const YOUR_REDIRECT_URL = 'https://dentalonlinelearning.onrender.com/auth/google/callback'
 
 const authGoogle = async (req, res) => {
@@ -58,10 +58,10 @@ const authGoogleCallback = async (req, res) => {
                 }
                 if (getRole == "teacher") {
                     logger.info(`Teacher logged in: ${getEmail}, IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
-                    return res.redirect('dentalonlinelearning-production.up.railway.app/adminIndex');
+                    return res.redirect('/adminIndex');
                 } else if (getRole == "student") {
                     logger.info(`Student logged in: ${getEmail}, IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
-                    return res.redirect('dentalonlinelearning-production.up.railway.app/studentIndex');
+                    return res.redirect('/studentIndex');
                 }
                 });
             } else {
