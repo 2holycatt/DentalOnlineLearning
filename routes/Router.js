@@ -17,6 +17,7 @@ const adminDashboard = require("../controller/adminDashboard");
 const dashboardManagement = require("../controller/dashboardManagement");
 const profileController = require('../controller/profileController');
 const studentQuizController = require('../controller/studentQuizController')
+const Subject = require('../models/subjects');
 
 
 
@@ -177,7 +178,9 @@ router.post('/adminIndex/deleteStudentListsFromSubject', manageStudent.deleteStu
 router.post('/adminIndex/editScorePerweek', manageStudent.editScorePerweek);
 router.post('/adminIndex/setPermissionStudentLists', manageStudent.setPermissionStudentLists)
 router.post('/adminIndex/deleteStudents', manageStudent.deleteStudents);
-
+router.get('/adminIndex/exportStudentList', teacherMiddleware, manageStudent.exportStudentList);
+router.get('/adminIndex/exportStudentListPage', teacherMiddleware, manageStudent.exportStudentListPage);
+router.get('/api/subjects/:subjectId/students', adminController.getSubjectStudents);
 
 // Dashboard Management
 router.post('/updateLessonProgress', dashboardManagement.updateLessonProgress);

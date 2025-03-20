@@ -786,38 +786,38 @@ a.data-a .list-div-data:hover {
                 <% if (subject.Assignments.length > 0) { %>
                   <div class="file-example w-100">
                   <div class="list-div purple row ">
-                    <p class="fw-bold my-3 col-3 text-center">
+                    <p class="fw-bold my-3 col-4 ">
                       ชื่อ
                     </p>
-                    <p class="fw-bold my-3 col-2 text-center">
+                    <p class="fw-bold my-3 col-2 ">
                       วันที่เปิดให้ส่ง
                     </p>
-                    <p class="fw-bold my-3 col-2 text-center">
+                    <p class="fw-bold my-3 col-2 ">
                       วันที่หมดเขตส่ง
                     </p>
-                    <p class="fw-bold my-3 col-3 text-center">
+                    <p class="fw-bold my-3 col-3 ">
                       สถานะการส่ง
                     </p>
-                    <p class="fw-bold my-3 col-1 text-center">
+                    <p class="fw-bold my-3 col-1 ">
                       คะแนน
                     </p>
                   </div>
                   <% subject.Assignments.forEach(assign => { %>
                     <a href="/studentAssignDetail?id=<%= assign._doc._id %>" class="data-a">                    
                       <div class="list-div-data row py-3">
-                        <p class="fs-6 fw-normal grey col-3 truncate-text" title="<%= assign.name %>">
+                        <p class=" fw-normal grey col-4 " title="<%= assign.name %>">
                             <%= assign.name %>
                         </p>
-                        <p class="fs-6 fw-normal text-success col-2">
+                        <p class=" fw-normal text-success col-2">
                             <%= moment(assign.StartDate).format('DD/MM/YYYY HH:mm') %>
                         </p>
-                        <p class="fs-6 fw-normal text-danger col-2">
+                        <p class=" fw-normal text-danger col-2">
                             <%= moment(assign.Deadline).format('DD/MM/YYYY HH:mm') %>
                         </p>
-                        <p class="fs-6 fw-normal text-center grey col-3">
+                        <p class=" fw-normal grey col-3">
                             submitassign.sendStatus
                         </p>
-                        <p class="fs-6 fw-normal text-success text-center col-1">
+                        <p class=" fw-normal text-success  col-1">
                              / <%= assign.Score %>
                         </p>
                     </div>

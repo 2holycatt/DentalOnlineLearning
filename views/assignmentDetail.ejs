@@ -205,6 +205,18 @@
         text-decoration: underline;
         color: #ba55d3 !important;
       }
+       .list-div-data {
+      padding-top: 1em;
+      border-bottom: 1px solid #EAEFF4;
+      text-align: start;
+      color: #4e5458 !important;
+      font-size: 14px;
+      }
+      .list-div {
+        font-size: 14px;
+      padding-top: 0.5em;
+      border-bottom: 1px solid #EAEFF4;
+      }
       @media screen and (max-width: 768px) {
         .above-nav-status{
           display: none;
@@ -317,26 +329,26 @@
       </div>
       <div class="lesson-content bg-white w-100 p-4 my-4 row" style="height: fit-content;">
         <div class="col-12 ">
-          <p class="fs-5 fw-bold ms-2"><i class="bi bi-people-fill fs-5 purple"></i>
+          <p class="fs-5 fw-bold ms-2 mb-2"><i class="bi bi-people-fill fs-5 purple"></i>
             รายชื่อนักศึกษาที่ส่งงาน
           </p>
         </div>
         <% if (getSubmitDetail.submitDetail.length > 0) { %>
         <div class="col-12 ">
           <div class="list-div ms-2 purple">
-            <p class="fs-6 fw-bold">
+            <p class=" fw-bold">
               รหัสนักศึกษา
             </p>
-            <p class="fs-6 fw-bold">
+            <p class=" fw-bold">
               ชื่อ-นามสกุล
             </p>
-            <p class="fs-6 fw-bold">
+            <p class=" fw-bold">
               วันที่ส่งงาน
             </p>
-            <p class="fs-6 fw-bold">
+            <p class=" fw-bold">
               สถานะการส่ง
             </p>
-            <p class="fs-6 fw-bold text-center">
+            <p class=" fw-bold ">
               คะแนนที่ได้
             </p>
           </div>
@@ -345,36 +357,36 @@
         <% submitDetail.forEach(detail => { %>
         <a href="/adminIndex/submitDetail?id=<%=assignment._id%>&submitId=<%=detail._id%>" class="data-a ">
           <div class="list-div-data py-3">
-            <p class="fs-6 fw-normal grey">
+            <p class=" fw-normal grey">
   <%= detail.user?.studentId || detail.user?.student?.studentId || '-' %>
             </p>
-            <p class="fs-6 fw-normal grey">
+            <p class=" fw-normal grey">
               <%= detail.user ? `${detail.user.fname || '' } ${detail.user.lname || '' }` : '-' %>
             </p>
             <% const sendDate = new Date(detail.updatedAt).toLocaleString('en-US', {timeZone: 'Asia/Bangkok', hour12: true, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}); %>
-            <p class="fs-6 fw-normal text-success">
+            <p class=" fw-normal text-success">
               <%= sendDate.replace(',' , '') %>
             </p>
             <% if (detail.sendStatus) { %>
               <% const status = detail.sendStatus.status %>
               <% if (status === "ส่งตรงเวลา") { %>
-                <p class="fs-6 fw-normal text-success">
+                <p class=" fw-normal text-success">
                   <%= status %>
                 </p>
               <% } else if (status === "ส่งช้า") { %>
                 <% const { day, hour, minute } = detail.sendStatus %>
-                <p class="fs-6 fw-normal">
+                <p class=" fw-normal">
                   <span class="text-danger">
                     <%= status %> <%= day %> วัน <%= hour %> ชั่วโมง <%= minute %> นาที
                   </span>
                 </p>
               <% } %>
             <% } else { %>
-              <p class="fs-6 fw-normal text-muted">
+              <p class=" fw-normal text-muted">
                 ไม่มีข้อมูลการส่ง
               </p>
             <% } %>
-            <p class="fs-6 fw-normal text-success text-center">
+            <p class=" fw-normal text-success ">
               <%=  detail.Score %>
             </p>
           </div>

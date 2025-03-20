@@ -173,6 +173,7 @@ const uploadStudent2 = async (req, res) => {
   }
 }
 
+
 const getEditLessonNamePage = async (req, res) => {
   try {
     const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
@@ -2352,6 +2353,57 @@ const archivedSubjectIndex = async (req, res) => {
   }
 };
 
+const getSubjectStudents = async (req, res) => {
+  try {
+    const subject = await Subject.findById(req.params.subjectId)
+      .populate({
+        path: 'students',
+        populate: {
+          path: 'user',
+          select: 'prefix fname lname nickname email major studentFromKku'
+        }
+      });
+
+    if (!subject) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'ไม่พบรายวิชา' 
+      });
+    }
+
+    // เพิ่มการตรวจสอบว่ามีนักศึกษาหรือไม่
+    if (!subject.students || subject.students.length === 0) {
+      return res.json({
+        success: true,
+        students: [],
+        message: 'ไม่พบรายชื่อนักศึกษาในรายวิชานี้'
+      });
+    }
+
+    const { limit = 10, page = 1 } = req.query;
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const students = limit === 'all' ? 
+      subject.students : 
+      subject.students.slice(startIndex, endIndex);
+
+    res.json({
+      success: true,
+      students,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(subject.students.length / limit),
+      totalStudents: subject.students.length
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'เกิดข้อผิดพลาดในการดึงข้อมูล' 
+    });
+  }
+};
 
 module.exports = {
   showStdAnswerDetail,
@@ -2406,5 +2458,6 @@ module.exports = {
   checkEndAnswer,
   archivedSubjectIndex,
   archiveSubject,
-  restoreSubject
+  restoreSubject,
+  getSubjectStudents
 }

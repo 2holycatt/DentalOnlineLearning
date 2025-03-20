@@ -1,7 +1,7 @@
 const multer = require('multer');
 const xlsx = require('xlsx');
 const upload = multer({ dest: 'uploads/' });
-// const ExcelJS = require('exceljs');
+const ExcelJS = require('exceljs');
 
 const Student = require("../models/student.model");
 const User = require("../models/user.model");
@@ -11,6 +11,40 @@ const Subject = require("../models/subjects");
 // const { findByIdAndUpdate, populate } = require('../models/Layout1');
 const fs = require('fs');
 const iconv = require('iconv-lite');
+
+async function getSubjectsForNav(userId) {
+  try {
+      const userData = await User.findById(userId);
+      let subjects = [];
+      
+      if (!userData) {
+          return [];
+      }
+
+      if (userData.role === 'student') {
+          const studentData = await Student.findOne({ user: userId })
+              .populate('subjects.subjectMongooseId');
+          
+          if (studentData && studentData.subjects) {
+              subjects = studentData.subjects
+                  .filter(subject => 
+                      subject.subjectMongooseId && 
+                      !subject.subjectMongooseId.isArchived)
+                  .map(subject => subject.subjectMongooseId);
+          }
+      } else {
+          // For teachers and admins, filter out archived subjects
+          subjects = await Subject.find({ isArchived: false })
+              .sort({ semester: 1 })
+              .populate("lessonArray") || [];
+      }
+      
+      return subjects;
+  } catch (error) {
+      console.error('Error in getSubjectsForNav:', error);
+      return [];
+  }
+}
 
 const generateStudentId = async () => {
   const prefix = 'es';
@@ -664,6 +698,193 @@ const deleteStudents = async (req, res) => {
   }
 };
 
+const exportStudentList = async (req, res) => {
+  try {
+    const subjectId = req.query.subjectId;
+    const subject = await Subject.findById(subjectId)
+      .populate({
+        path: 'students',
+        populate: {
+          path: 'user'
+        }
+      });
+
+    if (!subject) {
+      return res.status(404).send('ไม่พบรายวิชา');
+    }
+
+    // สร้าง workbook และ worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('รายชื่อนักศึกษา');
+
+    // กำหนด columns ใหม่
+    const columns = [
+      { key: 'no', header: 'เลขที่', width: 8 },
+      { key: 'studentId', header: 'รหัสประจำตัว', width: 15 },
+      { key: 'name', header: 'ชื่อ', width: 30 },
+      { key: 'email', header: 'kkumail', width: 30 },
+      { key: 'major', header: 'เอก', width: 8 },
+      { key: 'vaccine', header: 'ได้รับวัคซีน(ครั้ง)', width: 15 },
+      { key: 'grade', header: 'เกรด', width: 8 },
+      { key: 'score', header: 'จาก', width: 8 }
+    ];
+
+    // เพิ่ม columns สำหรับสัปดาห์ 1-16
+    for (let i = 1; i <= 16; i++) {
+      columns.push({ key: `week${i}`, header: `สัปดาห์`, width: 5 });
+    }
+
+    worksheet.columns = columns;
+
+    // เพิ่มข้อมูลส่วนหัว
+    worksheet.mergeCells('A1:C1');
+    worksheet.getCell('A1').value = 'มหาวิทยาลัยขอนแก่น';
+    worksheet.getCell('A1').font = { size: 16, bold: true };
+    worksheet.getCell('A1').alignment = { horizontal: 'left' };
+
+    worksheet.mergeCells('G1:X1');
+    worksheet.getCell('G1').value = 'รายชื่อนศ.ที่ลงทะเบียน';
+    worksheet.getCell('G1').alignment = { horizontal: 'right' };
+
+    worksheet.mergeCells('G2:X2');
+    worksheet.getCell('G2').value = `วิทยาเขต ขอนแก่น ปีการศึกษา ${subject.semester}`;
+    worksheet.getCell('G2').alignment = { horizontal: 'right' };
+
+    worksheet.mergeCells('G3:X3');
+    worksheet.getCell('G3').value = 'ระดับการศึกษา ปริญญาตรี ภาคปกติ';
+    worksheet.getCell('G3').alignment = { horizontal: 'right' };
+
+    worksheet.mergeCells('A4:F4');
+    worksheet.getCell('A4').value = 
+      `รหัสวิชา ${subject.subjectId} ${subject.subjectName} หน่วยกิต ${subject.unit} กลุ่มที่ ${subject.section}`;
+
+    worksheet.mergeCells('G4:X4');
+    worksheet.getCell('G4').value = 'อาจารย์ผู้สอน ...';
+
+    worksheet.mergeCells('A5:F5');
+    worksheet.getCell('A5').value = 'วันที่เรียน ...';
+    worksheet.mergeCells('G5:X5');
+    worksheet.getCell('G5').value = 'วันที่สอบ -';
+
+    // เพิ่มข้อมูลนักศึกษา
+    let rowIndex = 6;
+    subject.students.forEach((student, index) => {
+      const rowData = {
+        no: index + 1,
+        studentId: student.studentId,
+        name: `${student.user.prefix}${student.user.fname} ${student.user.lname}`,
+        email: student.user.email,
+        major: 'DT',
+        vaccine: '-',
+        grade: '',
+        score: '0'
+      };
+
+      // เพิ่มช่องว่างสำหรับสัปดาห์ 1-16
+      for (let i = 1; i <= 16; i++) {
+        rowData[`week${i}`] = '';
+      }
+
+      worksheet.addRow(rowData);
+    });
+
+    // จัดรูปแบบตาราง
+    worksheet.eachRow((row, rowNumber) => {
+      row.eachCell((cell) => {
+        cell.border = {
+          top: {style: 'thin'},
+          left: {style: 'thin'},
+          bottom: {style: 'thin'},
+          right: {style: 'thin'}
+        };
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        if (rowNumber <= 5) {
+          cell.alignment = { vertical: 'middle', horizontal: 'left' };
+        }
+      });
+    });
+
+    // ส่งไฟล์
+    const fileName = `studentList_${subject.subjectId}_${subject.semester}.xlsx`;
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
+
+    await workbook.xlsx.write(res);
+    res.end();
+
+  } catch (error) {
+    console.error('Error exporting student list:', error);
+    res.status(500).send('เกิดข้อผิดพลาดในการ export รายชื่อ');
+  }
+};
+
+
+const exportStudentListPage = async (req, res) => {
+  try {
+    let userData = null;
+    if (req.session.userId) {
+      userData = await User.findById(req.session.userId);
+    }
+    const navSubjects = await getSubjectsForNav(req.session.userId);
+    const subjects = await Subject.find()
+    .sort({ semester: -1 })
+    .populate({
+      path: 'students',
+      populate: {
+        path: 'user',
+        select: 'prefix fname lname nickname email major studentFromKku'
+      }
+    });
+        res.render('export_studentList', {
+      subjects,
+      navSubjects,
+      theme: req.session.theme || 'light',
+      isSidebarOpen: false,
+      userData
+    });
+  } catch (error) {
+    console.error('Error loading export page:', error);
+    res.status(500).send('เกิดข้อผิดพลาดในการโหลดหน้า');
+  }
+};
+
+const getSubjectStudentsList = async (req, res) => {
+  try {
+      const { limit = 10, page = 1 } = req.query;
+      const actualLimit = limit === 'all' ? 0 : parseInt(limit);
+      const skip = (parseInt(page) - 1) * actualLimit;
+
+      const subject = await Subject.findById(req.params.subjectId);
+      if (!subject) {
+          return res.status(404).json({ message: 'ไม่พบรายวิชา' });
+      }
+
+      const totalStudents = subject.students.length;
+      const students = actualLimit === 0 
+          ? subject.students 
+          : subject.students.slice(skip, skip + actualLimit);
+
+      const totalPages = actualLimit === 0 ? 1 : Math.ceil(totalStudents / actualLimit);
+
+      await Subject.populate(students, {
+          path: 'user',
+          select: 'prefix fname lname nickname email major studentFromKku'
+      });
+
+      res.json({
+          students,
+          currentPage: parseInt(page),
+          totalPages,
+          totalStudents
+      });
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูล' });
+  }
+};
 
 module.exports = {
   uploadedFile,
@@ -675,8 +896,10 @@ module.exports = {
   deleteStudentListsFromSubject,
   editScorePerweek,
   setPermissionStudentLists,
-  deleteStudents
-
+  deleteStudents,
+  exportStudentList,
+  exportStudentListPage,
+  getSubjectStudentsList
 };
 
 
