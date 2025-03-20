@@ -28,6 +28,7 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://admin01:xI9L8fqpHxqi8C
 
 const app = express();
 
+app.use(express.static('public'));
 
 app.locals.pluralize = require('pluralize');
 
