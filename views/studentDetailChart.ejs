@@ -458,9 +458,9 @@
             <div class="row">
               <div class="col-12 img-square">
                 <% if(findStudent.user.img) { %>
-                  <img class="shadow-sm" src="/uploads/<%=findStudent.user.img%>" alt="รูปโปรไฟล์">
+                  <img class="shadow-sm" src="/<%=findStudent.user.img%>" alt="รูปโปรไฟล์">
                 <% } else { %>
-                  <img class="shadow-sm" src="/images/default-profile.png" alt="รูปโปรไฟล์">
+                  <img class="shadow-sm" src="images/profile/userProfile.png" alt="รูปโปรไฟล์">
                 <% } %>              </div>
               <div class="col-12">
                 <p class="fw-bold fs-4 text-center mt-2"><%=findStudent.user.name%></p>

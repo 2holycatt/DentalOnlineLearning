@@ -249,8 +249,8 @@
             </ul>
         </li>
         <li class="a-li d-flex">
-            <a href="#" class="a-li" >แบบจำลอง 3D</a>
-         </li>
+            <a href="#" class="a-li" onclick="redirectTo3DModel()">แบบจำลอง 3D</a>
+        </li>
                     <% if (hasUnread) { %>
                         <li id="teacherNotification" class="li-a a-li">
                           <a href="/adminIndex/teacherNotification" class="a-li bell-animatio"><span class="text-success"></spanc>
@@ -396,6 +396,32 @@
                 }
             }
      
+            async function redirectTo3DModel() {
+    try {
+        const response = await fetch('/generate3DModelToken', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to generate SSO token');
+        }
+
+        const { redirectUrl } = await response.json();
+        window.location.href = redirectUrl;
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถเชื่อมต่อกับระบบแบบจำลอง 3D ได้',
+            confirmButtonText: 'ตกลง'
+        });
+    }
+}
+
         </script>
 </body>
 

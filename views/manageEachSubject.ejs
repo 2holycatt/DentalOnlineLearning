@@ -570,7 +570,13 @@
   .swal2-icon {
     margin: 1rem auto !important; /* จัดโลโก้แจ้งเตือนให้อยู่ตรงกลาง */
   }
-  .link:hover{
+  .link{
+        color: gray;
+      }
+      .dark .link{
+        color: rgb(231, 231, 231);
+      }
+      .dark .link:hover ,.link:hover{
         text-decoration: underline;
         color: #ba55d3 !important;
       }
@@ -583,6 +589,7 @@
   color: #fff;
   background-color: #4cbb17;
 }
+
       @media screen and (max-width: 768px) {
         .above-nav-status {
           display: none;
@@ -609,9 +616,22 @@
       <%- include("./partials/lessonsList.ejs")%>
         <!-- <div style="width: 20%;"><p class="w-100">&nbsp;</p></div> -->
         <div class="aside-right bg-white h-auto p-4 m-3" style="width: 80%;">
-          <div class="manange-bar px-4 py-3 bg-white w-100">
-            <div class="mb-3">
-              <p class="fw-bold fs-3 my-1 lesson-bar">
+          <div class="manange-bar p-4 bg-white w-100">
+
+            <div class="fw-normal font14  ms-2">
+            <span><i class="bi bi-journal ms-0 me-2 purple" ></i> </span>
+            <span>
+              <a class='link' href="/subjects"> รายวิชาทั้งหมด </a>
+            </span>
+            <span> / </span> 
+            <span>
+             <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
+            </span> 
+            </div>
+            <br>
+
+            <div class=" mb-3">
+              <p class="fw-bold fs-3 my-1 ms-2">
                 <span class=" fw-normal">
                   <%=subject.subjectId%>
                     <%=subject.subjectName%>
@@ -638,16 +658,16 @@
               </div> -->
               <div class="d-flex justify-content-between">
                 <a class="m-1 p-2 btn btn-primary" href="/adminIndex/adminDashboard?subjectId=<%=subject._id%>">
-                  แดชบอร์ด <i class="ms-1 bi bi-pie-chart-fill"></i>
+                  <i class=" bi bi-pie-chart-fill"></i>แดชบอร์ด 
                 </a>
                 <div>
                   <% if (!subject.isArchived) { %>
                     <!-- Show Archive buttons for active subjects -->
                     <a href="/adminIndex/editSubject?subjectId=<%=subject._id%>" class="btn btn-warning text-white m-1 p-2">
-                      แก้ไขรายวิชา<i class="bi bi-pencil-fill ms-2"></i>
+                      <i class="bi bi-pencil-fill me-1"></i>แก้ไขรายวิชา
                     </a>
                     <a href="#" onclick="confirmArchive('<%=subject._id%>')" class="btn btn-danger m-1 p-2">
-                      จัดเก็บรายวิชา <i class="bi bi-archive"></i>
+                       <i class="bi bi-archive me-1"></i>จัดเก็บรายวิชา
                     </a>
                   <% } else { %>
                     <!-- Show Restore/Delete buttons for archived subjects -->
@@ -678,7 +698,7 @@
       </div> -->
 
           <div class="lesson-content p-4 bg-white w-100 my-4">
-            <div class="row">
+            <div class="row px-2">
 
               <div class="col-12 mt-2 row">
                 <div class="col">

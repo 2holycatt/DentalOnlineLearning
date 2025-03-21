@@ -1358,10 +1358,15 @@
           <div class="col-12 aside-right px-4 py-4 bg-white" style="width: 100% !important;">
             <div class="manange-bar p-4 bg-white w-100">
               
-              <div class="fw-normal fs-6  ms-2"> 
+              <div class="fw-normal font14  ms-2"> 
+             
                 <span><i class="bi bi-card-checklist me-2 purple" ></i> </span>
+                <span>
+                  <a class='link' href="/subjects"> รายวิชาทั้งหมด </a>
+                </span>
+                <span> / </span> 
                 <a class="link" href="/eachSubject?subjectDbId=<%=subject._id%>">
-                <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%></a> 
+                 <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%></a> 
              
             <span> / แบบทดสอบ: <%=quiz.quizname%></span> 
             </div>

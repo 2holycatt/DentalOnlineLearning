@@ -138,11 +138,11 @@
     }
 
     .lesson-bar {
-      border-left: 0.25em solid #007bff !important;
-      padding-left: 0.5em !important;
-      margin-right: 0.5em !important;
-
-    }
+        border-left: 0.25em solid #8A2BE2 !important;
+         padding-left: 0.5em !important;
+         margin-right: 0.5em !important;
+   
+       }
 
     .set-border-header {
       border-left: 0.25em solid #387bef;
@@ -187,7 +187,7 @@
     }
 
     .drop_box h4 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 400;
       color: #2e2e2e;
     }
@@ -455,16 +455,16 @@
   <div class="main-content d-flex h-auto">
     <% const pageName = "addLesson" %>
     <%- include("./partials/lessonsList.ejs", { pageName: pageName })%>
-    <div class="aside-right w-75 h-auto p-4 bg-white">
+    <div class="aside-right m-3 w-75 h-auto p-4 bg-white">
       <div class="manange-bar p-3 bg-white d-flex w-100">
-        <p class="fw-bold fs-3 lesson-bar">เพิ่มรายวิชา</p>
+        <p class="fw-bold fs-3 lesson-bar ms-2">เพิ่มรายวิชา</p>
         <a href="/subjects" class="add-button btn btn-primary m-0 p-2">
           ยกเลิกการเพิ่ม<i class="bi bi-x-circle-fill mx-2"></i>
         </a>
       </div>
       <div class="lesson-content p-4 bg-white w-100 my-4" style="height: auto;">
-        <div class="pb-3 mb-3" style="border-bottom: 1px solid #EAEFF4;">
-          <p class="fw-bold fs-3 set-border-header mb-3">แบบฟอร์มเพิ่มรายวิชา</p>
+        <div class="px-2 pb-3 mb-3" style="border-bottom: 1px solid #EAEFF4;">
+          <p class="fw-bold fs-4 set-border-header mb-3">แบบฟอร์มเพิ่มรายวิชา</p>
           <form action="/adminIndex/createSubject" method="post">
             <div id="scriptData" class="grey my-1 w-75"><span class="text-primary">* </span>รหัสและภาคการศึกษาของรายวิชาจะส่งผลต่อ<span class="text-danger"> การเข้าถึงบทเรียน </span>ของนักศึกษา หากชื่อรายวิชาและภาคการศึกของการลงทะเบียนเรียนจากนักศึกษานั้นไม่ตรงกับข้อมูลรายวิชาที่สร้าง นักศึกษาจะไม่สามารถเข้าถึงบทเรียนของรายวิชานั้นได้
             </div>
@@ -540,8 +540,8 @@
           </form>
 
         </div>
-        <div class="pb-3" style="border-bottom: 1px solid #EAEFF4;">
-          <p class="fw-bold fs-3 set-border-header">อัปโหลดไฟล์</p>
+        <div class="px-2 pb-3" style="border-bottom: 1px solid #EAEFF4;">
+          <p class="fw-bold fs-4 ">อัปโหลดไฟล์</p>
           <form action="/upload" method="post" enctype="multipart/form-data">
             <div class="container3 my-3">
               <div class="card shadow-sm" style="height: fit-content !important;">
@@ -590,7 +590,7 @@
 
               </div>
               <div class="mt-3">
-                <p class="fw-bold text-primary text-center">ตัวอย่างไฟล์:</p>
+                <p class="fw-semi-bold purple text-center mb-1">ตัวอย่างไฟล์:</p>
                 <div class="d-flex justify-content-center">
                   <a href="/adminIndex/downloadFile" class="btn btn-outline-primary p-1">
                     <small>Teach_stdlistExcel.xls

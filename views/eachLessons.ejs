@@ -510,10 +510,15 @@
             <div class="manange-bar px-4 py-4 bg-white w-100">
               <div class="d-row border-b" style=" padding-bottom: 0.5em !important;">
                 
-                <div class="fw-normal fs-6  ms-2">
+                
+
+                <div class="fw-normal font14  ms-2">
                   <span><i class="bi bi-book-half me-2" style="color: #8A2BE2;"></i></span>
+                  <span>
+                    <a class='link' href="/subjects"> รายวิชาทั้งหมด </a>
+                  </span>
                   <a class="grey link" href="/eachSubject?subjectDbId=<%=subject._id%>">
-                    <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
+                    / <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
                   </a> 
                   <span>   / บทเรียน:  <%=lesson.LessonName%></span> 
 

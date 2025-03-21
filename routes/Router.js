@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 var express = require('express');
 var router = express.Router();
 const LoginController = require("../controller/Login");
@@ -37,6 +38,28 @@ router.get('/', redirectIfAuth, adminController.notLoggedIn);
 router.get('/auth/google', redirectIfAuth, LoginController.authGoogle);
 router.get('/auth/google/callback', LoginController.authGoogleCallback);
 router.post('/logoutGoogle', LoginController.logoutGoogle);
+router.post('/generate3DModelToken', teacherMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.session.userId);
+        if (!user) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const token = jwt.sign({
+            userId: user._id,
+            email: user.email,
+            name: `${user.fname} ${user.lname}`,
+            role: user.role,
+            timestamp: Date.now()
+        }, process.env.SSO_SECRET, { expiresIn: '1h' });
+
+        const redirectUrl = `https://backend-dental-production.up.railway.app/sso?token=${token}`;
+        res.json({ redirectUrl });
+    } catch (error) {
+        console.error('SSO Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 // Login Process
 // router.post('/loginToWeb', LoginController.loginPage);

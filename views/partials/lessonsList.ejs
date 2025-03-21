@@ -189,7 +189,7 @@
     </p>
   </div>
   <li class="a-li d-flex my-1">
-    <a href="#" class="a-li" ><i class="bi bi-badge-3d-fill me-2"></i>แบบจำลอง 3D</a>
+    <a href="#" class="a-li" onclick="redirectTo3DModel()"><i class="bi bi-badge-3d-fill me-2"></i>แบบจำลอง 3D</a>
  </li>
   <% if (hasUnread) { %>
     <li id="teacherNotification" class="mx-0 a-li">
@@ -221,6 +221,32 @@
     } else {
         menuContent.style.display = 'none';
         icon.style.transform = 'rotate(0deg)';
+    }
+}
+
+async function redirectTo3DModel() {
+    try {
+        const response = await fetch('/generate3DModelToken', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to generate SSO token');
+        }
+
+        const { redirectUrl } = await response.json();
+        window.location.href = redirectUrl;
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถเชื่อมต่อกับระบบแบบจำลอง 3D ได้',
+            confirmButtonText: 'ตกลง'
+        });
     }
 }
 </script>

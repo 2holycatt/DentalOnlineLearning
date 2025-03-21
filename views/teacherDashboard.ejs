@@ -673,7 +673,9 @@
     <!-- <div style="width: 20%;"><p class="w-100">&nbsp;</p></div> -->
     <div class="aside-right bg-white h-auto p-4 m-3" style="width: 80%;">
       <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
-        <p class="fw-bold fs-3 lesson-bar">แดชบอร์ด (Dashboard)</p>
+        <p class="fw-bold fs-3 mx-1">
+          <i class='bi-bar-chart-fill purple me-1'></i> แดชบอร์ด (Dashboard)
+        </p>
         <div class="d-flex justify-content-center" style="align-items: center;">
           <label class="mx-2" for="dashboardSelector">แดชบอร์ดของ: </label>
           <select id="dashboardSelector" onchange="changeDashboardType(this.value)">
@@ -687,7 +689,7 @@
       <div class="lesson-content p-4 bg-white w-100 my-4">
         <div style="border-bottom: 1px solid #EAEFF4;" class="mb-3">
           <p class="fs-4 fw-bold mb-2 ">
-            <i class="bi bi-pie-chart-fill purple" ></i>
+            <i class="" ></i>
             <span class="ms-1"> ภาพรวมของ<%= contentType === 'quiz' ? 'แบบทดสอบ' : 
               contentType === 'assignment' ? 'งานที่มอบหมาย' : 
               'บทเรียน' %>
@@ -1052,8 +1054,8 @@ if (contentType === 'quiz') {
 <div class="lesson-content p-4 bg-white w-100 my-4">
   <div class="row pb-2" >
     <div class="col">
-      <p class="fs-5 fw-bold">
-        <i class="bi bi-list-check purple"></i>
+      <p class="fs-4 fw-bold ">
+        <i class=""></i>
         <span class="mx-2">
           <%= contentType === 'quiz' ? 'รายการแบบทดสอบ' : 
               contentType === 'assignment' ? 'รายการงานที่มอบหมาย' : 
@@ -1066,7 +1068,7 @@ if (contentType === 'quiz') {
   
   <!-- Quiz Table -->
   <% if (contentType === 'quiz' && latestSubject.quizArray && latestSubject.quizArray.length > 0) { %>
-    <div class="file-example w-100">
+    <div class="file-example w-100 ms-1">
       <!-- หัวตาราง -->
       <div class="list-div purple row">
           <p class="fw-bold my-3 col-4">ชื่อแบบทดสอบ</p>
@@ -1099,13 +1101,13 @@ if (contentType === 'quiz') {
 
   <!-- Assignment Table -->
   <% } else if (contentType === 'assignment' && latestSubject.Assignments && latestSubject.Assignments.length > 0) { %>
-    <div class="file-example w-100">
+    <div class="file-example w-100 ms-1">
       <div class="list-div purple row">
         <p class="fw-bold my-3 col-3">ชื่องาน</p>
         <p class="fw-bold my-3 col-3">วันที่เปิดให้ส่ง</p>
         <p class="fw-bold my-3 col-3">วันที่หมดเขตส่ง</p>
         <p class="fw-bold my-3 col-2">จำนวนที่นักศึกษาส่งงาน/คน</p>
-        <p class="fw-bold my-3 col-1">คะแนนเต็ม</p>
+        <p class="fw-bold my-3 col-">คะแนนเต็ม</p>
       </div>
           <% latestSubject.Assignments.forEach(assignment => { %>
             <div class="list-div-data row" onclick="window.location.href='/adminIndex/assignmentDetail?assignmentId=<%= assignment._id %>'">
@@ -1121,7 +1123,7 @@ if (contentType === 'quiz') {
 
   <!-- Lesson Table -->
   <% } else if (contentType === 'lesson' && latestSubject.lessonArray && latestSubject.lessonArray.length > 0) { %>
-    <div class="file-example w-100">
+    <div class="file-example w-100 ms-1">
       <!-- หัวตาราง -->
       <div class="list-div purple row">
         <p class="fw-bold my-3 col-3">ชื่อบทเรียน</p>
