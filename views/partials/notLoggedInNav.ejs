@@ -154,33 +154,77 @@
     transition: 0.3s;
 
   }
+  .minilogo-dent{
+    min-height: 32px;
+  }
+  @media (max-width: 900px) { 
+    .minilogo-dent{
+      display: none;
+        }
+        .elearning-text{
+    font-size: 14px !important;
+  }
+  }
+  @media (max-width: 768px) { /* ซ่อนเมื่อหน้าจอเล็กกว่า 768px */
+  .logo-dent {
+    display: none;
+  }
+  .elearning-text{
+    display: none;
+  }
+  #footer{
+    margin: 0 auto !important;
+  }
+  .loginBtn {
+    padding: 4px 8px;
+    font-size: 12px;
+    max-height: 36px;
+  }
+
+  .loginBtn img {
+    max-width: 35px; /* ลดขนาดของโลโก้ */
+  }
+  .img-fluid{
+    max-width:35px
+  }
+
+}
+
+@media (max-width: 480px) { /* ปรับขนาดเพิ่มเมื่อหน้าจอเล็กมาก */
+
+
+  .loginBtn img {
+    max-width: 25px;
+  }
+}
+
 </style>
 <div class="nav main-nav">
   <div class="d-flex align-items-center">
-    <a href="/auth/google" class="logo-a d-flex justify-content-between">
-      <img style="width: 40%;" class="img-lo h-auto my-2 md-display-" src="/images/indexMed/DENTISTRY_KKU.svg.png" />
+    <a href="/" class="logo-a d-flex justify-content-between">
+      <img style="width: 40%;" class="img-lo h-auto my-2 minilogo-dent" src="/images/indexMed/DENTISTRY_KKU.svg.png" />
     </a>
-    <p class="fw-bold fs-5" style="max-width: 400px;">
+    <p class="fw-bold fs-5 elearning-text" style="max-width: 400px;">
       สื่อการสอนออนไลน์ คณะทันตแพทย์ศาตร์ มหาวิทยาลัยขอนแก่น
     </p>
   </div>
   <div class="in-sub-div-2">
 
     <div class="d-flex justify-content-end">
-     <div class="d-flex align-items-center">
+     <div class="d-flex align-items-center my-2 mx-3">
       <!-- <p class="mx-2">
         เข้าสู่ระบบ
       </p> -->
       <a href="/auth/google" class="ms-2 loginBtn px-2 py-2">
-        <span>
+        <span class="my-1">
           เข้าสู่ระบบด้วย
-          <img class="img-fluid" style="max-width: 50px;" src="https://upload.wikimedia.org/wikipedia/th/thumb/d/d9/KKU_SLA_Logo.svg/250px-KKU_SLA_Logo.svg.png" alt="KKU Logo">
+          <img class="img-fluid" style="width: 50px;" src="https://upload.wikimedia.org/wikipedia/th/thumb/d/d9/KKU_SLA_Logo.svg/250px-KKU_SLA_Logo.svg.png" alt="KKU Logo">
         </span>
       </a>
       <a href="/auth/google" class="ms-2 loginBtn px-2 py-2">
-        <span>
+        <span class="my-1">
           เข้าสู่ระบบด้วย
-          <img class="img-fluid" style="max-width: 50px;" src="/images/indexMed/Google_2015_logo.svg.webp" alt="Google Logo">
+          <img class="img-fluid" style="width: 50px;" src="/images/indexMed/Google_2015_logo.svg.webp" alt="Google Logo">
         </span>
       </a>
      </div>
