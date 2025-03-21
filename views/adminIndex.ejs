@@ -51,7 +51,7 @@
     }
 
     .classroom-p {
-      background-color: #8A2BE2;
+      background-color: #ba55d3;
       color: white !important;
       padding: 0.5em !important;
       border-radius: 0 0 0.5em 0!important;
@@ -119,14 +119,13 @@
       padding-bottom: 0.5em !important;
       margin-bottom: 0.5em !important;
       border-bottom: 1px solid #bb86fc;
-      color: #8A2BE2;
+      
     }
     .dark .setColumn-p {
       border-bottom-color: #bb86fc;
     }
 
     .dark .setColumn-p-lesson {
-      color: #9442e0;
       border-bottom-color: #bb86fc;
     }
     .setColumn-p-2 {
@@ -307,28 +306,27 @@
     <!-- <div class="element-student">
     </div> -->
   </nav>
-  <div class="firstDiv row" style="margin-top: 5em !important; margin-bottom: 5em !important">
+  <div class="firstDiv row w-auto" style="margin-top: 5em !important; margin-bottom: 5em !important">
     <div class="setShadow">
       <div class="inFirst row px-5 py-5 flex-column flex-md-row">
         <div class="col-md-4 d-flex justify-content-center">
-          <img class="w-75 h-auto logo-dent" src="/images/indexMed/Ellipse9.png" alt="ตราสัญลักษณ์ คณะทันตแพทย์ศาตร์" style="height: auto; width: 100%; max-width: 35em; max-height: 23em; object-fit: contain;">
+          <img class="w-75 h-auto logo-dent" src="/images/indexMed/Ellipse9.png" alt="ตราสัญลักษณ์ คณะทันตแพทย์ศาตร์" style="height: auto; width: auto; max-width: 35em; max-height: 23em; object-fit: contain;">
         </div>
-        <div class="col-md-8 d-flex text-white align-items-center mt-4 mt-md-0">
+        <div class="home-container col-md-8 d-flex text-white align-items-center mt-4 mt-md-0">
           <div>
-            <p>
+            <p class="border-purple mb-2">
               <span class="fs-3">สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม</span><br>
               <span class="fs-4">Online Learning : Component Parts of Dental Prosthesis</span>
             </p>
-            <img class="line img-fluid mb-3" src="images/indexMed/line-1.svg" />
             <p>
-              <span class="fs-4">คณะทันตยแพทย์ศาสตร์ มหาวิทยาลัยขอนแก่น</span><br>
-              <span class="fs-4">Faculty of Dentistry Khon Kaen University</span>
+              <span class="fs-4 md-fs-5">คณะทันตยแพทย์ศาสตร์ มหาวิทยาลัยขอนแก่น</span><br>
+              <span class="fs-4  md-fs-5">Faculty of Dentistry Khon Kaen University</span>
             </p>
           </div>
         </div>
       </div>
     </div>
-  </div>
+     </div>
   <div class="upDownDiv d-flex justify-content-center" style="margin-bottom: 10em !important;">
     <a href="#forUpdown" class="text-dark up-down-a">
       <i class="bi bi-chevron-double-down fs-1"></i>
@@ -347,7 +345,7 @@
             <div class="setColumn h-100 d-flex flex-column justify-content-between position-relative" >
        
            
-              <div class="setColumn-p-lesson fw-bold fs-5" >
+              <div class="setColumn-p-lesson fw-bold fs-5 purple" >
                 <p class="mb-0">
                   <%= subject.subjectId + ' ' + subject.subjectName %>
               </p>
@@ -357,20 +355,20 @@
               
               <!-- <p>Times</p> -->
             </div>
-              <div class="setColumn-p-lesson-2" style="color:#bb86fc;">
+              <div class="setColumn-p-lesson-2 text-dark" >
                 <p>บทเรียน</p>
                 <p><%= subject.lessonArray.length %></p>
               </div>
-              <div class="setColumn-p-lesson-2" style="color:#bb86fc;">
+              <div class="setColumn-p-lesson-2 text-dark" >
                 <p>แบบทดสอบ</p>
                 <p><%= subject.quizArray.length %></p>
               </div>
-              <div class="setColumn-p-lesson-2" style="color:#bb86fc;">
+              <div class="setColumn-p-lesson-2 text-dark" >
                 <p>งานที่มอบหมาย</p>
                 <p><%= subject.Assignments.length %></p>
               </div>
               <br>
-              <div class="setColumn-p-lesson-2 d-flex justify-content-end" style="color:#bb86fc;">
+              <div class="setColumn-p-lesson-2 d-flex justify-content-end grey" >
                 แก้ไขล่าสุดเมื่อ <%= new Date(subject.updatedAt).toLocaleDateString('th-TH') %>
               </div>
           

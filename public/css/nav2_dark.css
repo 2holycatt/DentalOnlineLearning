@@ -51,7 +51,7 @@ body.dark .a-li {
     color: rgb(231, 231, 231) !important;
 }
 body.dark .a-li:hover {
-    color: #9146ff !important;
+    color: #ba55d3 !important;
     transform: scale(1.1);
 }
 
@@ -78,7 +78,7 @@ body.dark .sub-menu-link:hover {
 
 
 body.dark .sub-menu-link:hover p {
-    color: #9146ff; /* สีของลิงก์เมื่อ hover ในเมนูย่อย */
+    color: #ba55d3; /* สีของลิงก์เมื่อ hover ในเมนูย่อย */
 }
 .search-input {
     color: var(--input-text-color);
