@@ -265,25 +265,37 @@
         <div class="useful-link">
           <p class="fw-bold fw-footer">ห้องเรียน</p>
           <div class="use-links mx-3">
-            <li><a href="/adminIndex/adminLessonIndex">บทเรียน</a></li>
-            <li><a href="/adminIndex/assignmentIndex">งานที่มอบหมาย</a></li>
-            <li><a href="/adminIndex/adminExamsIndex">แบบทดสอบ</a></li>
+            <li><a href="/subjects">รายวิชาทั้งหมด</a></li>
+            
           </div>
         </div>
 
       </div>
-      <div class="col-md-3 py-2 px-2">
+      <% if (userData.role === 'teacher') { %>
+        <div class="col-md-3 py-2 px-2">
         <div class="useful-link">
           <p class="fw-bold fw-footer">จัดการข้อมูลนักศึกษา</p>
           <div class="use-links mx-3">
-            <li><a href="index.html">แดชบอร์ด (Dashboard)</a></li>
+            <li><a href="/adminIndex/adminDashboard">แดชบอร์ด (Dashboard)</a></li>
             <li><a href="/adminIndex/uploadStudent">รายชื่อนักศึกษา</a></li>
             <li><a href="/adminIndex/logsFile">การเข้าใช้งาน (Logs file)</a></li>
-            <li><a href="index.html">การกำหนดสิทธิ์</a></li>
+            <li><a href="/adminIndex/setPermission">การกำหนดสิทธิ์</a></li>
           </div>
         </div>
+   
+      </div> 
+      <% }else { %>
+        <div class="col-md-3 py-2 px-2">
+          <div class="useful-link">
+            <p class="fw-bold fw-footer"></p>
+            <div class="use-links mx-3">
+              
+            </div>
+          </div>
+     
+        </div> 
+        <% } %>
 
-      </div>
       <div class="col-md-3 py-2 px-2">
         <div class="address">
             <p class="fw-bold fw-footer">ติดต่อเรา</p>

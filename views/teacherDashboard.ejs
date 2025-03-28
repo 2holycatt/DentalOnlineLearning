@@ -674,7 +674,7 @@
     <div class="aside-right bg-white h-auto p-4 m-3" style="width: 80%;">
       <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
         <p class="fw-bold fs-3 mx-1">
-          <i class='bi-bar-chart-fill purple me-1'></i> แดชบอร์ด (Dashboard)
+          <i class='bi-bar-chart-fill purple me-2'></i> แดชบอร์ด (Dashboard)
         </p>
         <div class="d-flex justify-content-center" style="align-items: center;">
           <label class="mx-2" for="dashboardSelector">แดชบอร์ดของ: </label>
@@ -1107,7 +1107,7 @@ if (contentType === 'quiz') {
         <p class="fw-bold my-3 col-3">วันที่เปิดให้ส่ง</p>
         <p class="fw-bold my-3 col-3">วันที่หมดเขตส่ง</p>
         <p class="fw-bold my-3 col-2">จำนวนที่นักศึกษาส่งงาน/คน</p>
-        <p class="fw-bold my-3 col-">คะแนนเต็ม</p>
+        <p class="fw-bold my-3 col-1">คะแนนเต็ม</p>
       </div>
           <% latestSubject.Assignments.forEach(assignment => { %>
             <div class="list-div-data row" onclick="window.location.href='/adminIndex/assignmentDetail?assignmentId=<%= assignment._id %>'">

@@ -693,7 +693,9 @@ const createSubject = async (req, res, next) => {
       return res.render('addSubjects', {
         error: 'มีรายวิชานี้อยู่ในระบบแล้ว',
         formData: req.body, // ส่งข้อมูลฟอร์มกลับไปเพื่อให้ผู้ใช้ไม่ต้องกรอกใหม่
-        filteredResult
+        filteredResult,
+        theme,
+        isSidebarOpen
       });
       // const formData = `subjectId=${subjectId}&subjectName=${subjectName}&semester=${semester}&unit=${unit}&section=${section}&error=วิชานี้มีอยู่แล้วในภาคการศึกษานี้`;
       // return res.redirect(`/adminIndex/addSubject?${formData}`);

@@ -1437,8 +1437,9 @@
                       
                       <a href="#" class="add-button cancel-button btn my-2 ms-2 p-2"
                         onclick="cancelReleaseQuiz('<%= quiz._id %>')">
-                        <span class="text_btn">ยกเลิกการเผยแพร่</span>
                         <i class="bi bi-x-circle ms-1"></i>
+                        <span class="text_btn">ยกเลิกการเผยแพร่</span>
+                        
                       </a>
                       <a href="/adminIndex/eachQuiz?quizId=<%= quiz._id %>/response"
                         class="add-button btn btn-secondary my-2 ms-2 p-2 " style="color: white;">
@@ -1460,8 +1461,9 @@
                 -->
                 <div class="d-flex w-50 justify-content-end">
                   <a href="#" class="add-button btn btn-danger my-2 p-2" onclick="confirmDelete('<%=quiz._id%>')">
+                     <i class="bi bi-trash3 "></i>
                     <span class="text_btn">ลบ</span>
-                    <i class="bi bi-trash3 "></i>
+                   
                   </a>
                 </div>
               </div>

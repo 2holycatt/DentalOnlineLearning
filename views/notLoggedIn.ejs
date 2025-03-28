@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>Home</title>
   <!-- <link rel="stylesheet" href="/css/event.css"> -->
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
@@ -627,8 +627,7 @@
     font-size: small;
   }
 
-
-
+ 
   .logo-footer {
     width: fit-content !important;
     height: fit-content !important;
@@ -682,21 +681,35 @@
     <!-- <div class="element-student">
     </div> -->
   </nav>
-  <div class="firstDiv row" style="margin-top: 5em !important; margin-bottom: 5em !important">
+  <div class="firstDiv row w-auto" style="margin-top: 5em !important; margin-bottom: 5em !important">
     <div class="setShadow">
       <div class="inFirst row px-5 py-5 flex-column flex-md-row">
         <div class="col-md-4 d-flex justify-content-center">
           <img class="w-75 h-auto logo-dent" src="/images/indexMed/Ellipse9.png" alt="ตราสัญลักษณ์ คณะทันตแพทย์ศาตร์" style="height: auto; width: auto; max-width: 35em; max-height: 23em; object-fit: contain;">
         </div>
         <div class="home-container col-md-8 d-flex text-white align-items-center mt-4 mt-md-0">
-          <div>
+          <div style="max-width: 780px;">
             <p class="border-purple mb-2">
-              <span class="fs-3">สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม</span><br>
-              <span class="fs-4">Online Learning : Component Parts of Dental Prosthesis</span>
+              <span class="fs-4 d-none d-md-inline">
+                สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม
+              </span>
+              <!-- สำหรับหน้าจอเล็ก (< 768px) ใช้ fs-6 -->
+              <span class="fs-5 d-inline d-md-none">
+                สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม
+              </span>
+
+               <span class="fs-4 d-none d-md-inline ">Online Learning : Component Parts of Dental Prosthesis</span>
+               <span class="fs-5 d-inline d-md-none">Online Learning : Component Parts of Dental Prosthesis</span>
+
             </p>
             <p>
-              <span class="fs-4 md-fs-5">คณะทันตยแพทย์ศาสตร์ มหาวิทยาลัยขอนแก่น</span><br>
-              <span class="fs-4  md-fs-5">Faculty of Dentistry Khon Kaen University</span>
+              <span class="fs-4 d-none d-md-inline">คณะทันตยแพทย์ศาสตร์ มหาวิทยาลัยขอนแก่น</span>
+              <span class="fs-5 d-inline d-md-none">คณะทันตยแพทย์ศาสตร์ มหาวิทยาลัยขอนแก่น</span>
+              <br>
+              <span class="fs-4 d-none d-md-inline">Faculty of Dentistry Khon Kaen University</span>
+              <span class="fs-5 d-inline d-md-none">Faculty of Dentistry Khon Kaen University</span>
+
+            
             </p>
           </div>
         </div>
