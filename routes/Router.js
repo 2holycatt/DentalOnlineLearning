@@ -19,6 +19,7 @@ const dashboardManagement = require("../controller/dashboardManagement");
 const profileController = require('../controller/profileController');
 const studentQuizController = require('../controller/studentQuizController')
 const Subject = require('../models/subjects');
+const User = require('../models/user.model');
 
 
 
@@ -42,9 +43,10 @@ router.post('/generate3DModelToken', teacherMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId);
         if (!user) {
-            return res.status(401).json({ error: 'Unauthorized' });
+            return res.status(401).json({ error: 'ไม่พบข้อมูลผู้ใช้งาน' });
         }
 
+        // สร้าง token
         const token = jwt.sign({
             userId: user._id,
             email: user.email,
@@ -57,7 +59,7 @@ router.post('/generate3DModelToken', teacherMiddleware, async (req, res) => {
         res.json({ redirectUrl });
     } catch (error) {
         console.error('SSO Error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: error.message || 'Internal server error' });
     }
 });
 

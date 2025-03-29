@@ -511,6 +511,71 @@
     const checkedAll = document.getElementById('checkedAll');
     const checkboxes = document.querySelectorAll('.checkStudent');
     const confirmBtn = document.getElementById('confirmBtn');
+    const studentFilter = document.getElementById('studentFilter');
+  const studentRows = document.querySelectorAll('.list-div-data');
+
+  studentFilter.addEventListener('change', function() {
+    const filterValue = this.value;
+    
+    studentRows.forEach(row => {
+      // ค้นหาคอลัมน์สุดท้ายของแต่ละแถว (นักศึกษาจาก)
+      const studentTypeColumn = row.querySelector('p:last-child');
+      const studentTypeText = studentTypeColumn.textContent.trim();
+      
+      if (filterValue === 'all') {
+        // แสดงทุกแถว
+        row.style.display = '';
+      } else if (filterValue === 'kku' && studentTypeText === 'มหาวิทยาลัยขอนแก่น') {
+        // แสดงเฉพาะนักศึกษา มข.
+        row.style.display = '';
+      } else if (filterValue === 'external' && studentTypeText === 'ภายนอก') {
+        // แสดงเฉพาะนักศึกษาภายนอก
+        row.style.display = '';
+      } else {
+        // ซ่อนแถวที่ไม่ตรงตามเงื่อนไข
+        row.style.display = 'none';
+      }
+    });
+    
+    // อัปเดตหมายเลขลำดับและการแสดงข้อความเมื่อไม่พบข้อมูล
+    updateRowNumbers();
+  });
+
+  function updateRowNumbers() {
+    let visibleCount = 0;
+    let hasVisibleRows = false;
+    
+    studentRows.forEach(row => {
+      if (row.style.display !== 'none') {
+        visibleCount++;
+        hasVisibleRows = true;
+      }
+    });
+    
+    // แสดงหรือซ่อนข้อความเมื่อไม่พบข้อมูล
+    const noDataMessage = document.querySelector('.file-example');
+    if (!hasVisibleRows && noDataMessage) {
+      // สร้างข้อความเมื่อไม่พบข้อมูล ถ้ายังไม่มี
+      let noDataElem = document.getElementById('no-data-message');
+      if (!noDataElem) {
+        noDataElem = document.createElement('p');
+        noDataElem.id = 'no-data-message';
+        noDataElem.className = 'mt-3 text-center';
+        noDataElem.textContent = 'ไม่พบรายชื่อนักศึกษาตามเงื่อนไขที่เลือก';
+        noDataMessage.parentNode.insertBefore(noDataElem, noDataMessage.nextSibling);
+      } else {
+        noDataElem.style.display = '';
+      }
+    } else {
+      // ซ่อนข้อความเมื่อมีข้อมูล
+      const noDataElem = document.getElementById('no-data-message');
+      if (noDataElem) {
+        noDataElem.style.display = 'none';
+      }
+    }
+  }
+
+
 
     function toggleButtonState() {
       const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
@@ -533,6 +598,7 @@
 
     checkedAll.addEventListener('change', handleCheckedAll);
     
+
   </script>
 </body>
 

@@ -298,7 +298,7 @@
     }
 
     .header-managebar {
-      border-left: 0.25em solid #387bef;
+      border-left: 0.25em solid #ba55d3;
       padding-left: 0.50em !important;
       margin-bottom: 0.5em !important;
 
@@ -353,7 +353,7 @@
     }
 
     .lesson-bar {
-      border-left: 0.25em solid #007bff !important;
+      border-left: 0.25em solid #ba55d3 !important;
       padding-left: 0.5em !important;
       margin-right: 0.5em !important;
 
@@ -741,12 +741,6 @@
    
        }
    
-       .lesson-bar {
-         border-left: 0.25em solid #8A2BE2 !important;
-         padding-left: 0.5em !important;
-         margin-right: 0.5em !important;
-   
-       }
    
        .a-add{
          color: #007bff !important;
@@ -822,19 +816,19 @@
             <div class="d-flex">
               <div class="d-flex w-50">
                 <button disabled href="#" class="add-button btn btn-primary my-2 p-2" style="height: fit-content !important;">
-                  เพิ่มเนื้อหา<i class="bi bi-plus-circle-fill mx-2"></i>
+                 <i class="bi bi-plus-circle-fill mx-2"></i> เพิ่มเนื้อหา
                 </button>
                 <a href="/adminIndex/editLessonContent?lesson=<%=lesson._id%>" class="btn add-button btn-warning my-2 p-2 mx-2" style="height: fit-content !important;color: white;">
-                  แก้ไขเนื้อหาภายในบทเรียน<i class="bi bi-pencil-square mx-2"></i>
+                 <i class="bi bi-pencil-square mx-2"></i> แก้ไขเนื้อหาภายในบทเรียน
                 </a>
                     <a href="/adminIndex/addEndChapterQuestion?lesson=<%=lesson._id%>"
                       class="btn add-button btn-info my-2 p-2" style="height: fit-content !important;color: white;">
-                      เพิ่มคำถามท้ายบท<i class="bi bi-question-circle mx-2"></i>
+                     <i class="bi bi-question-circle mx-2"></i> เพิ่มคำถามท้ายบท
                     </a>
               </div>
               <div class="d-flex w-50 justify-content-end">
                 <a href="/adminIndex/deleteLesson?lessonId=<%=lesson._id%>" class="btn add-button btn-danger my-2 p-2 mx-2" style="height: fit-content !important;">
-                  ลบบทเรียน: <span class="text-light"><%=lesson.LessonName%></span><i class="bi bi-eraser-fill mx-2"></i>
+                 <i class="bi bi-eraser-fill mx-2"></i> ลบบทเรียน: <span class="text-light"><%=lesson.LessonName%></span>
                 </a>
               </div>
             </div>
@@ -847,7 +841,7 @@
               </div>
               <div class="template-header">
                 <div class="row mx-2" style="display: flex !important; align-items: center !important">
-                  <p class="col-md-6 fw-bold fs-4">เพิ่มเนื้อหาด้วย <span class="text-primary">Template Layout</span></p>
+                  <p class="col-md-6 fw-bold fs-4">เพิ่มเนื้อหาด้วย <span class="text-purple">Template Layout</span></p>
                   <div class="col-md-6 d-flex justify-content-end">
                     <a class="fs-4 p-1 template-back" style="margin-left: auto;"><i class="bi bi-arrow-left-circle-fill text-primary"></i>
                     </a>
@@ -856,7 +850,7 @@
               </div>
               <div class="custom-header">
                 <div class="row mx-2" style="display: flex !important; align-items: center !important">
-                  <p class="col-md-6 fw-bold fs-4">เพิ่มเนื้อหาด้วย <span class="text-primary">PDF Files</span></p>
+                  <p class="col-md-6 fw-bold fs-4">เพิ่มเนื้อหาด้วย <span class="text-purple">PDF Files</span></p>
                   <div class="col-md-6 d-flex justify-content-end">
                     <a class="fs-4 py-1 custom-back" style="margin-left: auto;"><i class="bi bi-arrow-left-circle-fill text-primary"></i>
                     </a>
@@ -920,25 +914,25 @@
               <p class="discription-layout mx-4">
                 <span class="fw-bold ">คำอธิบาย: </span>
                 template นี้จะมีองค์ประกอบ ประกอบอยู่ 5 ส่วน ได้แก่ <br>
-                <span class="fw-bold text-primary">ส่วนที่ 1:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 1:</span>
                 หัวข้อ เหมาะสำหรับข้อความที่เป็นหัวข้อ
                 เป็นข้อความสั้น ๆ
                 ที่เอาไว้ใช้อธิบายเนื้อหาที่อยู่ถัดไป
                 <br>
-                <span class="fw-bold text-primary">ส่วนที่ 2:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 2:</span>
                 คำอธิบายเพิ่มเติม ส่วนนี้เป็นส่วนที่ใช้อธิบายเนื้อหาเพิ่มเติมรองลงมาจากหัวข้อ
                 เป็นข้อความเกริ่น ๆ ว่าเนื้อหานี้กล่าวถึงอะไรและมีความหมายว่าอย่างไร
                 <br>
-                <span class="fw-bold text-primary">ส่วนที่ 3:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 3:</span>
                 คำอธิบายเนื้อหาหลัก ส่วนนี้เหมาะสำหรับใช้อธิบายเนื้อหาหลักที่ได้ถูกเพิ่มและอยู่ในส่วนถัดไป
                 <br>
-                <span class="fw-bold text-primary">ส่วนที่ 4:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 4:</span>
                 ชื่อรูปภาพ เป็นส่วนที่ใช้บอกว่ารูปภาพด้านล่างนั้นคือรูปอะไร
                 <br>
-                <span class="fw-bold text-primary">ส่วนที่ 5:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 5:</span>
                 รูปภาพ ในส่วนนี้จะรับรองข้อมูลไฟล์ที่เป็นประเภทรูปภาพและวิดีโอ
                 <br>
-                <span class="fw-bold text-primary">ส่วนที่ 6:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 6:</span>
                 คำอธิบายเกี่ยวกับรูปภาพ ใช้ส่วนนี้อธิบายเกี่ยวกับรูปภาพดังกล่าวที่ถูกเพิ่มลงไป
                 เป็นรูปเกี่ยวกับอะไร มีความสำคัญอย่างไร
               </p>
@@ -950,27 +944,27 @@
                 <div class="form-grid px-4 py-1">
                   <div class="underForm-1">
                     <div class="my-1 mb-3">
-                      <label for="Topic" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 1 >> </span>หัวข้อ: </label>
+                      <label for="Topic" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 1 >> </span>หัวข้อ: </label>
                       <input type="text" class="form-control p-3 w-75 layout-1-topic" name="Topic" id="topicInput" placeholder="ส่วนประกอบฟั..." required>
                     </div>
                     <div class="form my-1 mb-3">
-                      <label for="MainDescription" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 2 >> </span>คำอธิบายเพิ่มเติม: </label>
+                      <label for="MainDescription" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 2 >> </span>คำอธิบายเพิ่มเติม: </label>
                       <textarea class="form-control w-75 p-3" name="MainDescription" id="topicInput2" style="height: 100px;"></textarea>
                     </div>
                     <div class="form my-1 mb-3 mb-3">
-                      <label for="subDescription" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 3 >> </span>คำอธิบายเนื้อหาหลัก: </label>
+                      <label for="subDescription" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 3 >> </span>คำอธิบายเนื้อหาหลัก: </label>
                       <textarea class="form-control w-75 p-3" name="SubDescription" id="topicInput3" style="height: 100px;" placeholder=""></textarea>
                     </div>
                     <div class="form my-1 mb-3">
-                      <label for="title" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 4 >> </span>ชื่อรูปภาพ: </label>
+                      <label for="title" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 4 >> </span>ชื่อรูปภาพ: </label>
                       <input type="text" class="form-control p-3 w-75" name="title" id="topicInput4" placeholder="Occlusal Re..." required>
                     </div>
                     <div class="my-1 mb-3">
-                      <label for="file" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 5 >> </span>ไฟล์รูปภาพหรือวิดีโอ: </label><br>
+                      <label for="file" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 5 >> </span>ไฟล์รูปภาพหรือวิดีโอ: </label><br>
                       <input type="file" class="w-75 img-input" id="topicInput5" style="background-color: white !important;" name="file" accept="image/*,video/*">
                     </div>
                     <div class="form my-1 mb-3">
-                      <label for="ImageDescription" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 6 >> </span>คำอธิบายเกี่ยวกับรูปภาพ: </label>
+                      <label for="ImageDescription" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 6 >> </span>คำอธิบายเกี่ยวกับรูปภาพ: </label>
                       <textarea class="form-control w-75 p-3" name="ImageDescription" id="topicInput6" style="height: 100px;" placeholder=""></textarea>
                     </div>
 
@@ -1052,16 +1046,16 @@
               <p class="discription-layout mx-4">
                 <span class="fw-bold ">คำอธิบาย: </span>
                 template นี้จะมีองค์ประกอบ ประกอบอยู่ 4 ส่วน ได้แก่ <br>
-                <span class="fw-bold text-primary">ส่วนที่ 1:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 1:</span>
                 หัวข้อ เหมาะกับข้อความที่เป็นหัวข้อ มีขนาดตัวอักษรที่เด่นกว่าส่วนอื่น ๆ
                 <br>
-                <span class="fw-bold text-primary">ส่วนที่ 2:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 2:</span>
                 คำอธิบาย เหมาะสำหรับอธิบายเนื้อหาหรือข้อความแบบบรรยาย
                 <br>
-                <span class="fw-bold text-primary">ส่วนที่ 3:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 3:</span>
                 คำอธิบาย เช่นเดี่ยวกับส่วนที่ 2 เหมาะสำหรับอธิบายเนื้อหาหรือข้อความแบบบรรยาย
                 <br>
-                <span class="fw-bold text-primary">ส่วนที่ 4:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 4:</span>
                 คำอธิบาย เป็นส่วนสุดท้ายที่ใช้สำหรับอธิบายหรือบรรยายเนื้อหาเช่นเดียวกับส่วนที่ 2 และ 3
                 <br>
               </p>
@@ -1073,22 +1067,22 @@
                 <div class="form-grid px-4 py-1">
                   <div class="underForm-1">
                     <div class="my-1">
-                      <label for="Topic" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 1 >> </span>หัวข้อ: </label>
+                      <label for="Topic" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 1 >> </span>หัวข้อ: </label>
                       <input type="text" class="form-control p-3 w-75" id="topicInput7" name="Topic" placeholder="ส่วนประกอบฟั..." required>
 
                     </div>
                     <div class="form my-1 mb-3">
-                      <label for="TextArea1" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 2 >> </span>คำอธิบายหรือบรรยาย: </label>
+                      <label for="TextArea1" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 2 >> </span>คำอธิบายหรือบรรยาย: </label>
                       <textarea class="form-control w-75 p-3" id="topicInput8" name="TextArea1" style="height: 100px;"></textarea>
 
                     </div>
                     <div class="form my-1 mb-3">
-                      <label for="TextArea2" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 3 >> </span>คำอธิบายหรือบรรยาย: </label>
+                      <label for="TextArea2" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 3 >> </span>คำอธิบายหรือบรรยาย: </label>
                       <textarea class="form-control w-75 p-3" name="TextArea2" id="topicInput9" style="height: 100px;" placeholder=""></textarea>
 
                     </div>
                     <div class="form my-1 mb-3">
-                      <label for="TextArea3" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 4 >> </span>คำอธิบายหรือบรรยาย: </label>
+                      <label for="TextArea3" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 4 >> </span>คำอธิบายหรือบรรยาย: </label>
                       <textarea class="form-control w-75 p-3" name="TextArea3" id="topicInput10" style="height: 100px;" placeholder=""></textarea>
                     </div>
                   </div>
@@ -1200,10 +1194,10 @@
               <p class="discription-layout mx-4">
                 <span class="fw-bold ">คำอธิบาย: </span>
                 template นี้จะมีองค์ประกอบ ประกอบอยู่ 2 ส่วน ได้แก่ <br>
-                <span class="fw-bold text-primary">ส่วนที่ 1:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 1:</span>
                 คำอธิบาย ใช้อธิบายส่วนที่ 2 ซึ่งในส่วนนั้นสามารถเป็นรูปภาพหรือวิดีโอก็ได้
                 <br>
-                <span class="fw-bold text-primary">ส่วนที่ 2:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 2:</span>
                 ไฟล์ ไฟล์ที่ใช้ในการอัปโหลดคือไฟล์ประเภทรูปภาพและวิดีโอ เช่นไฟล์ที่มีนามสกุลต่อไปนี้
                 <br>
                 <span class="text-success fw-bold">รูปภาพ: </span><span>.jpg, .jpeg, .png, .gif</span><br>
@@ -1217,12 +1211,12 @@
                 <div class="form-grid px-4 py-1">
                   <div class="underForm-1">
                     <div class="my-1 mb-3">
-                      <label for="Description" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 1 >> </span>คำอธิบาย: </label>
+                      <label for="Description" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 1 >> </span>คำอธิบาย: </label>
                       <input type="text" class="form-control p-3 w-75" id="topicInput11" name="Description" placeholder="ส่วนประกอบฟั..." required>
 
                     </div>
                     <div class="my-1 mb-3">
-                      <label for="FileForm" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 2 >> </span>ไฟล์รูปภาพหรือวิดีโอ: </label><br>
+                      <label for="FileForm" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 2 >> </span>ไฟล์รูปภาพหรือวิดีโอ: </label><br>
                       <input type="file" class="w-75 img-input" style="background-color: white !important;" name="img-file" id="img-file" accept="image">
 
                       <!-- <div id="emailHelp" class="form-text my-1">*ไม่ต้องทำการอัปโหลดรูปภาพ หากไม่มีรูปภาพที่ต้องการใช้</div> -->
@@ -1281,15 +1275,15 @@
               <p class="discription-layout mx-4">
                 <span class="fw-bold ">คำอธิบาย: </span>
                 template นี้จะมีองค์ประกอบ ประกอบอยู่ 3 ส่วน ได้แก่ <br>
-                <span class="fw-bold text-primary">ส่วนที่ 1:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 1:</span>
                 หัวข้อ เหมาะสำหรับข้อความที่เป็นหัวข้อ
                 เป็นข้อความสั้น ๆ
                 ที่เอาไว้ใช้อธิบายเนื้อหาที่อยู่ถัดไป
                 <br>
-                <span class="fw-bold text-primary">ส่วนที่ 2:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 2:</span>
                 คำอธิบาย เหมาะสำหรับอธิบายเนื้อหาหรือข้อความแบบบรรยาย
                 <br>
-                <span class="fw-bold text-primary">ส่วนที่ 3:</span>
+                <span class="fw-bold text-purple">ส่วนที่ 3:</span>
                 รายการหรือลิสต์ (lists) ข้อความที่ถูกแบ่งเป็นรายการหรือข้อย่อยทีละหัวข้อ
               </p>
               <div class="d-flex mx-4">
@@ -1300,16 +1294,16 @@
                 <div class="form-grid px-4 py-1">
                   <div class="underForm-1">
                     <div class="my-1 mb-3">
-                      <label for="Topic" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 1 >> </span>หัวข้อ: </label>
+                      <label for="Topic" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 1 >> </span>หัวข้อ: </label>
                       <input type="text" class="form-control p-3 w-75" name="Topic" placeholder="ส่วนประกอบฟั..." required>
 
                     </div>
                     <div class="form my-1 mb-3">
-                      <label for="Description" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 2 >> </span>คำอธิบายหรือบรรยาย: </label>
+                      <label for="Description" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 2 >> </span>คำอธิบายหรือบรรยาย: </label>
                       <textarea class="form-control w-75 p-3" name="Description" style="height: 100px;" placeholder=""></textarea>
                     </div>
                     <div class="form my-1 mb-3">
-                      <label for="list" class="form-label fs-bold"><span class="fw-bold text-primary">ส่วนที่ 3 >> </span>รายการหรือลิสต์ (lists): </label>
+                      <label for="list" class="form-label fs-bold"><span class="fw-bold text-purple">ส่วนที่ 3 >> </span>รายการหรือลิสต์ (lists): </label>
                       <p class=" set-small-font"><span class="text-primary">* </span>คุณสามารถเพิ่มและลบรายการได้ตามต้องการ</p>
                       <div class="listContents">
                         <input type="text" placeholder="- ประเภทที่เหมาะสมกั..." class="form-control p-1 w-75 none-border" name="list" required>
@@ -1327,7 +1321,7 @@
                     </div>
                   </div>
                   <div class="underForm-2">
-                    <p class="fw-bold text-primary my-1">ตัวอย่าง: <span class=" fw-light">ตัวหนังสือที่เป็นสี<span class="text-primary fw-bold"> "น้ำเงิน" </span>ดังในรูปภาพ คือส่วนที่ใช้บอกว่าแต่ละส่วนนั้นอยู่ที่ไหน หากเพิ่มข้อมูลลงไปแล้วจะมีหน้าตาเป็นอย่างไร</span></p>
+                    <p class="fw-bold text-primary my-1">ตัวอย่าง: <span class=" fw-light">ตัวหนังสือที่เป็นสี<span class="text-purple fw-bold"> "ม่วง" </span>ดังในรูปภาพ คือส่วนที่ใช้บอกว่าแต่ละส่วนนั้นอยู่ที่ไหน หากเพิ่มข้อมูลลงไปแล้วจะมีหน้าตาเป็นอย่างไร</span></p>
                     <a data-caption="ภาพตัวอย่างของรูปแบบที่ 4" data-fancybox="gallery" href="/images/indexMed/example-1.png">
                       <img title="กดที่รูปภาพเพื่อขยาย" src="/images/indexMed/example-1.png" class="img-fluid my-2 example-pic1" alt="Image">
                     </a>
@@ -1477,7 +1471,7 @@
             </div>
             <div class="lesson-content p-4 my-4 bg-white w-100 h-auto">
               <div class="add-content-header">
-                <p class="fw-bold fs-4 my-2 mx-2">เพิ่มเนื้อหา: <span class="text-primary">ปรับแต่งข้อความ</span> </p>
+                <p class="fw-bold fs-4 my-2 mx-2">เพิ่มเนื้อหา: <span class="text-purple">ปรับแต่งข้อความ</span> </p>
               </div>
               <p class="discription-layout-1 mx-2 my-2">
                 <span class="fw-bold ">คำอธิบาย: </span>
