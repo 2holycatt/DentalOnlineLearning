@@ -46,7 +46,7 @@ body {
    {
     min-width: 590px;
     width: 100%;
-    overflow-x: hidden !important;
+    overflow-x: hidden ;
   }
 
   .main-content {
