@@ -27,6 +27,7 @@
     position: fixed;
     z-index: 1000;
     top: 0;
+    
     background-color: rgba(255, 255, 255, 0.899);
     backdrop-filter: blur(1em);
 
@@ -163,6 +164,7 @@
     font-size: 14px !important;
   }
   }
+
   @media (max-width: 768px) { /* ซ่อนเมื่อหน้าจอเล็กกว่า 768px */
   .logo-dent {
     display: none;
@@ -182,7 +184,10 @@
   .loginBtn img {
     max-width: 35px; /* ลดขนาดของโลโก้ */
   }
- 
+  body, html {
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch; /* ช่วยให้การเลื่อนในอุปกรณ์ iOS ทำงานได้ดีขึ้น */
+    }
 
 }
 
