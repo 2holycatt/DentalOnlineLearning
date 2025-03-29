@@ -3,17 +3,16 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <title>Home</title>
  
   <link rel="preload" href="/images/indexMed/Ellipse9.png" as="image">
   <link rel="preload" href="/images/indexMed/DENTISTRY_KKU.svg.png" as="image">
-  <link rel="preload" href="/images/bg-2.jpg" as="image" importance="high">
 
-  <link rel="stylesheet" href="css/owl.carousel.min.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/owl.theme.default.min.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/style_2.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+  <link rel="stylesheet" href="css/owl.theme.default.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css">
+  <link rel="stylesheet" href="css/style_2.css">
   <%- include("./partials/header.ejs")%>
   <style>
     * {
@@ -22,34 +21,31 @@
       -o-box-sizing: border-box;
       -ms-box-sizing: border-box;
       box-sizing: border-box;
-      margin: 0 ;
-      padding: 0 ;
+      margin: 0 !important;
+      padding: 0 !important;
     }
 
-    html, body {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    height: 100%; /* เปลี่ยนจาก 100% เป็น auto */
-    width: 100%;
-    /* ลบ overflow-x: hidden ออก เนื่องจากอาจทำให้เลื่อนไม่ได้ */
-    overflow-y: auto !important;
-    position: relative;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  body {
-    /* ลบ overflow-x: hidden ออก */
-    min-height: 100vh; /* ใช้ min-height แทน height */
-  }
+    /* body {
+    font-size: 14px;
+    background: #fff;
+    max-width: 1920px;
+    margin: 0 auto;
+    overflow-x: hidden;
+    font-family: poppins;
 
-  #footer {
+
+  } */
+
+    #footer {
       background: white;
       padding: 3rem;
+      /* padding-top: 5rem; */
       padding-top: 7rem;
       padding-bottom: 80px;
+      /* background-image: url(https://arena.km.ua/wp-content/uploads/3538533.jpg); */
       border-top: 1px solid #EAEFF4;
-      position: relative; /* เปลี่ยนจาก sticky เป็น relative */
+      position: sticky;
+
     }
 
     #footer2 {
@@ -375,12 +371,10 @@
       transition: 0.3s;
     }
 
-    /* .logo-dent {
-      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
-      border-radius: 50%;
-      width: fit-content;
-      height: auto;
-    } */
+    .logo-dent {
+      max-width: 35em;
+      max-height: 23em;
+    }
     /* .secondDiv{
       margin-top: 6em !important;
     } */
@@ -398,18 +392,13 @@
 
     .firstDiv {
       height: fit-content;
-      background-image: url('/images/bg-2.jpg') !important;
-      /* filter: blur(6px); */
+      background-image: url('/images/bg-2.jpg');
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
-      z-index: 0;
       box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.3);
-      width: 100% !important; /* เพิ่ม !important เพื่อให้แน่ใจว่าไม่มีการ override */
-    overflow-x: visible !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    padding: 0 !important;
+      margin-top: 5em !important;
+      margin-bottom: 5em !important;
     }
 
     .setShadow {
@@ -667,46 +656,7 @@
     border-color: #555; /* Darker border color */
   }
 
-  .mobile-device {
-    -webkit-overflow-scrolling: touch;
-    overflow-y: auto !important;
-  }
-  
-  /* ปรับแต่ง position กับ z-index ของ navbar เพื่อไม่ให้กระทบการเลื่อน */
-  .mobile-device .main-nav {
-    position: absolute;
-    width: 100%;
-  }
-  
-  /* ทำให้แน่ใจว่าเนื้อหาหลักไม่ถูกซ่อนใต้ navbar ที่ fixed */
-  .mobile-device .firstDiv {
-    margin-top: 70px !important; /* ปรับตามความสูงของ navbar */
-  }
-  .container-fluid {
-    max-width: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
-  }
-  .row {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  
-  /* แก้ไขปัญหา columns ที่อาจจะกว้างเกินไป */
-  [class*="col-"] {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
-    max-width: 100% !important;
-  }
-  
-  /* ทำให้แน่ใจว่า image ไม่เกินขอบเขตของหน้าจอ */
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-
+ 
   @media (max-width: 768px) { /* ซ่อนเมื่อหน้าจอเล็กกว่า 768px */
   .logo-dent,.elearning-text {
     display: none;
@@ -714,9 +664,6 @@
   .home-container{
     font-size: 16px;
   }
-  .firstDiv {
-      margin-top: 60px !important; /* ปรับตามความสูงของ navbar บนมือถือ */
-    }
 }
   
   
@@ -733,13 +680,14 @@
     <!-- <div class="element-student">
     </div> -->
   </nav>
-  <div class="firstDiv container-fluid px-0" style="margin-top: 5em !important; margin-bottom: 5em !important">
+  <div class="firstDiv row w-auto" style="margin-top: 5em !important; margin-bottom: 5em !important">
     <div class="setShadow">
-      <div class="inFirst px-3 py-5 flex-column flex-md-row">
+      <div class="inFirst row px-5 py-5 flex-column flex-md-row">
         <div class="col-md-4 d-flex justify-content-center">
           <img class="w-75 h-auto logo-dent" src="/images/indexMed/Ellipse9.png" alt="ตราสัญลักษณ์ คณะทันตแพทยศาตร์" style="height: auto; width: auto; max-width: 35em; max-height: 23em; object-fit: contain;"
           loading="eager" 
-          fetchpriority="high">
+          fetchpriority="high"
+          decoding="async">
           
         </div>
         <div class="home-container col-md-8 d-flex text-white align-items-center mt-4 mt-md-0">
@@ -798,7 +746,6 @@
         },
       });
     }
-    
   </script>
 </body>
 <footer id="footer" >
@@ -849,46 +796,4 @@
   </div>
 
 </section>
-<script>
-  // เพิ่มสคริปต์นี้เพื่อช่วยแก้ปัญหาการเลื่อนในบางอุปกรณ์
-  document.addEventListener('DOMContentLoaded', function() {
-    // ตรวจสอบว่าเป็นอุปกรณ์มือถือหรือไม่
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    if (isMobile) {
-      // เพิ่มคลาสพิเศษสำหรับอุปกรณ์มือถือ
-      document.body.classList.add('mobile-device');
-      
-      // บังคับให้สามารถเลื่อนในอุปกรณ์มือถือได้
-      document.documentElement.style.overflow = 'auto';
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.height = 'auto';
-      document.body.style.height = 'auto';
-      
-      // แก้ไขปัญหาการเลื่อนในบางอุปกรณ์
-      setTimeout(function() {
-        window.scrollTo(0, 1);
-      }, 0);
-    }
-  });
-  
-  // คงสคริปต์เดิมไว้
-  var errorMessage = document.getElementById('error-message');
-  if (errorMessage && errorMessage.textContent) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'ขออภัย',
-      text: errorMessage.textContent,
-      customClass: {
-        container: 'custom-container',
-        popup: 'custom-popup',
-        title: 'custom-title',
-        icon: 'custom-icon',
-        content: 'custom-content',
-        confirmButton: 'custom-button'
-      },
-    });
-  }
-</script>
-
 </html>
