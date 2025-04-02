@@ -24,12 +24,14 @@ const User = require('../models/user.model');
 
 
 // Middleware For Files Uploading
-const upload = require("../middleware/multer");
+const { upload, imgUpload } = require('../middleware/multer');
 // const uploadMemory = require('../middleware/multerMemory'); // เรียกใช้ multer middleware
 // Middleware For Login System
 const redirectIfAuth = require("../middleware/redirectIfAuth");
 const studentMiddleware = require("../middleware/studentMiddleware");
 const teacherMiddleware = require("../middleware/teacherMiddleware");
+const checkUser = require("../middleware/checkUser");
+
 
 // Not Logged in Routes
 router.get('/', redirectIfAuth, adminController.notLoggedIn);
@@ -343,6 +345,13 @@ router.post('/updateQuizShuffleState', adminQuizController.updateQuizShuffleStat
 //Profile
 router.get('/profile',profileController.profileIndex);
 router.get('/profile/edit',profileController.profileIndex);
-router.route('/profile/edit').post(upload.single("img"), profileController.editProfile);
-
+router.post('/profile/edit', (req, res, next) => {
+    if (!req.session.userId) {
+      return res.redirect('/');
+    }
+    next();
+  }, imgUpload.single('profileImage'), (req, res) => {
+    profileController.editProfile(req, res);
+  });
+  
 module.exports = router;

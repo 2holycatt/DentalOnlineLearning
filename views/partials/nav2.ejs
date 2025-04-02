@@ -320,7 +320,7 @@
                     </ul>
                 </li>
                 <li class="a-li d-flex">
-                    <a href="#" class="a-li" onclick="redirectTo3DModel()">แบบจำลอง 3D</a>
+                    <a href="#" class="a-li" onclick="redirectTo3DModel(event)">แบบจำลอง 3D</a>
                  </li>
                 <% if (hasUnread) { %>
                     <li id="teacherNotification" class="li-a a-li">
@@ -472,7 +472,9 @@
                 }
             }
 
-            async function redirectTo3DModel() {
+            async function redirectTo3DModel(event) {
+            event.preventDefault(); 
+
     try {
         const response = await fetch('/generate3DModelToken', {
             method: 'POST',
@@ -486,7 +488,7 @@
         }
 
         const { redirectUrl } = await response.json();
-        window.location.href = redirectUrl;
+        window.open(redirectUrl, '_blank'); 
     } catch (error) {
         console.error('Error:', error);
         Swal.fire({
