@@ -9,6 +9,7 @@
   <link rel="preload" href="/images/indexMed/Ellipse9.png" as="image" fetchpriority="high">
 <link rel="preload" href="/images/indexMed/DENTISTRY_KKU.svg.png" as="image">
 <link rel="preload" href="/images/bg-2.jpg" as="image" fetchpriority="high">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
 <link rel="preload" href="css/owl.carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <link rel="preload" href="css/owl.theme.default.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -373,6 +374,8 @@
     .logo-dent {
       max-width: 35em;
       max-height: 23em;
+      will-change: transform; /* Hardware acceleration for hover effects */
+  contain: layout paint;
     }
     /* .secondDiv{
       margin-top: 6em !important;
@@ -682,19 +685,18 @@
     <!-- <div class="element-student">
     </div> -->
   </nav>
-  <div class="firstDiv row w-auto" style="margin-top: 5em !important; margin-bottom: 5em !important">
+  <div class="firstDiv row w-auto">
     <div class="setShadow">
       <div class="inFirst row px-5 py-5 flex-column flex-md-row">
         <div class="col-md-4 d-flex justify-content-center">
-          <img class="w-75 h-auto logo-dent" 
-          src="/images/indexMed/Ellipse9.png" 
-          alt="ตราสัญลักษณ์ คณะทันตแพทยศาตร์" 
-          width="350" 
-          height="350"
-          loading="eager" 
-          fetchpriority="high"
-          decoding="async">
-          
+            <img class="w-75 h-auto logo-dent" 
+              src="/images/indexMed/Ellipse9.png" 
+              alt="ตราสัญลักษณ์ คณะทันตแพทยศาตร์" 
+              width="350" 
+              height="350"
+              loading="eager" 
+              fetchpriority="high"
+              decoding="async">
         </div>
         <div class="home-container col-md-8 d-flex text-white align-items-center mt-4 mt-md-0">
           <div style="max-width: 780px;">
@@ -737,6 +739,7 @@
   
  
 </body>
+<br><br><br>
 <footer id="footer" >
   <div class="container-fluid p-4" style="width: auto">
     <div class="row">
@@ -815,4 +818,17 @@
   } else {
     preloadHandler();
   }
+  
+  // Load background image after content is visible
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      var hero = document.getElementById('hero');
+      if (hero) {
+        hero.style.backgroundImage = "url('/images/bg-2.webp')";
+        hero.style.backgroundPosition = "center";
+        hero.style.backgroundRepeat = "no-repeat";
+        hero.style.backgroundSize = "cover";
+      }
+    }, 100);
+  });
 </script>
