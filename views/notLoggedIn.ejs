@@ -6,14 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <title>Home</title>
  
-  <link rel="preload" href="/images/indexMed/Ellipse9.png" as="image" importance="high">
-  <link rel="preload" href="/images/indexMed/DENTISTRY_KKU.svg.png" as="image">
-  <link rel="preload" href="/images/bg-2.jpg" as="image" importance="high">
+  <link rel="preload" href="/images/indexMed/Ellipse9.png" as="image" fetchpriority="high">
+<link rel="preload" href="/images/indexMed/DENTISTRY_KKU.svg.png" as="image">
+<link rel="preload" href="/images/bg-2.jpg" as="image" fetchpriority="high">
 
+<link rel="preload" href="css/owl.carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="css/owl.theme.default.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="css/style_2.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
   <link rel="stylesheet" href="css/owl.carousel.min.css">
   <link rel="stylesheet" href="css/owl.theme.default.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css">
   <link rel="stylesheet" href="css/style_2.css">
+</noscript>
   <%- include("./partials/header.ejs")%>
   <style>
    
@@ -680,7 +686,11 @@
     <div class="setShadow">
       <div class="inFirst row px-5 py-5 flex-column flex-md-row">
         <div class="col-md-4 d-flex justify-content-center">
-          <img class="w-75 h-auto logo-dent" src="/images/indexMed/Ellipse9.png" alt="ตราสัญลักษณ์ คณะทันตแพทยศาตร์" style="height: auto; width: auto; max-width: 35em; max-height: 23em; object-fit: contain;"
+          <img class="w-75 h-auto logo-dent" 
+          src="/images/indexMed/Ellipse9.png" 
+          alt="ตราสัญลักษณ์ คณะทันตแพทยศาตร์" 
+          width="350" 
+          height="350"
           loading="eager" 
           fetchpriority="high"
           decoding="async">
@@ -725,24 +735,7 @@
   <!-- footer section end -->
   <!-- footer copy right section start -->
   
-  <script>
-    var errorMessage = document.getElementById('error-message').textContent;
-    if (errorMessage) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'ขออภัย',
-        text: errorMessage,
-        customClass: {
-          container: 'custom-container',
-          popup: 'custom-popup',
-          title: 'custom-title',
-          icon: 'custom-icon',
-          content: 'custom-content',
-          confirmButton: 'custom-button'
-        },
-      });
-    }
-  </script>
+ 
 </body>
 <footer id="footer" >
   <div class="container-fluid p-4" style="width: auto">
@@ -793,3 +786,33 @@
 
 </section>
 </html>
+
+<script>
+   function preloadHandler() {
+    var errorMessageEl = document.getElementById('error-message');
+    if (errorMessageEl && errorMessageEl.textContent) {
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'warning',
+          title: 'ขออภัย',
+          text: errorMessageEl.textContent,
+          customClass: {
+            container: 'custom-container',
+            popup: 'custom-popup',
+            title: 'custom-title',
+            icon: 'custom-icon',
+            content: 'custom-content',
+            confirmButton: 'custom-button'
+          },
+        });
+      }
+    }
+  }
+  
+  // Execute when DOM is loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', preloadHandler);
+  } else {
+    preloadHandler();
+  }
+</script>

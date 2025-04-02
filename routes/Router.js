@@ -63,6 +63,53 @@ router.post('/generate3DModelToken', async (req, res) => {
     }
 });
 
+router.get('/sso-login', async (req, res) => {
+    try {
+        const { token } = req.query;
+        
+        if (!token) {
+            return res.status(400).send('Token is required');
+        }
+        
+        // ตรวจสอบและถอดรหัส token
+        const decoded = jwt.verify(token, process.env.SSO_SECRET);
+        
+        // ตรวจสอบว่า token หมดอายุหรือไม่
+        if (Date.now() >= decoded.exp * 1000) {
+            return res.redirect('/auth/google?error=token_expired');
+        }
+        
+        // ดึงข้อมูลผู้ใช้จาก token
+        const { externalId, email, name, role } = decoded;
+        
+        // ค้นหาผู้ใช้จาก email
+        let user = await User.findOne({ email });
+        
+        if (!user) {
+            // ถ้าไม่พบผู้ใช้ให้แจ้งว่าต้องสมัครสมาชิกก่อน
+            return res.redirect('/auth/google?error=user_not_found');
+        }
+        
+        // สร้าง session สำหรับผู้ใช้
+        req.session.userId = user._id;
+        req.session.isLoggedIn = true;
+        req.session.isSidebarOpen = false;
+        
+        // บันทึกประวัติการเข้าใช้งาน
+        logger.info(`User logged in via SSO: ${email}, IP: ${req.ip}, User Agent: ${req.headers['user-agent']}`);
+        
+        // Redirect ไปหน้าที่เหมาะสมตาม role
+        if (user.role === 'teacher') {
+            return res.redirect('/adminIndex');
+        } else {
+            return res.redirect('/studentIndex');
+        }
+        
+    } catch (error) {
+        console.error('SSO Login Error:', error);
+        return res.redirect('/auth/google?error=invalid_token');
+    }
+});
 // Login Process
 // router.post('/loginToWeb', LoginController.loginPage);
 router.post('/saveInfoStudent', LoginController.saveInfoStudent);
