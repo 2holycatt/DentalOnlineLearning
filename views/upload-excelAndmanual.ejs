@@ -77,9 +77,12 @@
       .list-div-data {
 
         padding-top: 1em;
-        border-bottom: 1px solid #EAEFF4;
-        text-align: start;
-        color: #4e5458 !important;
+  border-bottom: 1px solid #EAEFF4;
+  text-align: start;
+  color: #4e5458 !important;
+  display: flex;
+  align-items: center;
+
       }
 
       .dark .list-div-data {
@@ -256,8 +259,23 @@
 
       }
       .checkbox-column {
-    transition: all 0.3s ease;
-    width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+.checkbox-column input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+.studentDetail-a {
+  text-decoration: none !important;
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1;
+  padding-left: 0;
+  padding-right: 0;
 }
 .swal2-popup {
   font-size: 1rem !important;
@@ -361,6 +379,20 @@ label {
         .above-nav-status {
           display: none;
         }
+        .list-div-data {
+    padding: 0.5em 0;
+  }
+  
+  .list-div-data p {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+    font-size: 0.9rem;
+  }
+  
+  .checkbox-column input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+  }
       }
     </style>
 </head>
@@ -440,33 +472,34 @@ label {
                 </p>
               </div>
               <% allStudents.docs.forEach ((student, index)=> { %>
-                <a href="/adminIndex/studentInformationAccount?studentId=<%=student.studentId%>"
-                  class="studentDetail-a">
-                  <div class="list-div-data row">
-                    <p class="fw-normal my-3 col-1 checkbox-column" style="display: none;">
-                      <input type="checkbox" name="studentCheckbox" value="<%= student.studentId %>" style="display: none;">
-                    </p>
-                    <p class="fw-normal my-3 col-2 grey ">
+                <div class="list-div-data row">
+                  <!-- ส่วน checkbox อยู่ด้านนอก a tag -->
+                  <div class="col-1 checkbox-column my-auto" style="display: none;">
+                    <input type="checkbox" name="studentCheckbox" value="<%= student.studentId %>" style="display: none;">
+                  </div>
+                  
+                  <!-- ส่วนข้อมูลนักศึกษาอยู่ใน a tag -->
+                  <a href="/adminIndex/studentInformationAccount?studentId=<%=student.studentId%>" class="studentDetail-a col-11 row">
+                    <p class="fw-normal my-3 col-2 grey">
                       <%= student.studentId || '-' %>
                     </p>
                     <p class="fw-normal my-3 col-3 grey col-adjust">
                       <%= student.prefix || '' %><%= student.user ? `${student.user.fname || '' } ${student.user.lname || '' }` : '-' %>
                     </p>
-                    <p class="fw-normal my-3 col-1 grey ">
+                    <p class="fw-normal my-3 col-1 grey">
                       <%= student.user && student.user.nickname ? student.user.nickname : '' %>
                     </p>
-                    <p class="fw-normal my-3 col-4 grey email-column ">
+                    <p class="fw-normal my-3 col-4 grey email-column">
                       <%= student.user?.email || '-' %>
                     </p>
-                    <p class="fw-normal  my-3 col-1 grey ">
+                    <p class="fw-normal my-3 col-1 grey">
                       <%= student.user?.major || '-' %>
                     </p>
-                    <p
-                      class="fw-normal my-3 col-1  <%= student.user?.studentFromKku ? 'text-kku' : 'grey' %>">
-                      <%= student.user?.studentFromKku ? 'มข.' : 'ภายนอก' %>
+                    <p class="fw-normal my-3 col-1 <%= student.user?.studentFromKku ? 'text-kku' : 'grey' %>">
+                      <%= student.user?.studentFromKku ? 'มหาวิทยาลัยขอนแก่น' : 'ภายนอก' %>
                     </p>
-                  </div>
-                </a>
+                  </a>
+                </div>
                 <% }); %>
             </div>
             <div class="d-flex justify-content-end mt-3">
@@ -562,77 +595,146 @@ label {
         uploadButton.style.display = isSelectionMode ? 'none' : 'inline-block';
         exportButton.style.display = isSelectionMode ? 'none' : 'inline-block';
         
-
-        // ปรับขนาด columns
-    if (isSelectionMode) {
-        document.querySelectorAll('.list-div-data').forEach(row => {
-            const columns = row.children;
-            // ปรับ checkbox column
-            columns[0].style.display = 'block';
-            // ปรับรหัสนักศึกษา
-            columns[1].className = 'fw-normal my-3 col-2 grey';
-            // ปรับชื่อ-นามสกุล
-            columns[2].className = 'fw-normal my-3 col-2 grey';
-            // ปรับชื่อเล่น
-            columns[3].className = 'fw-normal my-3 col-1 grey';
-            // ปรับอีเมล
-            columns[4].className = 'fw-normal my-3 col-4 grey email-column';
-            // คณะและนักศึกษาจาก คงเดิม col-1
-        });
-        
-        // ปรับ header columns ด้วย
-        const headerRow = document.querySelector('.list-div.purple.row');
-        if (headerRow) {
-            const headerColumns = headerRow.children;
-            headerColumns[0].style.display = 'block'; // checkbox
-            headerColumns[1].className = 'fw-bold my-3 col-2';
-            headerColumns[2].className = 'fw-bold my-3 col-2';
-            headerColumns[3].className = 'fw-bold my-3 col-1';
-            headerColumns[4].className = 'fw-bold my-3 col-4';
+        // ปรับการแสดงผลของ columns ให้ถูกต้อง ไม่เกิน 12 columns
+        if (isSelectionMode) {
+            // ปรับแต่ง Header row
+            const headerRow = document.querySelector('.list-div.purple.row');
+            if (headerRow) {
+                // Reset className ของทุก column ก่อน
+                headerRow.innerHTML = `
+                    <p class="fw-bold my-3 col-1 checkbox-column" style="display: block;">
+                        <input type="checkbox" id="selectAll" style="display: inline-block;">
+                    </p>
+                    <p class="fw-bold my-3 col-2">
+                        รหัสนักศึกษา
+                    </p>
+                    <p class="fw-bold my-3 col-2">
+                        ชื่อ - นามสกุล
+                    </p>
+                    <p class="fw-bold my-3 col-1">
+                        ชื่อเล่น
+                    </p>
+                    <p class="fw-bold my-3 col-4">
+                        ที่อยู่อีเมล (Email)
+                    </p>
+                    <p class="fw-bold my-3 col-1">
+                        คณะ
+                    </p>
+                    <p class="fw-bold my-3 col-1">
+                        นักศึกษาจาก
+                    </p>
+                `;
+                
+                // เพิ่ม event listener ให้กับ selectAll ที่สร้างใหม่
+                document.getElementById('selectAll').addEventListener('change', function() {
+                    checkboxes.forEach(cb => {
+                        cb.checked = this.checked;
+                    });
+                });
+            }
+            
+            // ปรับแต่ง Data rows
+            document.querySelectorAll('.list-div-data').forEach(row => {
+                // แยก checkbox ออกมา
+                const checkboxCol = row.querySelector('.checkbox-column');
+                checkboxCol.style.display = 'flex';
+                
+                // ตรวจสอบว่ามี checkbox หรือไม่
+                const checkbox = checkboxCol.querySelector('input[type="checkbox"]');
+                if (checkbox) checkbox.style.display = 'inline-block';
+                
+                // ปรับขนาดสำหรับลิงก์ข้อมูลนักศึกษา
+                const studentLink = row.querySelector('.studentDetail-a');
+                if (studentLink) {
+                    studentLink.classList.remove('col-12');
+                    studentLink.classList.add('col-11');
+                    
+                    // ปรับขนาดของแต่ละคอลัมน์ภายในลิงก์
+                    const studentCols = studentLink.querySelectorAll('p');
+                    if (studentCols.length >= 5) {
+                        studentCols[0].className = 'fw-normal my-3 col-2 grey'; // รหัสนักศึกษา
+                        studentCols[1].className = 'fw-normal my-3 col-2 grey'; // ชื่อ-นามสกุล (ลดจาก col-3)
+                        studentCols[2].className = 'fw-normal my-3 col-1 grey'; // ชื่อเล่น
+                        studentCols[3].className = 'fw-normal my-3 col-4 grey email-column'; // อีเมล
+                        studentCols[4].className = 'fw-normal my-3 col-1 grey'; // คณะ
+                        // นักศึกษาจาก คงเดิม col-1
+                    }
+                }
+            });
+        } else {
+            // คืนค่าเดิมเมื่อยกเลิกโหมดเลือก
+            const headerRow = document.querySelector('.list-div.purple.row');
+            if (headerRow) {
+                headerRow.innerHTML = `
+                    <p class="fw-bold my-3 col-1 checkbox-column" style="display: none;">
+                        <input type="checkbox" id="selectAll" style="display: none;">
+                    </p>
+                    <p class="fw-bold my-3 col-2">
+                        รหัสนักศึกษา
+                    </p>
+                    <p class="fw-bold my-3 col-3 col-adjust">
+                        ชื่อ - นามสกุล
+                    </p>
+                    <p class="fw-bold my-3 col-1">
+                        ชื่อเล่น
+                    </p>
+                    <p class="fw-bold my-3 col-4">
+                        ที่อยู่อีเมล (Email)
+                    </p>
+                    <p class="fw-bold my-3 col-1">
+                        คณะ
+                    </p>
+                    <p class="fw-bold my-3 col-1">
+                        นักศึกษาจาก
+                    </p>
+                `;
+                
+                // เพิ่ม event listener ให้กับ selectAll ที่สร้างใหม่
+                document.getElementById('selectAll').addEventListener('change', function() {
+                    checkboxes.forEach(cb => {
+                        cb.checked = this.checked;
+                    });
+                });
+            }
+            
+            document.querySelectorAll('.list-div-data').forEach(row => {
+                // ซ่อน checkbox column
+                const checkboxCol = row.querySelector('.checkbox-column');
+                if (checkboxCol) checkboxCol.style.display = 'none';
+                
+                // ตรวจสอบว่ามี checkbox หรือไม่
+                const checkbox = checkboxCol ? checkboxCol.querySelector('input[type="checkbox"]') : null;
+                if (checkbox) checkbox.style.display = 'none';
+                
+                // ปรับขนาดสำหรับลิงก์ข้อมูลนักศึกษา
+                const studentLink = row.querySelector('.studentDetail-a');
+                if (studentLink) {
+                    studentLink.classList.remove('col-11');
+                    studentLink.classList.add('col-12');
+                    
+                    // คืนค่าขนาดของแต่ละคอลัมน์ภายในลิงก์
+                    const studentCols = studentLink.querySelectorAll('p');
+                    if (studentCols.length >= 5) {
+                        studentCols[0].className = 'fw-normal my-3 col-2 grey'; // รหัสนักศึกษา
+                        studentCols[1].className = 'fw-normal my-3 col-3 grey col-adjust'; // ชื่อ-นามสกุล (เพิ่มเป็น col-3)
+                        studentCols[2].className = 'fw-normal my-3 col-1 grey'; // ชื่อเล่น
+                        studentCols[3].className = 'fw-normal my-3 col-4 grey email-column'; // อีเมล
+                        studentCols[4].className = 'fw-normal my-3 col-1 grey'; // คณะ
+                        // นักศึกษาจาก คงเดิม col-1
+                    }
+                }
+            });
         }
-    } else {
-        // คืนค่าเดิม
-        document.querySelectorAll('.list-div-data').forEach(row => {
-            const columns = row.children;
-            columns[0].style.display = 'none';
-            columns[1].className = 'fw-normal my-3 col-2 grey';
-            columns[2].className = 'fw-normal my-3 col-3 grey';
-            columns[3].className = 'fw-normal my-3 col-1 grey';
-            columns[4].className = 'fw-normal my-3 col-4 grey email-column';
-        });
         
-        // คืนค่า header
-        const headerRow = document.querySelector('.list-div.purple.row');
-        if (headerRow) {
-            const headerColumns = headerRow.children;
-            headerColumns[0].style.display = 'none';
-            headerColumns[1].className = 'fw-bold my-3 col-2';
-            headerColumns[2].className = 'fw-bold my-3 col-3';
-            headerColumns[3].className = 'fw-bold my-3 col-1';
-            headerColumns[4].className = 'fw-bold my-3 col-4';
-        }
-    }
-    
-        // แสดง/ซ่อน checkboxes
-        checkboxColumns.forEach(col => {
-            col.style.display = isSelectionMode ? 'block' : 'none';
+        // ปรับปรุงอ้างอิงถึง checkboxes เนื่องจากอาจมีการสร้าง DOM ใหม่
+        const newCheckboxes = document.getElementsByName('studentCheckbox');
+        checkboxes.forEach((cb, index) => {
+            if (newCheckboxes[index]) {
+                newCheckboxes[index].checked = cb.checked;
+            }
         });
-        checkboxes.forEach(cb => {
-            cb.style.display = isSelectionMode ? 'inline-block' : 'none';
-        });
-        selectAll.style.display = isSelectionMode ? 'inline-block' : 'none';
-
-  
-
-        uploadButton.style.display = isSelectionMode ? 'none' : 'inline-block';
-        exportButton.style.display = isSelectionMode ? 'none' : 'inline-block';
-
-        checkboxes.forEach(cb => {
-            cb.style.display = isSelectionMode ? 'inline-block' : 'none';
-        });
-        selectAll.style.display = isSelectionMode ? 'inline-block' : 'none';
     });
-  
+    
     // Select all functionality
     selectAll.addEventListener('change', function() {
       checkboxes.forEach(cb => {

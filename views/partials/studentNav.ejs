@@ -182,6 +182,53 @@
       .purple{
     color: #ba55d3  !important
       }
+      .custom-swal-popup {
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.custom-swal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    color: #333;
+}
+
+.custom-swal-content {
+    margin: 1.5rem 0 2.5rem 0; /* เพิ่มระยะห่างด้านล่างของข้อความ */
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.custom-swal-confirm-button {
+    padding: 0.8rem 2.5rem !important; /* ทำให้ปุ่มใหญ่ขึ้น */
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    background-color: #ba55d3 !important; /* สีม่วงตามธีมของคุณ */
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(186, 85, 211, 0.3) !important;
+}
+
+.custom-swal-confirm-button:hover {
+    background-color: #a03aaf !important; /* สีเข้มขึ้นเมื่อ hover */
+    transform: translateY(-2px);
+    transition: all 0.2s;
+}
+
+.custom-swal-icon {
+    border: none !important;
+    margin-top: 1rem !important;
+}
+
+.custom-swal-image {
+    margin: 1rem auto;
+    display: block;
+}
+
+.custom-swal-actions {
+    margin-top: 2rem; /* เพิ่มระยะห่างจากข้อความไปยังปุ่ม */
+}
       .dark .a-li .purple {
     color: #b98aff !important; /* สีที่อ่อนกว่าสำหรับ dark theme */
 }
@@ -417,7 +464,16 @@
             icon: 'error',
             title: 'เกิดข้อผิดพลาด',
             text: 'ไม่สามารถเชื่อมต่อกับระบบแบบจำลอง 3D ได้',
-            confirmButtonText: 'ตกลง'
+            confirmButtonText: 'ตกลง',
+            customClass: {
+                popup: 'custom-swal-popup',
+                title: 'custom-swal-title',
+                content: 'custom-swal-content',
+                confirmButton: 'custom-swal-confirm-button',
+                icon: 'custom-swal-icon',
+                image: 'custom-swal-image',
+                actions: 'custom-swal-actions'
+            }
         });
     }
 }

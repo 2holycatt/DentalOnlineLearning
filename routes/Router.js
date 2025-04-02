@@ -39,7 +39,7 @@ router.get('/', redirectIfAuth, adminController.notLoggedIn);
 router.get('/auth/google', redirectIfAuth, LoginController.authGoogle);
 router.get('/auth/google/callback', LoginController.authGoogleCallback);
 router.post('/logoutGoogle', LoginController.logoutGoogle);
-router.post('/generate3DModelToken', teacherMiddleware, async (req, res) => {
+router.post('/generate3DModelToken', async (req, res) => {
     try {
         const user = await User.findById(req.session.userId);
         if (!user) {
