@@ -27,7 +27,6 @@ const s3Storage = multerS3({
     cb(null, key);
   },
   contentType: multerS3.AUTO_CONTENT_TYPE,
-  acl: 'public-read'  // ให้ไฟล์สามารถอ่านได้แบบสาธารณะ
 });
 
 const fileFilter = (req, file, cb) => {
