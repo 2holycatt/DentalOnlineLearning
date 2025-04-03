@@ -338,13 +338,7 @@ justify-content: center;    }
                                 <form action="/profile/edit" method="POST" enctype="multipart/form-data" >
                                     <div class="profile-image text-center position-relative">
                                         <label for="profileImageInput" class="profile-label">
-                                            <img src="<% if (userData.img && userData.img.startsWith('http')) { %>
-                                                <%= userData.img %>
-                                              <% } else if (userData.img) { %>
-                                                https://<%= process.env.AWS_BUCKET_NAME %>.s3.<%= process.env.AWS_REGION %>.amazonaws.com/<%= userData.img %>
-                                              <% } else { %>
-                                                /images/example_file/userProfile.png
-                                              <% } %>"
+                                            <img src="https://<%= process.env.AWS_BUCKET_NAME %>.s3.<%= process.env.AWS_REGION %>.amazonaws.com/<%= userData.img %>"
                                             id="img" 
                                             alt="Profile Image" 
                                             class="img-fluid mx-auto profile-img" 
