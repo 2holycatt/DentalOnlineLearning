@@ -95,17 +95,17 @@
             <div class="row m-xl-0 p-xl-0">
               <div class="col-lg-6">
                 <div class="profile-image text-center">
-                  <img src="<% if (userData.img && userData.img.startsWith('http')) { %>
-                    <%= userData.img %>
-                  <% } else { %>
-                    https://<%= process.env.AWS_BUCKET_NAME %>.s3.<%= process.env.AWS_REGION %>.amazonaws.com/<%= userData.img %>
-                  <% } %>" 
-             id="img" 
-             alt="รูปโปรไฟล์ผู้ใช้" 
-             class="img-fluid mx-auto profile-img" 
-             width="310" height="350"
-             style="max-width: 310px;max-height: 320px; min-width: 310px; min-height: 320px;"
-             onerror="this.onerror=null; this.src='/images/example_file/userProfile.png';">
+                  <img 
+                  src="<%= userData && userData.img ? 
+                      (`https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${userData.img}`)
+                      : '/images/example_file/userProfile.png' %>"
+                  id="img" 
+                  alt="Profile Image" 
+                  class="img-fluid mx-auto profile-img" 
+                  width="310" height="350"
+                  style="max-width: 310px;max-height: 320px; min-width: 310px; min-height: 320px;"
+                  onerror="this.onerror=null; this.src='/images/example_file/userProfile.png';"
+              >
                   
                 </div>
                 <br>

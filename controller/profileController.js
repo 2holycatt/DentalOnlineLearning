@@ -23,6 +23,18 @@ const profileIndex = async (req, res) => {
     if (req.session.userId) {
       const isEditPage = req.originalUrl.includes('/edit');
       const userData = await User.findById(req.session.userId);
+      if (userData) {
+        // ตรวจสอบและดู URL ของรูปโปรไฟล์
+        console.log('User image path:', userData.img);
+        
+        // สร้าง URL เต็มจาก path
+        userData.fullImageUrl = userData.img 
+          ? `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${userData.img}`
+          : '/images/example_file/userProfile.png';
+          
+        console.log('Full image URL:', userData.fullImageUrl);
+      }
+
       const fname = req.session.fname;
       const lname = req.session.lname;
       const nickname = req.session.nickname;
@@ -113,7 +125,7 @@ const editProfile = async (req, res) => {
       user.lname = req.body.lname || user.lname;
       user.nickname = req.body.nickname || user.nickname;
       user.notes = req.body.notes || user.notes;
-      
+
       await user.save();
 
     // อัปเดต session

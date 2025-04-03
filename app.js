@@ -257,6 +257,10 @@ app.use(function (err, req, res, next) {
 });
 
 
-
+console.log('AWS Environment Variables:');
+console.log('Bucket:', process.env.AWS_BUCKET_NAME);
+console.log('Region:', process.env.AWS_REGION);
+console.log('Access Key ID:', process.env.AWS_ACCESS_KEY_ID ? 'Set' : 'Not set');
+console.log('Secret Access Key:', process.env.AWS_SECRET_ACCESS_KEY ? 'Set' : 'Not set');
 
 module.exports = app;
