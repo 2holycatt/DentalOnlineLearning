@@ -96,9 +96,13 @@
               <div class="col-lg-6">
                 <div class="profile-image text-center">
                   <img 
-                  src="<%= userData && userData.img ? 
-                      (`https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${userData.img}`)
-                      : '/images/example_file/userProfile.png' %>"
+                  src="<% if (userData.img && userData.img.startsWith('http')) { %>
+                    <%= userData.img %>
+                  <% } else if (userData.img) { %>
+                    https://<%= process.env.AWS_BUCKET_NAME %>.s3.<%= process.env.AWS_REGION %>.amazonaws.com/<%= userData.img %>
+                  <% } else { %>
+                    /images/example_file/userProfile.png
+                  <% } %>"
                   id="img" 
                   alt="Profile Image" 
                   class="img-fluid mx-auto profile-img" 
