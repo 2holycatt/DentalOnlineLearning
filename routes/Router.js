@@ -350,40 +350,6 @@ router.post('/profile/edit', (req, res, next) => {
       return res.redirect('/');
     }
     next();
-  }, imgUpload.single('profileImage'), async (req, res) => {
-    try {
-      const userId = req.session.userId;
-      let user = await User.findById(userId);
-  
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      // ถ้ามีการอัปโหลดไฟล์ใหม่
-      if (req.file) {
-        // อัปเดตรูปโปรไฟล์
-        user.img = req.file.key; // บันทึก path ของไฟล์ใน S3
-      }
-  
-      // อัปเดตข้อมูลอื่นๆ
-      user.fname = req.body.fname || user.fname;
-      user.lname = req.body.lname || user.lname;
-      user.nickname = req.body.nickname || user.nickname;
-      user.notes = req.body.notes || user.notes;
-      
-      await user.save();
-  
-      // อัปเดต session
-      req.session.fname = user.fname;
-      req.session.lname = user.lname;
-      req.session.nickname = user.nickname;
-      req.session.notes = user.notes;
-  
-      res.redirect('/profile');
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'เกิดข้อผิดพลาด', error: err.message });
-    }
-  });
+  }, imgUpload.single('profileImage'), profileController.editProfile);
 
 module.exports = router;

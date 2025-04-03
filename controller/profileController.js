@@ -113,9 +113,9 @@ const editProfile = async (req, res) => {
       user.lname = req.body.lname || user.lname;
       user.nickname = req.body.nickname || user.nickname;
       user.notes = req.body.notes || user.notes;
-      user.img = img; // บันทึกชื่อไฟล์ใหม่
-      await user.save();
       
+      await user.save();
+
     // อัปเดต session
     req.session.fname = user.fname;
     req.session.lname = user.lname;
