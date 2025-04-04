@@ -1461,19 +1461,19 @@ border-bottom: 1px solid #555;
                                 <div class="score-display text-center mx-2 d-flex">
                                     <div class="me-2">คะแนนต่ำสุด: <br>
                                         <span class="grey ms-2"><%= minScore %> / <%= totalPoints %> 
-                                        (<%= ((minScore/totalPoints) * 100).toFixed(0) %>%)</span>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="score-display text-center mx-2 d-flex">
                                     <div class="me-2">คะแนนเฉลี่ย: <br>
                                         <span class="grey ms-2"><%= avgScore %> / <%= totalPoints %>
-                                        (<%= ((avgScore/totalPoints) * 100).toFixed(0) %>%)</span>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="score-display text-center mx-2 d-flex">
                                     <div class="me-2">คะแนนสูงสุด: <br>
                                         <span class="grey ms-2"><%= maxScore %> / <%= totalPoints %>
-                                        (<%= ((maxScore/totalPoints) * 100).toFixed(0) %>%)</span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -1503,7 +1503,7 @@ border-bottom: 1px solid #555;
                                                 <td>
                                                 
                                                     <% const studentHighscore = Math.max(...attempt.eachAttempt.map(a => a.totalScore)); %>
-                                                    <%= `${studentHighscore} / ${totalPoints} (${((studentHighscore/totalPoints) * 100).toFixed(0)}%)` %>                                                </td>
+                                                    <%= `${studentHighscore} / ${totalPoints} ` %>                                                </td>
                                             </tr>
                                             
                                         <% }); %>

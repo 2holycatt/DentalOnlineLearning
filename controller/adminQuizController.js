@@ -10,6 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const upload = multer();
+const { uploadQuestionImage } = require('../middleware/multer');
 const moment = require('moment-timezone');
 const passport = require('passport');
 const mongoose = require('mongoose');
@@ -1074,37 +1075,35 @@ exports.search = async (req, res) => {
   }
 };
 
-exports.uploadQuestionImage = async (req, res) => {
-  try {
-      // รับ questionId จาก selectedbody function
-      const questionId = req.body.questionId.split('_')[1]; // แยกเอาเลข index จาก "question_1"
-      const quizId = req.query.quizId;
-      const imageFile = req.files.avatar;
-      
-      // บันทึกรูปภาพ
-      const imagePath = `/uploads/questions/${questionId}_${Date.now()}.jpg`;
-      await imageFile.mv(path.join(__dirname, '../public', imagePath));
-      
-      // อัพเดทข้อมูลคำถาม
-      const quiz = await Quiz.findById(quizId);
-      quiz.questions[questionId].questionImage = {
-          url: imagePath,
-          contentType: imageFile.mimetype
-      };
-      await quiz.save();
-      
-      res.json({ 
-          success: true, 
-          imageUrl: imagePath 
-      });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ 
-          success: false, 
-          error: 'Failed to upload image' 
-      });
+exports.uploadQuestionImage = [
+  uploadQuestionImage.single('avatar'),
+  async (req, res) => {
+      try {
+          if (!req.file) {
+              return res.status(400).json({
+                  success: false,
+                  message: 'กรุณาเลือกไฟล์รูปภาพ'
+              });
+          }
+
+          // สร้าง URL สำหรับเข้าถึงรูปภาพ
+          const imageUrl = `/uploads/questions/${req.file.filename}`;
+
+          res.json({
+              success: true,
+              message: 'อัปโหลดรูปภาพสำเร็จ',
+              imageUrl: imageUrl
+          });
+
+      } catch (error) {
+          console.error('Upload error:', error);
+          res.status(500).json({
+              success: false,
+              message: 'เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ'
+          });
+      }
   }
-};
+];
 
 exports.updateQuizShuffleState = async (req, res) => {
   try {

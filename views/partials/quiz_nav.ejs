@@ -229,7 +229,8 @@
                 max-width: 250px; color: var(--text-color);" alt="ดูตัวอย่าง"></i>
             </a>
             <button onclick="toggleMenu()" class="profile_button">
-                <img src="/<%= userData.img %>" alt="Profile Image" class="profile-icon mx-4 " style="margin-bottom:0.92rem ;margin-top: 1rem;" >
+                <img src= "https://<%= process.env.AWS_BUCKET_NAME %>.s3.<%= process.env.AWS_REGION %>.amazonaws.com/<%= userData.img %>"
+                alt="Profile Image" class="profile-icon mx-4 " style="margin-bottom:0.92rem ;margin-top: 1rem;" >
             </button>
             <div class="sub-menu-wrap" id="subMenu">
                 <div class="sub-menu">

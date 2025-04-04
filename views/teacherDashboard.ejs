@@ -672,11 +672,12 @@
     <%- include("./partials/lessonsList.ejs", { pageName: pageName })%>
     <!-- <div style="width: 20%;"><p class="w-100">&nbsp;</p></div> -->
     <div class="aside-right bg-white h-auto p-4 m-3" style="width: 80%;">
-      <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
-        <p class="fw-bold fs-3 mx-1">
-          <i class='bi-bar-chart-fill purple me-2'></i> แดชบอร์ด (Dashboard)
+      <div class="manange-bar px-4 py-3 bg-white d-flex w-100"> 
+        
+        <p class="fw-bold fs-3  mx-1">
+         <i class='bi-bar-chart-fill purple me-2'></i> แดชบอร์ด (Dashboard)
         </p>
-        <div class="d-flex justify-content-center" style="align-items: center;">
+          <div class="d-flex justify-content-center" style="align-items: center;">
           <label class="mx-2" for="dashboardSelector">แดชบอร์ดของ: </label>
           <select id="dashboardSelector" onchange="changeDashboardType(this.value)">
             <option value="lesson" <%= contentType === 'lesson' ? 'selected' : '' %>>บทเรียน</option>
@@ -1090,9 +1091,9 @@ if (contentType === 'quiz') {
                 let maxScore = scores.length ? Math.max(...scores) : 0;
                 let avgScore = scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2) : 0;
               %>
-              <p class="grey fw-normal my-3 col-2"><%= minScore %>/<%= totalPoints %> (<%= ((minScore/totalPoints) * 100).toFixed(0) %>%)</p>
-              <p class="grey fw-normal my-3 col-2"><%= avgScore %>/<%= totalPoints %> (<%= ((avgScore/totalPoints) * 100).toFixed(0) %>%)</p>
-              <p class="grey fw-normal my-3 col-2"><%= maxScore %>/<%= totalPoints %> (<%= ((maxScore/totalPoints) * 100).toFixed(0) %>%)</p>
+              <p class="grey fw-normal my-3 col-2"><%= minScore %>/<%= totalPoints %> </p>
+              <p class="grey fw-normal my-3 col-2"><%= avgScore %>/<%= totalPoints %> </p>
+              <p class="grey fw-normal my-3 col-2"><%= maxScore %>/<%= totalPoints %> </p>
             </div>
           <% }); %>
         </tbody>

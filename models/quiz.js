@@ -4,6 +4,16 @@ const optionSchema = new mongoose.Schema({
     optionText: {
         type: String,
         trim: true
+    },
+    image: {
+        url: {
+            type: String,
+            default: null
+        },
+        contentType: {
+            type: String,
+            default: null
+        }
     }
 });
 
@@ -11,11 +21,18 @@ const matchingOptionSchema = new mongoose.Schema({
     left: {
         text: {
             type: String,
-            trim: true
+            trim: true,
+            default: ''
         },
         image: {
-            url: String,
-            contentType: String
+            url: {
+                type: String,
+                default: null
+            },
+            contentType: {
+                type: String,
+                default: null
+            }
         },
         index: {
             type: Number,
@@ -27,9 +44,15 @@ const matchingOptionSchema = new mongoose.Schema({
             required: true,
             trim: true
         },
-        image: {
-            url: String,
-            contentType: String
+         image: {
+            url: {
+                type: String,
+                default: null
+            },
+            contentType: {
+                type: String,
+                default: null
+            }
         },
         index: {
             type: Number,
@@ -38,12 +61,13 @@ const matchingOptionSchema = new mongoose.Schema({
     },
     points: {
         type: Number,
-        default: 1,
+        default: 0,
         min: 0
     },
     correctMatch: {
         leftIndex: {
-            type: Number
+            type: Number,
+            default: null
         },
         rightIndex: {
             type: Number,
@@ -88,25 +112,22 @@ const questionSchema = new mongoose.Schema({
     matchingPairs: {
         type: [matchingOptionSchema],
         validate: {
-            validator: function(v) {
-                if (this.questionType !== 'matching') return true;
-                
-                // ตรวจสอบว่ามีคู่คำถามอย่างน้อย 1 คู่
-                if (!v || v.length === 0) return false;
-                
-                // ตรวจสอบว่า index ไม่ซ้ำกัน
-                const leftIndexes = v.map(pair => pair.left.index);
-                const rightIndexes = v.map(pair => pair.right.index);
-                
-                const uniqueLeftIndexes = new Set(leftIndexes);
-                const uniqueRightIndexes = new Set(rightIndexes);
-                
-                return uniqueLeftIndexes.size === leftIndexes.length &&
-                       uniqueRightIndexes.size === rightIndexes.length;
+            validator: function(pairs) {
+                if (!pairs) return true;
+                return pairs.every(pair => {
+                    // ถ้ามีข้อความหรือรูปภาพในด้านซ้าย ถือว่าผ่าน
+                    if (pair.left.text || (pair.left.image && pair.left.image.url)) {
+                        return true;
+                    }
+                    // หรือถ้าไม่มีทั้งข้อความและรูปภาพ (เป็นตัวเลือกหลอก) ก็ผ่าน
+                    return !pair.left.text && (!pair.left.image || !pair.left.image.url);
+                });
             },
-            message: 'Matching questions require valid pairs with unique indexes'
+            message: 'Matching pairs validation failed'
         }
-    },
+    }
+    ,
+
 
     answer: {
         type: mongoose.Schema.Types.Mixed,
