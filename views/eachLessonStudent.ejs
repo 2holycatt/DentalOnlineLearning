@@ -633,9 +633,9 @@
             <div class="setMargin py-2 px-4 bg-white w-100">
               <div class="Layout2Contents w-100 p-3 d-flex justify-content-center">
                 <% if (Layout.contentType == "image/png") { %>
-                <img class="ImageFile h-auto w-100 mx-auto my-2 shadow rounded" style="max-height: 750px;" src="/<%=Layout.file%>" alt="รูปภาพประกอบการเรียน">
+                <img class="ImageFile h-auto w-100 mx-auto my-2 shadow rounded" style="max-height: 750px;" src="<%=Layout.file%>" alt="รูปภาพประกอบการเรียน">
                 <% } else if (Layout.contentType == "video/mp4") {%>
-                <video class="w-100 h-auto object-fit-cover" src="/<%=Layout.file%>" controls autoplay></video>
+                <video class="w-100 h-auto object-fit-cover" src="<%=Layout.file%>" controls autoplay></video>
                 <% } %>
               </div>
             </div>
@@ -675,7 +675,7 @@
           <% } else if (Layout.name === "pdfFiles") { %>
           <div class="lesson-content py-2 bg-white my-4 layoutDetected" data-id="<%= Layout._id %>" data-type="pdfFile">
             <input class="d-none" type="text" name="_id" value="<%= Layout._id %>">
-            <iframe class="pdf-iframe" src="/<%=Layout.file%>" frameborder="0"></iframe>
+            <iframe class="pdf-iframe" src="<%=Layout.file%>" frameborder="0"></iframe>
           </div>
           <% } else if (Layout.name === "TextEditor") {%>
           <!-- <div class="layout" style="display: none;"></div> -->
