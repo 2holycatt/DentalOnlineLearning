@@ -1086,20 +1086,39 @@ exports.uploadQuestionImage = [
               });
           }
 
+          const quizId = req.query.quizId;
+          if (!quizId) {
+              return res.status(400).json({
+                  success: false,
+                  message: 'ไม่พบ Quiz ID'
+              });
+          }
+
           // สร้าง URL สำหรับเข้าถึงรูปภาพ
           const imageUrl = `/uploads/questions/${req.file.filename}`;
 
+          // อัพเดทข้อมูลใน Quiz model ถ้าจำเป็น
+          const quiz = await Quiz.findById(quizId);
+          if (!quiz) {
+              return res.status(404).json({
+                  success: false,
+                  message: 'ไม่พบแบบทดสอบ'
+              });
+          }
+
+          // ส่งข้อมูลกลับ
           res.json({
               success: true,
               message: 'อัปโหลดรูปภาพสำเร็จ',
-              imageUrl: imageUrl
+              imageUrl: imageUrl,
+              contentType: req.file.mimetype
           });
 
       } catch (error) {
           console.error('Upload error:', error);
           res.status(500).json({
               success: false,
-              message: 'เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ'
+              message: 'เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ: ' + error.message
           });
       }
   }
