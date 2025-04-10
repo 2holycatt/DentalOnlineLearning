@@ -104,39 +104,43 @@ const uploadQuestionImage = multer({
     bucket: process.env.AWS_BUCKET_NAME,
     key: function (req, file, cb) {
       const timestamp = new Date().toISOString().replace(/:/g, '-');
-      const filenameWithoutSpaces = file.originalname.replace(/\s+/g, '_');
-      // กำหนด path สำหรับรูปภาพคำถาม
-      const key = `uploads/question_pics/${timestamp}_${filenameWithoutSpaces}`;
+      const sanitizedFilename = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const key = `uploads/question_pics/${timestamp}_${sanitizedFilename}`;
+      console.log('Uploading to:', key); // เพิ่ม log
       cb(null, key);
     },
-    contentType: multerS3.AUTO_CONTENT_TYPE
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: file.fieldname });
+    }
   }),
   limits: {
-    fileSize: 2 * 1024 * 1024, // จำกัดขนาดไฟล์ที่ 2MB
+    fileSize: 5 * 1024 * 1024, // เพิ่มขนาดเป็น 5MB
   },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
-      cb(null, true);
-    } else {
-      cb(null, false);
-      return cb(new Error('อนุญาตเฉพาะไฟล์ .png, .jpg และ .jpeg เท่านั้น'));
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+      return cb(new Error('อนุญาตเฉพาะไฟล์รูปภาพเท่านั้น!'), false);
     }
+    cb(null, true);
   }
 });
 
 // เพิ่ม error handling middleware
 const handleUploadError = (error, req, res, next) => {
+  console.error('Upload error:', error);
+  
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({
         success: false,
-        message: 'ไฟล์มีขนาดใหญ่เกินไป (จำกัดที่ 2MB)'
+        message: 'ไฟล์มีขนาดใหญ่เกินไป (จำกัดที่ 5MB)'
       });
     }
   }
+  
   return res.status(500).json({
     success: false,
-    message: error.message
+    message: error.message || 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์'
   });
 };
 
