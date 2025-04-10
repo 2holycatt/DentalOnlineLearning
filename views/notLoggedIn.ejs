@@ -6,21 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <title>Home</title>
  
-  <link rel="preload" href="/images/indexMed/Ellipse9.webp" as="image" fetchpriority="high">
-  <link rel="preload" href="/images/indexMed/DENTISTRY_KKU.webp" as="image">
-  <link rel="preload" href="/images/bg-2.webp" as="image" fetchpriority="high">
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" as="style">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="preload" href="/images/indexMed/Ellipse9.png" as="image" fetchpriority="high">
+<link rel="preload" href="/images/indexMed/DENTISTRY_KKU.svg.png" as="image">
+<link rel="preload" href="/images/bg-2.webp" as="image" fetchpriority="high">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
-  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js" defer></script>
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
-  
-  <!-- Lazy-load non-critical CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" media="print" onload="this.media='all'">
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" media="print" onload="this.media='all'">
-
-
+<link rel="preload" href="css/owl.carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="css/owl.theme.default.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="css/style_2.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 
   <%- include("./partials/header.ejs")%>
   <style>
@@ -29,8 +23,10 @@
     #footer {
       background: white;
       padding: 3rem;
+      /* padding-top: 5rem; */
       padding-top: 7rem;
       padding-bottom: 80px;
+      /* background-image: url(https://arena.km.ua/wp-content/uploads/3538533.jpg); */
       border-top: 1px solid #EAEFF4;
       position: sticky;
 
@@ -192,13 +188,11 @@
     .logo-footer {
       width: fit-content !important;
       height: fit-content !important;
-      min-height: 150px;
-      min-width: 150px;
     }
 
     .logo-footer,
     .img-logo {
-      transition: transform 0.3s ease-in-out;
+      transition-duration: 0.3s;
     }
 
     .img-logo:hover {
@@ -206,7 +200,28 @@
       transition: 0.3s;
     }
 
-  
+    .descp {
+      text-indent: 2em;
+      margin: 0 2em;
+    }
+
+    .rectangle-141 {
+      background-color: white;
+      border-radius: 0.75em;
+      box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+      height: 14.6875em;
+      left: 4.6875em;
+      top: 37.3125em;
+      width: 39.125em;
+      width: 75%;
+      margin: 2em 2em;
+    }
+
+    /* .inFirst {
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+      border-bottom: 1px solid #EAEFF4;
+
+    } */
 
     .inFirst {
       display: flex;
@@ -214,7 +229,56 @@
       position: relative;
     }
 
-  
+    .classroomDiv {
+      /* position: absolute; */
+      display: flex;
+      justify-content: start;
+      z-index: 1;
+    }
+
+    .classroom-p {
+      background-color: #8A2BE2;
+      color: white !important;
+      padding: 0.5em !important;
+      border-radius: 0 0 0.5em 0 !important;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+
+
+    }
+
+    /* .classroomDiv2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: absolute;
+      z-index: 1;
+      top: 55%;
+    } */
+
+    .card-1 {
+      width: 90% !important;
+      height: fit-content !important;
+      transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+      cursor: pointer;
+      border-radius: 0.5em;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
+
+    }
+
+    .card-1:hover {
+      transform: scale(1.05);
+    }
+
+    .card-header {
+      border-right: 1px solid #EAEFF4;
+      border-bottom: 1px solid #EAEFF4;
+
+    }
+
+    .classroomDiv {
+      border-top: 1px solid #EAEFF4;
+      /* padding-top: 2em !important; */
+
+    }
 
     .a-list-1 {
       color: #8A2BE2 !important;
@@ -552,8 +616,6 @@
   .logo-footer {
     width: fit-content !important;
     height: fit-content !important;
-    min-height: 150px;
-    min-width: 150px;
   }
 
   .logo-footer,
@@ -582,7 +644,7 @@
 
  
   @media (max-width: 768px) { /* ซ่อนเมื่อหน้าจอเล็กกว่า 768px */
-  .elearning-text {
+  .logo-dent,.elearning-text {
     display: none;
   }
   .home-container{
@@ -611,13 +673,14 @@
     <div class="setShadow">
       <div class="inFirst row px-5 py-5 flex-column flex-md-row">
         <div class="col-md-4 d-flex justify-content-center">
-          <img class="w-75 h-auto logo-dent py-2" 
-          src="/images/indexMed/Ellipse9.webp" 
-          alt="ตราสัญลักษณ์ คณะทันตแพทยศาตร์" 
-          loading="eager" 
-          fetchpriority="high" 
-          decoding="async" 
-          width="320" height="350">
+            <img class="w-75 h-auto logo-dent py-2" 
+              src="/images/indexMed/Ellipse9.png" 
+              alt="ตราสัญลักษณ์ คณะทันตแพทยศาตร์" 
+              max-width="350px" 
+              max-height="350px"
+              loading="eager" 
+              fetchpriority="high"
+              decoding="async">
         </div>
         <div class="home-container col-md-8 d-flex text-white align-items-center mt-4 mt-md-0">
           <div style="max-width: 780px;">
@@ -662,17 +725,13 @@
 </body>
 <br><br><br>
 <footer id="footer" >
-  <div class="container-fluid p-4">
+  <div class="container-fluid p-4" style="width: auto">
     <div class="row">
       <div class="col-md-3">
         <div class="w-100 d-flex justify-content-center">
             <div class="w-50 d-flex justify-content-center" style="flex-direction: column; align-items: center;">
                 <a href="/adminIndex" class="logo-footer">
-                  <img class="img-logo" 
-                  src="/images/indexMed/DENTISTRY_KKU.webp" 
-                  alt="โลโก้" 
-                  loading="lazy" 
-                  width="150" height="150">
+                    <img src="/images/indexMed/DENTISTRY_KKU.svg.png" alt="โลโก้" class="img-logo" style="max-width: 150px;">
                 </a>
             </div>
         </div>
