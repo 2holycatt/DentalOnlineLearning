@@ -724,18 +724,18 @@
     }
 
     document.querySelector('form').addEventListener('submit', function(e) {
-  const fname = document.querySelector('input[name="fname"]').value;
-  const lname = document.querySelector('input[name="lname"]').value;
-  const email = document.querySelector('input[name="email"]').value;
+    const fname = document.querySelector('input[name="fname"]');
+    const lname = document.querySelector('input[name="lname"]');
+    const email = document.querySelector('input[name="email"]');
 
-  if (!fname || !lname || !email) {
-    e.preventDefault();
-    Swal.fire({
-      icon: 'warning',
-      title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
-      text: 'ชื่อ นามสกุล และอีเมลเป็นข้อมูลที่จำเป็น'
-    });
-  }
+    if (!fname.checkValidity() || !lname.checkValidity() || !email.checkValidity()) {
+        e.preventDefault(); // ขัดขวางการส่งฟอร์ม
+        Swal.fire({
+            icon: 'warning',
+            title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+            text: 'ชื่อ นามสกุล และอีเมลเป็นข้อมูลที่จำเป็น'
+        });
+    }
 });
   </script>
 </body>

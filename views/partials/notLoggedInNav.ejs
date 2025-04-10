@@ -62,9 +62,13 @@
 
   .logo-a {
     height: fit-content;
-    width: 25%;
+    width: auto; /* ปรับให้ขนาดอัตโนมัติ */
+    margin-right: 0.5rem; 
   }
 
+  .d-flex.align-items-center {
+    gap: 0.5rem; /* ใช้ gap เพื่อลดระยะห่างระหว่างโลโก้และข้อความ */
+  }
   .a-li {
     text-decoration: none;
     color: #5A6A85 !important;
@@ -201,12 +205,13 @@
 }
 
 </style>
-<div class="nav main-nav">
+<div class="nav main-nav py-2">
   <div class="d-flex align-items-center">
-    <a href="/" class="logo-a d-flex justify-content-between">
-      <img style="width: 40%;" class="img-lo h-auto my-2 minilogo-dent" src="/images/indexMed/DENTISTRY_KKU.svg.png" alt="mini-logo"/>
-    </a>
-    <p class="fw-bold fs-5 elearning-text" style="max-width: 400px;">
+    <a href="/" class="logo-a d-flex justify-content-between ms-3">
+      <img class="h-auto mx-4  logo-dent" src="/images/indexMed/Ellipse9.png" style="width: 3.5rem; 
+      max-width: 100px;" alt="โลโก้">
+  </a>
+    <p class="fw-semi-bold fs-6 elearning-text" style="max-width: 400px;">
       สื่อการสอนออนไลน์ คณะทันตแพทยศาตร์ มหาวิทยาลัยขอนแก่น
     </p>
   </div>

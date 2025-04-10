@@ -6,15 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <title>Home</title>
  
-  <link rel="preload" href="/images/indexMed/Ellipse9.png" as="image" fetchpriority="high">
-<link rel="preload" href="/images/indexMed/DENTISTRY_KKU.svg.png" as="image">
-<link rel="preload" href="/images/bg-2.webp" as="image" fetchpriority="high">
-<link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
-<link rel="preload" href="css/owl.carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<link rel="preload" href="css/owl.theme.default.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<link rel="preload" href="css/style_2.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+  <link rel="stylesheet" href="css/owl.theme.default.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css">
+  <link rel="stylesheet" href="css/style_2.css">
 
   <%- include("./partials/header.ejs")%>
   <style>
@@ -23,10 +18,8 @@
     #footer {
       background: white;
       padding: 3rem;
-      /* padding-top: 5rem; */
       padding-top: 7rem;
       padding-bottom: 80px;
-      /* background-image: url(https://arena.km.ua/wp-content/uploads/3538533.jpg); */
       border-top: 1px solid #EAEFF4;
       position: sticky;
 
@@ -356,7 +349,7 @@
     }
 
     .logo-dent {
-      max-width: 350px;
+      max-width: 320px;
       max-height: 350px;
       will-change: transform; /* Hardware acceleration for hover effects */
   contain: layout paint;
@@ -676,8 +669,7 @@
             <img class="w-75 h-auto logo-dent py-2" 
               src="/images/indexMed/Ellipse9.png" 
               alt="ตราสัญลักษณ์ คณะทันตแพทยศาตร์" 
-              max-width="350px" 
-              max-height="350px"
+         
               loading="eager" 
               fetchpriority="high"
               decoding="async">
