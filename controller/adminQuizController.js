@@ -25,7 +25,23 @@ const cron = require('node-cron');
 // const { createNotification } = require('./notificationController');
 // const { sendEmail } = require('../service/notification');
 
-
+const handleUploadError = (error, req, res, next) => {
+  console.error('Upload error:', error);
+  
+  if (error instanceof multer.MulterError) {
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({
+        success: false,
+        message: 'ไฟล์มีขนาดใหญ่เกินไป (จำกัดที่ 5MB)'
+      });
+    }
+  }
+  
+  return res.status(500).json({
+    success: false,
+    message: error.message || 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์'
+  });
+};
 
 async function getSubjectsForNav(userId) {
   try {
@@ -1079,51 +1095,39 @@ exports.search = async (req, res) => {
 
 exports.uploadQuestionImage = [
   uploadQuestionImage.single('avatar'),
+  handleUploadError,
   async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({
-          success: false,
-          message: 'ไม่พบไฟล์ที่อัปโหลด'
-        });
+      try {
+          if (!req.file) {
+              return res.status(400).json({
+                  success: false,
+                  message: 'กรุณาเลือกไฟล์รูปภาพ'
+              });
+          }
+
+          // ตรวจสอบ file type
+          if (!req.file.mimetype.startsWith('image/')) {
+              return res.status(400).json({
+                  success: false,
+                  message: 'กรุณาอัพโหลดไฟล์รูปภาพเท่านั้น'
+              });
+          }
+
+          // ส่งข้อมูลกลับ
+          res.json({
+              success: true,
+              message: 'อัปโหลดรูปภาพสำเร็จ',
+              imageUrl: req.file.location,
+              contentType: req.file.mimetype
+          });
+
+      } catch (error) {
+          console.error('Upload error:', error);
+          res.status(500).json({
+              success: false,
+              message: 'เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ: ' + error.message
+          });
       }
-
-      console.log('File uploaded:', req.file); // เพิ่ม log
-
-      // ตรวจสอบ quizId
-      const quizId = req.query.quizId;
-      if (!quizId) {
-        return res.status(400).json({
-          success: false,
-          message: 'ไม่พบ quizId'
-        });
-      }
-
-      // อัปเดตฐานข้อมูล quiz ถ้าจำเป็น
-      const quiz = await Quiz.findById(quizId);
-      if (!quiz) {
-        return res.status(404).json({
-          success: false,
-          message: 'ไม่พบ quiz'
-        });
-      }
-
-      // ส่งข้อมูลกลับ
-      res.json({
-        success: true,
-        message: 'อัปโหลดรูปภาพสำเร็จ',
-        imageUrl: req.file.location, // URL จาก S3
-        contentType: req.file.mimetype
-      });
-
-    } catch (error) {
-      console.error('Upload error:', error);
-      res.status(500).json({
-        success: false,
-        message: 'เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ',
-        error: error.message
-      });
-    }
   }
 ];
 
