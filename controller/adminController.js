@@ -23,6 +23,8 @@ const TextEditor = require("../models/TextEditor");
 const Assignment = require("../models/Assignments");
 const SubmitAssign = require("../models/submitAssignDetail");
 const AWS = require('aws-sdk');
+const { S3Client } = require('@aws-sdk/client-s3');
+const { Upload } = require('@aws-sdk/lib-storage');
 
 
 const { deleteFileFromS3 } = require('../utils/s3Utils');
@@ -44,6 +46,14 @@ const { sendEmail } = require('../service/notification');
 // }
 
 // const updateSubjectQueue = require('../service/queue');
+
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  }
+});
 
 async function getSubjectsForNav(userId) {
   try {
