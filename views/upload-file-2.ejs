@@ -457,7 +457,7 @@
         <div class="lesson-content p-4 bg-white w-100 my-2 " style="height: fit-content !important;">
           <div class="pb-3 px-2" style="border-bottom: 1px solid #EAEFF4;">
             <p class="fw-bold fs-4 ">อัปโหลดไฟล์</p>
-            <form action="/upload" method="post" enctype="multipart/form-data">
+            <form action="/upload" method="post" enctype="multipart/form-data" id="excelUploadForm">
               <div class="container3 my-3" >
                 <div class="card shadow-sm" style="height: fit-content !important;">
                   <!-- <h3>Upload Files</h3> -->
@@ -468,6 +468,7 @@
                     <p class="my-1 desText">ไฟล์ที่สามารถอัปโหลดได้: .xls</p>
                     <input type="file" name="excelFile" class="input-file" hidden accept=".xlsx, .xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" id="fileID" style="display:none;">
                     <button class="choose-btn btn-focus my-1" type="button">เลือกไฟล์</button>
+                    <button type="submit" id="uploadButton" class="btn-focus my-2" style="display: none;">อัปโหลด</button>
                   </div>
                 </div>
                 <div class="file-description w-100">
@@ -524,12 +525,11 @@
               <div class="col-12 row my-1 mb-3">
                 <div class="col">
                   <label for="studentId" class="form-label fs-bold">รหัสนักศึกษา:</label>
-                  <input type="text" class="form-control p-3 w-75" value="<%=formData.studentId%>" name="studentId">
+                  <input type="text" class="form-control p-3 w-75" value="<%=formData.studentId%>" name="studentId" required pattern="\S+.*" title="รหัสนักศึกษาต้องมีอย่างน้อย 1 ตัวอักษรและไม่ใช่การเว้นวรรค">
                 </div>
                 <div class="col">
                   <label for="email" class="form-label fs-bold">Email:</label>
-                  <input type="email" class="form-control p-3 w-75" value="<%=formData.email%>" name="email" required>
-                </div>
+                  <input type="email" class="form-control p-3 w-75" value="<%=formData.email%>" name="email" required pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="กรุณากรอกอีเมลให้ถูกต้อง">                </div>
               </div>
               <div class="row col-12">
                 <div class="col-6">
@@ -575,11 +575,11 @@
                     </div>
                     <div class="col-12 mb-3">
                       <label for="fname" class="form-label fs-bold">ชื่อ:</label>
-                      <input type="text" class="form-control p-3 w-75" value="<%=formData.fname%>" name="fname" required>
+                      <input type="text" class="form-control p-3 w-75" value="<%=formData.fname%>" name="fname" required pattern="\S+.*" title="ชื่อต้องมีอย่างน้อย 1 ตัวอักษรและไม่ใช่การเว้นวรรค">
                     </div>
                     <div class="col-12 mb-3">
                       <label for="lname" class="form-label fs-bold">นามสกุล:</label>
-                      <input type="text" class="form-control p-3 w-75" value="<%=formData.lname%>" name="lname" required>
+                      <input type="text" class="form-control p-3 w-75" value="<%=formData.lname%>" name="lname" required pattern="\S+.*" title="นามสกุลต้องมีอย่างน้อย 1 ตัวอักษรและไม่ใช่การเว้นวรรค">
                     </div>
                   </div>
                 </div>
@@ -713,118 +713,150 @@
     });
 
     const dropArea = document.querySelector(".drop_box"),
-      button = dropArea.querySelector(".choose-btn"),
-      dragText = dropArea.querySelector("header"),
-      input = dropArea.querySelector(".input-file");
-    let file;
-    var filename;
+  button = dropArea.querySelector(".choose-btn"),
+  dragText = dropArea.querySelector("header"),
+  input = dropArea.querySelector(".input-file");
+let file;
 
-    button.onclick = () => {
-      input.click();
-    };
-
-    input.addEventListener("change", function(e) {
-      var fileName = e.target.files[0].name;
-      var headerText = document.querySelector('.drop_box header h4');
-      var descText = document.querySelector('.desText');
-
-      // เปลี่ยนข้อความใน element เป็นชื่อไฟล์ที่ถูกเลือก
-      headerText.textContent = fileName;
-      descText.textContent = 'ไฟล์ถูกอัปโหลดแล้ว';
+button.onclick = () => {
+  input.click();
+};
+input.addEventListener("change", function(e) {
+  if (e.target.files && e.target.files[0]) {
+    var fileName = e.target.files[0].name;
+    var headerText = document.querySelector('.drop_box header h4');
+    var descText = document.querySelector('.desText');
+    var uploadButton = document.getElementById('uploadButton');
+    
+    // เปลี่ยนข้อความใน element เป็นชื่อไฟล์ที่ถูกเลือก
+    headerText.textContent = fileName;
+    descText.textContent = 'ไฟล์ถูกเลือกแล้ว: ' + fileName;
       // let filedata = `
       // <h4 class="my-2">${fileName}</h4>
       //;
       // dropArea.innerHTML = filedata;
-      var uploadButton = document.createElement('div');
-      uploadButton.classList.add('d-flex', 'justify-content-center', 'my-1');
-      uploadButton.innerHTML = `
-        <button class="btn-focus">อัปโหลด</button>
-        `;
-      dropArea.appendChild(uploadButton);
-
-      // ซ่อนปุ่ม "เลือกไฟล์"
-      var chooseButton = document.querySelector('.choose-btn');
-      chooseButton.style.display = 'none';
+     // แสดงปุ่มอัปโหลด
+     uploadButton.style.display = 'inline-block';
+    
+    // ซ่อนปุ่ม "เลือกไฟล์"
+    button.style.display = 'none';
+  }
+});
+   // เพิ่ม handler สำหรับ form submission
+document.getElementById('excelUploadForm').addEventListener('submit', function(e) {
+  // แสดง loading state
+  const uploadBtn = document.getElementById('uploadButton');
+  uploadBtn.disabled = true;
+  uploadBtn.textContent = 'กำลังอัปโหลด...';
+  
+  // เช็คว่ามีไฟล์ถูกเลือกหรือไม่
+  if (!document.getElementById('fileID').files.length) {
+    e.preventDefault();
+    Swal.fire({
+      icon: 'warning',
+      title: 'กรุณาเลือกไฟล์',
+      text: 'โปรดเลือกไฟล์ Excel ก่อนอัปโหลด'
     });
-    if (errorMessage) {
-      let getText = errorMessage.textContent;
-      Swal.fire({
-        icon: 'warning',
-        title: 'ไม่สามารถเพิ่มนักศึกษาได้',
-        text: getText,
-        customClass: {
-          container: 'custom-container',
-          popup: 'custom-popup',
-          title: 'custom-title',
-          icon: 'custom-icon',
-          content: 'custom-content',
-          confirmButton: 'custom-button'
-        },
-        timer: 3000
-      });
+    uploadBtn.disabled = false;
+    uploadBtn.textContent = 'อัปโหลด';
+    return;
+  }
+  
+  // แสดงข้อความรอ
+  Swal.fire({
+    title: 'กำลังอัปโหลด',
+    text: 'กรุณารอสักครู่...',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
+});
 
+    // ฟังก์ชันสำหรับตรวจสอบความถูกต้องของฟิลด์
+function validateField(field) {
+    const value = field.value.trim();
+    let isValid = true;
+    let errorMessage = '';
+
+    // ตรวจสอบตามประเภทของฟิลด์
+    switch(field.name) {
+        case 'email':
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            isValid = emailPattern.test(value);
+            errorMessage = 'กรุณากรอกอีเมลให้ถูกต้อง';
+            break;
+        default:
+            isValid = value.length > 0;
+            errorMessage = 'กรุณากรอกข้อมูลในช่องนี้';
     }
 
-    document.querySelector('form').addEventListener('submit', function(e) {
-    const fname = document.querySelector('input[name="fname"]');
-    const lname = document.querySelector('input[name="lname"]');
-    const email = document.querySelector('input[name="email"]');
-    
-    // ตรวจสอบว่าค่าหลังจาก trim แล้วไม่ใช่ค่าว่าง
-    if (!fname.value.trim() || !lname.value.trim() || !email.value.trim()) {
-        e.preventDefault(); // ป้องกันการส่งฟอร์ม
-        
-        // เพิ่ม class is-invalid สำหรับ input ที่มีค่าว่าง
-        if (!fname.value.trim()) {
-            fname.classList.add('is-invalid');
-        } else {
-            fname.classList.remove('is-invalid');
+    // จัดการ class และข้อความแสดงข้อผิดพลาด
+    if (!isValid) {
+        if (!field.classList.contains('is-invalid')) {
+            field.classList.add('is-invalid');
+            
+            // สร้างหรืออัพเดท feedback div
+            let feedback = field.nextElementSibling;
+            if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                feedback = document.createElement('div');
+                feedback.className = 'invalid-feedback';
+                field.parentNode.insertBefore(feedback, field.nextSibling);
+            }
+            feedback.textContent = errorMessage;
         }
-        
-        if (!lname.value.trim()) {
-            lname.classList.add('is-invalid');
-        } else {
-            lname.classList.remove('is-invalid');
+    } else {
+        field.classList.remove('is-invalid');
+        const feedback = field.nextElementSibling;
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.remove();
         }
-        
-        if (!email.value.trim()) {
-            email.classList.add('is-invalid');
-        } else {
-            email.classList.remove('is-invalid');
+    }
+
+    return isValid;
+}
+
+// Event listener สำหรับการ submit form
+document.querySelector('#studentForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // ป้องกันการส่งฟอร์มโดยอัตโนมัติ
+
+    const fields = this.querySelectorAll('input[required]');
+    let hasError = false;
+
+    // ตรวจสอบทุกฟิลด์ที่จำเป็น
+    fields.forEach(field => {
+        if (!validateField(field)) {
+            hasError = true;
         }
-        
+    });
+
+    // ถ้ามีข้อผิดพลาด แสดง SweetAlert
+    if (hasError) {
         Swal.fire({
             icon: 'warning',
             title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
-            text: 'ชื่อ และนามสกุลไม่สามารถเป็นค่าว่างหรือเว้นวรรคได้'
+            text: 'กรุณาตรวจสอบข้อมูลที่กรอกให้ถูกต้อง'
         });
-        return false;
-    }
-    
-    // ตรวจสอบรูปแบบอีเมล
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email.value.trim())) {
-        e.preventDefault();
-        email.classList.add('is-invalid');
-        Swal.fire({
-            icon: 'warning',
-            title: 'รูปแบบอีเมลไม่ถูกต้อง',
-            text: 'กรุณาตรวจสอบรูปแบบอีเมล'
-        });
-        return false;
     } else {
-        email.classList.remove('is-invalid');
+        // ถ้าไม่มีข้อผิดพลาด ส่งฟอร์ม
+        this.submit();
     }
 });
 
-// เพิ่ม event listener สำหรับการเปลี่ยนแปลงค่าใน input
-document.querySelectorAll('input[name="fname"], input[name="lname"], input[name="email"]').forEach(input => {
+// Event listeners สำหรับการ validate ขณะพิมพ์
+document.querySelectorAll('input[required]').forEach(input => {
+    // ตรวจสอบเมื่อออกจากช่องกรอก
+    input.addEventListener('blur', function() {
+        validateField(this);
+    });
+
+    // ตรวจสอบขณะพิมพ์ (หลังจากพิมพ์เสร็จ 500ms)
+    let timeout = null;
     input.addEventListener('input', function() {
-        if (this.value.trim()) {
-            this.classList.remove('is-invalid');
-        } else {
-            this.classList.add('is-invalid');
-        }
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            validateField(this);
+        }, 500);
     });
 });
 

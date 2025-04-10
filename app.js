@@ -230,7 +230,7 @@ app.use('/', Router)
 app.get('/students', (req, res, next) => {
     res.render('studentInformation');
 });
-app.post('/upload', multer().single('excelFile'), manageStudent.uploadedFile);
+app.post('/upload', upload.single('excelFile'), manageStudent.uploadedFile);
 app.use(multer().any());
 
 // Middleware ที่เรียกในทุก request

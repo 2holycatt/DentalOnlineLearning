@@ -109,6 +109,7 @@ const uploadedFile = async (req, res) => {
   const theme = req.session.theme || 'light';
   const isSidebarOpen = false;
   let userData = null;
+  let filePath;
 
   try {
     // เพิ่มการดึง user data
@@ -116,34 +117,43 @@ const uploadedFile = async (req, res) => {
       userData = await User.findById(req.session.userId);
     }
 
-    const filePath = req.file.path;
+    if (!req.file) {
+      return res.render('upload-file-2', {
+        formData: {},
+        error: 'กรุณาเลือกไฟล์ Excel',
+        userData: await User.findById(req.session.userId),
+        theme,
+        isSidebarOpen
+      });
+    }
+
+    filePath = req.file.path;
     const fileParts = req.file.originalname.split('.');
     const fileType = fileParts[fileParts.length - 1];
     const fileBuffer = fs.readFileSync(filePath);
 
-   // สร้าง object สำหรับเก็บข้อมูลผลการประมวลผล
-   const summary = {
-    total: 0,
-    added: 0,
-    updated: 0,
-    skipped: 0,
-    errors: []
-  };
+    // สร้าง object สำหรับเก็บข้อมูลผลการประมวลผล
+    const summary = {
+      total: 0,
+      added: 0,
+      updated: 0,
+      skipped: 0,
+      errors: []
+    };
 
     if (fileType === "xls") {
-      
       const decodedBuffer = iconv.decode(fileBuffer, 'win874');
       fs.writeFileSync(filePath, decodedBuffer);
       const workbook = xlsx.readFile(filePath);
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const data = xlsx.utils.sheet_to_json(worksheet);
-    
+      
       // แก้ไขการดึงข้อมูลจาก Excel
       const preSemster = data[0]["รายชื่อนศ.ที่ลงทะเบียน"];
       const splitSemster = preSemster.split(" ");
       const semster = splitSemster[splitSemster.length - 1];
-    
+      
       const subject = data[2]['มหาวิทยาลัยขอนแก่น '];
       const subSplit = subject.split(" ");
       const courseId = subSplit[1];
@@ -159,7 +169,7 @@ const uploadedFile = async (req, res) => {
         let section = subSplit.slice(sectionIndex).join(' ');
         let splitSection = section.split(' ');
         let splitUnit = unit.split(' ');
-    
+        
         currentSubject = await Subject.create({
           subjectId: courseId,
           subjectName: subjectName,
@@ -168,12 +178,12 @@ const uploadedFile = async (req, res) => {
           section: splitSection[splitSection.length - 1]
         });
       }
-    
-         // ดึงรายชื่อนักศึกษา
+      
+      // ดึงรายชื่อนักศึกษา
       const studentLists = data.slice(6, -3);
       summary.total = studentLists.length;
       const weeks = generateWeeks();
-    
+      
       // ประมวลผลรายชื่อนักศึกษา
       for (const studentData of studentLists) {
         try {
@@ -186,10 +196,10 @@ const uploadedFile = async (req, res) => {
             ? rawEmail 
             : `${rawEmail}@kkumail.com`;
           const studentMajor = updatedValues[4];
-    
+          
           // แยกข้อมูลชื่อ
           const { prefix, fname, lname } = extractPrefixAndName(studentName);
-    
+          
           console.log('Processing student:', {
             studentId,
             studentName,
@@ -198,8 +208,7 @@ const uploadedFile = async (req, res) => {
             lname,
             studentEmail
           });
-
-
+          
           // ตรวจสอบนักศึกษาที่มีอยู่แล้ว
           let student = await Student.findOne({ studentId: studentId });
           
@@ -334,7 +343,7 @@ const uploadedFile = async (req, res) => {
             
             summary.added++;
           }
-    
+          
         } catch (error) {
           console.error('Error processing student:', error);
           summary.errors.push({
@@ -343,7 +352,7 @@ const uploadedFile = async (req, res) => {
           continue;
         }
       }
-    
+      
       // ลบไฟล์หลังจากประมวลผลเสร็จ
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
@@ -355,10 +364,14 @@ const uploadedFile = async (req, res) => {
         message: 'อัปโหลดรายชื่อนักศึกษาสำเร็จ',
         summary: summary
       };
-
-      return res.redirect('/adminIndex/uploadStudent');
-    }
-
+      
+      req.session.save(function(err) {
+        if (err) {
+          console.error('Error saving session:', err);
+        }
+        return res.redirect('/adminIndex/uploadStudent');
+      });
+    } 
     else if (fileType === "xlsx") {
       // ต้องมีการเปลี่ยนแปลงในส่วนของการประมวลผลไฟล์ xlsx ด้วย
       // โดยใช้ตรรกะเดียวกับ xls ด้านบน
@@ -379,13 +392,11 @@ const uploadedFile = async (req, res) => {
       
       res.json(data);
     }
-
-
-
+    
   } catch (error) {
     console.error(error);
     // ลบไฟล์ในกรณีเกิด error
-    if (fs.existsSync(filePath)) {
+    if (filePath && fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
     
