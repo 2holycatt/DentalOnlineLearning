@@ -2325,19 +2325,34 @@ const studentAnswerLists = async (req, res) => {
     
     // Get student answers with populated user and student data
     const studentAnswers = await StudentAnswer.find({ lessonQuestion: questionId })
-      .populate({
-        path: 'user',
-        populate: {
-          path: 'student',
-          select: 'studentId'
-        }
-      });
+    .populate({
+      path: 'user',
+      select: 'fname lname email studentId',
+      populate: {
+        path: 'student',
+        model: 'Student',
+        select: 'studentId'
+      }
+    })
+    .sort({ createdAt: -1 });
 
     // Format the answers
-    const formattedAnswers = studentAnswers.map(answer => ({
-      ...answer._doc,
-      createdAt: moment(answer.createdAt).format('DD/MM/YYYY HH:mm:ss')
-    }));
+    const formattedAnswers = studentAnswers.map(answer => {
+      let studentId = 'N/A';
+      // ตรวจสอบและดึง studentId ตามลำดับ
+      if (answer.user?.student?.studentId) {
+        studentId = answer.user.student.studentId;
+      } else if (answer.user?.studentId) {
+        studentId = answer.user.studentId;
+      }
+
+      return {
+        ...answer._doc,
+        studentId: studentId,
+        createdAt: moment(answer.createdAt).format('DD/MM/YYYY HH:mm:ss'),
+        userName: answer.user ? `${answer.user.fname} ${answer.user.lname}` : 'N/A'
+      };
+    });
 
     res.render('studentAnswerLists', { 
       formattedAnswers,
@@ -2350,7 +2365,6 @@ const studentAnswerLists = async (req, res) => {
     res.status(500).send("เกิดข้อผิดพลาด");
   }
 }
-
 const showStdAnswerDetail = async (req, res) => {
   try {
     const studentAnswersId = req.query.studentAnswerId;

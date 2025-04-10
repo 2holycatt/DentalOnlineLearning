@@ -43,7 +43,7 @@
   </div>
   <div class="main-content d-flex w-100 h-auto">
     <%- include("./partials/lessonsList.ejs")%>
-    <div class="aside-right w-75 h-auto p-4">
+    <div class="aside-right m-3 w-75 h-auto p-4">
       <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
         <p class="fw-bold fs-3 lesson-bar">รายละเอียดการส่งงาน</p>
         <!-- <div>
@@ -107,37 +107,34 @@
           </div>
         </div>
         <div class="row my-2 desDiv">
-          <p class="fs-6 fw-bold text-primary">ความคิดเห็น: </p>
+          <p class="fs-6 fw-bold purple">ความคิดเห็น: </p>
           <textarea class="form-control w-100 descriptionText" name="Description" disabled><%=getSubmitDetail.comment%></textarea>
         </div>
         <div class="row mt-3">
           <div class="mb-3 row col-8">
-            <p>ไฟล์ที่เกี่ยวข้อง:</p>
-            <div class="row">
-              <% if (getSubmitDetail.files.length < 1) {%>
-              <p class="mx-1" style="font-size: small;"> - ไม่มีไฟล์ที่ถูกอัปโหลด</p>
-              <% } else if (getSubmitDetail.files.length > 0) {%>
-              <% let files = getSubmitDetail.files; %>
-              <% files.forEach((file, index) => { %>
-              <div class="row">
-                <div class="col-7">
-                  <a class="file-a" href="/studentIndex/showFileArray2?id=<%=getSubmitDetail._id%>&index=<%=index%>">
-                    <%= index+1 %>. <%= file?.file ? file.file.slice(67) : 'ไม่พบชื่อไฟล์' %>
-                  </a>
-
-                  <!-- <a href="/adminIndex/delFile?assignId=<%=getSubmitDetail._id%>&fileIndex=<%=index%>" class="text-danger fs-6 delFile">ลบ</a> -->
-                 
-                  </a>
-                </div>
-              </div>
-              <% }) %>
-              <% }%>
+            <div class="files-container mt-3">
+              <p class="fw-bold mb-2">ไฟล์ที่แนบมา:</p>
+              <% if (getSubmitDetail.files && getSubmitDetail.files.length > 0) { %>
+                <% getSubmitDetail.files.forEach((file, index) => { %>
+                  <div class="file-item mb-2">
+                    <% if (file.isImage) { %>
+                      <img src="<%= file.displayUrl %>" class="img-fluid mb-2" style="max-width: 200px;" alt="<%= file.filename %>">
+                    <% } %>
+                    <a href="/adminIndex/showFileArray2?id=<%= getSubmitDetail._id %>&index=<%= index %>" class="file-a">
+                      <span class=""><%=index+1%>. </span>
+                                    <%= file.filename %>
+                    </a>
+                  </div>
+                <% }); %>
+              <% } else { %>
+                <p class="text-muted">ไม่มีไฟล์แนบ</p>
+              <% } %>
             </div>
           </div>
           <div class="col-4" style="border-left: 1px solid rgb(215, 215, 215)">
             <div class="row">
               <div class="col-12">
-                <p class="my-1 fs-5 w-100 text-center fw-bold text-primary">คะแนนที่ได้:</p>
+                <p class="my-1 fs-5 w-100 text-center fw-bold ">คะแนนที่ได้:</p>
               </div>
               <!-- <div class="col-6">
                 <p class="my-1 w-100 text-center fw-bold text-primary">จำนวนการส่ง</p>

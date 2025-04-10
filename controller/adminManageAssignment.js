@@ -81,12 +81,6 @@ const assignmentIndex = async (req, res) => {
 
 const assignmentDetail = async (req, res) => {
   try {
-    // const lessons = await Lesson.find().sort({ createdAt: 1 }).exec();
-    const subjects = await Subject.find().populate('Assignments').sort({ createdAt: 1 }).exec();
-    const userData = await User.findById(req.session.userId);
-    const navSubjects = await getSubjectsForNav(req.session.userId);
-    const theme = req.session.theme || 'light';
-    const isSidebarOpen = false;
     const assignId = req.query.id;
     const assignment = await Assignments.findById(assignId)
       .populate({
@@ -95,110 +89,90 @@ const assignmentDetail = async (req, res) => {
       })
       .populate({
         path: 'submitDetail',
-        populate: {
+        populate: [{
           path: 'user',
-          populate: {
-            path: 'student'
-          }
-        }
-      })
-      .lean();
+          model: 'User',
+          select: 'fname lname email'
+        }]
+      });
 
     if (!assignment) {
       return res.status(404).send('Assignment not found');
     }
 
-// แก้ไขการจัดการไฟล์
-if (assignment.files && Array.isArray(assignment.files)) {
-  assignment.files = assignment.files
-    .filter(file => file && file.file) // กรองไฟล์ที่ไม่มีข้อมูล
-    .map(file => ({
-      ...file,
-      originalName: file.file.split('/').pop(),
-      displayName: decodeURIComponent(file.file.split('/').pop()),
-      file: file.file.startsWith('http') ? 
-        file.file : 
-        `${process.env.AWS_BUCKET_URL || ''}${file.file}`
-    }));
-} else {
-  assignment.files = [];
-}
-
-console.log('Assignment files:', assignment.files);
-
-    const getSubmitDetail = {
-      submitDetail: await Promise.all(assignment.submitDetail.map(async (detail) => {
-        if (!detail.user) return detail;
-
-        // หา student id จาก user
-        const student = await Student.findOne({ user: detail.user._id });
-        
-        // คำนวณสถานะการส่งงาน
-        const submittedDate = moment(detail.updatedAt);
-        const deadline = moment(assignment.Deadline);
-        let sendStatus;
-
-        if (submittedDate.isBefore(deadline)) {
-          sendStatus = {
-            status: "ส่งตรงเวลา"
-          };
-        } else {
-          const duration = moment.duration(submittedDate.diff(deadline));
-          sendStatus = {
-            status: "ส่งช้า",
-            day: Math.floor(duration.asDays()),
-            hour: duration.hours(),
-            minute: duration.minutes()
-          };
-        }
-
-        return {
-          ...detail.toObject(),
-          user: {
-            ...detail.user.toObject(),
-            studentId: student ? student.studentId : '-'
-          },
-          sendStatus // เพิ่ม sendStatus เข้าไปในข้อมูล
-        };
-      }))
+    // Format dates
+    const formattedDates = {
+      startDate: moment(assignment.StartDate).format('DD/MM/YYYY HH:mm'),
+      deadline: moment(assignment.Deadline).format('DD/MM/YYYY HH:mm'),
+      startDateInput: moment(assignment.StartDate).format('YYYY-MM-DDTHH:mm'),
+      deadlineInput: moment(assignment.Deadline).format('YYYY-MM-DDTHH:mm')
     };
 
-      const formattedSubmitDetail = {
-        ...getSubmitDetail._doc,
-        submitDetail: getSubmitDetail.submitDetail.map(detail => ({
-          _id: detail._id,
-          updatedAt: detail.updatedAt,
-          sendStatus: detail.sendStatus || { status: 'ไม่ระบุ' },
-          Score: detail.Score || 0,
-          studentId: detail.user?.student?.studentId || '-',
-          userName: detail.user?.student ? 
-            `${detail.user.student.prefix || ''}${detail.user.student.fname || ''} ${detail.user.student.lname || ''}` : 
-            'ไม่ระบุชื่อ',
-          user: detail.user
-        }))
+    // Format files
+    const formattedFiles = (assignment.files || []).map(file => {
+      const fileData = file.toObject ? file.toObject() : file;
+      const filePath = fileData.file || '';
+      const fileName = fileData.originalName || (filePath ? filePath.split('/').pop() : 'ไม่พบชื่อไฟล์');
+
+      return {
+        ...fileData,
+        displayUrl: filePath ? decodeURIComponent(filePath) : '',
+        filename: decodeURIComponent(fileName),
+        isImage: /\.(jpg|jpeg|png|gif)$/i.test(filePath),
+        isPdf: /\.pdf$/i.test(filePath),
+        isVideo: /\.(mp4|webm)$/i.test(filePath)
       };
+    });
 
-    const formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
-    const formattedDeadline = moment(assignment.Deadline).format('DD/MM/YYYY hh:mm A');
-   
+    // Format submit details
+    const submitDetails = await Promise.all((assignment.submitDetail || []).map(async (detail) => {
+      const student = await Student.findOne({ user: detail.user._id });
+      
+      const submittedDate = moment(detail.createdAt);
+      const deadline = moment(assignment.Deadline);
+      const sendStatus = submittedDate.isBefore(deadline) 
+        ? { status: "ส่งตรงเวลา" }
+        : {
+            status: "ส่งช้า",
+            day: Math.floor(moment.duration(submittedDate.diff(deadline)).asDays()),
+            hour: moment.duration(submittedDate.diff(deadline)).hours(),
+            minute: moment.duration(submittedDate.diff(deadline)).minutes()
+          };
 
+      return {
+        ...detail.toObject(),
+        studentId: student?.studentId || 'ไม่พบรหัสนักศึกษา',
+        sendStatus,
+        formattedDate: moment(detail.createdAt).format('DD/MM/YYYY HH:mm'),
+        Score: detail.Score
+      };
+    }));
+
+    // Render with all formatted data
     res.render('assignmentDetail', {
-      assignment,
-      subject: assignment.subject, 
-      formattedStartDate,
-      formattedDeadline,
-      getSubmitDetail,
-      navSubjects,
-      userData,
-      theme,
-      isSidebarOpen
+      assignment: {
+        ...assignment.toObject(),
+        files: formattedFiles,
+        // Add these formatted dates to assignment object
+        formattedStartDateInput: formattedDates.startDateInput,
+        formattedDeadlineInput: formattedDates.deadlineInput
+      },
+      formattedStartDate: formattedDates.startDate,
+      formattedDeadline: formattedDates.deadline,
+      subject: assignment.subject,
+      getSubmitDetail: {
+        submitDetail: submitDetails
+      },
+      userData: await User.findById(req.session.userId),
+      theme: req.session.theme || 'light',
+      isSidebarOpen: false
     });
 
   } catch (error) {
-    console.error(error);
+    console.error('Assignment Detail Error:', error);
     res.status(500).send('Server Error');
   }
-}
+};
 
 const uploadAssignments = asyncWrapper(async (req, res) => {
   try {
@@ -219,8 +193,9 @@ const uploadAssignments = asyncWrapper(async (req, res) => {
       Score,
       subject: subject._id,
       files: files.map(file => ({
-        file: file.location,
-        contentType: file.mimetype
+        file: file.location, // S3 path
+        contentType: file.mimetype,
+        originalName: file.originalname 
       }))
     });
 
@@ -238,27 +213,27 @@ const uploadAssignments = asyncWrapper(async (req, res) => {
     const users = await User.find({ role: 'student' });
     const userData = await User.findById(req.session.userId);
     
-    if (users.length > 0) {
-      const header = "การมอบหมายงานใหม่จาก Online Dentristy Learning";
-      const whatCome = "มีงานที่มอบหมายใหม่เรื่อง";
+    // if (users.length > 0) {
+    //   const header = "การมอบหมายงานใหม่จาก Online Dentristy Learning";
+    //   const whatCome = "มีงานที่มอบหมายใหม่เรื่อง";
 
-      // ส่ง email แบบ Promise.all
-      await Promise.all(users.map(async user => {
-        try {
-          const studentData = await Student.findOne({ user: user._id })
-            .populate('subjects.subjectMongooseId');
+    //   // ส่ง email แบบ Promise.all
+    //   await Promise.all(users.map(async user => {
+    //     try {
+    //       const studentData = await Student.findOne({ user: user._id })
+    //         .populate('subjects.subjectMongooseId');
 
-          if (studentData && studentData.subjects.some(s => 
-            s.subjectMongooseId && 
-            s.subjectMongooseId._id.toString() === subject._id.toString()
-          )) {
-            await sendEmail(user.email, header, name, userData, whatCome);
-          }
-        } catch (err) {
-          console.error(`Error sending email to ${user.email}:`, err);
-        }
-      }));
-    }
+    //       if (studentData && studentData.subjects.some(s => 
+    //         s.subjectMongooseId && 
+    //         s.subjectMongooseId._id.toString() === subject._id.toString()
+    //       )) {
+    //         await sendEmail(user.email, header, name, userData, whatCome);
+    //       }
+    //     } catch (err) {
+    //       console.error(`Error sending email to ${user.email}:`, err);
+    //     }
+    //   }));
+    // }
 
     // redirect กลับไปหน้า subject
     res.redirect(`/eachSubject?subjectDbId=${subject._id}`);
@@ -546,65 +521,81 @@ const submitDetail = async (req, res) => {
   try {
     const { id: assignId, submitId } = req.query;
 
-    // ดึงข้อมูล assignment
-    const assignment = await Assignments.findById(assignId);
-
-    // ดึงข้อมูล submitDetail พร้อม populate แบบละเอียด
-    const getSubmitDetail = await submitAssign.findById(submitId)
-      .populate({
+    // ดึงข้อมูล assignment และ submitDetail พร้อม populate ข้อมูลที่จำเป็น
+    const [assignment, submitDetail] = await Promise.all([
+      Assignments.findById(assignId),
+      submitAssign.findById(submitId).populate({
         path: 'user',
-        model: 'User',
+        select: 'fname lname email',
         populate: {
           path: 'student',
           model: 'Student',
-          select: 'studentId fname lname' // เลือกฟิลด์ที่ต้องการจาก Student
+          select: 'studentId'
         }
-      });
+      })
+    ]);
 
-    if (!getSubmitDetail) {
+    if (!submitDetail) {
       return res.status(404).send('Submit detail not found');
     }
 
-    // ดึงข้อมูล student โดยตรง
-    const student = await Student.findOne({ user: getSubmitDetail.user._id })
-      .select('studentId fname lname');
+    // ค้นหาข้อมูลนักศึกษาโดยตรง
+    const student = await Student.findOne({ user: submitDetail.user._id });
 
-    // Log เพื่อตรวจสอบข้อมูล
-    console.log('Student Data:', student);
-    console.log('Submit Detail Before:', getSubmitDetail);
+    // คำนวณสถานะการส่ง
+    const submittedDate = moment(submitDetail.createdAt);
+    const deadline = moment(assignment.Deadline);
+    const sendStatus = submittedDate.isBefore(deadline) 
+      ? { 
+          status: "ส่งตรงเวลา",
+          day: 0,
+          hour: 0,
+          minute: 0
+        }
+      : {
+          status: "ส่งช้า",
+          day: Math.floor(moment.duration(submittedDate.diff(deadline)).asDays()),
+          hour: moment.duration(submittedDate.diff(deadline)).hours(),
+          minute: moment.duration(submittedDate.diff(deadline)).minutes()
+        };
 
-    // สร้าง user object ใหม่พร้อมข้อมูลที่ต้องการ
-    const userObject = getSubmitDetail.user.toObject();
-    getSubmitDetail.user = {
-      ...userObject,
-      studentId: student?.studentId || userObject?.student?.studentId || 'ไม่พบรหัสนักศึกษา',
-      fname: student?.fname || userObject?.fname || 'ไม่พบชื่อ',
-      lname: student?.lname || userObject?.lname || 'ไม่พบนามสกุล',
-      student: {
-        ...userObject.student,
-        studentId: student?.studentId || 'ไม่พบรหัสนักศึกษา'
-      }
+    // Format files data
+    const formattedFiles = (submitDetail.files || []).map(file => {
+      const fileData = file.toObject ? file.toObject() : file;
+      return {
+        ...fileData,
+        displayUrl: decodeURIComponent(fileData.file || ''),
+        filename: decodeURIComponent(fileData.originalName || fileData.file?.split('/').pop() || 'ไม่พบชื่อไฟล์'),
+        isImage: /\.(jpg|jpeg|png|gif)$/i.test(fileData.file || '')
+      };
+    });
+
+    // เตรียมข้อมูลสำหรับ view
+    const studentData = {
+      studentId: student?.studentId || submitDetail.user?.student?.studentId || 'ไม่พบรหัสนักศึกษา',
+      fullName: `${submitDetail.user?.fname || ''} ${submitDetail.user?.lname || ''}`
     };
 
-    console.log('Submit Detail After:', getSubmitDetail);
-
-    // ส่งข้อมูลไปยัง view
+    // ส่งข้อมูลไป render
     res.render('submitDetail', {
       assignment,
-      getSubmitDetail,
+      getSubmitDetail: {
+        ...submitDetail.toObject(),
+        sendStatus,
+        files: formattedFiles,
+        user: {
+          ...submitDetail.user.toObject(),
+          studentId: studentData.studentId // เพิ่ม studentId เข้าไปใน user object
+        }
+      },
       userData: await User.findById(req.session.userId),
       theme: req.session.theme || 'light',
       isSidebarOpen: false,
-      // ส่งข้อมูลเพิ่มเติมเพื่อความแน่ใจ
-      studentData: {
-        studentId: student?.studentId || 'ไม่พบรหัสนักศึกษา',
-        fullName: `${student?.fname || ''} ${student?.lname || ''}`
-      }
+      studentData // ส่ง studentData แยก
     });
 
   } catch (error) {
     console.error('Submit Detail Error:', error);
-    console.error('Error Stack:', error.stack);
     res.status(500).send('Server Error');
   }
 };

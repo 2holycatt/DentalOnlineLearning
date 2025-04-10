@@ -8,39 +8,216 @@
   <%- include("./partials/header.ejs")%>
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
   <style>
+    .descp {
+      text-indent: 2em;
+      margin: 0 2em;
+    }
+
+    .rectangle-141 {
+      background-color: white;
+      border-radius: 0.75em;
+      box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
+      height: 14.6875em;
+      left: 4.6875em;
+      top: 37.3125em;
+      width: 39.125em;
+      width: 75%;
+      margin: 2em 2em;
+    }
+
+    .home-div,
+    .a-home {
+      color: #999999 !important;
+    }
+
+    .above-nav {
+      background-color: #dde6ed33;
+    }
+
+    .status-a {
+      color: #404258 !important;
+    }
+
+    .list-lesson-p {
+      color: #8A2BE2;
+
+    }
+
+    .list-lesson-p-span {
+      color: #4B0082;
+    }
+
+    .each-lesson {
+      border-top: 0.1em solid #8A2BE2;
+
+    }
+
+    .aside-right {
+      background-color: #dde6ed1a;
+      height: 100%;
+    }
+
+    .manange-bar {
+      border-radius: 1em;
+      /* grid-template-columns: 1fr 1fr; */
+      /* justify-content: space-between !important; */
+
+    }
+
     .add-button {
-      width: fit-content !important;
+      border-radius: 0.5em !important;
+      max-width: 500px !important;
+
     }
 
-    .list-header {
-      box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+    .main-content {
+      height: 100%;
     }
 
-    .p-header-1,
-    .p-header-2 {
-      border-right: 1px solid #999999 !important;
+    .lesson-content {
+      height: 100%;
+      border-radius: 1em !important;
+
+      justify-content: center !important;
+      border-top: 0.5em solid #8A2BE2;
     }
 
-    .p-header-4 {
-      border-left: 1px solid #999999 !important;
+    .lesson-nothing {
+      /* margin: 25% 0 !important; */
+      padding: 0 !important;
     }
 
-    .student-list {
-      border-bottom: 1px solid #cdcdcd !important;
-      color: #898989 !important;
+    .add-lesson-btn {
+      float: right;
+      width: auto;
     }
 
-    .email-p {
-      font-size: smaller !important;
+
+    .show-layout-2 {
+      display: block;
+      opacity: 1;
+      /* สิ้นสุดที่ความทึบ 1 */
+      transition: opacity 0.5s ease;
+      /* กำหนดการเปลี่ยนแปลงที่ต้องการ */
     }
 
-    .link-list {
-      text-decoration: none !important;
+    .layout01-mainDes {
+
+      font-size: xx-large !important;
+      font-weight: bolder !important;
+
     }
 
-    .link-list:hover .student-list {
-      color: black !important;
-      transition: 0.3s;
+    /* .input-mainSubDes,
+  .input-mainDes,
+  .input-mainSubDes2 {
+    white-space: pre-wrap !important;
+    overflow: auto !important;
+  } */
+
+    .subDes,
+    .subDesNumber2 {
+      border: none !important;
+    }
+
+    .layout1-contents {
+      background-color: #dde6ed1a;
+      width: 85%;
+
+    }
+
+    .layout01_gird {
+      display: grid;
+      grid-template-columns: 0.75fr 1.25fr;
+    }
+
+
+    .Topic1 {
+      /* background-color: #8A2BE2 !important; */
+      color: white !important;
+      border-radius: 1em !important;
+      width: 70% !important;
+    }
+
+    .Topic1::placeholder {
+      color: white !important;
+      font-size: xx-large;
+      font-weight: bolder;
+      text-align: center !important;
+    }
+
+    #file-input {
+      display: none !important;
+    }
+
+    .center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: auto;
+      /* ทำให้สูงเต็มหน้าจอ */
+    }
+
+    video {
+      border-radius: 0.5em;
+      box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+
+    }
+
+    .file-icon {
+      font-size: 7em;
+    }
+
+    .content-2 {
+      border-top: 0.5em solid #8A2BE2;
+      border-radius: 1em !important;
+      height: 100% !important;
+      background-color: #dde6ed1a !important;
+      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+    }
+
+    .main-content-long-text {
+      color: #8A2BE2 !important;
+      border: none !important;
+
+    }
+
+    .text-areas-indent {
+      text-indent: 2em;
+    }
+
+    .main-content-long-text::placeholder {
+      color: #8A2BE2 !important;
+      /* text-indent: 2em !important; */
+    }
+
+    .setEdge1,
+    .setEdge2 {
+      border-right: 1px solid #8A2BE2 !important;
+      border-bottom-width: 50% !important;
+      box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset !important;
+    }
+
+    .add-button-2 {
+      float: right;
+
+    }
+
+    .layout01_gird {
+      display: grid;
+      grid-template-columns: 0.75fr 1.25fr;
+    }
+
+    .allCOntent {
+      height: fit-content;
+    }
+
+    .subLayout2Contents2 div {
+      height: fit-content !important;
+    }
+
+    .setborder {
+      border-radius: 0.5em !important;
     }
 
     .addContent-a {
@@ -53,37 +230,281 @@
       transition: 0.3s;
     }
 
-    .list-div {
-
-      padding-top: 0.5em;
-      border-bottom: 1px solid #EAEFF4;
-    }
-
-    .list-div-data {
-
-      padding-top: 1em;
-      border-bottom: 1px solid #EAEFF4;
-      text-align: start;
-      color: #4e5458 !important;
-
-    }
-
     .lesson-bar {
-      border-left: 0.25em solid #007bff !important;
+      border-left: 0.25em solid #8A2BE2 !important;
       padding-left: 0.5em !important;
-      margin-right: 0.5em !important;
+    }
+
+    .comment-table tr th {
+      padding-top: 1em !important;
+      padding-bottom: 1em !important;
+      border-bottom: 1px solid #ced4daa0;
+      color: #5a6a85 !important;
 
     }
 
-    .studentDetail-a:hover>.list-div-data {
-      color: #0053ac !important;
+    .comment-table tr td {
+      padding-top: 1em !important;
+      /* padding-bottom: 1em !important; */
+      /* border-bottom: 1px solid #ced4daa0; */
+
+    }
+
+    .comment {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      max-height: 104px;
+    }
+
+    .comment img {
+      width: 50px;
+      height: 50px;
+      border-radius: 25%;
+      margin-right: 1em !important;
+      object-fit: cover;
+
+    }
+
+    /* .comment .content {
+    flex-grow: 1;
+  } */
+
+    .comment-color {
+      color: #7C8FAC !important;
+    }
+
+    .fancyBox {
+      width: 10%;
+      height: auto;
+    }
+
+    .comment-files {
+      width: 125px;
+      height: 125px;
+      margin-right: 1em !important;
+      border-radius: 10%;
+    }
+
+    .commentOption {
+      position: absolute;
+
+    }
+
+    .optionComment:hover {
+      color: #003ba1 !important;
       transition: 0.3s;
+    }
+
+    .reply-comment {
+      display: none;
+    }
+
+    .pdf-iframe {
+      width: 100%;
+      height: calc(100vh - 50px);
+      /* Adjust height based on toolbar */
+      border: none;
+    }
+
+    .editQuestion,
+    .deleteQuesitonsCheckbox,
+    #cancelDeleteCheckQuesitonLink,
+    .checkAllDeleteDiv {
+      display: none;
+    }
+
+    .editCommentForm {
+      position: fixed;
+      /* แก้ไขจาก absolute เป็น fixed */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      /* z-index สูงเพื่ออยู่ด้านบน */
+      display: none;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.205);
+      animation: fadeInScale 0.5s ease forwards;
+      /* เพิ่ม animation */
+    }
+
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.13);
+      /* ทำให้พื้นหลังมืด */
+      z-index: 999;
+      display: none;
+
+      /* ซ่อน overlay เมื่อ popup ยังไม่เปิด */
+    }
+
+
+    /* .spn-comment {
+    font-size:xx-small !important;
+    border: 2px solid white;
+    padding: 0.25em !important;
+    border-radius: 0.25em;
+  } */
+    * {
+      box-sizing: border-box !important;
+    }
+
+    body.dark {
+      background-color: #212121 !important;
+    }
+
+    .card-1,
+    .card-body-1 {
+      border: none !important;
+    }
+
+    .dark .above-nav-status {
+      background-color: var(--secondary-color) !important;
+      border-right: 1px solid #494949;
+    }
+
+    .status-a {
+      color: #404258 !important;
+    }
+
+    .list-lesson-p {
+      color: #8A2BE2;
+    }
+
+    .list-lesson-p-span {
+      color: #4B0082;
+    }
+
+    .each-lesson {
+      border-top: 0.1em solid #8A2BE2;
+    }
+
+    .aside-right {
+      background-color: var(--bg-color) !important;
+      height: 100%;
+    }
+
+
+    .dark .manange-bar,
+    .dark .lesson-content {
+      background-color: var(--secondary-color) !important;
+    }
+
+    .lesson-nothing {
+      margin: 25% 0 !important;
+      padding: 0 !important;
+    }
+
+    .each-lesson-a {
+      text-decoration: none !important;
+    }
+
+    .each-lesson-a:hover .each-lesson {
+      border-left: 0.2em solid #8A2BE2 !important;
+    }
+
+    .card-img-top {
+      box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
+    }
+
+    .setColumn {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr !important;
+    }
+
+    .card-a {
+      text-decoration: none !important;
+    }
+
+    .card-a:hover,
+    .card-a:hover .p-lesson-name {
+      color: #007bff !important;
+      transition: 0.5s;
+    }
+
+    .card-a:hover .bi-book {
+      color: #007bff !important;
+      transition: color 0.5s;
+    }
+
+    .bi-book-fill {
+      display: none;
+    }
+
+
+    .grey {
+      color: gray !important;
+    }
+
+    .dark .grey {
+      color: lightgray !important
+    }
+  
+
+.swal2-cancel,.swal2-confirm {
+  padding: 0.6rem  !important; /* เพิ่ม padding ของปุ่มยืนยัน */
+  margin: 1rem !important; /* เพิ่ม margin ของปุ่มยืนยัน */
+}
+.swal2-icon {
+  margin: 1rem auto !important; /* จัดโลโก้แจ้งเตือนให้อยู่ตรงกลาง */
+}
+.link{
+      color: gray;
+    }
+    .dark .link{
+      color: rgb(231, 231, 231);
+    }
+    .dark .link:hover ,.link:hover{
+      text-decoration: underline;
+      color: #ba55d3 !important;
+    }
+    .border-b{
+      border-bottom: 1px solid #EAEFF4;
+    }
+    .dark .border-b{
+      border-bottom: 1px solid #666;
+    }
+    .btn-sm-custom {
+  font-size: 0.9rem !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+  border: none !important;
+  height: fit-content !important;
+  min-height: 38px !important;
+}
+
+.btn-sm-custom i {
+  font-size: 1rem !important;
+  vertical-align: middle !important;
+}
+    @media screen and (max-width: 768px) {
+      .above-nav-status {
+        display: none;
+      }
+      .btn-sm-custom {
+      font-size: 0.8rem !important;
+      padding: 0.3rem 0.6rem !important;
+  }
+  
+  .btn-sm-custom i {
+      font-size: 0.8rem !important;
+  }
     }
   </style>
 </head>
 
 <body>
-  <%- include("./partials/nav.ejs")%>
+  <%- include("./partials/nav2.ejs")%>
   <!-- <div class="above-nav d-flex px-4 py-3">
       <div class="home-div above-nav-home d-flex mx-2 my-0 align-middle">
         <i class="bi bi-house mx-2"></i>
@@ -96,9 +517,9 @@
       </a>
     </div> 
     </div> -->
-  <div class="main-content d-flex w-100 h-auto">
+  <div class="main-content  d-flex w-100 h-auto">
     <%- include("./partials/lessonsList.ejs")%>
-    <div class="aside-right w-75 h-auto p-4 m">
+    <div class="aside-right m-3 w-75 h-auto p-4 m">
       <div class="manange-bar py-3 px-4 bg-white d-flex w-100">
         <p class="fw-bold fs-3 lesson-bar">รายชื่อนักศึกษาที่ส่งคำตอบ</p>
         <div>
@@ -144,25 +565,19 @@
         <a href="/adminIndex/showStdAnswerDetail?studentAnswerId=<%=answser._id%>" class="studentDetail-a">
           <div class="list-div-data row">
             <p class="fw-normal my-3 col-2">
-              <%= answer.user && answer.user.student ? answer.user.student.studentId : 'N/A' %>
+              <%= answser.studentId || 'N/A' %>
             </p>
             <p class="fw-normal my-3 col-3">
-              <%= answer.user ? answer.user.name : 'N/A' %>
+              <%= answser.userName %>
             </p>
             <p class="fw-normal my-3 col-3">
-              <%=answser.createdAt%>
+              <%= answser.createdAt %>
             </p>
-            <% if (answser.checked == true) { %>
-            <p class="fw-normal my-3 col-2" style="color: #8B4513 !important;">
-              ตรวจแล้ว
+            <p class="fw-normal my-3 col-2" style="color: <%= answser.checked ? '#8B4513' : '#0d6efd' %> !important;">
+              <%= answser.checked ? 'ตรวจแล้ว' : 'ยังไม่ตรวจ' %>
             </p>
-            <% } else if (answser.checked == false) { %>
-            <p class="fw-normal my-3 col-2 text-primary">
-              ยังไม่ตรวจ
-            </p>
-            <% } %>
             <p class="fw-normal my-3 col-2">
-              <%=answser.Score%>
+              <%= answser.Score !== undefined && answser.Score !== null ? answser.Score.toFixed(0) : 'N/A' %>
             </p>
           </div>
         </a>
