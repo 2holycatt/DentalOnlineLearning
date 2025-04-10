@@ -15,6 +15,7 @@
     "@ironsoftware/ironpdf-engine-windows-x64": "^2024.6.4",
     "aos": "^2.3.4",
     "atob": "^2.1.2",
+    "aws-sdk": "^2.1692.0",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
