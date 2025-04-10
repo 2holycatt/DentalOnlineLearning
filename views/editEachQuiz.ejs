@@ -1694,6 +1694,7 @@ function savechanges() {
     saveBtn.disabled = true;
     saveBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> กำลังบันทึก...';
 
+    // อัพโหลดไฟล์ไปยัง AWS S3
     fetch(`/adminIndex/uploadQuestionImage?quizId=${quizId}`, {
         method: 'POST',
         body: formData
@@ -1701,25 +1702,19 @@ function savechanges() {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
+            // บันทึก URL จาก S3 ลงในโครงสร้างข้อมูล
+            const imageData = {
+                url: data.imageUrl,
+                contentType: data.contentType
+            };
+
             if (target === 'question') {
-                questions[questionIndex].questionImage = {
-                    url: data.imageUrl,
-                    contentType: data.contentType
-                };
+                questions[questionIndex].questionImage = imageData;
             } else if (target === 'option') {
-                questions[questionIndex].options[optionIndex].image = {
-                    url: data.imageUrl,
-                    contentType: data.contentType
-                };
+                questions[questionIndex].options[optionIndex].image = imageData;
             } else if (target.startsWith('matching_')) {
                 const [_, side] = target.split('_');
-                if (!questions[questionIndex].matchingPairs[optionIndex][side].image) {
-                    questions[questionIndex].matchingPairs[optionIndex][side].image = {};
-                }
-                questions[questionIndex].matchingPairs[optionIndex][side].image = {
-                    url: data.imageUrl,
-                    contentType: data.contentType
-                };
+                questions[questionIndex].matchingPairs[optionIndex][side].image = imageData;
             }
 
             // อัพเดท UI และบันทึกข้อมูล

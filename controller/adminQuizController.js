@@ -1094,7 +1094,6 @@ exports.search = async (req, res) => {
 
 exports.uploadQuestionImage = [
   uploadQuestionImage.single('avatar'),
-  handleUploadError,
   async (req, res) => {
     try {
       if (!req.file) {
@@ -1104,31 +1103,11 @@ exports.uploadQuestionImage = [
         });
       }
 
-      const quizId = req.query.quizId;
-      if (!quizId) {
-        return res.status(400).json({
-          success: false,
-          message: 'ไม่พบ Quiz ID'
-        });
-      }
-
-      // ได้ URL จาก S3
-      const imageUrl = req.file.location;
-
-      // อัพเดทข้อมูลใน Quiz model
-      const quiz = await Quiz.findById(quizId);
-      if (!quiz) {
-        return res.status(404).json({
-          success: false,
-          message: 'ไม่พบแบบทดสอบ'
-        });
-      }
-
-      // ส่งข้อมูลกลับ
+      // ส่ง URL จาก S3 กลับไป
       res.json({
         success: true,
         message: 'อัปโหลดรูปภาพสำเร็จ',
-        imageUrl: imageUrl,
+        imageUrl: req.file.location,
         contentType: req.file.mimetype
       });
 
