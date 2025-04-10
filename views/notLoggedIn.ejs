@@ -192,11 +192,13 @@
     .logo-footer {
       width: fit-content !important;
       height: fit-content !important;
+      min-height: 150px;
+      min-width: 150px;
     }
 
     .logo-footer,
     .img-logo {
-      transition-duration: 0.3s;
+      transition: transform 0.3s ease-in-out;
     }
 
     .img-logo:hover {
@@ -550,6 +552,8 @@
   .logo-footer {
     width: fit-content !important;
     height: fit-content !important;
+    min-height: 150px;
+    min-width: 150px;
   }
 
   .logo-footer,
@@ -578,7 +582,7 @@
 
  
   @media (max-width: 768px) { /* ซ่อนเมื่อหน้าจอเล็กกว่า 768px */
-  .logo-dent,.elearning-text {
+  .elearning-text {
     display: none;
   }
   .home-container{
@@ -658,7 +662,7 @@
 </body>
 <br><br><br>
 <footer id="footer" >
-  <div class="container-fluid p-4" style="width: auto">
+  <div class="container-fluid p-4">
     <div class="row">
       <div class="col-md-3">
         <div class="w-100 d-flex justify-content-center">
