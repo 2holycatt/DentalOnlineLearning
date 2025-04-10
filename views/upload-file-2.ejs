@@ -386,6 +386,23 @@
       .studentDetail-a :hover{
         color: #0053ac !important;
       }
+      .is-invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+    
+    .is-invalid:focus {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+    
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+    }
       @media screen and (max-width: 768px) {
         .above-nav-status{
           display: none;
@@ -393,6 +410,31 @@
       }
   </style>
 </head>
+
+<script>
+  // เช็คว่ามีผลการอัปโหลดหรือไม่
+  <% if (typeof uploadResults !== 'undefined' && uploadResults) { %>
+    document.addEventListener('DOMContentLoaded', function() {
+      Swal.fire({
+        icon: 'success',
+        title: '<%= uploadResults.message %>',
+        html: `
+          <div class="text-start">
+            <p><strong>สรุปผลการอัปโหลด:</strong></p>
+            <ul>
+              <li>จำนวนข้อมูลทั้งหมด: <%= uploadResults.summary.total %> รายการ</li>
+              <li>เพิ่มใหม่: <%= uploadResults.summary.added %> รายการ</li>
+              <li>อัพเดต: <%= uploadResults.summary.updated %> รายการ</li>
+              <li>ข้ามการประมวลผล: <%= uploadResults.summary.skipped %> รายการ</li>
+              <li>ข้อผิดพลาด: <%= uploadResults.summary.errors.length %> รายการ</li>
+            </ul>
+          </div>
+        `,
+        confirmButtonText: 'ตกลง'
+      });
+    });
+  <% } %>
+</script>
 
 <body>
   <div id="blur-container2">
@@ -432,7 +474,7 @@
                   <p class="fw-bold mx-4" style="color: #5A6A85;">คำอธิบายเกี่ยวกับการอัปโหลดไฟล์:
                     <br>
                     <span class="fw-light">
-                      1. ข้อมูลที่ได้จากการอัปโหลไฟล์ จะได้แก่ ข้อมูลรายวิชาและข้อมูลนักศึกษา <br>
+                      1. ข้อมูลที่ได้จากการอัปโหลดไฟล์ จะได้แก่ ข้อมูลรายวิชาและข้อมูลนักศึกษา <br>
                       2. ระบบจะบันทึกข้อมูลและรายชื่อการลงทะเบียนเรียนของนักศึกษาและรายวิชาในไฟล์ที่แนบให้อัติโนมัติ <br>
                       3. เมื่อมีอัปโหลดข้อมูลรายวิชาและรายชื่อนักศึกษาที่ซ้ำ ระบบจะไม่ทำการบันทึกการอัปโหลด
                     </span>
@@ -727,16 +769,66 @@
     const fname = document.querySelector('input[name="fname"]');
     const lname = document.querySelector('input[name="lname"]');
     const email = document.querySelector('input[name="email"]');
-
-    if (!fname.checkValidity() || !lname.checkValidity() || !email.checkValidity()) {
-        e.preventDefault(); // ขัดขวางการส่งฟอร์ม
+    
+    // ตรวจสอบว่าค่าหลังจาก trim แล้วไม่ใช่ค่าว่าง
+    if (!fname.value.trim() || !lname.value.trim() || !email.value.trim()) {
+        e.preventDefault(); // ป้องกันการส่งฟอร์ม
+        
+        // เพิ่ม class is-invalid สำหรับ input ที่มีค่าว่าง
+        if (!fname.value.trim()) {
+            fname.classList.add('is-invalid');
+        } else {
+            fname.classList.remove('is-invalid');
+        }
+        
+        if (!lname.value.trim()) {
+            lname.classList.add('is-invalid');
+        } else {
+            lname.classList.remove('is-invalid');
+        }
+        
+        if (!email.value.trim()) {
+            email.classList.add('is-invalid');
+        } else {
+            email.classList.remove('is-invalid');
+        }
+        
         Swal.fire({
             icon: 'warning',
             title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
-            text: 'ชื่อ นามสกุล และอีเมลเป็นข้อมูลที่จำเป็น'
+            text: 'ชื่อ และนามสกุลไม่สามารถเป็นค่าว่างหรือเว้นวรรคได้'
         });
+        return false;
+    }
+    
+    // ตรวจสอบรูปแบบอีเมล
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email.value.trim())) {
+        e.preventDefault();
+        email.classList.add('is-invalid');
+        Swal.fire({
+            icon: 'warning',
+            title: 'รูปแบบอีเมลไม่ถูกต้อง',
+            text: 'กรุณาตรวจสอบรูปแบบอีเมล'
+        });
+        return false;
+    } else {
+        email.classList.remove('is-invalid');
     }
 });
+
+// เพิ่ม event listener สำหรับการเปลี่ยนแปลงค่าใน input
+document.querySelectorAll('input[name="fname"], input[name="lname"], input[name="email"]').forEach(input => {
+    input.addEventListener('input', function() {
+        if (this.value.trim()) {
+            this.classList.remove('is-invalid');
+        } else {
+            this.classList.add('is-invalid');
+        }
+    });
+});
+
+
   </script>
 </body>
 

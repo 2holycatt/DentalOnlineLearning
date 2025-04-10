@@ -20,7 +20,8 @@ const profileController = require('../controller/profileController');
 const studentQuizController = require('../controller/studentQuizController')
 const Subject = require('../models/subjects');
 const User = require('../models/user.model');
-
+const { uploadExcelFile } = require('../middleware/multer');
+const { uploadExcel } = require('../controller/adminController');
 
 
 // Middleware For Files Uploading
@@ -126,6 +127,7 @@ router.get('/adminIndex/manageStudent', teacherMiddleware, adminController.manag
 // router.get('/adminIndex/uploadStudent2', teacherMiddleware, adminController.uploadStudent2);
 router.get('/adminIndex/downloadFile', teacherMiddleware, adminController.downloadFile);
 
+router.post('/adminIndex/upload-excel', uploadExcelFile.single('excelFile'), uploadExcel);
 router.get('/adminIndex/uploadStudent', teacherMiddleware, adminController.uploadStudent);
 router.get('/adminIndex/uploadStudent2', teacherMiddleware, adminController.uploadStudent2);
 

@@ -90,6 +90,38 @@ async function getSubjectsForNav(userId) {
 }
 
 
+const uploadExcel = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).render('upload-file-2', {
+        formData: {},
+        error: 'กรุณาเลือกไฟล์ Excel ก่อนอัปโหลด',
+        userData: await User.findById(req.session.userId),
+        theme: req.session.theme || 'light',
+        isSidebarOpen: false,
+        navSubjects: await getSubjectsForNav(req.session.userId)
+      });
+    }
+     // เรียกใช้ฟังก์ชันประมวลผลไฟล์ Excel ของคุณที่มีอยู่แล้ว
+    // processExcelFile(req.file);
+    
+    // ส่งผู้ใช้กลับไปที่หน้า upload student พร้อมข้อความสำเร็จ
+    req.session.uploadSuccess = true;
+    res.redirect('/adminIndex/uploadStudent');
+  } catch (error) {
+    console.error('Excel upload error:', error);
+    res.status(500).render('upload-file-2', {
+      formData: {},
+      error: 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์: ' + error.message,
+      userData: await User.findById(req.session.userId),
+      theme: req.session.theme || 'light',
+      isSidebarOpen: false,
+      navSubjects: await getSubjectsForNav(req.session.userId)
+    });
+  }
+};
+
+
 const adminIndex = async (req, res) => {
   try {
     const userData = await User.findById(req.session.userId);
@@ -144,6 +176,8 @@ const uploadStudent = async (req, res) => {
     
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+        // ดึงผลการอัปโหลดจาก session ถ้ามี
+    const uploadResults = req.session.uploadResults;
 
     const allStudents = await Student.paginate({}, {
       page,
@@ -164,7 +198,8 @@ const uploadStudent = async (req, res) => {
       navSubjects,
       userData,
       theme,
-      isSidebarOpen
+      isSidebarOpen,
+      uploadResults: uploadResults || null
     });
 
   } catch (error) {
@@ -179,8 +214,12 @@ const uploadStudent2 = async (req, res) => {
     const navSubjects = await getSubjectsForNav(req.session.userId);
     const theme = req.session.theme || 'light'; 
     const isSidebarOpen = false; 
+    // ดึงผลการอัปโหลดจาก session ถ้ามี
+    const uploadResults = req.session.uploadResults;
 
-    res.render("upload-file-2", { formData: {}, error: null ,theme,isSidebarOpen,userData,navSubjects});
+
+    res.render("upload-file-2", { formData: {}, error: null ,theme,isSidebarOpen,userData,navSubjects,      uploadResults: uploadResults || null,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
@@ -2608,5 +2647,6 @@ module.exports = {
   archivedSubjectIndex,
   archiveSubject,
   restoreSubject,
-  getSubjectStudents
+  getSubjectStudents,
+  uploadExcel,
 }

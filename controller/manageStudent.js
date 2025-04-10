@@ -1,6 +1,6 @@
 const multer = require('multer');
 const xlsx = require('xlsx');
-const upload = multer({ dest: 'uploads/' });
+// const upload = multer({ dest: 'uploads/' });
 const ExcelJS = require('exceljs');
 
 const Student = require("../models/student.model");
@@ -11,6 +11,9 @@ const Subject = require("../models/subjects");
 // const { findByIdAndUpdate, populate } = require('../models/Layout1');
 const fs = require('fs');
 const iconv = require('iconv-lite');
+const storage = multer.memoryStorage();
+const { upload } = require('../middleware/multer');
+
 
 async function getSubjectsForNav(userId) {
   try {
@@ -118,6 +121,15 @@ const uploadedFile = async (req, res) => {
     const fileType = fileParts[fileParts.length - 1];
     const fileBuffer = fs.readFileSync(filePath);
 
+   // สร้าง object สำหรับเก็บข้อมูลผลการประมวลผล
+   const summary = {
+    total: 0,
+    added: 0,
+    updated: 0,
+    skipped: 0,
+    errors: []
+  };
+
     if (fileType === "xls") {
       
       const decodedBuffer = iconv.decode(fileBuffer, 'win874');
@@ -157,8 +169,9 @@ const uploadedFile = async (req, res) => {
         });
       }
     
-      // ดึงรายชื่อนักศึกษา
+         // ดึงรายชื่อนักศึกษา
       const studentLists = data.slice(6, -3);
+      summary.total = studentLists.length;
       const weeks = generateWeeks();
     
       // ประมวลผลรายชื่อนักศึกษา
@@ -185,25 +198,110 @@ const uploadedFile = async (req, res) => {
             lname,
             studentEmail
           });
-    
-          // ค้นหาหรือสร้าง User
-          let user = await User.findOne({ email: studentEmail });
-          if (!user) {
-            user = await User.create({
-              email: studentEmail,
-              prefix: prefix,
-              fname: fname,
-              lname: lname,
-              name: studentName,
-              major: studentMajor,
-              role: "student",
-              studentFromKku: true
-            });
-          }
-    
-          // ค้นหาหรือสร้าง Student
+
+
+          // ตรวจสอบนักศึกษาที่มีอยู่แล้ว
           let student = await Student.findOne({ studentId: studentId });
-          if (!student) {
+          
+          if (student) {
+            // กรณีมีนักศึกษาอยู่แล้ว
+            console.log('Found existing student:', studentId);
+            
+            // ดึงข้อมูล User ปัจจุบันของนักศึกษา
+            let user = await User.findById(student.user);
+            
+            if (user) {
+              // ตรวจสอบว่าข้อมูลที่ได้จากไฟล์แตกต่างจากข้อมูลในฐานข้อมูลหรือไม่
+              let hasChanges = false;
+              
+              if (user.email !== studentEmail || 
+                  user.prefix !== prefix || 
+                  user.fname !== fname || 
+                  user.lname !== lname || 
+                  user.major !== studentMajor) {
+                
+                // อัปเดตข้อมูลผู้ใช้
+                user.email = studentEmail;
+                user.prefix = prefix;
+                user.fname = fname;
+                user.lname = lname;
+                user.name = studentName;
+                user.major = studentMajor;
+                
+                await user.save();
+                hasChanges = true;
+              }
+              
+              // ตรวจสอบว่ามีวิชานี้อยู่แล้วหรือไม่
+              const hasSubject = student.subjects.some(s => 
+                s.subjectMongooseId.toString() === currentSubject._id.toString()
+              );
+              
+              if (!hasSubject) {
+                // เพิ่มวิชาให้กับนักศึกษา
+                await Student.findByIdAndUpdate(
+                  student._id,
+                  {
+                    $push: {
+                      subjects: {
+                        subjectMongooseId: currentSubject._id,
+                        subjectId: courseId,
+                        subjectSemster: semster,
+                        weeks: weeks,
+                        studentNumber: studentNumber
+                      }
+                    }
+                  },
+                  { new: true }
+                );
+                hasChanges = true;
+              }
+              
+              // อัปเดตข้อมูลใน Subject
+              const isStudentInSubject = currentSubject.students.includes(student._id);
+              if (!isStudentInSubject) {
+                await Subject.findByIdAndUpdate(
+                  currentSubject._id,
+                  { $addToSet: { students: student._id } },
+                  { new: true }
+                );
+                hasChanges = true;
+              }
+              
+              if (hasChanges) {
+                summary.updated++;
+              } else {
+                summary.skipped++;
+              }
+              
+            } else {
+              // กรณีไม่พบ user แต่พบ student (ข้อมูลไม่ตรงกัน)
+              summary.errors.push({
+                studentId,
+                error: 'พบข้อมูลนักศึกษาแต่ไม่พบผู้ใช้ที่เชื่อมโยง'
+              });
+              summary.skipped++;
+            }
+          } else {
+            // กรณีไม่มีนักศึกษา สร้างใหม่
+            // ตรวจสอบว่ามี user ที่มี email นี้อยู่แล้วหรือไม่
+            let user = await User.findOne({ email: studentEmail });
+            
+            if (!user) {
+              // สร้าง user ใหม่
+              user = await User.create({
+                email: studentEmail,
+                prefix: prefix,
+                fname: fname,
+                lname: lname,
+                name: studentName,
+                major: studentMajor,
+                role: "student",
+                studentFromKku: true
+              });
+            }
+            
+            // สร้างนักศึกษาใหม่
             student = await Student.create({
               studentId: studentId,
               user: user._id,
@@ -226,40 +324,22 @@ const uploadedFile = async (req, res) => {
               { student: student._id },
               { new: true }
             );
-          } else {
-            // เพิ่มวิชาให้กับนักศึกษาที่มีอยู่แล้ว
-            const hasSubject = student.subjects.some(s => 
-              s.subjectMongooseId.toString() === currentSubject._id.toString()
+            
+            // อัพเดต Subject reference
+            await Subject.findByIdAndUpdate(
+              currentSubject._id,
+              { $addToSet: { students: student._id } },
+              { new: true }
             );
-    
-            if (!hasSubject) {
-              await Student.findByIdAndUpdate(
-                student._id,
-                {
-                  $push: {
-                    subjects: {
-                      subjectMongooseId: currentSubject._id,
-                      subjectId: courseId,
-                      subjectSemster: semster,
-                      weeks: weeks,
-                      studentNumber: studentNumber
-                    }
-                  }
-                },
-                { new: true }
-              );
-            }
+            
+            summary.added++;
           }
-    
-          // อัพเดต Subject reference
-          await Subject.findByIdAndUpdate(
-            currentSubject._id,
-            { $addToSet: { students: student._id } },
-            { new: true }
-          );
     
         } catch (error) {
           console.error('Error processing student:', error);
+          summary.errors.push({
+            error: error.message || 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ'
+          });
           continue;
         }
       }
@@ -268,25 +348,36 @@ const uploadedFile = async (req, res) => {
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
+      
+      // แสดงผลการอัปโหลดด้วย SweetAlert
+      req.session.uploadResults = {
+        success: true,
+        message: 'อัปโหลดรายชื่อนักศึกษาสำเร็จ',
+        summary: summary
+      };
 
       return res.redirect('/adminIndex/uploadStudent');
     }
 
-     else if (fileType === "xlsx") {
+    else if (fileType === "xlsx") {
+      // ต้องมีการเปลี่ยนแปลงในส่วนของการประมวลผลไฟล์ xlsx ด้วย
+      // โดยใช้ตรรกะเดียวกับ xls ด้านบน
       const workbook = xlsx.readFile(filePath);
-
-      // สมมติว่าเราต้องการอ่านข้อมูลจากแผ่นแรก
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-
-      // แปลงข้อมูลใน worksheet เป็น JSON
       const data = xlsx.utils.sheet_to_json(worksheet);
+      
+      // แสดงข้อมูลตัวอย่าง (สามารถลบหรือเปลี่ยนเป็นการประมวลผลจริงได้)
       for (let i = 0; i <= 5 && i < data.length; i++) {
         console.log(data[i]);
       }
+      
+      // ลบไฟล์หลังจากประมวลผลเสร็จ
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+      
       res.json(data);
-      // แสดงผล 5 แถวแรก
-
     }
 
 

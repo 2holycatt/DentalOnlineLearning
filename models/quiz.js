@@ -193,6 +193,11 @@ const eachAttemptSchema = new mongoose.Schema({
         type: Number,
         default: 1
     },
+    status: {
+        type: String,
+        enum: ['not_started', 'in_progress', 'completed'],
+        default: 'not_started'
+      },
     startedAt: {
         type: Date,
         default: Date.now

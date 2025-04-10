@@ -1686,13 +1686,25 @@ async function savechanges() {
         const questionIndex = parseInt(document.getElementById('questionIndex').value);
         const optionIndex = document.getElementById('optionIndex').value;
 
+        // ตรวจสอบว่ามีการเลือกไฟล์หรือไม่
+        if (!document.getElementById('avatar').files[0]) {
+            Swal.fire({
+                icon: 'error',
+                title: 'กรุณาเลือกรูปภาพ'
+            });
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = 'บันทึก';
+            return;
+        }
+
         // เพิ่ม metadata ลงใน formData
         formData.append('target', target);
         formData.append('questionIndex', questionIndex);
         formData.append('optionIndex', optionIndex);
+        formData.append('quizId', quizId);
 
         const response = await fetch(`/adminIndex/uploadQuestionImage`, {
-            method: 'POST',
+            method: 'POST', // ต้องระบุ method เป็น POST
             body: formData
         });
 
@@ -1727,8 +1739,9 @@ async function savechanges() {
                 showConfirmButton: false,
                 timer: 1500
             });
+        } else {
+            throw new Error(data.message || 'อัพโหลดรูปภาพไม่สำเร็จ');
         }
-
     } catch (error) {
         console.error('Upload error:', error);
         Swal.fire({
@@ -1736,7 +1749,6 @@ async function savechanges() {
             title: 'เกิดข้อผิดพลาด',
             text: error.message || 'ไม่สามารถอัปโหลดรูปภาพได้'
         });
-
     } finally {
         const saveBtn = document.querySelector('#exampleModalLong .modal-footer .btn-primary');
         saveBtn.disabled = false;

@@ -7,7 +7,6 @@ const SchoolYear = require("../models/schoolYear");
 const Subject = require("../models/subjects");
 const Assignment = require("../models/Assignments");
 const fs = require('fs');
-const path = require('path');
 const multer = require('multer');
 const upload = multer();
 const { uploadQuestionImage } = require('../middleware/multer');
@@ -19,11 +18,21 @@ const Grid = require('gridfs-stream');
 const { Readable } = require('stream');
 const schedule = require('node-schedule');
 const cron = require('node-cron');
-
+const { S3Client } = require('@aws-sdk/client-s3');
+const multerS3 = require('multer-s3');
+const path = require('path');
 
 // const Notification = require("../models/notification");
 // const { createNotification } = require('./notificationController');
 // const { sendEmail } = require('../service/notification');
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  }
+});
+
 
 const handleUploadError = (error, req, res, next) => {
   console.error('Upload error:', error);
@@ -1095,6 +1104,7 @@ exports.search = async (req, res) => {
 
 exports.uploadQuestionImage = [
   uploadQuestionImage.single('avatar'),
+  handleUploadError,
   async (req, res) => {
       try {
           if (!req.file) {
@@ -1104,24 +1114,13 @@ exports.uploadQuestionImage = [
               });
           }
 
-          // ตรวจสอบ file type
-          if (!req.file.mimetype.startsWith('image/')) {
-              return res.status(400).json({
-                  success: false,
-                  message: 'กรุณาอัพโหลดไฟล์รูปภาพเท่านั้น'
-              });
-          }
-
-          const imageUrl = req.file.location; // URL จาก S3
-          const contentType = req.file.mimetype;
-
+          // ส่งข้อมูลกลับไปยัง client
           res.json({
               success: true,
               message: 'อัปโหลดรูปภาพสำเร็จ',
-              imageUrl: imageUrl,
-              contentType: contentType
+              imageUrl: req.file.location, // S3 URL ของไฟล์
+              contentType: req.file.mimetype
           });
-
       } catch (error) {
           console.error('Upload error:', error);
           res.status(500).json({

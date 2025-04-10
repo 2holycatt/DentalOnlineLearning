@@ -102,21 +102,23 @@ const uploadQuestionImage = multer({
   storage: multerS3({
       s3: s3Client,
       bucket: process.env.AWS_BUCKET_NAME,
+      acl: 'public-read', // ตั้งค่าการเข้าถึง (optional)
       key: function (req, file, cb) {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-          cb(null, `quiz-images/${uniqueSuffix}-${file.originalname}`);
+          const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+          const fileName = `question_pics/${timestamp}_${file.originalname.replace(/\s+/g, '_')}`;
+          cb(null, fileName);
       },
       contentType: multerS3.AUTO_CONTENT_TYPE
   }),
-  limits: {
+  limits: { 
       fileSize: 5 * 1024 * 1024 // จำกัดขนาดไฟล์ที่ 5MB
   },
-  fileFilter: (req, file, cb) => {
-      if (file.mimetype.startsWith('image/')) {
-          cb(null, true);
-      } else {
-          cb(new Error('อนุญาตเฉพาะไฟล์รูปภาพเท่านั้น'));
+  fileFilter: function (req, file, cb) {
+      // ตรวจสอบประเภทไฟล์
+      if (!file.mimetype.startsWith('image/')) {
+          return cb(new Error('เฉพาะไฟล์รูปภาพเท่านั้น'));
       }
+      cb(null, true);
   }
 });
 
@@ -139,10 +141,41 @@ const handleUploadError = (error, req, res, next) => {
   });
 };
 
+
+const excelStorage = multerS3({
+  s3: s3Client,
+  bucket: process.env.AWS_BUCKET_NAME,
+  acl: 'public-read', // ปรับตามความต้องการ
+  key: function (req, file, cb) {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const fileName = `uploads/excel/${timestamp}_${file.originalname.replace(/\s+/g, '_')}`;
+    cb(null, fileName);
+  },
+  contentType: multerS3.AUTO_CONTENT_TYPE
+});
+
+const uploadExcelFile = multer({
+  storage: excelStorage,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype === 'application/vnd.ms-excel' ||
+      file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error('รองรับเฉพาะไฟล์ Excel (.xls, .xlsx) เท่านั้น'));
+    }
+  }
+});
+
 module.exports = { 
   upload, 
   imgUpload,
   uploadQuestionImage,
-  handleUploadError
+  handleUploadError,
+  uploadExcelFile
 };
 
