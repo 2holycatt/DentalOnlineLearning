@@ -6,17 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <title>Home</title>
  
-<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js" defer></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+  <link rel="preload" href="/images/indexMed/Ellipse9.webp" as="image" fetchpriority="high">
+  <link rel="preload" href="/images/indexMed/DENTISTRY_KKU.webp" as="image">
+  <link rel="preload" href="/images/bg-2.webp" as="image" fetchpriority="high">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" as="style">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
-<!-- โหลด CSS ที่ไม่สำคัญแบบ Lazy -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" media="print" onload="this.media='all'">
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/owl.carousel.min.css">
-  <link rel="stylesheet" href="css/owl.theme.default.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css">
-  <link rel="stylesheet" href="css/style_2.css">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js" defer></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+  
+  <!-- Lazy-load non-critical CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" media="print" onload="this.media='all'">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" media="print" onload="this.media='all'">
+
+
 
   <%- include("./partials/header.ejs")%>
   <style>
@@ -200,28 +204,7 @@
       transition: 0.3s;
     }
 
-    .descp {
-      text-indent: 2em;
-      margin: 0 2em;
-    }
-
-    .rectangle-141 {
-      background-color: white;
-      border-radius: 0.75em;
-      box-shadow: 0em 0.75em 1.5em -0.25em #919eab1f, 0em 0em 0.125em #919eab33;
-      height: 14.6875em;
-      left: 4.6875em;
-      top: 37.3125em;
-      width: 39.125em;
-      width: 75%;
-      margin: 2em 2em;
-    }
-
-    /* .inFirst {
-      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
-      border-bottom: 1px solid #EAEFF4;
-
-    } */
+  
 
     .inFirst {
       display: flex;
@@ -229,56 +212,7 @@
       position: relative;
     }
 
-    .classroomDiv {
-      /* position: absolute; */
-      display: flex;
-      justify-content: start;
-      z-index: 1;
-    }
-
-    .classroom-p {
-      background-color: #8A2BE2;
-      color: white !important;
-      padding: 0.5em !important;
-      border-radius: 0 0 0.5em 0 !important;
-      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
-
-
-    }
-
-    /* .classroomDiv2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      position: absolute;
-      z-index: 1;
-      top: 55%;
-    } */
-
-    .card-1 {
-      width: 90% !important;
-      height: fit-content !important;
-      transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
-      cursor: pointer;
-      border-radius: 0.5em;
-      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
-
-    }
-
-    .card-1:hover {
-      transform: scale(1.05);
-    }
-
-    .card-header {
-      border-right: 1px solid #EAEFF4;
-      border-bottom: 1px solid #EAEFF4;
-
-    }
-
-    .classroomDiv {
-      border-top: 1px solid #EAEFF4;
-      /* padding-top: 2em !important; */
-
-    }
+  
 
     .a-list-1 {
       color: #8A2BE2 !important;
@@ -673,13 +607,13 @@
     <div class="setShadow">
       <div class="inFirst row px-5 py-5 flex-column flex-md-row">
         <div class="col-md-4 d-flex justify-content-center">
-            <img class="w-75 h-auto logo-dent py-2" 
-              src="/images/indexMed/Ellipse9.png" 
-              alt="ตราสัญลักษณ์ คณะทันตแพทยศาตร์" 
-         
-              loading="eager" 
-              fetchpriority="high"
-              decoding="async">
+          <img class="w-75 h-auto logo-dent py-2" 
+          src="/images/indexMed/Ellipse9.webp" 
+          alt="ตราสัญลักษณ์ คณะทันตแพทยศาตร์" 
+          loading="eager" 
+          fetchpriority="high" 
+          decoding="async" 
+          width="320" height="350">
         </div>
         <div class="home-container col-md-8 d-flex text-white align-items-center mt-4 mt-md-0">
           <div style="max-width: 780px;">
@@ -730,7 +664,11 @@
         <div class="w-100 d-flex justify-content-center">
             <div class="w-50 d-flex justify-content-center" style="flex-direction: column; align-items: center;">
                 <a href="/adminIndex" class="logo-footer">
-                    <img src="/images/indexMed/DENTISTRY_KKU.svg.png" alt="โลโก้" class="img-logo" style="max-width: 150px;">
+                  <img class="img-logo" 
+                  src="/images/indexMed/DENTISTRY_KKU.webp" 
+                  alt="โลโก้" 
+                  loading="lazy" 
+                  width="150" height="150">
                 </a>
             </div>
         </div>
