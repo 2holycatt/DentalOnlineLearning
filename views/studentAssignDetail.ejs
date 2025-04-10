@@ -248,6 +248,10 @@
           <div class="fw-normal fs-6 ms-1">
             <span> <i class="bi bi-clipboard-check me-1" style="cursor: default;color: #8A2BE2;"></i>
             </span>
+            <span>
+              <a class='link' href="/subjects"> รายวิชาทั้งหมด </a>
+            </span>
+            <span> / </span> 
             <a class="grey link" href="/eachSubject?subjectDbId=<%=subject._id%>">
               <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
             </a> 
@@ -265,43 +269,10 @@
             <div class="row  ms-2 ">
           <div class="form-control w-100 descriptionText p-1" name="Description" disabled><%=assignment.Description%></div>
         </div>
+        <br>
           <div class="col-12 row my-2 ms-2">
            
-            <div class="row">
-              <div class="col-5 mb-3">
-              </div>
-              <% if (userSubmit) {%>
-              <div class="col-12 mb-3 d-flex">
-                <% if (userSubmit.sendStatus.status == "ส่งตรงเวลา") { %>
-  
-                <p class="mx-2"><span class="fw-bold ">สถานะการส่ง: </span><span class="text-success"><%=userSubmit.sendStatus.status%></span></p>
-                <p class="mx-2"><span class="fw-bold ">คะแนนที่ได้: </span><%=userSubmit.Score%></p>
-  
-                <a href="#editAssignment" class="submit-a mx-2 text-primary"><i class="bi bi-arrow-right-short text-primary"></i>
-                  แก้ไขงานที่ส่ง</i>
-                </a>
-                <% } else if (userSubmit.sendStatus.status == "ส่งช้า") { %>
-                <% const day = userSubmit.sendStatus.day; %>
-                <% const hour = userSubmit.sendStatus.hour; %>
-                <% const minute = userSubmit.sendStatus.minute; %>
-  
-                <p class="mx-1"><span class="fw-bold ">สถานะการส่ง: </span> <span class="text-danger"><%=userSubmit.sendStatus.status%> <%=day%> วัน <%=hour%> ชั่วโมง <%=minute%> นาที</span></p>
-                <p class="ms-2 me-3"><span class="fw-bold ">คะแนนที่ได้: </span><%=userSubmit.Score%></p>
-                <a href="#editAssignment" class="submit-a mx-2 text-primary"><i class="bi bi-arrow-right-short text-primary"></i>
-                  แก้ไขงานที่ส่ง</i>
-                </a>
-                <% } %>
-              </div>
-              <% } else if (!userSubmit) {%>
-              <div class="col-12 mb-3 d-flex">
-                <p class="ms-1 me-3"><span class=" ">สถานะการส่ง: </span><span class="text-danger">ยังไม่ส่ง</span></p>
-                <p class="mx-2"><span class=" ">คะแนนที่ได้: </span>0</p>
-                <a href="#submitForm" class="submit-a mx-1 text-primary"><i class="bi bi-arrow-right-short text-primary"></i>
-                  ส่งงาน</i>
-                </a>
-              </div>
-              <% } %>
-            </div> 
+         
             <div class="col-4">
               <p class="fs-6 fw-bold"><i class="fs-5 bi bi-stopwatch text-success"></i><span class="mx-1 text-success">วันที่เปิดให้ส่ง</span>: <span class="fw-normal"><%=formattedStartDate%></span></p>
             </div>
@@ -313,7 +284,7 @@
       <br>
         <div class="row ms-2">
           <div class="col-8">
-            <p class="my-1 w-100 fw-bold text-primary">ไฟล์ที่เกี่ยวข้อง:</p>
+            <p class="my-1 w-100 fw-bold">ไฟล์ที่เกี่ยวข้อง:</p>
             <% if (assignment.files.length > 0) { %>
             <div class="row">
               <div class="col-12">
@@ -321,8 +292,7 @@
                 <% files.forEach((file, index) => { %>
                 <a class="file-a" href="/adminIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
                   <span class=""><%=index+1%>. </span>
-                  <%=file.file.slice(67)%>
-                </a>
+                  <%= file.file ? file.file.slice(67) : file.originalName || 'ไม่พบชื่อไฟล์' %>                </a>
                 <br>
                 <% }); %>
               </div>
@@ -335,21 +305,63 @@
           <div class="col-4">
             <div class="row ms-2">
               <div class="col-6">
-                <p class="my-1 w-100 text-center fw-bold fs-6 text-primary">คะแนนเต็ม</p>
+                <p class="my-1 w-100 text-center fw-bold fs-5 ">สถานะการส่ง</p>
               </div>
               <div class="col-6">
-                <p class="studentSubmit-h my-1  w-100 text-center fw-bold fs-6 text-primary" >จำนวนนักศึกษาที่ส่งงาน</p>
+                <p class="my-1 w-100 text-center fw-bold fs-5 ">คะแนนที่ได้</p>
               </div>
             </div>
             <div class="row">
               <div class="h-auto row">
-                <div class="col-6 setRight p-3 d-flex justify-content-center">
-                  <p class="fw-bold fs-2 text-success"><%=assignment.Score%></p>
+                <div class="col-6 setRight p-3 d-flex justify-content-center align-items-center flex-column">
+                  <% if (userSubmit) { %>
+                    <% if (userSubmit.sendStatus && userSubmit.sendStatus.status) { %>
+                      <% if (userSubmit.sendStatus.status == "ส่งตรงเวลา") { %>
+                        <p class="fw-bold fs-5 text-success mb-2"><%=userSubmit.sendStatus.status%></p>
+                      <% } else { %>
+                        <p class="fw-bold fs-5 text-danger mb-2">
+                          <%=userSubmit.sendStatus.status%>
+                          <% if (userSubmit.sendStatus.day || userSubmit.sendStatus.hour || userSubmit.sendStatus.minute) { %>
+                            <br>
+                            <span class="fs-5">
+                              <%=userSubmit.sendStatus.day%> วัน
+                              <%=userSubmit.sendStatus.hour%> ชั่วโมง
+                              <%=userSubmit.sendStatus.minute%> นาที
+                            </span>
+                          <% } %>
+                        </p>
+                      <% } %>
+                      <div class="mt-2">
+                        <a href="#editAssignment" class="submit-a text-primary">
+                          <i class="bi bi-pencil me-1"></i>แก้ไขงานที่ส่ง
+                        </a>
+                      </div>
+                    <% } %>
+                  <% } else { %>
+                    <p class="fw-bold fs-5 text-danger mb-2">ยังไม่ส่ง</p>
+                    <div class="mt-2">
+                      <a href="#submitForm" class="submit-a text-primary">
+                        <i class="bi bi-send me-1"></i>ส่งงาน
+                      </a>
+                    </div>
+                  <% } %>
                 </div>
-                <div class="col-6 p-3 d-flex justify-content-center">
-                  <p class="fw-bold fs-2 text-secondary"><%=assignment.sentCount%></p>
+                
+                <div class="col-6 p-3 d-flex justify-content-center align-items-center">
+                  <p class="fw-bold fs-2 <%= userSubmit ? 'text-success' : 'text-danger' %>">
+                    <%= userSubmit ? userSubmit.Score : '0' %> / <%=assignment.Score%>
+                  </p>
                 </div>
               </div>
+            </div>
+          
+            <!-- Add submission stats at bottom -->
+            <div class="mt-3 pt-3 border-top ">
+              <p class="text-secondary mb-1 text-center">
+                <i class="bi bi-people me-2"></i>
+                จำนวนผู้ส่งงาน: <%=assignment.sentCount%> คน
+              </p>
+           
             </div>
           </div>
         </div>
@@ -403,7 +415,8 @@
                   <div class="row">
                     <div class="col-7">
                       <a class="file-a-2 mb-1" href="/studentIndex/showFileArray2?id=<%=userSubmit._id%>&index=<%=index%>">
-                        <%=index+1%>. <%= file.file ? file.file.slice(67) : file.file %>
+                        <%=index+1%>.  <%= file.file ? file.file.slice(67) : file.originalName || 'ไม่พบชื่อไฟล์' %>                </a>
+
                       </a>
                     </div>
                     <div class="col-2 d-flex justify-content-center">
@@ -428,7 +441,11 @@
             </div>
             <div class="col-12 d-flex justify-content-start pt-4" style="border-top: 1px solid #EAEFF4;">
               <button class="btn btn-warning p-2" type="submit">บันทึกการแก้ไข <i class="bi bi-pencil text-dark"></i></button>
-              <a href="/studentCancelAssign?submitId=<%=userSubmit._id%>&assignmentId=<%=assignment._id%>" class="btn btn-danger p-2 mx-3" type="submit">ยกเลิกการส่งงาน </a>
+              <a href="/studentCancelAssign?submitId=<%=userSubmit._id%>&assignmentId=<%=assignment._id%>" 
+                class="btn btn-danger p-2 mx-3"
+                onclick="return confirm('คุณแน่ใจหรือไม่ที่จะยกเลิกการส่งงาน?')">
+                 ยกเลิกการส่งงาน
+             </a>
             </div>
           </div>
         </form>

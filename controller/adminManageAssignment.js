@@ -89,24 +89,42 @@ const assignmentDetail = async (req, res) => {
     const isSidebarOpen = false;
     const assignId = req.query.id;
     const assignment = await Assignments.findById(assignId)
-    .populate({
-      path: 'subject',
-      model: 'subject', // Use lowercase 'subject' to match model name
-      select: 'subjectId subjectName semester section'
-    })
-    .populate({
-      path: 'submitDetail',
-      populate: {
-        path: 'user',
+      .populate({
+        path: 'subject',
+        select: 'subjectId subjectName semester section'
+      })
+      .populate({
+        path: 'submitDetail',
         populate: {
-          path: 'student'
+          path: 'user',
+          populate: {
+            path: 'student'
+          }
         }
-      }
-    });
+      })
+      .lean();
 
-  if (!assignment) {
-    return res.status(404).send('Assignment not found');
-  }
+    if (!assignment) {
+      return res.status(404).send('Assignment not found');
+    }
+
+// แก้ไขการจัดการไฟล์
+if (assignment.files && Array.isArray(assignment.files)) {
+  assignment.files = assignment.files
+    .filter(file => file && file.file) // กรองไฟล์ที่ไม่มีข้อมูล
+    .map(file => ({
+      ...file,
+      originalName: file.file.split('/').pop(),
+      displayName: decodeURIComponent(file.file.split('/').pop()),
+      file: file.file.startsWith('http') ? 
+        file.file : 
+        `${process.env.AWS_BUCKET_URL || ''}${file.file}`
+    }));
+} else {
+  assignment.files = [];
+}
+
+console.log('Assignment files:', assignment.files);
 
     const getSubmitDetail = {
       submitDetail: await Promise.all(assignment.submitDetail.map(async (detail) => {
@@ -171,10 +189,8 @@ const assignmentDetail = async (req, res) => {
       formattedDeadline,
       getSubmitDetail,
       navSubjects,
-      subject: assignment.subject,
       userData,
       theme,
-      
       isSidebarOpen
     });
 
@@ -186,7 +202,7 @@ const assignmentDetail = async (req, res) => {
 
 const uploadAssignments = asyncWrapper(async (req, res) => {
   try {
-    const { subjectId, name, Description, StartDate, Deadline, Score, schoolYear } = req.body;
+    const { subjectId, name, Description, StartDate, Deadline, Score } = req.body;
     const files = req.files;
    
     const subject = await Subject.findById(subjectId);
@@ -194,69 +210,62 @@ const uploadAssignments = asyncWrapper(async (req, res) => {
       return res.status(404).send('Subject not found');
     }
 
-    const users = await User.find();
-    const userData = await User.findById(req.session.userId);
-    const header = "การมอบหมายงานใหม่จาก Online Dentristy Learning";
-    const whatCome = "มีงานที่มอบหมายใหม่เรื่อง";
-    // console.log(files);
-    // res.json(files);
-
+    // สร้าง assignment ใหม่
     const saveAssign = new Assignments({
       name,
       Description,
       StartDate,
       Deadline,
       Score,
-      subject: subject._id, // Reference to subject
+      subject: subject._id,
       files: files.map(file => ({
-        file: file.location,
-        contentType: file.mimetype
+        file: file.location, // S3 path
+        contentType: file.mimetype,
+        originalName: file.originalname 
       }))
     });
 
-    const fileData = files.map(files => {
-      return {
-        // file: files.filename,
-        file: files.location,
-        contentType: files.mimetype
-      };
-    });
-
+    // บันทึก assignment
     await saveAssign.save();
-    const assignId = saveAssign._id;
 
-    for (const i of fileData) {
-      const updatedAssign = await Assignments.findByIdAndUpdate(
-        assignId,
-        { $push: { files: i } },
-        { new: true }
-      );
-    }
-
+    // อัพเดท subject โดยเพิ่ม reference ไปยัง assignment
     await Subject.findByIdAndUpdate(
       subject._id,
       { $push: { Assignments: saveAssign._id } },
       { new: true }
     );
 
-    await Promise.all(users.map(async user => {
-      const findUser = await User.findById(user._id)
-        .populate({
-          path: "student",
-          populate: {
-            path: "subject",
-          }
-        });
-      // if (findUser.student && (findUser.student.schoolYear.schoolYear == checkExists.schoolYear)) {
-      //   const email = user.email;
-      //   sendEmail(email, header, name, userData, whatCome);
-      // }
-    }));
+    // ส่ง email notification (ถ้าต้องการ)
+    const users = await User.find({ role: 'student' });
+    const userData = await User.findById(req.session.userId);
+    
+    // if (users.length > 0) {
+    //   const header = "การมอบหมายงานใหม่จาก Online Dentristy Learning";
+    //   const whatCome = "มีงานที่มอบหมายใหม่เรื่อง";
 
+    //   // ส่ง email แบบ Promise.all
+    //   await Promise.all(users.map(async user => {
+    //     try {
+    //       const studentData = await Student.findOne({ user: user._id })
+    //         .populate('subjects.subjectMongooseId');
+
+    //       if (studentData && studentData.subjects.some(s => 
+    //         s.subjectMongooseId && 
+    //         s.subjectMongooseId._id.toString() === subject._id.toString()
+    //       )) {
+    //         await sendEmail(user.email, header, name, userData, whatCome);
+    //       }
+    //     } catch (err) {
+    //       console.error(`Error sending email to ${user.email}:`, err);
+    //     }
+    //   }));
+    // }
+
+    // redirect กลับไปหน้า subject
     res.redirect(`/eachSubject?subjectDbId=${subject._id}`);
 
   } catch (error) {
-    console.error(error);
+    console.error('Upload Assignment Error:', error);
     res.status(500).send('เกิดข้อผิดพลาดในการอัปโหลดและเขียนลงในฐานข้อมูล');
   }
 });

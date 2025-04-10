@@ -93,6 +93,7 @@ const studentLesson = async (req, res) => {
 
 const studentAssignment = async (req, res) => {
     try {
+        // First find the user and populate required data
         const userData = await User.findById(req.session.userId)
             .populate({
                 path: "student",
@@ -103,23 +104,38 @@ const studentAssignment = async (req, res) => {
                     }
                 }
             });
-        // res.json(userData);
-        const subjects = userData.student.subjects;
-        // const subjects = getSubjects.subjectMongooseId;
-        // res.json(getSubjects)
 
+        // Check if user and student data exists
+        if (!userData || !userData.student) {
+            return res.status(404).send("ไม่พบข้อมูลนักศึกษา");
+        }
+
+        // Access subjects after verification
+        const subjects = userData.student.subjects || [];
+
+        // Format dates for assignments
         subjects.forEach(subject => {
-            const getInSub = subject.subjectMongooseId;
-            getInSub.Assignments.forEach(assignment => {
-                assignment._doc.formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
-                assignment._doc.formattedDeadline = moment(assignment.Deadline).format('DD/MM/YYYY hh:mm A');
-            })
+            if (subject.subjectMongooseId && subject.subjectMongooseId.Assignments) {
+                subject.subjectMongooseId.Assignments.forEach(assignment => {
+                    assignment._doc.formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY hh:mm A');
+                    assignment._doc.formattedDeadline = moment(assignment.Deadline).format('DD/MM/YYYY hh:mm A');
+                });
+            }
         });
-        // // const getUserLessons = userData.student.schoolYear.lessonArray;
-        res.render("studentAssignment", { userData, subjects });
-        // res.json(subjects);
+
+        const theme = req.session.theme || 'light';
+        const isSidebarOpen = false;
+
+        res.render("studentAssignment", { 
+            userData, 
+            subjects,
+            theme,
+            isSidebarOpen
+        });
+
     } catch (error) {
-        console.error(error);
+        console.error('Error in studentAssignment:', error);
+        res.status(500).send("เกิดข้อผิดพลาดในการโหลดข้อมูล");
     }
 }
 

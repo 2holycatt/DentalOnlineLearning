@@ -562,6 +562,16 @@
 a.data-a .list-div-data:hover {
     background-color: rgba(0, 0, 0, 0.05);
 }
+.link{
+        color: gray;
+      }
+      .dark .link{
+        color: rgb(231, 231, 231);
+      }
+      .dark .link:hover ,.link:hover{
+        text-decoration: underline;
+        color: #ba55d3 !important;
+      }
       @media screen and (max-width: 768px) {
         .above-nav-status {
           display: none;
@@ -588,9 +598,28 @@ a.data-a .list-div-data:hover {
       <%- include("./partials/studentAside.ejs")%>
         <!-- <div style="width: 20%;"><p class="w-100">&nbsp;</p></div> -->
         <div class="aside-right bg-white h-auto p-4 m-3" style="width: 80%;">
-          <div class="manange-bar px-4 py-3 bg-white w-100">
-            <div class="mb-3">
-              <p class="fw-bold fs-3 my-1 lesson-bar">
+          <div class="manange-bar p-4 bg-white w-100">
+
+            <div class="fw-normal font14  ms-2">
+            <span><i class="bi bi-journal ms-0 me-2 purple" ></i> </span>
+            <span>
+              <a class='link' href="/subjects"> รายวิชาทั้งหมด </a>
+            </span>
+            <% if (subject.isArchived) { %>
+              <span> / </span> 
+              <span>
+                <a class='link' href="/archivedSubject"> รายวิชาที่ถูกจัดเก็บ </a>
+              </span> 
+            <% } %>
+            <span> / </span> 
+            <span>
+             <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
+            </span> 
+            </div>
+            <br>
+
+            <div class=" mb-3">
+              <p class="fw-bold fs-3 my-1 ms-2">
                 <span class=" fw-normal">
                   <%=subject.subjectId%>
                     <%=subject.subjectName%>
@@ -608,8 +637,15 @@ a.data-a .list-div-data:hover {
                   <%=subject.section%>
                 </span>
               </p>
-              <p class="grey m-3"><%=subject.description%></p>
+            <p class="grey my-3 ms-2"><%=subject.description%></p>
+            </div>
 
+            <div>
+              <!-- <div class="d-flex justify-content-start mx-3 mb-2">
+                <p>โดย</p>
+              </div> -->
+            
+            
               <% if (subject.isArchived) { %>
                 <br>
               <hr>
@@ -619,22 +655,6 @@ a.data-a .list-div-data:hover {
                 </p>
               <% } %>
             </div>
-            <div>
-              <!-- <div class="d-flex justify-content-start mx-3 mb-2">
-                <p>โดย</p>
-              </div> -->
-              <!-- <div class="d-flex justify-content-end">
-                <a class="m-1 p-2 btn btn-primary" href="/adminIndex/adminDashboard?subjectId=<%=subject._id%>" >
-                  แดชบอร์ด <i class="ms-1 bi bi-pie-chart-fill"></i>
-                </a>
-                <div>
-                 
-                  <a href="/adminIndex/deleteSubject?subjectId=<%=subject._id%>" class="btn btn-danger m-1 p-2">
-                    จัดเก็บรายวิชา <i class="bi bi-archive"></i>
-                  </a>
-                </div>
-              </div> -->
-            </div>
           </div>
           <!-- <div class="lesson-content p-4 bg-white w-100 my-4">
         <p class="lesson-nothing text-center">ยังไม่มีข้อมูลจากบทเรียน
@@ -643,7 +663,7 @@ a.data-a .list-div-data:hover {
       </div> -->
 
           <div class="lesson-content p-4 bg-white w-100 my-4">
-            <div class="row">
+            <div class="row px-2">
 
               <div class="col-12 mt-2 row">
                 <div class="col">
@@ -814,11 +834,32 @@ a.data-a .list-div-data:hover {
                         <p class=" fw-normal text-danger col-2">
                             <%= moment(assign.Deadline).format('DD/MM/YYYY HH:mm') %>
                         </p>
-                        <p class=" fw-normal grey col-3">
-                            submitassign.sendStatus
+                        <p class="fw-normal gray col-3">
+                          <% const submitStatus = assign._doc.submitStatus %>
+                          <% if (submitStatus && submitStatus.sendStatus) { %>
+                            <%= submitStatus.sendStatus.status %>
+                            <% if (submitStatus.sendStatus.status === "ส่งช้า") { %>
+                              <%= submitStatus.sendStatus.day %> วัน
+                              <%= submitStatus.sendStatus.hour %> ชั่วโมง
+                              <%= submitStatus.sendStatus.minute %> นาที
+                            <% } %>
+                            <!-- แสดงสถานะด้วยวงกลมสี -->
+                            <span class="status-circle 
+                              <%= submitStatus.sendStatus.status === 'ส่งตรงเวลา' ? 'status-green' : 
+                                 submitStatus.sendStatus.status === 'ส่งช้า' ? 'status-orange' : 
+                                 'status-grey' %>">
+                            </span>
+                          <% } else { %>
+                            ยังไม่ส่ง
+                            <span class="status-circle status-grey"></span>
+                          <% } %>
                         </p>
-                        <p class=" fw-normal text-success  col-1">
-                             / <%= assign.Score %>
+                        <p class="fw-normal text-success col-1">
+                          <% if (assign._doc.submitStatus) { %>
+                            <%= assign._doc.submitStatus.score %> / <%= assign.Score %>
+                          <% } else { %>
+                            0 / <%= assign.Score %>
+                          <% } %>
                         </p>
                     </div>
                   </a>

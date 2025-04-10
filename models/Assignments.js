@@ -18,13 +18,10 @@ const AssignmentSchema = new Schema({
     Deadline: {
         type: Date,
     },
-    files: [{
-        contentType: {
-            type: String,
-        },
-        file: {
-            type: String,
-        }
+     files: [{
+        contentType: String,
+        file: String,
+        originalName: String 
     }],
     submitDetail:[{
         type: mongoose.Schema.ObjectId,

@@ -183,7 +183,54 @@
         color: gray ;
       }
 .purple{
-    color: #9146ff  !important
+    color: #ba55d3  !important
+}
+.custom-swal-popup {
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.custom-swal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    color: #333;
+}
+
+.custom-swal-content {
+    margin: 1.5rem 0 2.5rem 0; /* เพิ่มระยะห่างด้านล่างของข้อความ */
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.custom-swal-confirm-button {
+    padding: 0.8rem 2.5rem !important; /* ทำให้ปุ่มใหญ่ขึ้น */
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    background-color: #ba55d3 !important; /* สีม่วงตามธีมของคุณ */
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(186, 85, 211, 0.3) !important;
+}
+
+.custom-swal-confirm-button:hover {
+    background-color: #a03aaf !important; /* สีเข้มขึ้นเมื่อ hover */
+    transform: translateY(-2px);
+    transition: all 0.2s;
+}
+
+.custom-swal-icon {
+    border: none !important;
+    margin-top: 1rem !important;
+}
+
+.custom-swal-image {
+    margin: 1rem auto;
+    display: block;
+}
+
+.custom-swal-actions {
+    margin-top: 2rem; /* เพิ่มระยะห่างจากข้อความไปยังปุ่ม */
 }
       .dark .grey {
         color: rgb(231, 231, 231)  ;
@@ -200,6 +247,7 @@
       .dark .text-danger{
         color: rgb(255, 75, 75) !important;
       }
+      
     </style>
 </head>
 
@@ -216,7 +264,7 @@
         <div class="header_info">
             <a href="/adminIndex" class="logo-a d-flex justify-content-between">
                 <img class="h-auto mx-4  logo-dent" src="/images/indexMed/Ellipse9.png" style="width: 3.5rem; 
-                max-width: 100px;" alt="ตราสัญลักษณ์ คณะทันตแพทย์ศาตร์">
+                max-width: 100px;" alt="โลโก้">
             </a>
             <ul class="ul-nav">
                 <li class="li-a">
@@ -272,7 +320,7 @@
                     </ul>
                 </li>
                 <li class="a-li d-flex">
-                    <a href="#" class="a-li" >แบบจำลอง 3D</a>
+                    <a href="#" class="a-li" onclick="redirectTo3DModel(event)">แบบจำลอง 3D</a>
                  </li>
                 <% if (hasUnread) { %>
                     <li id="teacherNotification" class="li-a a-li">
@@ -342,7 +390,7 @@
     </header>
 
     <!-- Sidebar Component -->
-    <%- include('Sidebar', { isOpen: isSidebarOpen, theme: theme }) %> <!-- รวม Sidebar component -->
+    <%- include('sidebar.ejs', { isOpen: isSidebarOpen, theme: theme }) %> <!-- รวม Sidebar component -->
         <script>
             // ฟังก์ชัน JavaScript สำหรับการจัดการ Sidebar และธีม
             function toggleSidebar() {
@@ -424,7 +472,43 @@
                 }
             }
 
- 
+            async function redirectTo3DModel(event) {
+            event.preventDefault(); 
+
+    try {
+        const response = await fetch('/generate3DModelToken', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to generate SSO token');
+        }
+
+        const { redirectUrl } = await response.json();
+        window.open(redirectUrl, '_blank'); 
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถเชื่อมต่อกับระบบแบบจำลอง 3D ได้',
+            confirmButtonText: 'ตกลง',
+            customClass: {
+                popup: 'custom-swal-popup',
+                title: 'custom-swal-title',
+                content: 'custom-swal-content',
+                confirmButton: 'custom-swal-confirm-button',
+                icon: 'custom-swal-icon',
+                image: 'custom-swal-image',
+                actions: 'custom-swal-actions'
+            }
+        });
+    }
+}
+
         </script>
 </body>
 

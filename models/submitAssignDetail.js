@@ -40,8 +40,10 @@ const submitAssignSchema = new Schema({
         },
         file: {
             type: String,
+        },
+        originalName: {
+            type: String,
         }
-        
     }],
     user: {
         type: mongoose.Schema.ObjectId,

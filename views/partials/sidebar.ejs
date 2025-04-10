@@ -55,8 +55,8 @@
                     จัดการข้อมูลนักศึกษา
                 </p>
                 <ul class="submenu">
-                    <li><a class="bi-4 a-li" href="/adminIndex/adminLessonIndex" onclick="toggleSidebar()"><i
-                                class="bi-4 bi-bar-chart mx-2"></i>แดชบอร์ด (Dashboard)</a></li>
+                    <li><a class="bi-4 a-li" href="/adminIndex/adminDashboard" onclick="toggleSidebar()"><i
+                                class="bi-4 bi-bar-chart-fill mx-2"></i>แดชบอร์ด (Dashboard)</a></li>
                     <li><a class="bi-5 a-li" href="/adminIndex/uploadStudent" onclick="toggleSidebar()"><i
                                 class="bi-5 bi-person-lines-fill mx-2"></i>รายชื่อนักศึกษา</a></li>
                     <li><a class="bi-6 a-li" href="/adminIndex/logsFile" onclick="toggleSidebar()"><i
@@ -64,13 +64,13 @@
                             (Logs
                             file)</a></li>
                     <li><a class="bi-7 a-li" href="/adminIndex/setPermission" onclick="toggleSidebar()"> <i
-                                class="bi-7 bi-bar-chart mx-2"></i>การกำหนดสิทธิ์</a>
+                                class="bi-7 bi-person-check-fill mx-2"></i>การกำหนดสิทธิ์</a>
                     </li>
 
                 </ul>
             </li>
                <li class="a-li d-flex">
-                    <a href="#" class="a-li" onclick="toggleSidebar()"><i class="bi bi-badge-3d-fill me-2"></i>แบบจำลอง 3D</a>
+                    <a href="#" class="a-li" onclick="redirectTo3DModel(event)"><i class="bi bi-badge-3d-fill me-2"></i>แบบจำลอง 3D</a>
                  </li>
             <% if (hasUnread) { %>
                 <li id="teacherNotification" class="li-a a-li">
@@ -142,9 +142,45 @@
                 darkIcon.style.display = savedTheme === 'dark' ? 'inline' : 'none';
             }
         })();
+
+
+        async function redirectTo3DModel(event) {
+        event.preventDefault(); 
+        try {
+            const response = await fetch('/generate3DModelToken', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to generate SSO token');
+            }
+
+            const { redirectUrl } = await response.json();
+            window.open(redirectUrl, '_blank'); 
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาด',
+                text: 'ไม่สามารถเชื่อมต่อกับระบบแบบจำลอง 3D ได้',
+                confirmButtonText: 'ตกลง',
+                customClass: {
+                    popup: 'custom-swal-popup',
+                    title: 'custom-swal-title',
+                    content: 'custom-swal-content',
+                    confirmButton: 'custom-swal-confirm-button',
+                    icon: 'custom-swal-icon',
+                    image: 'custom-swal-image',
+                    actions: 'custom-swal-actions'
+                }
+            });
+        }
+    }
+
     </script>
-
-
 </body>
 
 </html>

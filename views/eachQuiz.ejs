@@ -1358,10 +1358,15 @@
           <div class="col-12 aside-right px-4 py-4 bg-white" style="width: 100% !important;">
             <div class="manange-bar p-4 bg-white w-100">
               
-              <div class="fw-normal fs-6  ms-2"> 
+              <div class="fw-normal font14  ms-2"> 
+             
                 <span><i class="bi bi-card-checklist me-2 purple" ></i> </span>
+                <span>
+                  <a class='link' href="/subjects"> รายวิชาทั้งหมด </a>
+                </span>
+                <span> / </span> 
                 <a class="link" href="/eachSubject?subjectDbId=<%=subject._id%>">
-                <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%></a> 
+                 <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%></a> 
              
             <span> / แบบทดสอบ: <%=quiz.quizname%></span> 
             </div>
@@ -1398,13 +1403,14 @@
                     <!-- แสดงปุ่มแก้ไขและเผยแพร่แบบทดสอบ เมื่อยังไม่ได้เผยแพร่ -->
                     <a href="/adminIndex/eachQuiz?quizId=<%= quiz._id %>/edit"
                       class="add-button btn btn-warning my-2 ms-2 p-2" style="color: white;">
+                      
+                      <i class="bi bi-pencil-square me-1 "></i>
                       <span class="text_btn">แก้ไข</span>
-                      <i class="bi bi-pencil-square ms-1 "></i>
                     </a>
 
                     <a href="/adminIndex/eachQuiz?quizId=<%= quiz._id %>/response"
                       class="add-button btn btn-secondary my-2 ms-2 p-2 " style="color: white;">
-                      <span class="text_btn">การตอบกลับ</span>
+                      <span class="text_btn">คำตอบจากนักศึกษา</span>
                      
                     </a>
 
@@ -1432,12 +1438,13 @@
                       
                       <a href="#" class="add-button cancel-button btn my-2 ms-2 p-2"
                         onclick="cancelReleaseQuiz('<%= quiz._id %>')">
-                        <span class="text_btn">ยกเลิกการเผยแพร่</span>
                         <i class="bi bi-x-circle ms-1"></i>
+                        <span class="text_btn">ยกเลิกการเผยแพร่</span>
+                        
                       </a>
                       <a href="/adminIndex/eachQuiz?quizId=<%= quiz._id %>/response"
                         class="add-button btn btn-secondary my-2 ms-2 p-2 " style="color: white;">
-                        <span class="text_btn">การตอบกลับ</span>
+                        <span class="text_btn">คำตอบจากนักศึกษา</span>
                        
                       </a>
 
@@ -1455,8 +1462,9 @@
                 -->
                 <div class="d-flex w-50 justify-content-end">
                   <a href="#" class="add-button btn btn-danger my-2 p-2" onclick="confirmDelete('<%=quiz._id%>')">
+                     <i class="bi bi-trash3 "></i>
                     <span class="text_btn">ลบ</span>
-                    <i class="bi bi-trash3 "></i>
+                   
                   </a>
                 </div>
               </div>

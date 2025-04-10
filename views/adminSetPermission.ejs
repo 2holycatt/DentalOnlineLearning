@@ -266,7 +266,9 @@
     <!-- <div style="width: 20%;"><p class="w-100">&nbsp;</p></div> -->
     <div class="aside-right bg-white h-auto p-4 m-3" style="width: 80%;">
       <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
-        <p class="fw-bold fs-3 lesson-bar">กำหนดสิทธิ์การเข้าใช้งาน</p>
+        <p class="fw-bold fs-3 mx-1"> 
+          <i class='bi-person-check-fill purple me-3'></i>กำหนดสิทธิ์การเข้าใช้งาน
+        </p>
         <!-- <div class="d-flex justify-content-center" style="align-items: center;">
           <label class="mx-2" for="dashboardSelector">แดชบอร์ดของ: </label>
           <select id="dashboardSelector">
@@ -290,24 +292,24 @@
       <div class="lesson-content p-4 bg-white w-100 my-4">
         <div class="row pb-2" style="border-bottom: 1px solid #EAEFF4; align-items: center;">
           <div class="col-12 mb-3">
-            <p class="fs-5 fw-bold ">
+            <p class="fs-6 fw-bold ">
               <i class="bi bi-info-circle-fill purple"></i>
               <span class="mx-2">หมายเหตุ: </span>
               <!-- <span class="fs-6 fw-light mx-2" style="color: #5A6A85;">(3 x 8) แถว/คอลัมน์ แรก</span> -->
             </p>
             <p class="fs-6">
             
-              <span>
+              <span class="fs-6">
                 - นักศึกษาที่มีสิทธิ์เข้าใช้งานเว็บไซต์จะมีเครื่องหมาย <i class="bi bi-check-square-fill text-primary"></i>
               </span>
               <br>
-              <span>
+              <span class="fs-6">
                 - การนำเครื่องหมายออกเป็นการจำกัดสิทธิ์ให้นักศึกษาไม่สามารถเข้าใช้งานเว็บไซต์ได้
               </span>
             </p>
           </div>
           <div class="col">
-            <p class="fs-5 fw-bold ">
+            <p class="fs-6 fw-bold ">
               <i class="bi bi-people-fill purple"></i><span class="mx-2">รายชื่อนักศึกษา </span>
               <!-- <span class="fs-6 fw-light mx-2" style="color: #5A6A85;">(3 x 8) แถว/คอลัมน์ แรก</span> -->
             </p>
@@ -326,24 +328,10 @@
           <div class="col d-flex justify-content-end" style="align-items: center;">
             <div class="">
               <label class="quiz-label" for="dashboardSelector">นักศีกษาจาก: </label>
-              <select class="sectionSelector">
-                <!-- <option value="all">ทั้งหมด</option> -->
-                <option value="allLessons" selected>
-                  ทั้งหมด
-                  </a>
-                </option>
-                <option value="JavaScript">
-                  JavaScript
-                </option>
-                <option value="Python">
-                  Python
-                </option>
-                <option value="PHP">
-                  PHP
-                </option>
-                <option value="HTML">
-                  HTML
-                </option>
+              <select id="studentFilter">
+                <option value="all" <%= filter === 'all' || !filter ? 'selected' : '' %>>ทั้งหมด</option>
+                <option value="kku" <%= filter === 'kku' ? 'selected' : '' %>>มหาวิทยาลัยขอนแก่น</option>
+                <option value="external" <%= filter === 'external' ? 'selected' : '' %>>ภายนอก</option>
               </select>
             </div>
           </div>
@@ -395,11 +383,11 @@
                   <%=student.user.major%>
                 </p>
                 <% if (student.user.studentFromKku == true) { %>
-                <p class="fw-normal my-3 col-2 text-kku" >
+                <p class="fw-normal my-3 col-2 text-kku student-source" >
                   มหาวิทยาลัยขอนแก่น
                 </p>
                 <% } else if (student.user.studentFromKku == false) { %>
-                <p class="fw-normal my-3 col-2 grey">
+                <p class="fw-normal my-3 col-2 grey student-source">
                   ภายนอก
                 </p>
                 <% } %>
@@ -523,6 +511,70 @@
     const checkedAll = document.getElementById('checkedAll');
     const checkboxes = document.querySelectorAll('.checkStudent');
     const confirmBtn = document.getElementById('confirmBtn');
+    const studentFilter = document.getElementById('studentFilter');
+  const studentRows = document.querySelectorAll('.list-div-data');
+
+  studentFilter.addEventListener('change', function() {
+    const filterValue = this.value;
+    
+    studentRows.forEach(row => {
+      // ค้นหาคอลัมน์สุดท้ายของแต่ละแถว (นักศึกษาจาก)
+      const studentTypeColumn = row.querySelector('p:last-child');
+      const studentTypeText = studentTypeColumn.textContent.trim();
+      
+      if (filterValue === 'all') {
+        // แสดงทุกแถว
+        row.style.display = '';
+      } else if (filterValue === 'kku' && studentTypeText === 'มหาวิทยาลัยขอนแก่น') {
+        // แสดงเฉพาะนักศึกษา มข.
+        row.style.display = '';
+      } else if (filterValue === 'external' && studentTypeText === 'ภายนอก') {
+        // แสดงเฉพาะนักศึกษาภายนอก
+        row.style.display = '';
+      } else {
+        // ซ่อนแถวที่ไม่ตรงตามเงื่อนไข
+        row.style.display = 'none';
+      }
+    });
+    
+    // อัปเดตหมายเลขลำดับและการแสดงข้อความเมื่อไม่พบข้อมูล
+    updateRowNumbers();
+  });
+
+  function updateRowNumbers() {
+    let visibleCount = 0;
+    let hasVisibleRows = false;
+    
+    studentRows.forEach(row => {
+      if (row.style.display !== 'none') {
+        visibleCount++;
+        hasVisibleRows = true;
+      }
+    });
+    
+    // แสดงหรือซ่อนข้อความเมื่อไม่พบข้อมูล
+    const noDataMessage = document.querySelector('.file-example');
+    if (!hasVisibleRows && noDataMessage) {
+      // สร้างข้อความเมื่อไม่พบข้อมูล ถ้ายังไม่มี
+      let noDataElem = document.getElementById('no-data-message');
+      if (!noDataElem) {
+        noDataElem = document.createElement('p');
+        noDataElem.id = 'no-data-message';
+        noDataElem.className = 'mt-3 text-center';
+        noDataElem.textContent = 'ไม่พบรายชื่อนักศึกษาตามเงื่อนไขที่เลือก';
+        noDataMessage.parentNode.insertBefore(noDataElem, noDataMessage.nextSibling);
+      } else {
+        noDataElem.style.display = '';
+      }
+    } else {
+      // ซ่อนข้อความเมื่อมีข้อมูล
+      const noDataElem = document.getElementById('no-data-message');
+      if (noDataElem) {
+        noDataElem.style.display = 'none';
+      }
+    }
+  }
+
 
     function toggleButtonState() {
       const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
@@ -544,6 +596,21 @@
     }
 
     checkedAll.addEventListener('change', handleCheckedAll);
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+    const studentFilter = document.getElementById("studentFilter");
+    const form = document.querySelector("form");
+
+    studentFilter.addEventListener("change", function () {
+      const selectedValue = studentFilter.value;
+      const currentURL = new URL(window.location.href);
+
+      // เพิ่ม query parameter ตามค่าที่เลือก
+      currentURL.searchParams.set("filter", selectedValue);
+      window.location.href = currentURL.toString();
+    });
+  });
   </script>
 </body>
 

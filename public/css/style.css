@@ -46,7 +46,7 @@ body {
    {
     min-width: 590px;
     width: 100%;
-    overflow-x: hidden !important;
+    overflow-x: hidden ;
   }
 
   .main-content {
@@ -1001,7 +1001,7 @@ a {
   padding-left: 0.25em !important;
 }
 .setpBorder2{
-  border-left: 0.25em solid #007bff;
+  border-left: 0.25em solid #ba55d3;
   padding-left: 0.5em !important;
 }
 .setWarning-color {

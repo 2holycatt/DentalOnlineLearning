@@ -246,9 +246,13 @@
     
       <div class="lesson-content bg-white w-100 py-3 px-4 " style="height: fit-content;">
         <div class="py-3 ps-1  d-flex w-100">
-          <div class="fw-normal fs-6 ms-1">
+          <div class="fw-normal font14 ms-1">
             <span> <i class="bi bi-list-task me-1 purple" style="cursor: default;"></i>
                </span>
+               <span>
+                <a class='link' href="/subjects"> รายวิชาทั้งหมด </a>
+              </span>
+              /
             <a class="grey link" href="/eachSubject?subjectDbId=<%=subject._id%>">
               <%= subject?.subjectId || '-' %> 
               <%= subject?.subjectName || '-' %> 
@@ -292,8 +296,7 @@
                 <% files.forEach((file, index) => { %>
                 <a class="file-a" href="/adminIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
                   <span class=""><%=index+1%>. </span>
-                  <%=file.file.slice(67)%>
-                </a>
+                  <%= file.file ? file.file.slice(67) : file.originalName || 'ไม่พบชื่อไฟล์' %>                </a>
                 <br>
                 <% }); %>
               </div>
@@ -425,7 +428,7 @@
                   <div class="row">
                     <div class="col-7">
                       <a class="file-a-2 mb-1" href="/adminIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
-                      <%=index+1%>. <%=file.file.slice(67)%>
+                      <%=index+1%>. <%= file.file ? file.file.slice(67) : file.originalName || 'ไม่พบชื่อไฟล์' %>
                       </a>
                     </div>
                     <div class="col-2 d-flex justify-content-center">

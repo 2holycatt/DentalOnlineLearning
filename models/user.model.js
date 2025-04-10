@@ -33,7 +33,7 @@ const userSchema = new Schema({
     },
     img: {
         type: String,
-        default: 'userProfile.png'
+        default: 'example_file/userProfile.png'
     },
     note: {
         type: String,

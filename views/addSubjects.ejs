@@ -137,17 +137,6 @@
       margin-top: 1em !important;
     }
 
-    .lesson-bar {
-      border-left: 0.25em solid #007bff !important;
-      padding-left: 0.5em !important;
-      margin-right: 0.5em !important;
-
-    }
-
-    .set-border-header {
-      border-left: 0.25em solid #387bef;
-      padding-left: 0.50em !important;
-    }
 
     .container2 {
       align-items: center;
@@ -187,7 +176,7 @@
     }
 
     .drop_box h4 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 400;
       color: #2e2e2e;
     }
@@ -277,16 +266,22 @@
        }
    
        .manange-bar {
-         border-radius: 0.5em;
-         justify-content: space-between !important;
-         
-       }
-   
-       .add-button {
-         border-radius: 0.5em !important;
-         width: 20% !important;
-         height: auto !important;
-       }
+    border-radius: 0.5em;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important; /* ป้องกันการขึ้นบรรทัดใหม่ */
+  }
+
+  /* แก้ไข add-button ให้มีขนาดที่เหมาะสม */
+  .add-button {
+    border-radius: 0.5em !important;
+    width: auto !important; /* เปลี่ยนจาก 20% เพื่อให้ปรับขนาดตามเนื้อหา */
+    min-width: fit-content;
+    white-space: nowrap; /* ป้องกันข้อความขึ้นบรรทัดใหม่ */
+    flex-shrink: 0; /* ป้องกันการหดตัวของปุ่ม */
+  }
+
    
        .lesson-content {
          height: fit-content !important;
@@ -307,7 +302,7 @@
        }
    
        .each-lesson-a:hover .each-lesson {
-         border-left: 0.2em solid #8A2BE2 !important;
+         border-left: 0.2em solid #ba55d3 !important;
        }
    
        .card-img-top {
@@ -409,7 +404,7 @@
        }
    
        .lesson-bar {
-         border-left: 0.25em solid #007bff !important;
+         border-left: 0.25em solid #ba55d3 !important;
          padding-left: 0.5em !important;
          margin-right: 0.5em !important;
    
@@ -429,11 +424,154 @@
         .dark .grey {
             color: lightgray !important
         }
+        @media (max-width: 992px) {
+  .form-label {
+    margin-bottom: 0.25rem;
+  }
+  
+  .add-lesson-btn {
+    width: auto !important;
+  }
+}
        @media screen and (max-width: 768px) {
          .above-nav-status{
            display: none;
          }
+         .manange-bar {
+      flex-direction: row !important; 
+      gap: 10px;
+    }
+    
+    .lesson-bar {
+      font-size: 1.5rem !important; /* ลดขนาดฟอนต์ลงเล็กน้อยบนหน้าจอเล็ก */
+    }
+    
+    /* ทำให้ lesson-bar-container กินพื้นที่น้อยลงบนหน้าจอเล็ก */
+    .lesson-bar-container {
+      width: auto;
+      flex-shrink: 1;
+    }
+    
+    /* ปรับขนาดไอคอนให้เล็กลงในหน้าจอเล็ก */
+    .add-button i {
+      font-size: 0.9rem;
+    }
+    .w-100-sm {
+    width: 100% !important;
+  }
+  
+  .p-sm-2 {
+    padding: 0.5rem !important;
+  }
+  
+  #scriptData {
+    font-size: 0.9rem;
+  }
+  
+  .set-border-header {
+    font-size: 1.5rem !important;
+  }
+  
+  .row > div {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* ให้ label อยู่ติดกับ input */
+  .form-label {
+    margin-bottom: 0.25rem;
+  }
        }
+       @media (max-width: 576px) {
+  .w-100-sm {
+    width: 100% !important;
+  }
+  
+  .p-sm-2 {
+    padding: 0.5rem !important;
+  }
+  
+  #scriptData {
+    font-size: 0.85rem;
+  }
+  
+  .set-border-header {
+    font-size: 1.25rem !important;
+  }
+  
+  .row > div {
+    margin-bottom: 0.75rem;
+  }
+  
+  /* ทำให้ปุ่มเพิ่มรายวิชาเหมาะสมกับหน้าจอเล็ก */
+  .add-lesson-btn {
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .add-lesson-btn i {
+    font-size: 0.9rem;
+  }
+}
+
+/* คลาสสำหรับปรับขนาดของ input บนหน้าจอเล็ก */
+.w-100-sm {
+  width: inherit;
+}
+
+.p-sm-2 {
+  padding: inherit;
+}
+
+@media (max-width: 768px) {
+  .w-100-sm {
+    width: 100% !important;
+  }
+  
+  .p-sm-2 {
+    padding: 0.5rem !important;
+  }
+  
+  /* แก้ปัญหาข้อความเกินขอบ */
+  .col-sm-12 {
+    word-break: break-word;
+  }
+  .file-description {
+      font-size: 0.9rem;
+    }
+    
+    .file-description .fw-light {
+      font-size: 0.85rem;
+    }
+    
+    .drop_box {
+      padding: 1rem !important;
+    }
+    
+    .drop_box h4 {
+      font-size: 14px;
+    }
+    
+    .drop_box p {
+      font-size: 12px;
+    }
+    
+    .btn-focus {
+      padding: 6px 12px !important;
+      font-size: 14px;
+    }
+  }
+
+/* เพิ่ม small font size class */
+.fs-sm-5 {
+    font-size: 1rem !important;
+  }
+  
+  @media (max-width: 576px) {
+    .fs-sm-5 {
+      font-size: 0.9rem !important;
+    }
+  }
+      
   </style>
 </head>
 
@@ -455,34 +593,39 @@
   <div class="main-content d-flex h-auto">
     <% const pageName = "addLesson" %>
     <%- include("./partials/lessonsList.ejs", { pageName: pageName })%>
-    <div class="aside-right w-75 h-auto p-4 bg-white">
-      <div class="manange-bar p-3 bg-white d-flex w-100">
-        <p class="fw-bold fs-3 lesson-bar">เพิ่มรายวิชา</p>
+    <div class="aside-right m-3 w-75 h-auto p-4 bg-white">
+      <div class="manange-bar p-3 bg-white d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+          <div class="lesson-bar-container">
+            <p class="fw-bold fs-3 lesson-bar ms-2 mb-0">เพิ่มรายวิชา</p>
+          </div>
+        </div>
         <a href="/subjects" class="add-button btn btn-primary m-0 p-2">
-          ยกเลิกการเพิ่ม<i class="bi bi-x-circle-fill mx-2"></i>
+          <span class="d-none d-sm-inline">ยกเลิกการเพิ่ม</span><span class="d-inline d-sm-none">ยกเลิก</span><i class="bi bi-x-circle-fill mx-2"></i>
         </a>
       </div>
       <div class="lesson-content p-4 bg-white w-100 my-4" style="height: auto;">
-        <div class="pb-3 mb-3" style="border-bottom: 1px solid #EAEFF4;">
-          <p class="fw-bold fs-3 set-border-header mb-3">แบบฟอร์มเพิ่มรายวิชา</p>
+        <div class="px-2 pb-3 mb-3" style="border-bottom: 1px solid #EAEFF4;">
+          <p class="fw-bold fs-4 set-border-header mb-3">แบบฟอร์มเพิ่มรายวิชา</p>
           <form action="/adminIndex/createSubject" method="post">
-            <div id="scriptData" class="grey my-1 w-75"><span class="text-primary">* </span>รหัสและภาคการศึกษาของรายวิชาจะส่งผลต่อ<span class="text-danger"> การเข้าถึงบทเรียน </span>ของนักศึกษา หากชื่อรายวิชาและภาคการศึกของการลงทะเบียนเรียนจากนักศึกษานั้นไม่ตรงกับข้อมูลรายวิชาที่สร้าง นักศึกษาจะไม่สามารถเข้าถึงบทเรียนของรายวิชานั้นได้
+            <div id="scriptData" class="grey my-1 w-75 w-100-sm">
+              <span class="text-primary">* </span>รหัสและภาคการศึกษาของรายวิชาจะส่งผลต่อ<span class="text-danger"> การเข้าถึงบทเรียน </span>ของนักศึกษา หากชื่อรายวิชาและภาคการศึกษาของการลงทะเบียนเรียนจากนักศึกษานั้นไม่ตรงกับข้อมูลรายวิชาที่สร้าง นักศึกษาจะไม่สามารถเข้าถึงบทเรียนของรายวิชานั้นได้
             </div>
-           
+             
             <div class="mb-3">
               <div class="row">
-                <div class="col-3">
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-md-3">
                   <label for="subjectId" class="form-label">รหัสวิชา:</label>
-                  <input type="text" list="script" class="form-control p-3 w-75" value="<%= formData ? formData.subjectId : '' %>" name="subjectId" id="subjectId" required>
+                  <input type="text" list="script" class="form-control p-3 p-sm-2 w-75 w-100-sm" value="<%= formData ? formData.subjectId : '' %>" name="subjectId" id="subjectId" required>
                   <datalist id="script">
                     <% filteredResult.subjectId.forEach (sub => {%>
                     <option value="<%=sub%>"></option>
                     <% });%>
                   </datalist>
                 </div>
-                <div class="col-3">
-                  <label for="semester" class="form-label">ภาคศึกษา:</label>
-                  <input type="text" list="script-2" class="form-control p-3 w-50" value="<%= formData ? formData.semester : '' %>" name="semester" id="semester" maxlength="6" required>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                  <label for="semester" class="form-label">ภาคการศึกษา:</label>
+                  <input type="text" list="script-2" class="form-control p-3 p-sm-2 w-50 w-100-sm" value="<%= formData ? formData.semester : '' %>" name="semester" id="semester" maxlength="6" required>
                   <datalist id="script-2">
                     <% filteredResult.semester.forEach (sub => {%>
                     <option value="<%= sub%>"></option>
@@ -491,9 +634,10 @@
                 </div>
               </div>
             </div>
+            
             <div class="mb-3">
               <label for="subject" class="form-label">ชื่อวิชา:</label>
-              <input type="text" list="script-3" class="form-control p-3 w-50" value="<%= formData ? formData.subjectName : '' %>" name="subjectName" id="subject" required>
+              <input type="text" list="script-3" class="form-control p-3 p-sm-2 w-50 w-100-sm" value="<%= formData ? formData.subjectName : '' %>" name="subjectName" id="subject" required>
               <% if (filteredResult.length > 0) { %>
               <% console.log(filteredResult); %>
               <datalist id="script-3">
@@ -503,49 +647,40 @@
               </datalist>
               <% } %>
             </div>
-
+        
             <div class="mb-3">
-              <label for="subject" class="form-label">คำอธิบาย:</label>
-              <textarea class="form-control p-3 w-75" name="description" id="description" rows="4"><%= formData ? formData.description : '' %></textarea>
+              <label for="description" class="form-label">คำอธิบาย:</label>
+              <textarea class="form-control p-3 p-sm-2 w-75 w-100-sm" name="description" id="description" rows="4"><%= formData ? formData.description : '' %></textarea>
             </div>
+            
             <div class="mb-3">
               <div class="row">
-                <div class="col-3">
-                  <label for="subjectId" class="form-label">หน่วยกิต:</label>
-                  <input type="number" class="form-control p-3 w-50" value="<%= formData ? formData.unit : '' %>" name="unit" min="1" id="unit" required>
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-md-3">
+                  <label for="unit" class="form-label">หน่วยกิต:</label>
+                  <input type="number" class="form-control p-3 p-sm-2 w-50 w-100-sm" value="<%= formData ? formData.unit : '' %>" name="unit" min="1" id="unit" required>
                 </div>
-                <div class="col-3">
-                  <label for="semester" class="form-label">กลุ่มเรียนที่:</label>
-                  <input type="number" class="form-control p-3 w-50" value="<%= formData ? formData.section : '' %>" min="1" name="section" id="section" required>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                  <label for="section" class="form-label">กลุ่มเรียนที่:</label>
+                  <input type="number" class="form-control p-3 p-sm-2 w-50 w-100-sm" value="<%= formData ? formData.section : '' %>" min="1" name="section" id="section" required>
                 </div>
               </div>
             </div>
-
-
-            <!-- <div class="mb-3">
-            <label for="lessonName" class="form-label">ชื่อบทเรียน:</label>
-            <input type="text" class="form-control p-3 w-50" name="lessonName" placeholder="กรอกชื่อบทเรียน" required>
-          </div>
-          <div class="mb-3">
-            <label for="LessonImage" class="form-label">รูปภาพหน้าปก:</label><br>
-            <input type="file" class="w-50 img-input" style="background-color: white !important;" name="file" accept="image/*">
-            <div id="emailHelp" class="form-text my-1"><span class="text-primary">* </span>ไม่ต้องทำการอัปโหลดรูปภาพ หากไม่มีรูปภาพที่ต้องการใช้</div>
-          </div> -->
+        
             <div class="d-flex justify-content-end">
               <button type="submit" class="add-lesson-btn btn btn-primary py-2 px-3 shadow">
                 <span>เพิ่มรายวิชา</span><i class="bi bi-plus-circle-fill mx-2"></i>
-                </i>
               </button>
             </div>
           </form>
-
         </div>
-        <div class="pb-3" style="border-bottom: 1px solid #EAEFF4;">
-          <p class="fw-bold fs-3 set-border-header">อัปโหลดไฟล์</p>
+        <div class="px-2 pb-3" style="border-bottom: 1px solid #EAEFF4;">
+          <p class="fw-bold fs-4">อัปโหลดไฟล์</p>
           <form action="/upload" method="post" enctype="multipart/form-data">
-            <div class="container3 my-3">
+            <!-- ใช้คลาส d-none d-md-grid และ d-grid d-md-none เพื่อสลับการแสดงผลบนขนาดหน้าจอต่างๆ -->
+            
+            <!-- แสดงในหน้าจอใหญ่ (ตั้งแต่ md ขึ้นไป) -->
+            <div class="container3 my-3 d-none d-md-grid">
               <div class="card shadow-sm" style="height: fit-content !important;">
-                <!-- <h3>Upload Files</h3> -->
                 <div class="drop_box">
                   <header>
                     <h4 class="my-1">เลือกไฟล์ที่จะอัปโหลดที่นี่</h4>
@@ -555,8 +690,9 @@
                   <button class="choose-btn btn-focus my-1" type="button">เลือกไฟล์</button>
                 </div>
               </div>
+              
               <div class="file-description w-100">
-                <p class="fw-bold mx-4 grey" >คำอธิบายเกี่ยวกับการอัปโหลดไฟล์:
+                <p class="fw-bold mx-4 grey">คำอธิบายเกี่ยวกับการอัปโหลดไฟล์:
                   <br>
                   <span class="fw-light grey">
                     1. ข้อมูลที่ได้จากการอัปโหลไฟล์ จะได้แก่ ข้อมูลรายวิชาและข้อมูลนักศึกษา <br>
@@ -564,33 +700,20 @@
                     3. เมื่อมีอัปโหลดข้อมูลรายวิชาและรายชื่อนักศึกษาที่ซ้ำ ระบบจะไม่ทำการบันทึกการอัปโหลด
                   </span>
                 </p>
-
+        
                 <p class="fw-bold mx-4 text-success mt-2">ไฟล์ที่รองรับ:
-                  <span class="fw-light grey" >ไฟล์ Excel (.xls) ที่ได้จากเว็บไซต์สำนักบริหารและพัฒนาวิชาการ (reg.kku.ac.th)</span>
+                  <span class="fw-light grey">ไฟล์ Excel (.xls) ที่ได้จากเว็บไซต์สำนักบริหารและพัฒนาวิชาการ (reg.kku.ac.th)</span>
                 </p>
-
-                <!-- <p class="fw-bold mx-4 text-success">จำนวนคอลัมน์:
-                  <span class="fw-light" style="color: #5A6A85;"> 8 คอลัมน์ หากไฟล์ที่คุณอัปโหลดมีจำนวนคอลัมน์มากกว่าและน้อยกว่า 8 คอลัมน์ <br>
-                    จะไม่สามารถอัปโหลดไฟล์ได้
-                  </span>
-                </p>
-                <p class="fw-bold mx-4 text-success">ความถูกต้องของข้อมูล:
-                  <span class="fw-light" style="color: #5A6A85;"> ควรกรอกข้อมูลให้เหมาะสมกับคอลัมน์ เช่น <span class="text-primary">School_Year</span> ควรกรอกเป็นตัวเลข<br>
-                    จำนวน 4 หลัก, <span class="text-primary">Year_Level</span> 1 หลัก และ <span class="text-primary">email</span> ควรมี @
-                  </span>
-                </p> -->
+        
                 <p class="fw-bold mx-4 text-danger mt-2">ข้อควรระวัง:
-                  <span class="fw-light grey" >
-                    <!-- <span class="text-primary">School_Year, Year_Level</span>  -->
+                  <span class="fw-light grey">
                     หลีกเลี่ยงการแก้ไขไฟล์เพิ่มเติมหลังที่จากดาวน์โหลดจากสำนักบริหารและพัฒนาวิชาการ
                   </span>
                 </p>
-
-
-
               </div>
+              
               <div class="mt-3">
-                <p class="fw-bold text-primary text-center">ตัวอย่างไฟล์:</p>
+                <p class="fw-semi-bold purple text-center mb-1">ตัวอย่างไฟล์:</p>
                 <div class="d-flex justify-content-center">
                   <a href="/adminIndex/downloadFile" class="btn btn-outline-primary p-1">
                     <small>Teach_stdlistExcel.xls
@@ -598,6 +721,52 @@
                     </small>
                   </a>
                 </div>
+              </div>
+            </div>
+            
+            <!-- แสดงในหน้าจอเล็ก (น้อยกว่า md) -->
+            <div class="my-3 d-block d-md-none">
+              <div class="card shadow-sm mb-3" style="height: fit-content !important;">
+                <div class="drop_box">
+                  <header>
+                    <h4 class="my-1">เลือกไฟล์ที่จะอัปโหลดที่นี่</h4>
+                  </header>
+                  <p class="my-1 desText">ไฟล์ที่สามารถอัปโหลดได้: .xls</p>
+                  <input type="file" name="excelFile-mobile" class="input-file-mobile" hidden accept=".xlsx, .xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" id="fileID-mobile" style="display:none;">
+                  <button class="choose-btn-mobile btn-focus my-1" type="button">เลือกไฟล์</button>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <p class="fw-semi-bold purple text-center mb-1">ตัวอย่างไฟล์:</p>
+                <div class="d-flex justify-content-center">
+                  <a href="/adminIndex/downloadFile" class="btn btn-outline-primary p-1">
+                    <small>Teach_stdlistExcel.xls
+                      <i class="bi bi-download ms-1"></i>
+                    </small>
+                  </a>
+                </div>
+              </div>
+              
+              <div class="file-description w-100">
+                <p class="fw-bold mx-2 grey fs-sm-5">คำอธิบายเกี่ยวกับการอัปโหลดไฟล์:
+                  <br>
+                  <span class="fw-light grey small">
+                    1. ข้อมูลที่ได้จากการอัปโหลไฟล์ จะได้แก่ ข้อมูลรายวิชาและข้อมูลนักศึกษา <br>
+                    2. ระบบจะบันทึกข้อมูลและรายชื่อการลงทะเบียนเรียนของนักศึกษาและรายวิชาในไฟล์ที่แนบให้อัติโนมัติ <br>
+                    3. เมื่อมีอัปโหลดข้อมูลรายวิชาและรายชื่อนักศึกษาที่ซ้ำ ระบบจะไม่ทำการบันทึกการอัปโหลด
+                  </span>
+                </p>
+        
+                <p class="fw-bold mx-2 text-success mt-2 small">ไฟล์ที่รองรับ:
+                  <span class="fw-light grey">ไฟล์ Excel (.xls) ที่ได้จากเว็บไซต์สำนักบริหารและพัฒนาวิชาการ (reg.kku.ac.th)</span>
+                </p>
+        
+                <p class="fw-bold mx-2 text-danger mt-2 small">ข้อควรระวัง:
+                  <span class="fw-light grey">
+                    หลีกเลี่ยงการแก้ไขไฟล์เพิ่มเติมหลังที่จากดาวน์โหลดจากสำนักบริหารและพัฒนาวิชาการ
+                  </span>
+                </p>
               </div>
             </div>
           </form>
@@ -617,40 +786,54 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
   
-      const dropArea = document.querySelector(".drop_box"),
-        button = dropArea.querySelector(".choose-btn"),
-        dragText = dropArea.querySelector("header"),
-        input = dropArea.querySelector(".input-file");
-      let file;
-      var filename;
+      setupFileUpload('.drop_box', '.choose-btn', '.input-file');
+  
+  // สำหรับหน้าจอเล็ก
+  setupFileUpload('.drop_box', '.choose-btn-mobile', '.input-file-mobile');
+  
+  function setupFileUpload(dropAreaSelector, buttonSelector, inputSelector) {
+    const dropAreas = document.querySelectorAll(dropAreaSelector);
+    
+    dropAreas.forEach(dropArea => {
+      const button = dropArea.querySelector(buttonSelector);
+      const input = dropArea.querySelector(inputSelector);
+      
+      if (button && input) {
+        button.onclick = () => {
+          input.click();
+        };
+        
+        input.addEventListener("change", function(e) {
+          if (!e.target.files.length) return;
+          
+          var fileName = e.target.files[0].name;
+          var headerText = dropArea.querySelector('header h4');
+          var descText = dropArea.querySelector('.desText');
 
-      button.onclick = () => {
-        input.click();
-      };
+          // เปลี่ยนข้อความเป็นชื่อไฟล์ที่ถูกเลือก
+          headerText.textContent = fileName;
+          descText.textContent = 'ไฟล์ถูกอัปโหลดแล้ว';
+          
+          // ลบปุ่มอัปโหลดเดิมถ้ามีอยู่แล้ว
+          const existingButton = dropArea.querySelector('.upload-button-container');
+          if (existingButton) {
+            existingButton.remove();
+          }
+          
+          // สร้างปุ่มใหม่
+          var uploadButton = document.createElement('div');
+          uploadButton.classList.add('d-flex', 'justify-content-center', 'my-1', 'upload-button-container');
+          uploadButton.innerHTML = `
+          <button class="btn-focus">อัปโหลด</button>
+          `;
+          dropArea.appendChild(uploadButton);
 
-      input.addEventListener("change", function(e) {
-        var fileName = e.target.files[0].name;
-        var headerText = document.querySelector('.drop_box header h4');
-        var descText = document.querySelector('.desText');
-
-        // เปลี่ยนข้อความใน element เป็นชื่อไฟล์ที่ถูกเลือก
-        headerText.textContent = fileName;
-        descText.textContent = 'ไฟล์ถูกอัปโหลดแล้ว';
-        // let filedata = `
-        // <h4 class="my-2">${fileName}</h4>
-        //;
-        // dropArea.innerHTML = filedata;
-        var uploadButton = document.createElement('div');
-        uploadButton.classList.add('d-flex', 'justify-content-center', 'my-1');
-        uploadButton.innerHTML = `
-        <button class="btn-focus">อัปโหลด</button>
-        `;
-        dropArea.appendChild(uploadButton);
-
-        // ซ่อนปุ่ม "เลือกไฟล์"
-        var chooseButton = document.querySelector('.choose-btn');
-        chooseButton.style.display = 'none';
-      });
+          // ซ่อนปุ่ม "เลือกไฟล์"
+          button.style.display = 'none';
+        });
+      }
+    });
+  }
 
       var errorMessage = document.getElementById('error-message').textContent || "error";
       if (errorMessage) {

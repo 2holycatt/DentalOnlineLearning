@@ -561,15 +561,19 @@
       
       <div class="manange-bar p-4 bg-white w-100">
               
-        <div class="fw-normal fs-6  ms-2"> 
+        <div class="fw-normal font14  ms-2"> 
           <span><i class="bi bi-person-dash-fill me-2 purple" ></i> </span>
+          <span>
+            <a class='link' href="/subjects"> รายวิชาทั้งหมด </a>
+          </span>
+          /
           <a class="link" href="/eachSubject?subjectDbId=<%=subject._id%>">
           <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%></a> 
        
       <span> / ลบนักศึกษาออกจากรายวิชา</span> 
       </div>
         <br>
-        <p class="ms-2 fs-3 ">ลบนักศึกษาออกจากรายวิชา</p>
+        <p class="ms-2 fs-3 ">ลบนักศึกษาออกจาก  <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%></p>
           </div>
 
 
@@ -580,10 +584,7 @@
               <i class="bi bi-people-fill purple"></i><span class="mx-2">รายชื่อนักศึกษาที่ลงทะเบียน </span>
               <!-- <span class="fs-6 fw-light mx-2" style="color: #5A6A85;">(3 x 8) แถว/คอลัมน์ แรก</span> -->
             </p>
-            <div class="form-check form-switch d-flex align-items-center">
-              <input class="form-check-input" type="checkbox" role="switch" id="checkedAll">
-              <label class="form-check-label ms-2" for="flexSwitchCheckDefault">เลือกทั้งหมด</label>
-            </div>
+           
             <!-- <div class="form-check d-flex align-items-center">
               <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
               <label class="form-check-label" for="flexCheckDefault">
@@ -592,27 +593,9 @@
             </div> -->
           </div>
           <div class="col d-flex justify-content-end" style="align-items: center;">
-            <div class="">
-              <label class="quiz-label" for="dashboardSelector">นักศีกษาจาก: </label>
-              <select class="sectionSelector">
-                <!-- <option value="all">ทั้งหมด</option> -->
-                <option value="allLessons" selected>
-                  ทั้งหมด
-                  </a>
-                </option>
-                <option value="JavaScript">
-                  JavaScript
-                </option>
-                <option value="Python">
-                  Python
-                </option>
-                <option value="PHP">
-                  PHP
-                </option>
-                <option value="HTML">
-                  HTML
-                </option>
-              </select>
+            <div class="form-check form-switch d-flex align-items-center">
+              <input class="form-check-input" type="checkbox" role="switch" id="checkedAll">
+              <label class="form-check-label ms-2" for="flexSwitchCheckDefault">เลือกทั้งหมด</label>
             </div>
           </div>
         </div>

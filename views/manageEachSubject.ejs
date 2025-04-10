@@ -303,7 +303,7 @@
 
       .list-div-data {
         padding-top: 1em;
-        border-bottom: 1px solid #EAEFF4;
+        border-bottom: 1px solid #EAEFF4 !important;
         text-align: start;
       }
       .dark .list-div-data {
@@ -570,7 +570,13 @@
   .swal2-icon {
     margin: 1rem auto !important; /* จัดโลโก้แจ้งเตือนให้อยู่ตรงกลาง */
   }
-  .link:hover{
+  .link{
+        color: gray;
+      }
+      .dark .link{
+        color: rgb(231, 231, 231);
+      }
+      .dark .link:hover ,.link:hover{
         text-decoration: underline;
         color: #ba55d3 !important;
       }
@@ -583,11 +589,233 @@
   color: #fff;
   background-color: #4cbb17;
 }
+.assignment-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  margin-right: 10px;
+}
+
+.assignment-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+
+.file-example {
+  min-width: 900px; /* กำหนดความกว้างขั้นต่ำให้พอดีกับเนื้อหา */
+  width: 100%;
+}
+
+/* กำหนดความสูงคงที่สำหรับ container ของรายชื่อนักศึกษา */
+.students-list-container {
+  height: 400px; /* กำหนดความสูงคงที่ */
+  overflow-y: auto; /* ให้เลื่อนในแนวตั้งได้ */
+  overflow-x: hidden; /* ป้องกันการเลื่อนในแนวนอนซ้อน */
+  border: 1px solid #EAEFF4;
+  border-top: none;
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* สำหรับโหมดมืด */
+.dark .students-list-container {
+  border-color: #555;
+}
+
+/* ทำให้ header ของตารางมีการเน้นให้เห็นชัดเจน */
+.list-div.purple.row {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background-color: #f8f8ff; /* สีพื้นหลังอ่อนๆ */
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+/* สำหรับโหมดมืด */
+.dark .list-div.purple.row {
+  background-color: #333;
+}
+
+/* ปรับปรุงการแสดงผลของแถวข้อมูล */
+.student-row-link {
+  display: block;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.student-row-link:hover {
+  transform: translateY(-2px);
+}
+
+.list-div-data {
+  transition: background-color 0.2s, transform 0.2s;
+  border-bottom: 1px solid #EAEFF4;
+  padding: 0.5rem 0;
+}
+
+.list-div-data:hover {
+  background-color: rgba(138, 43, 226, 0.05);
+  transform: translateY(-2px);
+}
+
+.dark .list-div-data:hover {
+  background-color: rgba(185, 138, 255, 0.1);
+}
+
+.list-div-data:last-child {
+  border-bottom: none;
+}
+
+/* ทำให้ตารางมีความสวยงามมากขึ้น */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.assignments-list-container {
+  height: 400px; /* กำหนดความสูงคงที่ */
+  overflow-y: auto; /* ให้เลื่อนในแนวตั้งได้ */
+  overflow-x: hidden; /* ป้องกันการเลื่อนในแนวนอนซ้อน */
+  border: 1px solid #EAEFF4;
+  border-top: none;
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.dark .assignments-list-container {
+  border-color: #555;
+}
+
+.assignment-row-link {
+  display: block;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.assignment-row-link:hover {
+  transform: translateY(-2px);
+}
+
+.list-div-data p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* เพิ่ม hover effect สำหรับแถวข้อมูล */
+.assignment-row-link .list-div-data:hover {
+  background-color: rgba(138, 43, 226, 0.05);
+}
+
+.dark .assignment-row-link .list-div-data:hover {
+  background-color: rgba(185, 138, 255, 0.1);
+}
+
       @media screen and (max-width: 768px) {
+        .students-list-container {
+    height: 300px; /* ลดความสูงลงในหน้าจอเล็ก */
+  }
         .above-nav-status {
           display: none;
         }
+        
+  .table-responsive {
+    position: relative;
+  }
+  
+  .table-responsive::after {
+    content: "◀ เลื่อนเพื่อดูข้อมูลเพิ่มเติม ▶";
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    color: #666;
+    white-space: nowrap;
+    opacity: 0.8;
+  }
+  
+  /* เพิ่มเอฟเฟกต์ shadow เพื่อบอกว่ามีเนื้อหาต่อ */
+  .table-responsive::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 15px;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  /* Dark mode support */
+  .dark .table-responsive::before {
+    background: linear-gradient(to right, rgba(33,33,33,0), rgba(0,0,0,0.2));
+  }
+  
+  .dark .table-responsive::after {
+    color: #aaa;
+  }
+
+
+/* ปรับปรุงการแสดงผลของแถว */
+.student-row-link {
+  display: block;
+  text-decoration: none;
+}
+
+.list-div-data {
+  transition: background-color 0.2s;
+}
+
+.list-div-data:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark .list-div-data:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.assignments-list-container {
+    height: 300px;
+  }
       }
+      @media (max-width: 576px) {
+  .assignment-header {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .assignment-header p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+  
+  .assignment-actions {
+    flex: 0 0 auto;
+  }
+  
+  /* ปรับ dropdown menu ให้แสดงผลได้ถูกต้องบนมือถือ */
+  .custom-dropdown-menu {
+    left: auto !important;
+    right: 0 !important;
+    width: 200px !important;
+  }
+  .list-div p,
+  .list-div-data p {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+/* แก้ไขปัญหา dropdown menu ID ซ้ำกัน */
+.custom-dropdown#custom-dropdown-4 .custom-dropdown-menu {
+  z-index: 1050; /* ให้แสดงด้านบนสุด */
+}
     </style>
 
 </head>
@@ -609,9 +837,28 @@
       <%- include("./partials/lessonsList.ejs")%>
         <!-- <div style="width: 20%;"><p class="w-100">&nbsp;</p></div> -->
         <div class="aside-right bg-white h-auto p-4 m-3" style="width: 80%;">
-          <div class="manange-bar px-4 py-3 bg-white w-100">
-            <div class="mb-3">
-              <p class="fw-bold fs-3 my-1 lesson-bar">
+          <div class="manange-bar p-4 bg-white w-100">
+
+            <div class="fw-normal font14  ms-2">
+            <span><i class="bi bi-journal ms-0 me-2 purple" ></i> </span>
+            <span>
+              <a class='link' href="/subjects"> รายวิชาทั้งหมด </a>
+            </span>
+            <% if (subject.isArchived) { %>
+              <span> / </span> 
+              <span>
+                <a class='link' href="/archivedSubject"> รายวิชาที่ถูกจัดเก็บ </a>
+              </span> 
+            <% } %>
+            <span> / </span> 
+            <span>
+             <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
+            </span> 
+            </div>
+            <br>
+
+            <div class=" mb-3">
+              <p class="fw-bold fs-3 my-1 ms-2">
                 <span class=" fw-normal">
                   <%=subject.subjectId%>
                     <%=subject.subjectName%>
@@ -629,7 +876,7 @@
                   <%=subject.section%>
                 </span>
               </p>
-            <p class="grey m-3"><%=subject.description%></p>
+            <p class="grey my-3 ms-2"><%=subject.description%></p>
             </div>
 
             <div>
@@ -638,16 +885,16 @@
               </div> -->
               <div class="d-flex justify-content-between">
                 <a class="m-1 p-2 btn btn-primary" href="/adminIndex/adminDashboard?subjectId=<%=subject._id%>">
-                  แดชบอร์ด <i class="ms-1 bi bi-pie-chart-fill"></i>
+                  <i class=" bi bi-pie-chart-fill"></i> แดชบอร์ด 
                 </a>
                 <div>
                   <% if (!subject.isArchived) { %>
                     <!-- Show Archive buttons for active subjects -->
                     <a href="/adminIndex/editSubject?subjectId=<%=subject._id%>" class="btn btn-warning text-white m-1 p-2">
-                      แก้ไขรายวิชา<i class="bi bi-pencil-fill ms-2"></i>
+                      <i class="bi bi-pencil-fill me-1"></i>แก้ไขรายวิชา
                     </a>
                     <a href="#" onclick="confirmArchive('<%=subject._id%>')" class="btn btn-danger m-1 p-2">
-                      จัดเก็บรายวิชา <i class="bi bi-archive"></i>
+                       <i class="bi bi-archive me-1"></i>จัดเก็บรายวิชา
                     </a>
                   <% } else { %>
                     <!-- Show Restore/Delete buttons for archived subjects -->
@@ -678,7 +925,7 @@
       </div> -->
 
           <div class="lesson-content p-4 bg-white w-100 my-4">
-            <div class="row">
+            <div class="row px-2">
 
               <div class="col-12 mt-2 row">
                 <div class="col">
@@ -867,195 +1114,187 @@
                                 <% } %>
               </div>
 
-              <div class="col-12 mt-2 row">
-                <div class="col">
-                  <p class="fw-bold fs-6 my-1">
-                    <i class="me-1 bi-2 bi bi-list-task purple"></i>
-                    งานที่มอบหมาย
-                    <span class="text-secondary fw-normal">
-                      /
-                    </span>
-                    จำนวน:
-                    <span class="purple fw-normal">
-                        <%= subject.Assignments ? subject.Assignments.length : 0 %>
-                    </span>
-                  </p>
-                </div>
-                <div class="col d-flex align-items-center justify-content-end">
-                  <div class="custom-dropdown" id="custom-dropdown-4">
-                    <% if (!subject.isArchived) { %>
+             
+            <!-- แก้ไขส่วนของตารางงานที่มอบหมาย -->
+<div class="col-12 mt-2">
+  <div class="d-flex justify-content-between align-items-center flex-wrap">
+    <div class="assignment-header">
+      <p class="fw-bold fs-6 my-1">
+        <i class="me-1 bi-2 bi bi-list-task purple"></i>
+        งานที่มอบหมาย
+        <span class="text-secondary fw-normal">
+          /
+        </span>
+        จำนวน:
+        <span class="purple fw-normal">
+          <%= subject.Assignments ? subject.Assignments.length : 0 %>
+        </span>
+      </p>
+    </div>
+    <div class="assignment-actions">
+      <div class="custom-dropdown" id="custom-dropdown-4">
+        <% if (!subject.isArchived) { %>
+        <a href="" class="icon-toggle" id="icon-toggle-4">
+          <i class="fs-5 bi bi-three-dots-vertical text-primary icon-gear"></i>
+        </a>
+        <ul class="custom-dropdown-menu" id="custom-dropdown-menu-4">
+          <li>
+            <a class="custom-dropdown-item" href="/adminIndex/subjectCreateAssignment?subjectId=<%=subject._id%>">
+              <i class="bi bi-plus-circle me-2"></i>มอบหมายงาน
+            </a>
+          </li>
+        </ul>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
 
-                    <a href="" class="icon-toggle" id="icon-toggle-4">
-                      <i class="fs-5 bi bi-three-dots-vertical text-primary icon-gear"></i>
-                    </a>
-                    <ul class="custom-dropdown-menu" id="custom-dropdown-menu">
-                      <li><a class="custom-dropdown-item"
-                          href="/adminIndex/subjectCreateAssignment?subjectId=<%=subject._id%>">
-                          <i class="bi bi-plus-circle me-2"></i>เพิ่มงานที่มอบหมาย</a>
-                      </li>
-                     
-                      <!-- <li><a class="custom-dropdown-item" href="/exportLogs?value=plain">ลบบทเรียน</a></li> -->
-                    </ul>
-                    <% } %>
-                  </div>
-                </div>
+<div class="col-12 row">
+  <% if (subject.Assignments.length > 0) { %>
+    <div class="table-responsive">
+      <div class="file-example w-100">
+        <div class="list-div purple row">
+          <p class="fw-bold ps-4 my-3 col-4">ชื่อ</p>
+          <p class="fw-bold my-3 col-2">วันที่เปิดให้ส่ง</p>
+          <p class="fw-bold my-3 col-2">วันที่หมดเขตส่ง</p>
+          <p class="fw-bold my-3 col-3">จำนวนที่นักศึกษาส่งงาน</p>
+          <p class="fw-bold my-3 col-1">คะแนนเต็ม</p>
+        </div>
+        <div class="assignments-list-container">
+          <% subject.Assignments.forEach(assign => { %>
+            <a href="/adminIndex/assignmentDetail?id=<%= assign._id %>" class="assignment-row-link">
+              <div class="list-div-data row">
+                <p class="fw-normal grey ps-4 my-3 col-4 truncate-text" title="<%= assign.name %>">
+                  <%= assign.name %>
+                </p>
+                <p class="fw-normal text-success my-3 col-2 truncate-text">
+                  <%= moment(assign.StartDate).format('DD/MM/YYYY HH:mm') %>
+                </p>
+                <p class="fw-normal text-danger my-3 col-2 truncate-text">
+                  <%= moment(assign.Deadline).format('DD/MM/YYYY HH:mm') %>
+                </p>
+                <p class="fw-normal grey my-3 col-3 truncate-text">
+                  <%= assign.sentCount %>
+                </p>
+                <p class="fw-normal text-success my-3 col-1 truncate-text">
+                  <%= assign.Score %>
+                </p>
               </div>
-              <div class=" col-12 my-2 row">
-                <% if (subject.Assignments.length > 0) { %>
-                  <div class="file-example w-100">
-                  <div class="list-div purple row ">
-                    <p class="fw-bold my-3 col-4 ">
-                      ชื่อ
-                    </p>
-                    <p class="fw-bold my-3 col-2 ">
-                      วันที่เปิดให้ส่ง
-                    </p>
-                    <p class="fw-bold my-3 col-2 ">
-                      วันที่หมดเขตส่ง
-                    </p>
-                    <p class="fw-bold my-3 col-3">
-                      จำนวนที่นักศึกษาส่งงาน
-                    </p>
-                    <p class="fw-bold my-3 col-1">
-                      คะแนนเต็ม
-                    </p>
-                  </div>
-                  <% subject.Assignments.forEach(assign => { %>
-                    <a href="/adminIndex/assignmentDetail?id=<%= assign._id %>" class="data-a">                    
-                      <div class="list-div-data row py-3 mb-2">
-                        <p class=" fw-normal grey col-4 " title="<%= assign.name %>">
-                            <%= assign.name %>
-                        </p>
-                        <p class=" fw-normal text-success col-2">
-                            <%= moment(assign.StartDate).format('DD/MM/YYYY HH:mm') %>
-                        </p>
-                        <p class=" fw-normal text-danger col-2">
-                            <%= moment(assign.Deadline).format('DD/MM/YYYY HH:mm') %>
-                        </p>
-                        <p class=" fw-normal  grey col-3">
-                            <%= assign.sentCount %>
-                        </p>
-                        <p class=" fw-normal text-success  col-1">
-                            <%= assign.Score %>
-                        </p>
-                    </div>
-                  </a>
-                  <% }); %>
-                  <% } else if (subject.Assignments.length < 1) {%>
-                  <div class="list-no-assign">
-                    <p class="showSubject show<%=subject.subjectId%> mb-2">ยังไม่มีงานที่มอบหมายในรายวิชานี้</p>
-                  </div>
-                  <% }; %>
-                
-                </div>
-              </div>
+            </a>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  <% } else { %>
+    <p class="showSubject show<%=subject.subjectId%> mb-2">ยังไม่มีงานที่มอบหมายในรายวิชานี้</p>
+  <% } %>
+</div>
             
 
               
-              <div class=" col-12 mt-2 row">
-                <div class="col mb-2">
-                  <p class="fw-bold fs-6 my-1">
-                    <i class="bi bi-people-fill purple me-1"></i></i>
-                    นักศึกษาที่ลงทะเบียนเรียน
-                    <span class="text-secondary fw-normal">
-                      /
-                    </span>
-                    จำนวน:
-                    <span class="purple fw-normal">
-                      <%=subject.students.length%>
-                    </span>
-                  </p>
-                </div>
-                <div class="col d-flex align-items-center justify-content-end">
-                  <div class="custom-dropdown" id="custom-dropdown-3">
-                    <% if (!subject.isArchived) { %>
-
-                    <a href="" class="icon-toggle" id="icon-toggle-3">
-                      <i class="fs-5 bi bi-three-dots-vertical text-primary icon-gear"></i>
-                    </a>
-                    <ul class="custom-dropdown-menu" id="custom-dropdown-menu-3">
-                      <li><a class="custom-dropdown-item"
-                          href="/adminIndex/addStudentToSubject?subjectDbId=<%=subject._id%>">
-                          <i class="bi bi-person-add me-2"></i>เพิ่มนักศึกษาลงในรายวิชา</a>
-                      </li>
-                      <li><a class="custom-dropdown-item"
-                          href="/adminIndex/deleteStudentFromSubjectPage?subjectDbId=<%=subject._id%>">
-                          <i class="bi bi-person-dash me-2"></i>ลบนักศึกษาออกจากรายวิชา</a>
-                      </li>
-                      <!-- <li><a class="custom-dropdown-item" href="/exportLogs?value=plain">ลบบทเรียน</a></li> -->
-                    </ul>
-                    <% } %>
-                  </div>
-                </div>
+             <!-- แก้ไขส่วนของนักศึกษาที่ลงทะเบียนเรียน -->
+<div class="col-12 mt-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap">
+    <div class="assignment-header">
+      <p class="fw-bold fs-6 my-1">
+        <i class="bi bi-people-fill purple me-1"></i>
+        นักศึกษาที่ลงทะเบียนเรียน
+        <span class="text-secondary fw-normal">
+          /
+        </span>
+        จำนวน:
+        <span class="purple fw-normal">
+          <%=subject.students.length%>
+        </span>
+      </p>
+    </div>
+    <div class="assignment-actions">
+      <div class="custom-dropdown" id="custom-dropdown-3">
+        <% if (!subject.isArchived) { %>
+        <a href="" class="icon-toggle" id="icon-toggle-3">
+          <i class="fs-5 bi bi-three-dots-vertical text-primary icon-gear"></i>
+        </a>
+        <ul class="custom-dropdown-menu" id="custom-dropdown-menu-3">
+          <li>
+            <a class="custom-dropdown-item" href="/adminIndex/addStudentToSubject?subjectDbId=<%=subject._id%>">
+              <i class="bi bi-person-add me-2"></i>เพิ่มนักศึกษาลงในรายวิชา
+            </a>
+          </li>
+          <li>
+            <a class="custom-dropdown-item" href="/adminIndex/deleteStudentFromSubjectPage?subjectDbId=<%=subject._id%>">
+              <i class="bi bi-person-dash me-2"></i>ลบนักศึกษาออกจากรายวิชา
+            </a>
+          </li>
+          <!-- <li><a class="custom-dropdown-item" href="/exportLogs?value=plain">ลบบทเรียน</a></li> -->
+        </ul>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+     
+<div class="col-12 row">
+  <% if (subject.students.length > 0) { %>
+    <div class="table-responsive">
+      <div class="file-example w-100">
+        <div class="list-div purple row">
+          <p class="fw-bold my-3 ps-4 col-2">
+            รหัสนักศึกษา
+          </p>
+          <p class="fw-bold my-3 col-2">
+            ชื่อ - นามสกุล
+          </p>
+          <p class="fw-bold my-3 col-1">
+            ชื่อเล่น
+          </p>
+          <p class="fw-bold my-3 col-4">
+            ที่อยู่อีเมล (email)
+          </p>
+          <p class="fw-bold my-3 col-1">
+            คณะ
+          </p>
+          <p class="fw-bold my-3 col-2">
+            นักศึกษาจาก
+          </p>
+        </div>
+        <div class="students-list-container">
+          <% const students=subject.students %>
+          <% students.forEach((student, index)=> { %>
+            <a href="/adminIndex/studentInformationAccount?studentId=<%=student.studentId%>" class="student-row-link">
+              <div class="list-div-data row">
+                <p class="grey fw-normal ps-4 my-3 col-2">
+                  <%=student.studentId%>
+                </p>
+                <p class="grey fw-normal my-3 col-2">
+                  <%=student.user.fname%> <%=student.user.lname%>
+                </p>
+                <p class="grey fw-normal my-3 col-1">
+                  <% if (student.user.nickname !=null) { %>
+                    <%=student.user.nickname%>
+                  <% } else { %>
+                    -
+                  <% } %>
+                </p>
+                <p class="grey fw-normal my-3 col-4 truncate-text">
+                  <%=student.user.email%>
+                </p>
+                <p class="grey fw-normal my-3 col-1">
+                  <%=student.user.major%>
+                </p>
+                <p class="fw-normal my-3 col-2 <%= student.user?.studentFromKku ? 'text-kku' : 'grey' %>">
+                  <%= student.user?.studentFromKku ? 'มหาวิทยาลัยขอนแก่น' : 'ภายนอก' %>
+                </p>
               </div>
-              <div class="col-12 row">
-                <% if (subject.students.length> 0) {%>
-                  <div class="file-example w-100">
-                    <div class="list-div purple row">
-                      <!-- <p class="fw-bold my-3 col-1">
-                        เลขที่
-                      </p> -->
-                      <p class="fw-bold my-3 col-2">
-                        รหัสนักศึกษา
-                      </p>
-                      <p class="fw-bold my-3 col-2">
-                        ชื่อ - นามสกุล
-                      </p>
-                      <p class="fw-bold my-3 col-1">
-                        ชื่อเล่น
-                      </p>
-                      <p class="fw-bold my-3 col-4">
-                        ที่อยู่อีเมล (email)
-                      </p>
-                      <p class="fw-bold my-3 col-1">
-                        คณะ
-                      </p>
-                      <p class="fw-bold my-3 col-2">
-                        นักศึกษาจาก
-                      </p>
-                    </div>
-                    <% const students=subject.students %>
-                      <% students.forEach((student, index)=> { %>
-                        <!-- <a href="/adminIndex/studentDetail?studentId=<%= student._id %>&subjectId=<%= subject._id.toString() %>" class="data-a"> -->
-                          <a href="/adminIndex/studentInformationAccount?studentId=<%=student.studentId%>">
-                        <div class="list-div-data row">
-                          <!-- <p class="grey fw-normal my-3 col-1">
-                            <%=index + 1%>
-                          </p> -->
-                          <p class="grey fw-normal my-3 col-2">
-                            <%=student.studentId%>
-                          </p>
-                          <p class="grey fw-normal my-3 col-2">
-                            <%=student.user.fname%>
-                              <%=student.user.lname%>
-                          </p>
-                          <p class="grey fw-normal my-3 col-1">
-                            <% if (student.user.nickname !=null) { %>
-                              <%=student.user.nickname%>
-                                <% } else { %>
-                                  -
-                                  <% } %>
-                          </p>
-                          <p class="grey fw-normal my-3 col-4 truncate-text">
-                            <%=student.user.email%>
-                          </p>
-                          <p class="grey fw-normal my-3 col-1">
-                            <%=student.user.major%>
-                          </p>
-                          <p
-                      class="fw-normal my-3 col-2  <%= student.user?.studentFromKku ? 'text-kku' : 'grey' %>">
-                      <%= student.user?.studentFromKku ? 'มหาวิทยาลัยขอนแก่น' : 'ภายนอก' %>
-                    </p>
-                        </div>
-                      </a>
-                        <% }); %>
-
-                  </div>
-                  <% } else if (subject.students.length < 1) {%>
-                    <p class="showSubject show<%=subject.subjectId%> mt-3">ยังไม่มีนักศึกษาอยู่ในรายวิชานี้</span>
-                    </p>
-                    <% } %>
-              </div>
+            </a>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  <% } else if (subject.students.length < 1) { %>
+    <p class="showSubject show<%=subject.subjectId%> mt-3">ยังไม่มีนักศึกษาอยู่ในรายวิชานี้</p>
+  <% } %>
+</div>
             </div>
           </div>
 

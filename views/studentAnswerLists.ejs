@@ -144,25 +144,25 @@
         <a href="/adminIndex/showStdAnswerDetail?studentAnswerId=<%=answser._id%>" class="studentDetail-a">
           <div class="list-div-data row">
             <p class="fw-normal my-3 col-2">
-              <%=answser.user.student.studentId%>
+              <%= answser.user && answser.user.student ? answser.user.student.studentId : 'N/A' %>
             </p>
             <p class="fw-normal my-3 col-3">
-              <%=answser.user.name%>
+              <%= answser.user ? answser.user.name : 'N/A' %>
             </p>
             <p class="fw-normal my-3 col-3">
-              <%=answser.createdAt%>
+              <%= answser.createdAt %>
             </p>
-            <% if (answser.checked == true) { %>
-            <p class="fw-normal my-3 col-2" style="color: #8B4513 !important;">
-              ตรวจแล้ว
-            </p>
-            <% } else if (answser.checked == false) { %>
-            <p class="fw-normal my-3 col-2 text-primary">
-              ยังไม่ตรวจ
-            </p>
+            <% if (answser.checked === true) { %>
+              <p class="fw-normal my-3 col-2" style="color: #8B4513 !important;">
+                ตรวจแล้ว
+              </p>
+            <% } else { %>
+              <p class="fw-normal my-3 col-2 text-primary">
+                ยังไม่ตรวจ
+              </p>
             <% } %>
             <p class="fw-normal my-3 col-2">
-              <%=answser.Score%>
+              <%= answser.Score || 'N/A' %>
             </p>
           </div>
         </a>

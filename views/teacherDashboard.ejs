@@ -672,9 +672,12 @@
     <%- include("./partials/lessonsList.ejs", { pageName: pageName })%>
     <!-- <div style="width: 20%;"><p class="w-100">&nbsp;</p></div> -->
     <div class="aside-right bg-white h-auto p-4 m-3" style="width: 80%;">
-      <div class="manange-bar px-4 py-3 bg-white d-flex w-100">
-        <p class="fw-bold fs-3 lesson-bar">แดชบอร์ด (Dashboard)</p>
-        <div class="d-flex justify-content-center" style="align-items: center;">
+      <div class="manange-bar px-4 py-3 bg-white d-flex w-100"> 
+        
+        <p class="fw-bold fs-3  mx-1">
+         <i class='bi-bar-chart-fill purple me-2'></i> แดชบอร์ด (Dashboard)
+        </p>
+          <div class="d-flex justify-content-center" style="align-items: center;">
           <label class="mx-2" for="dashboardSelector">แดชบอร์ดของ: </label>
           <select id="dashboardSelector" onchange="changeDashboardType(this.value)">
             <option value="lesson" <%= contentType === 'lesson' ? 'selected' : '' %>>บทเรียน</option>
@@ -687,7 +690,7 @@
       <div class="lesson-content p-4 bg-white w-100 my-4">
         <div style="border-bottom: 1px solid #EAEFF4;" class="mb-3">
           <p class="fs-4 fw-bold mb-2 ">
-            <i class="bi bi-pie-chart-fill purple" ></i>
+            <i class="" ></i>
             <span class="ms-1"> ภาพรวมของ<%= contentType === 'quiz' ? 'แบบทดสอบ' : 
               contentType === 'assignment' ? 'งานที่มอบหมาย' : 
               'บทเรียน' %>
@@ -907,7 +910,7 @@
                   </a>
                 <% } else if (contentType === 'assignment') { %>
                   <a href="/adminIndex/subjectCreateAssignment?subjectId=<%= latestSubject._id %>" class="btn btn-primary">
-                    เพิ่มงานที่มอบหมาย <i class="bi bi-plus-circle "></i>
+                   มอบหมายงาน <i class="bi bi-plus-circle "></i>
                   </a>
                 <% } else { %>
                   <a href="/adminIndex/addLesson?subjectDbId=<%= latestSubject._id %>&subjectName=<%= encodeURIComponent(latestSubject.subjectName) %>&subjectSection=<%= latestSubject.section %>&subjectId=<%= latestSubject.subjectId %>&subjectSemester=<%= latestSubject.semester %>" class="btn btn-primary">
@@ -1052,8 +1055,8 @@ if (contentType === 'quiz') {
 <div class="lesson-content p-4 bg-white w-100 my-4">
   <div class="row pb-2" >
     <div class="col">
-      <p class="fs-5 fw-bold">
-        <i class="bi bi-list-check purple"></i>
+      <p class="fs-4 fw-bold ">
+        <i class=""></i>
         <span class="mx-2">
           <%= contentType === 'quiz' ? 'รายการแบบทดสอบ' : 
               contentType === 'assignment' ? 'รายการงานที่มอบหมาย' : 
@@ -1066,7 +1069,7 @@ if (contentType === 'quiz') {
   
   <!-- Quiz Table -->
   <% if (contentType === 'quiz' && latestSubject.quizArray && latestSubject.quizArray.length > 0) { %>
-    <div class="file-example w-100">
+    <div class="file-example w-100 ms-1">
       <!-- หัวตาราง -->
       <div class="list-div purple row">
           <p class="fw-bold my-3 col-4">ชื่อแบบทดสอบ</p>
@@ -1088,9 +1091,9 @@ if (contentType === 'quiz') {
                 let maxScore = scores.length ? Math.max(...scores) : 0;
                 let avgScore = scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2) : 0;
               %>
-              <p class="grey fw-normal my-3 col-2"><%= minScore %>/<%= totalPoints %> (<%= ((minScore/totalPoints) * 100).toFixed(0) %>%)</p>
-              <p class="grey fw-normal my-3 col-2"><%= avgScore %>/<%= totalPoints %> (<%= ((avgScore/totalPoints) * 100).toFixed(0) %>%)</p>
-              <p class="grey fw-normal my-3 col-2"><%= maxScore %>/<%= totalPoints %> (<%= ((maxScore/totalPoints) * 100).toFixed(0) %>%)</p>
+              <p class="grey fw-normal my-3 col-2"><%= minScore %>/<%= totalPoints %> </p>
+              <p class="grey fw-normal my-3 col-2"><%= avgScore %>/<%= totalPoints %> </p>
+              <p class="grey fw-normal my-3 col-2"><%= maxScore %>/<%= totalPoints %> </p>
             </div>
           <% }); %>
         </tbody>
@@ -1099,7 +1102,7 @@ if (contentType === 'quiz') {
 
   <!-- Assignment Table -->
   <% } else if (contentType === 'assignment' && latestSubject.Assignments && latestSubject.Assignments.length > 0) { %>
-    <div class="file-example w-100">
+    <div class="file-example w-100 ms-1">
       <div class="list-div purple row">
         <p class="fw-bold my-3 col-3">ชื่องาน</p>
         <p class="fw-bold my-3 col-3">วันที่เปิดให้ส่ง</p>
@@ -1121,7 +1124,7 @@ if (contentType === 'quiz') {
 
   <!-- Lesson Table -->
   <% } else if (contentType === 'lesson' && latestSubject.lessonArray && latestSubject.lessonArray.length > 0) { %>
-    <div class="file-example w-100">
+    <div class="file-example w-100 ms-1">
       <!-- หัวตาราง -->
       <div class="list-div purple row">
         <p class="fw-bold my-3 col-3">ชื่อบทเรียน</p>
@@ -1224,9 +1227,7 @@ function changeChartType(chartType) {
   });
   
   const data = '<%= progressData %>';
-  const splitData = data.split(",");
-  const studentAmount = '<%= studentAmount %>';
-  const parsintStdAmount = parseInt(studentAmount, 10);
+  const splitData = data.split(",").map(Number); // แปลงเป็นตัวเลข
   
   // สร้างสีพื้นหลัง
   const backgroundColors = splitLabels.map(label => getColorForLabel(label));
@@ -1234,29 +1235,71 @@ function changeChartType(chartType) {
   const config = {
     type: chartType,
     data: {
-      labels: truncatedLabels,
-      datasets: truncatedLabels.map((label, index) => ({
-      label: label,
-      data: splitData.map((d, i) => i === index ? d : 0), // แสดงข้อมูลเฉพาะของ label นั้นๆ
-      backgroundColor: backgroundColors[index],
-      borderWidth: 1,
-      barPercentage: 0.8,
-      categoryPercentage: 0.7,
-      borderRadius: 5
-    }))
+        labels: truncatedLabels,
+        datasets: [{
+            label: `<%= contentType === "quiz" ? "แบบทดสอบ" : 
+                     contentType === "assignment" ? "งานที่มอบหมาย" : 
+                     "บทเรียน" %>`, // เพิ่ม label ตรงนี้
+            data: splitData,
+            backgroundColor: backgroundColors,
+            borderWidth: 1
+        }]
     },
     options: {
-      responsive: true,
-      layout: {
-      padding: {
-        bottom: 0 // เพิ่มระยะห่างด้านล่าง
-      }
-    },
-    scales: chartType === 'bar' || chartType === 'line' ? {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: chartType === 'pie' || chartType === 'doughnut' ? 'right' : 'top',
+                align: 'start',
+                labels: {
+                    generateLabels: function(chart) {
+                        const data = chart.data;
+                        if (data.labels.length && data.datasets.length) {
+                            return data.labels.map((label, i) => {
+                                const dataset = data.datasets[0];
+                                const value = dataset.data[i];
+                                const total = dataset.data.reduce((acc, val) => acc + val, 0);
+                                const percentage = ((value / total) * 100).toFixed(2);
+                                return {
+                                    text: `${label}`,
+                                    fillStyle: backgroundColors[i],
+                                    strokeStyle: backgroundColors[i],
+                                    lineWidth: 1,
+                                    hidden: false,
+                                    index: i
+                                };
+                            });
+                        }
+                        return [];
+                    },
+                    padding: 20,
+                    usePointStyle: true,
+                    font: {
+                        family: 'Noto Sans Thai, sans-serif',
+                        size: 12
+                    }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const label = context.label || '';
+                        const value = context.raw;
+                        const total = context.dataset.data.reduce((acc, curr) => acc + curr, 0);
+                        const percentage = ((value / total) * 100).toFixed(2);
+                        return `${label}: ${value} คน (${percentage}%)`;
+                    }
+                }
+            }
+        }
+    }
+};
+  // เพิ่ม scales เฉพาะสำหรับ bar และ line chart
+  if (chartType === 'bar' || chartType === 'line') {
+    config.options.scales = {
       x: {
         title: {
           display: true,
-         
           font: {
             size: 16,
             family: 'Noto Sans Thai, sans-serif'
@@ -1276,7 +1319,6 @@ function changeChartType(chartType) {
       },
       y: {
         beginAtZero: true,
-        max: parsintStdAmount,
         title: {
           display: true,
           text: 'จำนวนนักศึกษาที่สำเร็จ',
@@ -1289,41 +1331,11 @@ function changeChartType(chartType) {
           borderDash: [2, 4]
         }
       }
-    } : undefined,
-    plugins: {
-      legend: {
-        position: chartType === 'pie' || chartType === 'doughnut' ? 'left' : 'top',
-        align: 'start',
-        labels: {
-          padding: 20,
-          usePointStyle: true,
-          font: {
-            family: 'Noto Sans Thai, sans-serif',
-            size: 12
-          }
-        }
-      },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            const label = context.dataset.label || '';
-            if (chartType === 'pie' || chartType === 'doughnut') {
-              const total = context.dataset.data.reduce((acc, curr) => acc + curr, 0);
-              const percentage = ((context.raw / total) * 100).toFixed(2);
-              return `${label}: ${context.raw} คน (${percentage}%)`;
-            }
-            return `${label}: ${context.raw} คน`;
-          }
-        }
-      }
-    }
+    };
   }
-};
 
   currentCharts.myChart = new Chart(ctx, config);
 }
-
-
     const predefinedColors = [
       'rgba(255, 99, 132)', // แดงชมพู
       'rgba(54, 162, 235)', // น้ำเงินสด

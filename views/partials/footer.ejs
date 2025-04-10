@@ -177,14 +177,14 @@
     line-height: 32px;
     color: gray;
   }
-  .dark.address-links {
-    line-height: 32px;
-    color: lightgray;
+  .dark.address-links ,.dark .address1{
+   
+    color: lightgray !important;
   }
 
   .copy-right-sec {
     padding: 1.8rem;
-    background: #8A2BE2;
+    background: #ba55d3;
     color: #fff;
     text-align: center;
   }
@@ -202,10 +202,10 @@
     font-size: small;
   }
 
-  .fw-footer{
-    border-left: 0.25em solid #8A2BE2;
-    padding-left: 0.75em !important;
-  }
+  .fw-footer {
+      border-left: 0.25em solid #ba55d3;
+      padding-left: 0.75em !important;
+    }
 
   .logo-footer {
     width: fit-content !important;
@@ -257,42 +257,55 @@
         </div>
         <div class="w-100 px-3">
             <p class="about-p py-3" style="text-indent: 2em;">
-                สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม คณะทันตยแพทย์ศาสตร์ มหาวิทยาลัยขอนแก่น
+                สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม คณะทันตยแพทยศาสตร์ มหาวิทยาลัยขอนแก่น
             </p>
         </div>
       </div>
       <div class="col-md-3 py-2 px-2">
         <div class="useful-link">
           <p class="fw-bold fw-footer">ห้องเรียน</p>
-          <div class="use-links mx-3">
-            <li><a href="/adminIndex/adminLessonIndex">บทเรียน</a></li>
-            <li><a href="/adminIndex/assignmentIndex">งานที่มอบหมาย</a></li>
-            <li><a href="/adminIndex/adminExamsIndex">แบบทดสอบ</a></li>
+          <div class="use-links mx-3 mt-1">
+            <li><a href="/subjects">รายวิชาทั้งหมด</a></li>
+            
           </div>
         </div>
 
       </div>
-      <div class="col-md-3 py-2 px-2">
+      <% if (userData.role === 'teacher') { %>
+        <div class="col-md-3 py-2 px-2">
         <div class="useful-link">
           <p class="fw-bold fw-footer">จัดการข้อมูลนักศึกษา</p>
-          <div class="use-links mx-3">
-            <li><a href="index.html">แดชบอร์ด (Dashboard)</a></li>
+          <div class="use-links mx-3 mt-1">
+            <li><a href="/adminIndex/adminDashboard">แดชบอร์ด (Dashboard)</a></li>
             <li><a href="/adminIndex/uploadStudent">รายชื่อนักศึกษา</a></li>
             <li><a href="/adminIndex/logsFile">การเข้าใช้งาน (Logs file)</a></li>
-            <li><a href="index.html">การกำหนดสิทธิ์</a></li>
+            <li><a href="/adminIndex/setPermission">การกำหนดสิทธิ์</a></li>
           </div>
         </div>
+   
+      </div> 
+      <% }else { %>
+        <div class="col-md-3 py-2 px-2">
+          <div class="useful-link">
+            <p class="fw-bold fw-footer"></p>
+            <div class="use-links mx-3">
+              
+            </div>
+          </div>
+     
+        </div> 
+        <% } %>
 
-      </div>
       <div class="col-md-3 py-2 px-2">
         <div class="address">
             <p class="fw-bold fw-footer">ติดต่อเรา</p>
-          <div class="address-links mx-3" style="overflow-wrap: break-word;">
-            <li class="address1"></li>
-            <li><a href="">094-517-2149</a></li>
-            <li><a> papinwit.s@kkumail.com</a></li>
-            <li><a> kongkungwan.w@kkumail.com</a></li>
-          </div>
+            <div class="address-links mx-3 mt-1" style="overflow-wrap: break-word;">
+              <li class="address1"></li>
+              <li class="address1">คณะทันตยแพทยศาสตร์ </li>
+              <li class="address1">มหาวิทยาลัยขอนแก่น </li>
+              <li class="address1"> papinwit.s@kkumail.com</li>
+              <li class="address1"> kongkungwan.w@kkumail.com</li>
+            </div>
         </div>
       </div>
 

@@ -3,36 +3,22 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <title>Home</title>
-  <!-- <link rel="stylesheet" href="/css/event.css"> -->
-  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> -->
-  <link rel="stylesheet" href="css/owl.carousel.min.css">
-  <link rel="stylesheet" href="css/owl.theme.default.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css">
-  <link rel="stylesheet" href="css/style_2.css">
+ 
+  <link rel="preload" href="/images/indexMed/Ellipse9.png" as="image" fetchpriority="high">
+<link rel="preload" href="/images/indexMed/DENTISTRY_KKU.svg.png" as="image">
+<link rel="preload" href="/images/bg-2.webp" as="image" fetchpriority="high">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+<link rel="preload" href="css/owl.carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="css/owl.theme.default.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/css/ionicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="css/style_2.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
   <%- include("./partials/header.ejs")%>
   <style>
-    * {
-      -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      -o-box-sizing: border-box;
-      -ms-box-sizing: border-box;
-      box-sizing: border-box;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-
-    /* body {
-    font-size: 14px;
-    background: #fff;
-    max-width: 1920px;
-    margin: 0 auto;
-    overflow-x: hidden;
-    font-family: poppins;
-
-
-  } */
+   
 
     #footer {
       background: white;
@@ -195,7 +181,7 @@
     }
 
     .fw-footer {
-      border-left: 0.25em solid #8A2BE2;
+      border-left: 0.25em solid #ba55d3;
       padding-left: 0.75em !important;
     }
 
@@ -369,12 +355,12 @@
       transition: 0.3s;
     }
 
-    /* .logo-dent {
-      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px !important;
-      border-radius: 50%;
-      width: fit-content;
-      height: auto;
-    } */
+    .logo-dent {
+      max-width: 350px;
+      max-height: 350px;
+      will-change: transform; /* Hardware acceleration for hover effects */
+  contain: layout paint;
+    }
     /* .secondDiv{
       margin-top: 6em !important;
     } */
@@ -392,14 +378,13 @@
 
     .firstDiv {
       height: fit-content;
-      background-image: url('/images/bg-2.jpg') !important;
-      /* filter: blur(6px); */
+      background-image: url('/images/bg-2.webp');
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
-      z-index: 0;
       box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.3);
-
+      margin-top: 5em !important;
+      margin-bottom: 5em !important;
     }
 
     .setShadow {
@@ -423,6 +408,257 @@
       padding: 0.5em 1em !important;
       margin-top: 1em !important;
     }
+
+  * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
+  /* body {
+    font-size: 14px;
+    background: #fff;
+    max-width: 1920px;
+    margin: 0 auto;
+    overflow-x: hidden;
+    font-family: poppins;
+
+
+  } */
+
+  #footer {
+    background: white;
+    padding: 3rem;
+    /* padding-top: 5rem; */
+    padding-top: 7rem;
+    padding-bottom: 80px;
+    /* background-image: url(https://arena.km.ua/wp-content/uploads/3538533.jpg); */
+    border-top: 1px solid #EAEFF4;
+    position: sticky;
+
+  }
+  .dark #footer{
+    border-top: 1px solid #494949 !important;
+  }
+
+  #footer2 {
+    background: #f7f7f7;
+    padding: 3rem;
+    margin-top: 0px;
+    /* padding-top: 5rem; */
+    padding-top: 7rem;
+    padding-bottom: 80px;
+    background-image: url(../images/cards/v748-toon-111.png);
+  }
+
+  .social-links h2 {
+    padding-bottom: 15px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .social-links img {
+    padding-bottom: 25px;
+  }
+
+  .social-icons {
+    /* display: flex;
+    gap: 3rem; */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: lightgray;
+  }
+
+  .social-icons a {
+    /* font-size: 18px; */
+    /* background: #ffffff; */
+    /* box-shadow: rgb(0 0 0 / 8%) 0px 4px 12px;
+    padding: 0.4rem 1rem 0.4rem 1rem;
+    border-radius: 3px;
+  color: #82074a; */
+    /* margin-right: 18px; */
+    color: lightgray;
+  }
+
+  .social-icons a:hover {
+    color: #000;
+  }
+
+  .social-icons a i {
+    box-shadow: rgb(0 0 0 / 8%) 0px 4px 12px;
+    padding: 0.4rem 1rem 0.4rem 1rem;
+    border-radius: 3px;
+    color: #82074a;
+    font-size: 16px;
+    margin-right: 12px;
+  }
+
+  li {
+    list-style: none;
+  }
+
+  .useful-link h2 {
+    padding-bottom: 15px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .useful-link img {
+    padding-bottom: 15px;
+  }
+
+  .use-links {
+    line-height: 32px;
+  }
+
+  .use-links li i {
+    font-size: 14px;
+    padding-right: 8px;
+  }
+
+  .use-links li a {
+    font-size: 15px;
+    font-weight: 500;
+    color: gray;
+  }
+  .dark .use-links li a {
+    font-size: 15px;
+    font-weight: 500;
+    color: lightgray;
+  }
+
+  .use-links li a:hover {
+    color: #000;
+  }
+  .dark .use-links li a:hover {
+    color: white;
+  }
+
+  .address h2 {
+    padding-bottom: 15px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .address img {
+    padding-bottom: 15px;
+  }
+
+  .address-links li a {
+    font-size: 15px;
+    font-weight: 500;
+    color: gray;
+
+  }
+  .dark .address-links li a {
+    font-size: 15px;
+    font-weight: 500;
+    color: lightgray;
+
+  }
+
+  .address-links li i {
+    font-size: 16px;
+    padding-right: 8px;
+    color:gray
+
+  }
+  .dark .address-links li i {
+    font-size: 16px;
+    padding-right: 8px;
+    color:lightgray
+
+  }
+
+  .address-links li i:nth-child(1) {
+    padding-top: 9px;
+  }
+
+  .address-links .address1 {
+    font-weight: 500;
+    font-size: 15px;
+    display: flex;
+  }
+
+  .address-links {
+    line-height: 32px;
+    color: gray;
+  }
+  .dark.address-links {
+    line-height: 32px;
+    color: lightgray;
+  }
+
+  .copy-right-sec {
+    padding: 1.8rem;
+    background: #ba55d3;
+    color: #fff;
+    text-align: center;
+  }
+
+  .copy-right-sec a {
+    color: #fcd462;
+    font-weight: 500;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .about-p {
+    font-size: small;
+  }
+
+ 
+  .logo-footer {
+    width: fit-content !important;
+    height: fit-content !important;
+  }
+
+  .logo-footer,
+  .img-logo {
+    transition-duration: 0.3s;
+  }
+
+  .img-logo:hover {
+    transform: scale(1.1);
+    transition: 0.3s;
+  }
+  body.dark {
+    background-color: #121212; /* Dark background color */
+    color: #fff; /* Light text color */
+  }
+
+  .dark #footer {
+    background-color: #444; /* Dark footer background */
+    color: #fff; /* Light text color */
+  }
+
+  .dark .useful-link,
+  .dark .address {
+    border-color: #555; /* Darker border color */
+  }
+
+ 
+  @media (max-width: 768px) { /* ซ่อนเมื่อหน้าจอเล็กกว่า 768px */
+  .logo-dent,.elearning-text {
+    display: none;
+  }
+  .home-container{
+    font-size: 16px;
+  }
+  html, body, .main-content{
+    overflow-x: visible !important;
+  }
+}
+  
+  
+  /* Additional styles for dark mode */
+ 
+
   </style>
 
 </head>
@@ -433,115 +669,150 @@
     <!-- <div class="element-student">
     </div> -->
   </nav>
-  <div class="firstDiv row" style="margin-top: 5em !important;">
+  <div class="firstDiv row w-auto">
     <div class="setShadow">
-      <div class="inFirst row px-5 py-5">
-        <div class="col-4 d-flex justify-content-center">
-          <img class="w-75 h-auto logo-dent" src="/images/indexMed/Ellipse9.png" alt="ตราสัญลักษณ์ คณะทันตแพทย์ศาตร์">
+      <div class="inFirst row px-5 py-5 flex-column flex-md-row">
+        <div class="col-md-4 d-flex justify-content-center">
+            <img class="w-75 h-auto logo-dent py-2" 
+              src="/images/indexMed/Ellipse9.png" 
+              alt="ตราสัญลักษณ์ คณะทันตแพทยศาตร์" 
+              max-width="350px" 
+              max-height="350px"
+              loading="eager" 
+              fetchpriority="high"
+              decoding="async">
         </div>
-        <div class="col-8 d-flex text-white" style="align-items: center;">
-          <div>
-            <p>
-              <span class="fs-3 ">สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม</span><br>
-              <span class="fs-4 ">Online Learning : Component Parts of Dental Prosthesis</span>
+        <div class="home-container col-md-8 d-flex text-white align-items-center mt-4 mt-md-0">
+          <div style="max-width: 780px;">
+            <p class="border-purple mb-2">
+              <span class="fs-4 d-none d-md-inline">
+                สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม
+              </span>
+              <!-- สำหรับหน้าจอเล็ก (< 768px) ใช้ fs-6 -->
+              <span class="fs-5 d-inline d-md-none">
+                สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม
+              </span>
+
+               <span class="fs-4 d-none d-md-inline ">Online Learning : Component Parts of Dental Prosthesis</span>
+               <span class="fs-5 d-inline d-md-none">Online Learning : Component Parts of Dental Prosthesis</span>
+
             </p>
-            <img class="line img-fluid mb-3" src="images/indexMed/line-1.svg" />
             <p>
-              <span class="fs-4 ">คณะทันตแพทย์ศาสตร์ มหาวิทยาลัยขอนแก่น</span><br>
-              <span class="fs-4 ">Faculty of Dentistry Khon Kaen University</span>
+              <span class="fs-4 d-none d-md-inline">คณะทันตแพทยศาสตร์ มหาวิทยาลัยขอนแก่น</span>
+              <span class="fs-5 d-inline d-md-none">คณะทันตแพทยศาสตร์ มหาวิทยาลัยขอนแก่น</span>
+              <br>
+              <span class="fs-4 d-none d-md-inline">Faculty of Dentistry Khon Kaen University</span>
+              <span class="fs-5 d-inline d-md-none">Faculty of Dentistry Khon Kaen University</span>
+
+            
             </p>
           </div>
         </div>
       </div>
     </div>
-  </div>
+     </div>
+  
 
   <% if (noPermission != null) { %>
   <div id="error-message" style="display: none;"><%=noPermission%></div>
   <% } %>
-  <footer id="footer">
-    <div class="container p-4">
-      <div class="row">
-        <div class="col-md-3">
-          <div class="w-100 d-flex justify-content-center">
-            <div style="width: 50%;">
-              <a href="/adminIndex" class="logo-footer">
-                <img src="/images/indexMed/DENTISTRY_KKU.svg.png" alt="โลโก้" class="w-100 h-auto img-logo">
-              </a>
-            </div>
-          </div>
-          <div class="w-100 px-3">
-            <p class="about-p py-3" style="text-indent: 2em;">
-              สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม คณะทันตยแพทย์ศาสตร์ มหาวิทยาลัยขอนแก่น
-            </p>
-          </div>
-        </div>
-        <!-- <div class="col-md-3 py-2 px-2">
-          <div class="useful-link">
-            <p class="fw-bold fw-footer">ห้องเรียน</p>
-            <div class="use-links mx-3">
-              <li><a href="index.html">บทเรียน</a></li>
-              <li><a href="index.html">งานที่มอบหมาย</a></li>
-              <li><a href="index.html">แบบทดสอบ</a></li>
-            </div>
-          </div>
-
-        </div>
-        <div class="col-md-3 py-2 px-2">
-          <div class="useful-link">
-            <p class="fw-bold fw-footer">จัดการข้อมูลนักศึกษา</p>
-            <div class="use-links mx-3">
-              <li><a href="index.html">แดชบอร์ด (Dashboard)</a></li>
-              <li><a href="index.html">รายชื่อนักศึกษา</a></li>
-              <li><a href="index.html">การเข้าใช้งาน (Logs file)</a></li>
-              <li><a href="index.html">การกำหนดสิทธิ์</a></li>
-            </div>
-          </div>
-
-
-        </div> -->
-        <div class="col-md-3 py-2 px-2">
-          <div class="address">
-            <p class="fw-bold fw-footer">ติดต่อเรา</p>
-            <div class="address-links mx-3">
-              <li class="address1"></li>
-              <li><a href="">094-517-2149</a></li>
-              <li></i> papinwit.s@kkumail.com</li>
-              <li></i> kongkungwan.w@kkumail.com</li>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </footer>
+  <br>
+ 
   <!-- footer section end -->
   <!-- footer copy right section start -->
-  <section id="copy-right">
-    <div class="copy-right-sec p-2">
-      คณะทันตแพทยศาสตร์ มหาวิทยาลัยขอนแก่น</a>
-    </div>
-
-  </section>
-  <script>
-    var errorMessage = document.getElementById('error-message').textContent;
-    if (errorMessage) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'ขออภัย',
-        text: errorMessage,
-        customClass: {
-          container: 'custom-container',
-          popup: 'custom-popup',
-          title: 'custom-title',
-          icon: 'custom-icon',
-          content: 'custom-content',
-          confirmButton: 'custom-button'
-        },
-      });
-    }
-  </script>
+  
+ 
 </body>
+<br><br><br>
+<footer id="footer" >
+  <div class="container-fluid p-4" style="width: auto">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="w-100 d-flex justify-content-center">
+            <div class="w-50 d-flex justify-content-center" style="flex-direction: column; align-items: center;">
+                <a href="/adminIndex" class="logo-footer">
+                    <img src="/images/indexMed/DENTISTRY_KKU.svg.png" alt="โลโก้" class="img-logo" style="max-width: 150px;">
+                </a>
+            </div>
+        </div>
+        <div class="w-100 px-3">
+            <p class="about-p py-3" style="text-indent: 2em;">
+                สื่อการเรียนการสอนออนไลน์ : เรื่องส่วนประกอบของฟันเทียม คณะทันตแพทยศาสตร์ มหาวิทยาลัยขอนแก่น
+            </p>
+        </div>
+      </div>
+      <div class="col-md-3 py-2 px-2">
+        
 
+      </div>
+      <div class="col-md-3 py-2 px-2">
+       
+
+      </div>
+      <div class="col-md-3 py-2 px-2">
+        <div class="address">
+            <p class="fw-bold fw-footer">ติดต่อเรา</p>
+            <div class="address-links mx-3 mt-1" style="overflow-wrap: break-word;">
+              <li class="address1"></li>
+              <li class="address1">คณะทันตแพทยศาสตร์ </li>
+              <li class="address1">มหาวิทยาลัยขอนแก่น </li>
+              <li class="address1"> papinwit.s@kkumail.com</li>
+              <li class="address1"> kongkungwan.w@kkumail.com</li>
+            </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</footer>
+<section id="copy-right">
+  <div class="copy-right-sec p-2">
+    คณะทันตแพทยศาสตร์ มหาวิทยาลัยขอนแก่น</a>
+  </div>
+
+</section>
 </html>
+
+<script>
+   function preloadHandler() {
+    var errorMessageEl = document.getElementById('error-message');
+    if (errorMessageEl && errorMessageEl.textContent) {
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'warning',
+          title: 'ขออภัย',
+          text: errorMessageEl.textContent,
+          customClass: {
+            container: 'custom-container',
+            popup: 'custom-popup',
+            title: 'custom-title',
+            icon: 'custom-icon',
+            content: 'custom-content',
+            confirmButton: 'custom-button'
+          },
+        });
+      }
+    }
+  }
+  
+  // Execute when DOM is loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', preloadHandler);
+  } else {
+    preloadHandler();
+  }
+  
+  // Load background image after content is visible
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      var hero = document.getElementById('hero');
+      if (hero) {
+        hero.style.backgroundImage = "url('/images/bg-2.webp')";
+        hero.style.backgroundPosition = "center";
+        hero.style.backgroundRepeat = "no-repeat";
+        hero.style.backgroundSize = "cover";
+      }
+    }, 100);
+  });
+</script>

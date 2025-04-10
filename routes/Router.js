@@ -18,11 +18,12 @@ const dashboardManagement = require("../controller/dashboardManagement");
 const profileController = require('../controller/profileController');
 const studentQuizController = require('../controller/studentQuizController')
 const Subject = require('../models/subjects');
-
+const jwt = require('jsonwebtoken');
+const SSO_SECRET = process.env.SSO_SECRET;
 
 
 // Middleware For Files Uploading
-const upload = require("../middleware/multer");
+const { upload, uploadQuestionImage } = require('../middleware/multer');
 // const uploadMemory = require('../middleware/multerMemory'); // เรียกใช้ multer middleware
 // Middleware For Login System
 const redirectIfAuth = require("../middleware/redirectIfAuth");
@@ -37,6 +38,28 @@ router.get('/', redirectIfAuth, adminController.notLoggedIn);
 router.get('/auth/google', redirectIfAuth, LoginController.authGoogle);
 router.get('/auth/google/callback', LoginController.authGoogleCallback);
 router.post('/logoutGoogle', LoginController.logoutGoogle);
+router.post('/generate3DModelToken', async (req, res) => {
+    try {
+        const { userId, email, name, role } = req.body;
+        
+        // สร้าง JWT token
+        const token = jwt.sign({
+            userId,
+            email,
+            name,
+            role,
+            timestamp: Date.now()
+        }, SSO_SECRET, { expiresIn: '1h' });
+
+        // สร้าง URL พร้อม token
+        const redirectUrl = `https://backend-dental-production.up.railway.app/sso?token=${token}`;
+        
+        res.json({ redirectUrl });
+    } catch (error) {
+        console.error('Error generating token:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 // Login Process
 // router.post('/loginToWeb', LoginController.loginPage);
@@ -254,8 +277,7 @@ router.get('/seestudent',teacherMiddleware,adminQuizController.seeStudent)
 router.get('/adminIndex/deleteQuiz',adminEditDeleteQuizController.deleteQuiz)
 router.post('/uploadquiz',teacherMiddleware,adminQuizController.uploadQuiz)
 router.post('/updateQuiz',teacherMiddleware,adminEditDeleteQuizController.updateQuiz)
-router.post('/upload-question-image', adminQuizController.uploadQuestionImage);
-
+router.post('/adminIndex/uploadQuestionImage', adminQuizController.uploadQuestionImage);
 
 // router.get('/getallquestion/:id',teacherMiddleware,adminManageQuestions.getAllQuestion)
 router.get('/getQuestions',teacherMiddleware, adminManageQuestions.getQuestions);

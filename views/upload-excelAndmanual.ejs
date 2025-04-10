@@ -75,12 +75,12 @@
       }
 
       .list-div-data {
-
-        padding-top: 1em;
-        border-bottom: 1px solid #EAEFF4;
-        text-align: start;
-        color: #4e5458 !important;
-      }
+  padding: 0 !important;
+  margin: 0;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+}
 
       .dark .list-div-data {
         border-bottom: 1px solid #555;
@@ -256,8 +256,31 @@
 
       }
       .checkbox-column {
-    transition: all 0.3s ease;
-    width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0;
+}
+.checkbox-column input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin: 0;
+}
+/* ปรับแต่ง style ของ header checkbox */
+.list-div.purple .checkbox-column {
+  margin: 0;
+  padding: 0.5rem 0;
+  height: 100%;
+}
+.studentDetail-a {
+  text-decoration: none !important;
+  padding: 0.5rem 0;
+  margin: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 .swal2-popup {
   font-size: 1rem !important;
@@ -350,18 +373,268 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }
-#subjectSelect,
-#entriesPerPage {
-    font-size: 0.9rem !important;
-}
+
 label {
     font-size: 0.9rem !important;
 }
+.list-div.purple {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.list-div.purple,
+.list-div-data {
+  display: flex;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+}
+
+.list-div.purple p,
+.list-div-data p,
+.checkbox-column {
+  display: flex;
+  align-items: center;
+  margin: 0 !important;
+  padding: 0.5rem;
+  min-height: 48px;
+}
+
+/* ปรับแต่ง style ของ header checkbox */
+.list-div.purple .checkbox-column,
+.list-div-data .checkbox-column {
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.checkbox-column input[type="checkbox"] {
+  margin: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.list-div.purple .col-2,
+.list-div-data .col-2,
+.studentDetail-a .col-2 {
+  flex: 0 0 16.666667%;
+  max-width: 16.666667%;
+}
+
+.list-div.purple .col-4,
+.list-div-data .col-4,
+.studentDetail-a .col-4 {
+  flex: 0 0 33.333333%;
+  max-width: 33.333333%;
+}
+/* ปรับแต่ง style ของ data rows */
+.list-div-data {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  min-height: 48px;
+}
+
+.list-div-data .checkbox-column {
+  justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+/* ปรับแต่ง studentDetail-a alignment */
+.studentDetail-a {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
+.studentDetail-a p {
+  display: flex;
+  align-items: center;
+  margin: 0 !important;
+  padding: 0.5rem 0;
+  min-height: 48px;
+}
+
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+  scrollbar-width: thin;
+}
+
+/* ปรับแต่ง scrollbar */
+.table-responsive-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* กำหนดความกว้างขั้นต่ำของตาราง */
+.list-div.purple,
+.list-div-data {
+  min-width: 800px; /* ปรับตามความเหมาะสม */
+}
+form-select {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.9rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.form-select:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+
+
+
+.dark .form-select:focus {
+    border-color: #86b7fe;
+}
+.filter-container {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    margin-bottom: 1rem;
+    justify-content: flex-end;
+}
+
+.filter-select {
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
+    white-space: nowrap;
+}
+
+.form-select-sm {
+    border: 1px solid lightgray;
+    border-radius: 0.5em;
+    padding: 0.4rem 0.8rem;
+    background-color: white;
+    font-size: 0.9rem;
+    width: auto;
+    min-width: 150px;
+    max-width: 200px; /* เพิ่มขนาดสูงสุด */
+}
+
+
       @media screen and (max-width: 768px) {
+
+        .filter-container {
+       
+        justify-content: flex-end;
+    }
+    
+    .form-select-sm {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.5rem;
+        min-width: 120px;
+    }
+    
+    .filter-select {
+        margin-right: 0.3rem;
+    }
         .above-nav-status {
           display: none;
         }
+        .list-div-data {
+    padding: 0.5em 0;
+  }
+  
+  .list-div-data p {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+    font-size: 0.9rem;
+  }
+  
+  .checkbox-column input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+  }
+  .list-div.purple p,
+  .list-div.purple .checkbox-column,
+  .list-div-data .checkbox-column,
+  .studentDetail-a p {
+    min-height: 40px;
+    font-size: 0.9rem;
+  }
+
+  .list-div.purple p,
+  .list-div-data p,
+  .checkbox-column {
+    padding: 0.25rem;
+    min-height: 40px;
+    font-size: 0.9rem;
+  }
+  .table-responsive-wrapper {
+    margin: -1rem; /* ขยายให้เต็มพื้นที่ parent */
+    padding: 1rem;
+  }
+  
+  .lesson-content {
+    padding: 1rem !important;
+  }
+
+  /* ปรับขนาดตัวอักษรให้เล็กลงบนมือถือ */
+  .list-div.purple p,
+  .list-div-data p {
+    font-size: 0.85rem;
+  }
+
+  .d-flex.align-items-center.flex-wrap.gap-4 {
+        gap: 1rem !important;
+    }
+    
+    .d-flex.align-items-center.flex-wrap.gap-4 > div {
+        width: 100%;
+    }
+    
+    #entriesPerPage,
+    #studentFilter {
+        width: 100% !important;
+    }
       }
+
+      @media screen and (max-width: 575px) {
+    .filter-container {
+        
+        justify-content: space-between;
+    }
+    
+    .form-select-sm {
+        min-width: 0;
+       
+        font-size: 0.75rem;
+        padding: 0.25rem;
+    }
+    
+    .filter-select {
+        flex: 1;
+        margin: 0 0.25rem;
+    }
+}
     </style>
 </head>
 
@@ -373,37 +646,58 @@ label {
   <div class="main-content d-flex">
     <%- include("./partials/lessonsList.ejs")%>
       <div class="aside-right bg-white h-auto p-4 m-3" style="width: 80%;">
-        <div class="manange-bar py-3 px-4 bg-white d-flex w-100">
-          <p class="fw-bold fs-3 lesson-bar">รายชื่อนักศึกษา</p>
-          <div>
-    <button id="deleteButton" class="add-button btn btn-danger m-0 p-2" style="display: none;">
-              <i class="bi bi-trash me-1"></i> ลบรายชื่อที่เลือก
-            </button>
-            <button id="selectButton" class="add-button btn btn-secondary m-0 p-2">
-               <i class="bi bi-check-square me-1"></i>เลือกลบรายชื่อ
-            </button>
-
-            <a href="/adminIndex/uploadStudent2" class="add-button btn btn-primary m-0 p-2">
-              <i class="bi bi-file-arrow-up-fill me-1"></i> อัปโหลดรายชื่อนักศึกษา
-            </a>
-
-            <a href="/adminIndex/exportStudentListPage" class="add-button btn btn-dark m-0 p-2">
-             <i class="bi bi-file-arrow-down-fill me-1"></i>  นำออกรายชื่อนักศึกษา
-              </i>
-            </a>
+        <div class="manange-bar px-4 py-3 bg-white w-100 mb-3"> 
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+              <!-- ส่วนหัวข้อ -->
+              <div class="d-flex align-items-center">
+                  <p class="fw-bold fs-3 mb-0">
+                      <i class="bi-person-lines-fill purple me-3"></i> รายชื่อนักศึกษา
+                  </p>
+              </div>
+              
+      
+              <!-- ส่วนปุ่มต่างๆ -->
+              <div class="d-flex flex-wrap gap-2">
+                  <button id="deleteButton" class="add-button btn btn-danger m-0 p-2" style="display: none;">
+                      <i class="bi bi-trash me-1"></i> ลบรายชื่อที่เลือก
+                  </button>
+                  <button id="selectButton" class="add-button btn btn-secondary m-0 p-2">
+                      <i class="bi bi-check-square me-1"></i>เลือกลบรายชื่อ
+                  </button>
+                  <a href="/adminIndex/uploadStudent2" class="add-button btn btn-primary m-0 p-2">
+                      <i class="bi bi-file-arrow-up-fill me-1"></i> อัปโหลดรายชื่อนักศึกษา
+                  </a>
+                  <a href="/adminIndex/exportStudentListPage" class="add-button btn btn-dark m-0 p-2">
+                      <i class="bi bi-file-arrow-down-fill me-1"></i> นำออกรายชื่อนักศึกษา
+                  </a>
+              </div>
           </div>
-        </div>
+      </div>
         <br>
-        <div class="d-flex align-items-center ms-2 mb-3 me-4">
-          <label for="entriesPerPage" class="ms-3 me-2">แสดงรายชื่อ:</label>
-          <select id="entriesPerPage" class="form-select" style="width: max-content; min-width: 170px;">
-            <option value="10" <%= allStudents.limit == 10 ? 'selected' : '' %>> 10 รายการ</option>
-            <option value="20" <%= allStudents.limit == 20 ? 'selected' : '' %>> 20 รายการ</option>
-            <option value="all" <%= allStudents.limit == allStudents.totalDocs ? 'selected' : '' %>>
-               ทั้งหมด (<%= allStudents.totalDocs %> รายการ)
-            </option>
-          </select>
-        </div>
+        <div class="filter-container d-flex align-items-center flex-wrap gap-4 ms-2 mb-3 me-4">
+          <!-- ส่วนแสดงรายชื่อ -->
+          <div class="filter-select">
+              <label for="entriesPerPage" class="me-2">แสดงรายชื่อ:</label>
+              <select id="entriesPerPage" class="form-select-sm px-2">
+                  <option value="10" <%= allStudents.limit == 10 ? 'selected' : '' %>> 10 รายการ</option>
+                  <option value="20" <%= allStudents.limit == 20 ? 'selected' : '' %>> 20 รายการ</option>
+                  <option value="all" <%= allStudents.limit == allStudents.totalDocs ? 'selected' : '' %>>
+                      ทั้งหมด (<%= allStudents.totalDocs %> รายการ)
+                  </option>
+              </select>
+          </div>
+      
+          <!-- ส่วน Filter นักศึกษา -->
+          <div class="filter-select">
+              <label for="studentFilter" class="me-2">นักศึกษาจาก:</label>
+              <select id="studentFilter" class="form-select-sm px-2">
+                  <option value="all" selected>ทั้งหมด</option>
+                  <option value="kku">มหาวิทยาลัยขอนแก่น</option>
+                  <option value="external">ภายนอก</option>
+              </select>
+          </div>
+      </div>
+      
         <% if (allStudents.length < 1) { %>
 
           <div class="lesson-content bg-white w-100 py-3 my-2" style="height: fit-content;">
@@ -416,59 +710,62 @@ label {
           </div>
           <% } else if (allStudents.docs.length> 0) {%>
             <div class="lesson-content p-4 bg-white w-100 my-2 h-auto">
-              <div class="list-div purple row">
-                <p class="fw-bold my-3 col-1 checkbox-column" style="display: none;">
-                  <input type="checkbox" id="selectAll" style="display: none;">
-                </p>
-                <p class="fw-bold my-3 col-2 ">
-                  รหัสนักศึกษา
-                </p>
-                <p class="fw-bold my-3 col-3 col-adjust">
-                  ชื่อ - นามสกุล
-                </p>
-                <p class="fw-bold my-3 col-1 ">
-                  ชื่อเล่น
-                </p>
-                <p class="fw-bold my-3 col-4  ">
-                  ที่อยู่อีเมล (Email)
-                </p>
-                <p class="fw-bold my-3 col-1 ">
-                  คณะ
-                </p>
-                <p class="fw-bold my-3 col-1">
-                  นักศึกษาจาก
-                </p>
-              </div>
-              <% allStudents.docs.forEach ((student, index)=> { %>
-                <a href="/adminIndex/studentInformationAccount?studentId=<%=student.studentId%>"
-                  class="studentDetail-a">
-                  <div class="list-div-data row">
-                    <p class="fw-normal my-3 col-1 checkbox-column" style="display: none;">
-                      <input type="checkbox" name="studentCheckbox" value="<%= student.studentId %>" style="display: none;">
-                    </p>
-                    <p class="fw-normal my-3 col-2 grey ">
-                      <%= student.studentId || '-' %>
-                    </p>
-                    <p class="fw-normal my-3 col-3 grey col-adjust">
-                      <%= student.prefix || '' %><%= student.user ? `${student.user.fname || '' } ${student.user.lname || '' }` : '-' %>
-                    </p>
-                    <p class="fw-normal my-3 col-1 grey ">
-                      <%= student.user && student.user.nickname ? student.user.nickname : '' %>
-                    </p>
-                    <p class="fw-normal my-3 col-4 grey email-column ">
-                      <%= student.user?.email || '-' %>
-                    </p>
-                    <p class="fw-normal  my-3 col-1 grey ">
-                      <%= student.user?.major || '-' %>
-                    </p>
-                    <p
-                      class="fw-normal my-3 col-1  <%= student.user?.studentFromKku ? 'text-kku' : 'grey' %>">
-                      <%= student.user?.studentFromKku ? 'มข.' : 'ภายนอก' %>
-                    </p>
+              <div class="table-responsive-wrapper">
+                  <div class="list-div purple row">
+                      <p class="fw-bold my-3 col-1 checkbox-column" style="display: none;">
+                          <input type="checkbox" id="selectAll" style="display: none;">
+                      </p>
+                      <!-- เพิ่ม div ครอบส่วนของหัวข้อเพื่อให้สอดคล้องกับ studentDetail-a -->
+                      <div class="col-12 row">
+                          <p class="fw-bold my-3 col-2">
+                              รหัสนักศึกษา
+                          </p>
+                          <p class="fw-bold my-3 col-2">
+                              ชื่อ - นามสกุล
+                          </p>
+                          <p class="fw-bold my-3 col-1">
+                              ชื่อเล่น
+                          </p>
+                          <p class="fw-bold my-3 col-4">
+                              ที่อยู่อีเมล (Email)
+                          </p>
+                          <p class="fw-bold my-3 col-1">
+                              คณะ
+                          </p>
+                          <p class="fw-bold my-3 col-1">
+                              นักศึกษาจาก
+                          </p>
+                      </div>
                   </div>
-                </a>
-                <% }); %>
-            </div>
+                  <% allStudents.docs.forEach ((student, index)=> { %>
+                      <div class="list-div-data row">
+                          <p class="col-1 checkbox-column my-auto" style="display: none;">
+                              <input type="checkbox" name="studentCheckbox" value="<%= student.studentId %>" style="display: none;">
+                          </p>
+                          <a href="/adminIndex/studentInformationAccount?studentId=<%=student.studentId%>" class="studentDetail-a col-12 row">
+                              <p class="fw-normal my-3 col-2 grey">
+                                  <%= student.studentId || '-' %>
+                              </p>
+                              <p class="fw-normal my-3 col-2 grey col-adjust">
+                                  <%= student.prefix || '' %><%= student.user ? `${student.user.fname || '' } ${student.user.lname || '' }` : '-' %>
+                              </p>
+                              <p class="fw-normal my-3 col-1 grey">
+                                  <%= student.user && student.user.nickname ? student.user.nickname : '' %>
+                              </p>
+                              <p class="fw-normal my-3 col-4 grey email-column">
+                                  <%= student.user?.email || '-' %>
+                              </p>
+                              <p class="fw-normal my-3 col-1 grey">
+                                  <%= student.user?.major || '-' %>
+                              </p>
+                              <p class="fw-normal my-3 col-1 <%= student.user?.studentFromKku ? 'text-kku' : 'grey' %>">
+                                  <%= student.user?.studentFromKku ? 'มหาวิทยาลัยขอนแก่น' : 'ภายนอก' %>
+                              </p>
+                          </a>
+                      </div>
+                  <% }); %>
+              </div>
+          </div>
             <div class="d-flex justify-content-end mt-3">
               <nav aria-label="Page navigation example">
                 <ul class="pagination">
@@ -548,6 +845,50 @@ label {
     const exportButton = document.querySelector('a[href="/adminIndex/exportStudentListPage"]'); // แก้ไขตรงนี้
     const checkboxColumns = document.querySelectorAll('.checkbox-column');
     const adjustColumns = document.querySelectorAll('.col-adjust');
+    const studentFilter = document.getElementById('studentFilter');
+    const studentRows = document.querySelectorAll('.list-div-data');
+
+    studentFilter.addEventListener('change', function() {
+        const filterValue = this.value;
+        let visibleCount = 0;
+        
+        studentRows.forEach(row => {
+            const studentTypeColumn = row.querySelector('p:last-child');
+            const studentTypeText = studentTypeColumn.textContent.trim();
+            
+            if (filterValue === 'all') {
+                row.style.display = '';
+                visibleCount++;
+            } else if (filterValue === 'kku' && studentTypeText === 'มหาวิทยาลัยขอนแก่น') {
+                row.style.display = '';
+                visibleCount++;
+            } else if (filterValue === 'external' && studentTypeText === 'ภายนอก') {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // แสดงข้อความเมื่อไม่พบข้อมูล
+        const noDataMessage = document.querySelector('.table-responsive-wrapper');
+        const existingMessage = document.getElementById('no-data-message');
+        
+        if (visibleCount === 0) {
+            if (!existingMessage) {
+                const messageElement = document.createElement('p');
+                messageElement.id = 'no-data-message';
+                messageElement.className = 'text-center mt-3';
+                messageElement.textContent = 'ไม่พบรายชื่อนักศึกษาตามเงื่อนไขที่เลือก';
+                noDataMessage.appendChild(messageElement);
+            }
+        } else if (existingMessage) {
+            existingMessage.remove();
+        }
+    });
+
+
+
     let isSelectionMode = false;
   
     // Toggle selection mode
@@ -562,77 +903,159 @@ label {
         uploadButton.style.display = isSelectionMode ? 'none' : 'inline-block';
         exportButton.style.display = isSelectionMode ? 'none' : 'inline-block';
         
-
-        // ปรับขนาด columns
-    if (isSelectionMode) {
-        document.querySelectorAll('.list-div-data').forEach(row => {
-            const columns = row.children;
-            // ปรับ checkbox column
-            columns[0].style.display = 'block';
-            // ปรับรหัสนักศึกษา
-            columns[1].className = 'fw-normal my-3 col-2 grey';
-            // ปรับชื่อ-นามสกุล
-            columns[2].className = 'fw-normal my-3 col-2 grey';
-            // ปรับชื่อเล่น
-            columns[3].className = 'fw-normal my-3 col-1 grey';
-            // ปรับอีเมล
-            columns[4].className = 'fw-normal my-3 col-4 grey email-column';
-            // คณะและนักศึกษาจาก คงเดิม col-1
-        });
-        
-        // ปรับ header columns ด้วย
-        const headerRow = document.querySelector('.list-div.purple.row');
-        if (headerRow) {
-            const headerColumns = headerRow.children;
-            headerColumns[0].style.display = 'block'; // checkbox
-            headerColumns[1].className = 'fw-bold my-3 col-2';
-            headerColumns[2].className = 'fw-bold my-3 col-2';
-            headerColumns[3].className = 'fw-bold my-3 col-1';
-            headerColumns[4].className = 'fw-bold my-3 col-4';
+        // ปรับการแสดงผลของ columns ให้ถูกต้อง ไม่เกิน 12 columns
+      if (isSelectionMode) {
+    // ปรับแต่ง Header row
+    const headerRow = document.querySelector('.list-div.purple.row');
+    if (headerRow) {
+        // Reset className ของทุก column ก่อน
+        headerRow.innerHTML = `
+<p class="fw-bold my-3 col-1 checkbox-column" style="display: flex; justify-content: center;">
+    <input type="checkbox" id="selectAll">
+</p>
+<div class="col-11 d-flex" style="padding: 0;">
+    <p class="fw-bold my-3 col-2">
+        รหัสนักศึกษา
+    </p>
+    <p class="fw-bold my-3 col-2">
+        ชื่อ - นามสกุล
+    </p>
+    <p class="fw-bold my-3 col-1">
+        ชื่อเล่น
+    </p>
+    <p class="fw-bold my-3 col-4">
+        ที่อยู่อีเมล (Email)
+    </p>
+    <p class="fw-bold my-3 col-1">
+        คณะ
+    </p>
+    <p class="fw-bold my-3 col-1">
+        นักศึกษาจาก
+    </p>
+</div>`;
+                
+                // เพิ่ม event listener ให้กับ selectAll ที่สร้างใหม่
+                document.getElementById('selectAll').addEventListener('change', function() {
+                    checkboxes.forEach(cb => {
+                        cb.checked = this.checked;
+                    });
+                });
+            }
+            
+            // ปรับแต่ง Data rows
+            document.querySelectorAll('.list-div-data').forEach(row => {
+                // แยก checkbox ออกมา
+                const checkboxCol = row.querySelector('.checkbox-column');
+        if (checkboxCol) {
+            checkboxCol.style.display = 'flex';
+            checkboxCol.style.justifyContent = 'center';
+            
+            // ตรวจสอบว่ามี checkbox หรือไม่
+            const checkbox = checkboxCol.querySelector('input[type="checkbox"]');
+            if (checkbox) checkbox.style.display = 'inline-block';
         }
-    } else {
-        // คืนค่าเดิม
-        document.querySelectorAll('.list-div-data').forEach(row => {
-            const columns = row.children;
-            columns[0].style.display = 'none';
-            columns[1].className = 'fw-normal my-3 col-2 grey';
-            columns[2].className = 'fw-normal my-3 col-3 grey';
-            columns[3].className = 'fw-normal my-3 col-1 grey';
-            columns[4].className = 'fw-normal my-3 col-4 grey email-column';
-        });
-        
-        // คืนค่า header
-        const headerRow = document.querySelector('.list-div.purple.row');
-        if (headerRow) {
-            const headerColumns = headerRow.children;
-            headerColumns[0].style.display = 'none';
-            headerColumns[1].className = 'fw-bold my-3 col-2';
-            headerColumns[2].className = 'fw-bold my-3 col-3';
-            headerColumns[3].className = 'fw-bold my-3 col-1';
-            headerColumns[4].className = 'fw-bold my-3 col-4';
+                
+                // ปรับขนาดสำหรับลิงก์ข้อมูลนักศึกษา
+                const studentLink = row.querySelector('.studentDetail-a');
+                if (studentLink) {
+                    studentLink.classList.remove('col-12');
+                    studentLink.classList.add('col-11');
+                    
+                    // ปรับขนาดของแต่ละคอลัมน์ภายในลิงก์
+                    const studentCols = studentLink.querySelectorAll('p');
+                    if (studentCols.length >= 5) {
+                        studentCols[0].className = 'fw-normal my-3 col-2 grey'; // รหัสนักศึกษา
+                        studentCols[1].className = 'fw-normal my-3 col-2 grey'; // ชื่อ-นามสกุล (ลดจาก col-3)
+                        studentCols[2].className = 'fw-normal my-3 col-1 grey'; // ชื่อเล่น
+                        studentCols[3].className = 'fw-normal my-3 col-4 grey email-column'; // อีเมล
+                        studentCols[4].className = 'fw-normal my-3 col-1 grey'; // คณะ
+                        if (studentCols[5].classList.contains('text-kku')) {
+                              studentCols[5].className = 'fw-normal my-3 col-1 text-kku';
+                          } else {
+                              studentCols[5].className = 'fw-normal my-3 col-1 grey';
+                          }
+                        // นักศึกษาจาก คงเดิม col-1
+                    }
+                }
+            });
+        } else {
+            // คืนค่าเดิมเมื่อยกเลิกโหมดเลือก
+            const headerRow = document.querySelector('.list-div.purple.row');
+            if (headerRow) {
+              headerRow.innerHTML = `
+   <p class="fw-bold my-3 col-1 checkbox-column" style="display: none;">
+                  <input type="checkbox" id="selectAll" style="display: none;">
+                </p>
+    <p class="fw-bold col-2">
+        รหัสนักศึกษา
+    </p>
+    <p class="fw-bold col-2">
+        ชื่อ - นามสกุล
+    </p>
+    <p class="fw-bold col-1">
+        ชื่อเล่น
+    </p>
+    <p class="fw-bold col-4">
+        ที่อยู่อีเมล (Email)
+    </p>
+    <p class="fw-bold col-1">
+        คณะ
+    </p>
+    <p class="fw-bold col-1">
+        นักศึกษาจาก
+    </p>
+`;
+                
+                // เพิ่ม event listener ให้กับ selectAll ที่สร้างใหม่
+                document.getElementById('selectAll').addEventListener('change', function() {
+                    checkboxes.forEach(cb => {
+                        cb.checked = this.checked;
+                    });
+                });
+            }
+            
+            document.querySelectorAll('.list-div-data').forEach(row => {
+                // ซ่อน checkbox column
+                const checkboxCol = row.querySelector('.checkbox-column');
+                if (checkboxCol) checkboxCol.style.display = 'none';
+                
+                // ตรวจสอบว่ามี checkbox หรือไม่
+                const checkbox = checkboxCol ? checkboxCol.querySelector('input[type="checkbox"]') : null;
+                if (checkbox) checkbox.style.display = 'none';
+                
+                // ปรับขนาดสำหรับลิงก์ข้อมูลนักศึกษา
+                const studentLink = row.querySelector('.studentDetail-a');
+                if (studentLink) {
+                    studentLink.classList.remove('col-11');
+                    studentLink.classList.add('col-12');
+                    
+                    // คืนค่าขนาดของแต่ละคอลัมน์ภายในลิงก์
+                    const studentCols = studentLink.querySelectorAll('p');
+                    if (studentCols.length >= 5) {
+                        studentCols[0].className = 'fw-normal my-3 col-2 grey'; // รหัสนักศึกษา
+                        studentCols[1].className = 'fw-normal my-3 col-2 grey col-adjust'; // ชื่อ-นามสกุล (เพิ่มเป็น col-3)
+                        studentCols[2].className = 'fw-normal my-3 col-1 grey'; // ชื่อเล่น
+                        studentCols[3].className = 'fw-normal my-3 col-4 grey email-column'; // อีเมล
+                        studentCols[4].className = 'fw-normal my-3 col-1 grey'; // คณะ
+                        if (studentCols[5].classList.contains('text-kku')) {
+                          studentCols[5].className = 'fw-normal my-3 col-1 text-kku';
+                      } else {
+                          studentCols[5].className = 'fw-normal my-3 col-1 grey';
+                      }
+                    }
+                }
+            });
         }
-    }
-    
-        // แสดง/ซ่อน checkboxes
-        checkboxColumns.forEach(col => {
-            col.style.display = isSelectionMode ? 'block' : 'none';
+        
+        // ปรับปรุงอ้างอิงถึง checkboxes เนื่องจากอาจมีการสร้าง DOM ใหม่
+        const newCheckboxes = document.getElementsByName('studentCheckbox');
+        checkboxes.forEach((cb, index) => {
+            if (newCheckboxes[index]) {
+                newCheckboxes[index].checked = cb.checked;
+            }
         });
-        checkboxes.forEach(cb => {
-            cb.style.display = isSelectionMode ? 'inline-block' : 'none';
-        });
-        selectAll.style.display = isSelectionMode ? 'inline-block' : 'none';
-
-  
-
-        uploadButton.style.display = isSelectionMode ? 'none' : 'inline-block';
-        exportButton.style.display = isSelectionMode ? 'none' : 'inline-block';
-
-        checkboxes.forEach(cb => {
-            cb.style.display = isSelectionMode ? 'inline-block' : 'none';
-        });
-        selectAll.style.display = isSelectionMode ? 'inline-block' : 'none';
     });
-  
+    
     // Select all functionality
     selectAll.addEventListener('change', function() {
       checkboxes.forEach(cb => {

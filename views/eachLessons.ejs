@@ -3,7 +3,6 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>
     <%=lesson.LessonName%>
   </title>
@@ -479,10 +478,33 @@
       .dark .border-b{
         border-bottom: 1px solid #666;
       }
+      .btn-sm-custom {
+    font-size: 0.9rem !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 0.5rem !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    border: none !important;
+    height: fit-content !important;
+    min-height: 38px !important;
+}
+
+.btn-sm-custom i {
+    font-size: 1rem !important;
+    vertical-align: middle !important;
+}
       @media screen and (max-width: 768px) {
         .above-nav-status {
           display: none;
         }
+        .btn-sm-custom {
+        font-size: 0.8rem !important;
+        padding: 0.3rem 0.6rem !important;
+    }
+    
+    .btn-sm-custom i {
+        font-size: 0.8rem !important;
+    }
       }
     </style>
 </head>
@@ -510,10 +532,13 @@
             <div class="manange-bar px-4 py-4 bg-white w-100">
               <div class="d-row border-b" style=" padding-bottom: 0.5em !important;">
                 
-                <div class="fw-normal fs-6  ms-2">
+                <div class="fw-normal font14  ms-2">
                   <span><i class="bi bi-book-half me-2" style="color: #8A2BE2;"></i></span>
+                  <span>
+                    <a class='link' href="/subjects"> รายวิชาทั้งหมด </a>
+                  </span>
                   <a class="grey link" href="/eachSubject?subjectDbId=<%=subject._id%>">
-                    <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
+                    / <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
                   </a> 
                   <span>   / บทเรียน:  <%=lesson.LessonName%></span> 
 
@@ -532,39 +557,44 @@
               </div>
 
               <% const questions=lesson.lessonQuestion %>
-                <div class="d-flex">
-                  <div class="d-flex w-50">
+              <div class="d-flex mt-3">
+                <!-- ปุ่มด้านซ้าย -->
+                <div class="d-flex flex-wrap gap-2 w-50 ">
                     <a href="/adminIndex/getMoreAddContent?lesson=<%=lesson._id%>"
-                      class="add-button btn btn-primary my-2 p-2">
-                      เพิ่มเนื้อหา<i class="bi bi-plus-circle-fill mx-2"></i>
+                        class="add-button btn btn-primary btn-sm-custom d-flex align-items-center">
+                        <i class="bi bi-plus-circle-fill me-2"></i>
+                        <span>เพิ่มเนื้อหา</span>
                     </a>
+                    
                     <a href="/adminIndex/editLessonContent?lesson=<%=lesson._id%>"
-                      class="btn add-button btn-warning my-2 p-2 mx-2"
-                      style="height: fit-content !important; color: white;">
-                      แก้ไขเนื้อหาภายในบทเรียน<i class="bi bi-pencil-square mx-2"></i>
+                        class="btn add-button btn-warning btn-sm-custom d-flex align-items-center text-white">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        <span>แก้ไขเนื้อหาในบทเรียน</span>
                     </a>
-                    <% if (questions) {%>
-                      <button class="btn add-button btn-info my-2 p-2"
-                        style="height: fit-content !important; color: white;" disabled>
-                        เพิ่มคำถามท้ายบท<i class="bi bi-question-circle mx-2"></i>
-                      </button>
-                      <% } else { %>
+                    
+                    <% if (questions) { %>
+                        <button class="btn add-button btn-info btn-sm-custom d-flex align-items-center text-white" disabled>
+                            <i class="bi bi-question-circle me-2"></i>
+                            <span>เพิ่มคำถามท้ายบท</span>
+                        </button>
+                    <% } else { %>
                         <a href="/adminIndex/addEndChapterQuestion?lesson=<%=lesson._id%>"
-                          class="btn add-button btn-info my-2 p-2" style="height: fit-content !important;color: white;">
-                          เพิ่มคำถามท้ายบท<i class="bi bi-question-circle mx-2"></i>
+                            class="btn add-button btn-info btn-sm-custom d-flex align-items-center text-white">
+                            <i class="bi bi-question-circle me-2"></i>
+                            <span>เพิ่มคำถามท้ายบท</span>
                         </a>
-                        <% } %>
-
-                  </div>
-                  <div class="d-flex w-50 justify-content-end">
-                    <a href="/adminIndex/deleteLesson?lessonId=<%=lesson._id%>&subjectId=<%=subject._id%>"
-                      class="btn add-button btn-danger my-2 p-2 mx-2 delete-lesson-btn" style="height: fit-content !important;">
-                      ลบบทเรียน: <span class="text-light">
-                        <%=lesson.LessonName%>
-                      </span><i class="bi bi-eraser-fill mx-2"></i>
-                    </a>
-                  </div>
+                    <% } %>
                 </div>
+            
+                <!-- ปุ่มด้านขวา -->
+                <div class="d-flex w-50 justify-content-end">
+                    <a href="/adminIndex/deleteLesson?lessonId=<%=lesson._id%>&subjectId=<%=subject._id%>"
+                        class="btn add-button btn-danger btn-sm-custom d-flex align-items-center delete-lesson-btn">
+                        <i class="bi bi-eraser-fill me-2"></i>
+                        <span>ลบบทเรียน: <span class="text-white fw-normal"><%=lesson.LessonName%></span></span>
+                    </a>
+                </div>
+            </div>
 
             </div>
             <div class="hide-layout-2">
@@ -953,8 +983,8 @@
                                 <td style="border-top: 1px solid #ced4daa0; padding-bottom:1em !important;">
                                   <div class="comment">
                                     <div class="content d-flex">
-                                      <img src="<%=comment.user.img%>" alt="รูปโปรไฟล์ผู้ใช้">
-                                      <div>
+                                      <img src="/uploads/<%=comment.user.img%>" alt="รูปโปรไฟล์ผู้ใช้">                      <div>
+                                        <div>
                                         <p class="fw-bold" class="username-comment">
                                           <%=comment.user.name%>
                                             <span class="fw-normal" style="font-size: small;">

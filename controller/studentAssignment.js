@@ -79,7 +79,8 @@ const submitAssignment = async (req, res) => {
             return {
                 // file: files.filename,
                 file: files.location,
-                contentType: files.mimetype
+                contentType: files.mimetype,
+                originalName: files.originalname
             };
         });
 
@@ -219,7 +220,8 @@ const studentEditAssignment = async (req, res) => {
         const fileData = files.map(files => {
             return {
                 file: files.location,
-                contentType: files.mimetype
+                contentType: files.mimetype,
+                originalName: files.originalname
             };
         });
         for (const i of fileData) {
@@ -305,60 +307,45 @@ const historyAssignment = async (req, res) => {
 const studentCancelAssign = async (req, res) => {
     try {
         const submitId = req.query.submitId;
-        // console.log(submitId);
         const assignId = req.query.assignmentId;
-        const userData = await User.findById(req.session.userId)
+        
+        // 1. ลบไฟล์จาก S3 
+        const findSubmitAssign = await submitAssign.findById(submitId);
+        if (findSubmitAssign && findSubmitAssign.files) {
+            for (const file of findSubmitAssign.files) {
+                if (file.file) {
+                    try {
+                        await deleteFileFromS3(file.file);
+                    } catch (error) {
+                        console.error('Error deleting file from S3:', error);
+                    }
+                }
+            }
+        }
 
+        // 2. อัพเดท Assignment
         await Assignments.findByIdAndUpdate(
             assignId,
             {
-                $pull: { submitAssign: submitId },
+                $pull: { submitDetail: submitId },
                 $inc: { sentCount: -1 }
-            },
-            { new: true }
+            }
         );
 
-        // await deleteFileFromS3(filePath)
+        // 3. ลบ submitAssign
+        await submitAssign.findByIdAndDelete(submitId);
 
-        const findSubmitAssign = await submitAssign.findById(submitId);
-        const fileArray = findSubmitAssign.files;
-        console.log(findSubmitAssign);
+        // 4. Redirect กลับไปที่หน้ารายละเอียดงาน
+        return res.redirect(`/studentAssignDetail?id=${assignId}`);
 
-        for (i of fileArray) {
-            await deleteFileFromS3(i.file)
-        }
-
-        await submitAssign.findByIdAndDelete(
-            submitId
-        );
-
-        // 2. Find and update Users
-        await User.findByIdAndUpdate(
-            userData._id,
-            { $pull: { submitAssign: submitId } },
-            { new: true }
-        );
-
-        //  // ลบไฟล์จากโฟลเดอร์ uploads
-        //  const submission = await submitAssign.findById(submitId);
-        //  submission.files.forEach(file => {
-        //      const filePath = path.join(__dirname, '../uploads', file.file);
-        //      fs.unlink(filePath, (err) => {
-        //          if (err) {
-        //              console.error(`Failed to delete file ${file.file}: ${err.message}`);
-        //          }
-        //      });
-        //  });
-
-        //  // ลบเอกสารจากฐานข้อมูล
-        //  await submitAssign.findByIdAndDelete(submitId);
-
-        // const deleteSubmitAssign = await submitAssign.findByIdAndDelete({_id:submitId});
-        res.redirect('/studentAssignment');
     } catch (err) {
-        console.log(err);
+        console.error('Error in studentCancelAssign:', err);
+        return res.status(500).json({ 
+            error: 'เกิดข้อผิดพลาดในการยกเลิกการส่งงาน',
+            details: err.message 
+        });
     }
-}
+};
 module.exports = {
     studentAssignDetail,
     submitAssignment,

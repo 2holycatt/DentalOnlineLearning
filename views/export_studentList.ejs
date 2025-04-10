@@ -595,7 +595,7 @@ async function loadStudents(subjectId, limit = 10, page = 1) {
                     <p class="fw-normal my-3 col-4 grey">${student.user?.email || '-'}</p>
                     <p class="fw-normal my-3 col-1 grey">${student.user?.major || '-'}</p>
                     <p class="fw-normal my-3 col-1 ${student.user?.studentFromKku ? 'text-kku' : 'grey'}">
-                        ${student.user?.studentFromKku ? 'มข.' : 'ภายนอก'}
+                        ${student.user?.studentFromKku ? 'มหาวิทยาลัยขอนแก่น' : 'ภายนอก'}
                     </p>
                 </div>
             `).join('');
