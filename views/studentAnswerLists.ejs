@@ -144,10 +144,10 @@
         <a href="/adminIndex/showStdAnswerDetail?studentAnswerId=<%=answser._id%>" class="studentDetail-a">
           <div class="list-div-data row">
             <p class="fw-normal my-3 col-2">
-              <%=answser.user.student.studentId%>
+              <%= answer.user && answer.user.student ? answer.user.student.studentId : 'N/A' %>
             </p>
             <p class="fw-normal my-3 col-3">
-              <%=answser.user.name%>
+              <%= answer.user ? answer.user.name : 'N/A' %>
             </p>
             <p class="fw-normal my-3 col-3">
               <%=answser.createdAt%>

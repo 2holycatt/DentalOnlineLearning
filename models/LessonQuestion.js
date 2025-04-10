@@ -4,10 +4,12 @@ const Schema = mongoose.Schema;
 const lessonQuestionchema = new Schema({
     Questions:[ {
         questionNo: {
-            type: String, 
+            type: Number,
+            required: true 
         },
         questionText: {
             type: String, 
+            required: true
         }
     }],
     Lesson: {

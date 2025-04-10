@@ -581,54 +581,52 @@ const uploadPdfToLesson = async (req, res) => {
 }
 
 const addEndQuestionChapter = async (req, res) => {
-    
-    const reqQuestions = Object.keys(req.body)
-        .filter(key => key.startsWith('question'))
-        .map(key => req.body[key]);
-
-    // res.send(questions);
-    const lessonId = req.body.lessonId;
-    const maxScore = req.body.maxScore;
-    const QuestionsArray = [];
-
-    reqQuestions.forEach((question, index ) => {
-        let eachQuestion = {
-            questionNo: index+1,
-            questionText: question
-        }
-        QuestionsArray.push(eachQuestion);
+    try {
+        const lessonId = req.body.lessonId;
+        const maxScore = req.body.maxScore;
         
-    });
-
-    const newQuestions = new lessonQuestion({
-        Questions:QuestionsArray,
-        maxScore:maxScore
-    });
-    await newQuestions.save();
-
-    const addLessonIdToQuestion = await lessonQuestion.findByIdAndUpdate(
-        newQuestions._id,
-        { $push : { Lesson: lessonId} },
-        { new: true}
-    )
+        // ตรวจสอบข้อมูลที่จำเป็น
+        if (!lessonId || !maxScore) {
+          return res.status(400).send('Missing required fields');
+        }
     
-    const addQuestionIdToLesson = await Lesson.findByIdAndUpdate(
-        {_id:lessonId},
-        { $push : { lessonQuestion: newQuestions._id}},
-        { new: true}
-    )
-
-    // const findQuestions = await lessonQuestion.find().exec();
-
-    // if (findQuestions) {
-    //     res.send(findQuestions);
-    // } else {
-    //     res.send("Not found any questions")
-    // }
-    res.redirect(`/adminIndex/eachLessons?lessonId=${lessonId}`);
-    // res.send("Add Questions Success");
-
-}
+        // รวบรวมคำถามจาก req.body
+        const questions = [];
+        let questionNo = 1;
+        
+        while (req.body[`question${questionNo}`]) {
+          if (req.body[`question${questionNo}`].trim() !== '') {
+            questions.push({
+              questionNo: questionNo,
+              questionText: req.body[`question${questionNo}`]
+            });
+          }
+          questionNo++;
+        }
+    
+        // สร้าง lessonQuestion ใหม่
+        const newLessonQuestion = new lessonQuestion({
+          Lesson: lessonId,
+          maxScore: parseInt(maxScore),
+          Questions: questions
+        });
+    
+        await newLessonQuestion.save();
+    
+        // อัพเดท lesson ด้วย
+        await Lesson.findByIdAndUpdate(
+          lessonId,
+          { lessonQuestion: newLessonQuestion._id },
+          { new: true }
+        );
+    
+        res.redirect(`/adminIndex/eachLessons?lessonId=${lessonId}`);
+    
+      } catch (err) {
+        console.error('Error adding end chapter question:', err);
+        res.status(500).send('Error adding questions');
+      }
+    };
 
 const createTextEditor = async (req, res) => {
     try {

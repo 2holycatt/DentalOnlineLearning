@@ -21,6 +21,8 @@ const lessonQuestion = require("../models/LessonQuestion");
 const StudentAnswer = require("../models/StudentAnswerEndChapQuestion");
 const TextEditor = require("../models/TextEditor");
 const Assignment = require("../models/Assignments");
+const SubmitAssign = require("../models/submitAssignDetail");
+
 const { deleteFileFromS3 } = require('../utils/s3Utils');
 
 // const atob = require('atob');
@@ -664,7 +666,7 @@ const createLayout = async function (req, res, next) {
 
 const createSubject = async (req, res, next) => {
   try {
-    const { subjectId, subjectName,description, semester, unit, section } = req.body;
+    const { subjectId, subjectName, description, semester, unit, section } = req.body;
     const userId = req.session.userId;
     const theme = req.session.theme || 'light';
     const isSidebarOpen = false;
@@ -677,33 +679,34 @@ const createSubject = async (req, res, next) => {
       unit,
       section,
       userId,
-      theme,
-      isSidebarOpen,
       createdBy: userId
-    })
+    });
 
     await newSubject.save();
     res.redirect('/subjects');
   } catch (err) {
     console.error(err);
-    // const { subjectId, subjectName, semester, unit, section } = req.body;
-    const filteredResult = await getUniqueSubjectValues();
+    
+    // ต้องกำหนดค่า theme และ isSidebarOpen ใน catch block
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
 
-    if (err.code === 11000) { // รหัสข้อผิดพลาดสำหรับ duplicate key error
+    const filteredResult = await getUniqueSubjectValues(); // ดึงค่าที่ใช้ในหน้า addSubjects
+
+    if (err.code === 11000) { // ตรวจสอบว่าเป็น Duplicate Key Error
       return res.render('addSubjects', {
-        error: 'มีรายวิชานี้อยู่ในระบบแล้ว',
-        formData: req.body, // ส่งข้อมูลฟอร์มกลับไปเพื่อให้ผู้ใช้ไม่ต้องกรอกใหม่
+        error: `รายวิชา ${req.body.subjectId} - เทอม ${req.body.semester} - กลุ่ม ${req.body.section} มีอยู่แล้ว`,
+        formData: req.body, // ส่งค่าฟอร์มกลับไปเพื่อให้กรอกใหม่ได้ง่าย
         filteredResult,
         theme,
         isSidebarOpen
       });
-      // const formData = `subjectId=${subjectId}&subjectName=${subjectName}&semester=${semester}&unit=${unit}&section=${section}&error=วิชานี้มีอยู่แล้วในภาคการศึกษานี้`;
-      // return res.redirect(`/adminIndex/addSubject?${formData}`);
     } else {
-      return res.status(500).send('An error occurred');
+      return res.status(500).send('เกิดข้อผิดพลาด ไม่สามารถเพิ่มรายวิชาได้');
     }
   }
-}
+};
+
 
 // const createLayout_01 = async (req, res) => {
 //     try {
@@ -761,14 +764,28 @@ const eachLessons = async (req, res) => {
     //   populate: 'schoolYear' // populate schoolYear field
     // };
 
-const lesson = await Lesson.findById(lessonId)
-      .populate('subject.subjectMongooseId')
-      .populate('lessonQuestion');
+    const lesson = await Lesson.findById(lessonId)
+    .populate('subject.subjectMongooseId')
+    .populate({
+      path: 'lessonQuestion',
+      populate: {
+        path: 'Questions'
+      }
+    });
 
     // If lesson not found, redirect to subject page
     if (!lesson) {
       return res.redirect(`/eachSubject?subjectDbId=${req.query.subjectId}`);
     }
+
+    const questions = lesson.lessonQuestion ? {
+      _id: lesson.lessonQuestion._id,
+      maxScore: lesson.lessonQuestion.maxScore,
+      Questions: lesson.lessonQuestion.Questions.map(q => ({
+        questionNo: q.questionNo,
+        questionText: q.questionText
+      }))
+    } : null;
     // const result = await Lesson.paginate({ _id: lessonId }, options);
     // res.json(lesson);
     // console.log(lesson)
@@ -915,6 +932,7 @@ const lesson = await Lesson.findById(lessonId)
       currentPage: page,
       paginatedLayouts,
       totalPages,
+      questions,
       navSubjects
       // lessonQuestion
     });
@@ -1282,6 +1300,8 @@ const editComment = async (req, res) => {
 
     const getComment = await Comment.findById(commentId).populate("user");
 
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
     // ฟังก์ชันสำหรับจัดรูปแบบวันที่
     function formatDate(date) {
       const formattedDate = moment(date).format("DD/MM/YYYY HH:mm A");
@@ -1321,7 +1341,7 @@ const editComment = async (req, res) => {
 
     // console.log(getComment);
     // res.json(getComment)
-    res.render("editComment", { userData, getComment, lessonId });
+    res.render("editComment", { userData, getComment, lessonId ,theme,isSidebarOpen});
     // if (userData.role == "teacher") {
     // res.render("editComment", { userData, getComment, lessonId });
     // } else if (userData.role == "student") {
@@ -1340,7 +1360,8 @@ const editCommentStudent = async (req, res) => {
     const lessonId = req.query.lessonId;
 
     const getComment = await Comment.findById(commentId).populate("user");
-
+    const theme = req.session.theme || 'light'; 
+    const isSidebarOpen = false; 
     // ฟังก์ชันสำหรับจัดรูปแบบวันที่
     function formatDate(date) {
       const formattedDate = moment(date).format("DD/MM/YYYY HH:mm A");
@@ -1380,7 +1401,7 @@ const editCommentStudent = async (req, res) => {
 
     // console.log(getComment);
     // res.json(getComment)
-    res.render("editCommentStudent", { userData, getComment, lessonId });
+    res.render("editCommentStudent", { userData, getComment, lessonId,theme,isSidebarOpen });
   } catch (err) {
     console.log(err)
   }
@@ -1544,12 +1565,49 @@ const manageSubject = async (req, res) => {
       .populate('quizArray')
       .exec();
 
-    // Format dates for assignments if they exist
-    if (subject && subject.Assignments) {
-      subject.Assignments.forEach(assignment => {
-        assignment._doc.formattedStartDate = moment(assignment.StartDate).format('DD/MM/YYYY HH:mm');
-        assignment._doc.formattedDeadline = moment(assignment.Deadline).format('DD/MM/YYYY HH:mm');
-      });
+    // สร้าง submitStatusMap
+    let submitStatusMap = {};
+
+    // Get submission status and score for each assignment
+    if (subject.Assignments && subject.Assignments.length > 0) {
+      await Promise.all(subject.Assignments.map(async (assignment) => {
+        const submitData = await SubmitAssign.findOne({
+          assignment: assignment._id,
+          user: req.session.userId
+        });
+
+        if (submitData) {
+          const submitted = moment(submitData.createdAt);
+          const deadline = moment(assignment.Deadline);
+          
+          let sendStatus;
+          if (submitted.isBefore(deadline)) {
+            sendStatus = {
+              status: "ส่งตรงเวลา"
+            };
+          } else {
+            const duration = moment.duration(submitted.diff(deadline));
+            sendStatus = {
+              status: "ส่งช้า",
+              day: Math.floor(duration.asDays()),
+              hour: duration.hours(),
+              minute: duration.minutes()
+            };
+          }
+
+          // เก็บข้อมูลลงใน submitStatusMap
+          submitStatusMap[assignment._id] = {
+            sendStatus,
+            score: submitData.Score || 0
+          };
+
+          // Add to assignment object
+          assignment._doc.submitStatus = {
+            sendStatus,
+            score: submitData.Score || 0
+          };
+        }
+      }));
     }
 
     if (userData.role === 'student') {
@@ -1558,8 +1616,9 @@ const manageSubject = async (req, res) => {
         userData, 
         theme, 
         isSidebarOpen,
-        moment ,
-        navSubjects
+        moment,
+        navSubjects,
+        submitStatusMap  // ส่ง submitStatusMap ไปยัง template
       });
     } else {
       res.render("manageEachSubject", { 
@@ -1567,7 +1626,7 @@ const manageSubject = async (req, res) => {
         userData, 
         theme, 
         isSidebarOpen,
-        moment ,
+        moment,
         navSubjects
       });
     }
@@ -1812,35 +1871,45 @@ const downloadFile = async (req, res) => {
 
 const setPermission = async (req, res) => {
   try {
-    // const students = await Student.find().populate('user').sort({createdAt:1});
     const navSubjects = await getSubjectsForNav(req.session.userId);
-    const { page = 1, limit = 25 } = req.query;
+    const { page = 1, limit = 25, filter } = req.query; // รับค่าฟิลเตอร์จาก query params
     const userData = await User.findById(req.session.userId);
     const theme = req.session.theme || 'light'; 
     const isSidebarOpen = false; 
 
+    let query = {}; // สร้าง query ว่างไว้ก่อน
+
+    // ตรวจสอบค่า filter และกำหนดเงื่อนไข
+    if (filter === "kku") {
+      query["user.studentFromKku"] = true;
+    } else if (filter === "external") {
+      query["user.studentFromKku"] = false;
+    }
+
     const options = {
       page: parseInt(page, 10),
       limit: parseInt(limit, 10),
-      sort: { createdAt: 1 }, // เรียงลำดับจากใหม่ไปเก่า
-      populate: 'user',
+      sort: { createdAt: 1 }, 
+      populate: "user",
     };
 
-    const students = await Student.paginate({}, options);
-    // res.json(studentsNotInSubject);
-    res.render('adminSetPermission', {
+    // ดึงข้อมูลนักศึกษาตามเงื่อนไข query
+    const students = await Student.paginate(query, options);
+
+    res.render("adminSetPermission", {
       students,
       userData,
       theme,
       isSidebarOpen,
-      navSubjects
+      navSubjects,
+      filter // ส่งค่า filter ไปให้ EJS เพื่อให้ select แสดงค่าที่เลือก
     });
   } catch (err) {
     console.error(err);
     res.status(500).send("เกิดข้อผิดพลาด");
   }
+};
 
-}
 
 const addEndChapterQuestion = async (req, res) => {
   try {
@@ -1864,57 +1933,93 @@ const editEndQuestionChapter = async (req, res) => {
   try {
     const questionId = req.body.questionId;
 
-    // ดึงข้อมูล lessonQuestion จาก database โดยใช้ questionId
+    // ดึงข้อมูล lessonQuestion จาก database
     let lessonQuestionData = await lessonQuestion.findById(questionId);
     if (!lessonQuestionData) {
       return res.status(404).send('Lesson Question not found');
     }
 
-    // วนลูปเพื่อจัดการคำถามจากฐานข้อมูล
-    for (const question of lessonQuestionData.Questions) {
-      let questionNo = question.questionNo; // เลขของคำถาม
+    // หาหมายเลขคำถามสูงสุดที่มีอยู่
+    const maxQuestionNo = Math.max(
+      ...lessonQuestionData.Questions.map(q => Number(q.questionNo)), 
+      0
+    );
 
-      // ตรวจสอบว่ามีการทำเครื่องหมายลบคำถามหรือไม่
+    // รวบรวมคำถามที่มีการอัปเดตและคำถามใหม่
+    const updatedQuestions = [];
+    const deletedQuestions = [];
+    const newQuestions = [];
+
+    // จัดการคำถามเดิม
+    for (const question of lessonQuestionData.Questions) {
+      const questionNo = question.questionNo;
+      
       if (req.body[`questionCheckDelete${questionNo}`] === 'on') {
-        // ถ้าถูกทำเครื่องหมายให้ลบ ก็ให้ลบคำถามนี้ออกจาก database โดยใช้ pull
-        await lessonQuestion.updateOne(
-          { _id: questionId },
-          { $pull: { Questions: { questionNo: questionNo } } }
-        );
-      } else if (req.body[`question${questionNo}`]) {
-        // ถ้าไม่ถูกลบ ให้ตรวจสอบว่ามีการอัปเดตข้อความคำถามหรือไม่
-        await lessonQuestion.updateOne(
-          { _id: questionId, 'Questions.questionNo': questionNo },
-          { $set: { 'Questions.$.questionText': req.body[`question${questionNo}`] } }
-        );
+        deletedQuestions.push(questionNo);
+        continue;
+      }
+
+      if (req.body[`question${questionNo}`]) {
+        updatedQuestions.push({
+          questionNo: questionNo,
+          questionText: req.body[`question${questionNo}`]
+        });
       }
     }
 
-    const checkLength = await lessonQuestion.findById(lessonQuestionData._id)
-    if (checkLength.Questions.length < 1) {
-      const daleteFromLesson = await Lesson.findByIdAndUpdate(
-        { _id: checkLength.Lesson },
-        {
-          $pull: {
-            lessonQuestion: checkLength._id
-          }
-        },
-        {
-          new: true
+    // เพิ่มคำถามใหม่
+    let newQuestionNo = maxQuestionNo + 1;
+        while (req.body[`question${newQuestionNo}`]) {
+            if (req.body[`question${newQuestionNo}`].trim()) {
+                updatedQuestions.push({
+                    questionNo: Number(newQuestionNo),
+                    questionText: req.body[`question${newQuestionNo}`]
+                });
+            }
+            newQuestionNo++;
         }
-      )
 
-      const deleteQuestion = await lessonQuestion.findByIdAndDelete(checkLength._id);
+    // อัปเดตคำถามในแบบทดสอบ
+    lessonQuestionData.Questions = updatedQuestions;
+    await lessonQuestionData.save();
+
+    // อัพเดท StudentAnswer สำหรับทุกนักศึกษา
+    const studentAnswers = await StudentAnswer.find({ lessonQuestion: questionId });
+    
+    for (const answer of studentAnswers) {
+      // ลบคำถามที่ถูกลบออก
+      answer.Questions = answer.Questions.filter(q => 
+        !deletedQuestions.includes(q.questionNo)
+      );
+
+      // เพิ่มคำถามใหม่
+      for (const newQ of newQuestions) {
+        answer.Questions.push({
+          questionNo: newQ.questionNo,
+          questionText: '' // เริ่มต้นด้วยคำตอบว่าง
+        });
+      }
+
+      await answer.save();
     }
 
-    res.redirect(`/adminIndex/eachLessons?lessonId=${checkLength.Lesson}`)
+    // ถ้าไม่มีคำถามเหลือ ให้ลบแบบทดสอบออก
+    if (updatedQuestions.length < 1) {
+      await Lesson.findByIdAndUpdate(
+        lessonQuestionData.Lesson,
+        { $unset: { lessonQuestion: 1 } }
+      );
+      await lessonQuestion.findByIdAndDelete(questionId);
+      await StudentAnswer.deleteMany({ lessonQuestion: questionId });
+    }
 
-    // res.json(req.body);
+    res.redirect(`/adminIndex/eachLessons?lessonId=${lessonQuestionData.Lesson}`);
+
   } catch (err) {
-    console.error(err);
-
+    console.error('Error in editEndQuestionChapter:', err);
+    res.status(500).send("เกิดข้อผิดพลาดในการแก้ไขคำถามท้ายบท");
   }
-}
+};
 
 const studentAnswerEndChapterQuestions = async (req, res) => {
   try {
@@ -1927,96 +2032,76 @@ const studentAnswerEndChapterQuestions = async (req, res) => {
       return res.status(404).send('Lesson Question not found');
     }
 
-    const checkExist = await StudentAnswer.findOne(
-      {
-        lessonQuestion: lessonQuestionId,
-        user: req.session.userId
-      }
-    );
-    // let userId = req.session.userId;
+    // Get all questions from lessonQuestionData
+    const allQuestions = lessonQuestionData.Questions;
+    
+    // Create answers array with all questions, set empty/unanswered ones to null
+    const answers = allQuestions.map(question => ({
+      questionNo: question.questionNo,
+      questionText: req.body[`question${question.questionNo}`] || '' // Empty string if not answered
+    }));
+
+    // Check if student already has an answer for this lesson
+    const checkExist = await StudentAnswer.findOne({
+      lessonQuestion: lessonQuestionId,
+      user: req.session.userId
+    });
+
     if (checkExist) {
-      for (const question of lessonQuestionData.Questions) {
-        let questionNo = question.questionNo; // เลขของคำถาม
-
-        // ตรวจสอบว่ามีการทำเครื่องหมายลบคำถามหรือไม่
-        if (req.body[`question${questionNo}`] != "") {
-
-          // ถ้าถูกทำเครื่องหมายให้ลบ ก็ให้ลบคำถามนี้ออกจาก database โดยใช้ pull
-          await StudentAnswer.updateOne(
-            {
-              _id: checkExist._id,
-              'Questions.questionNo': questionNo
-            },
-            { $set: { 'Questions.$.questionText': req.body[`question${questionNo}`] } }
-          );
-
-        }
-      }
-
-    } else if (!checkExist) {
+      // Update existing answer
+      checkExist.Questions = answers;
+      await checkExist.save();
+    } else {
+      // Create new answer document
       const newStudentAnswer = new StudentAnswer({
+        Questions: answers,
         lessonQuestion: lessonQuestionId,
         user: req.session.userId
-      })
+      });
       await newStudentAnswer.save();
-
-      // วนลูปเพื่อจัดการคำถามจากฐานข้อมูล
-      for (const question of lessonQuestionData.Questions) {
-        let questionNo = question.questionNo; // เลขของคำถาม
-
-        // ตรวจสอบว่ามีการทำเครื่องหมายลบคำถามหรือไม่
-        if (req.body[`question${questionNo}`] != "") {
-
-          let question = {
-            questionNo: questionNo,
-            questionText: req.body[`question${questionNo}`]
-          }
-          // ถ้าถูกทำเครื่องหมายให้ลบ ก็ให้ลบคำถามนี้ออกจาก database โดยใช้ pull
-          await StudentAnswer.updateOne(
-            { _id: newStudentAnswer._id },
-            { $push: { Questions: question } }
-          );
-        }
-      }
     }
-    res.redirect(`/studentIndex/eachLessonStudent?lessonId=${lessonId}`)
-    // res.json(req.body);
+
+    res.redirect(`/studentIndex/eachLessonStudent?lessonId=${lessonId}`);
+
   } catch (err) {
-    console.log(err);
+    console.error('Error in studentAnswerEndChapterQuestions:', err);
+    res.status(500).send("เกิดข้อผิดพลาดในการบันทึกคำตอบ");
   }
 }
 
 const studentEditAnswerEndChapter = async (req, res) => {
   try {
-    const studentAnswerId = req.body.studentAnswerId;
-    const lessonId = req.body.lessonId;
-    let StudentAnswerData = await StudentAnswer.findById(studentAnswerId);
-
-    if (!StudentAnswerData) {
-      return res.status(404).send('Lesson Question not found');
-    } else if (StudentAnswerData) {
-      for (const question of StudentAnswerData.Questions) {
-        let questionNo = question.questionNo; // เลขของคำถาม
-
-        // ตรวจสอบว่ามีการทำเครื่องหมายลบคำถามหรือไม่
-        if (req.body[`question${questionNo}`] != "") {
-
-          await StudentAnswer.updateOne(
-            {
-              _id: StudentAnswerData._id,
-              'Questions.questionNo': questionNo
-            },
-            { $set: { 'Questions.$.questionText': req.body[`question${questionNo}`] } }
-          );
-        }
-      }
+    const { lessonId, studentAnswerId } = req.body;
+    
+    // ตรวจสอบว่ามี studentAnswer อยู่หรือไม่
+    const studentAnswer = await StudentAnswer.findById(studentAnswerId);
+    if (!studentAnswer) {
+      return res.status(404).send('ไม่พบข้อมูลคำตอบ');
     }
-    res.redirect(`/studentIndex/eachLessonStudent?lessonId=${lessonId}`)
-    // res.json(req.body);
-  } catch (err) {
-    console.log(err);
+
+    // แปลงข้อมูลคำตอบจากฟอร์ม
+    const answers = req.body.answer || {};
+    const updatedQuestions = [];
+
+    // รวบรวมคำถามและคำตอบทั้งหมด
+    for (const questionNo in answers) {
+      updatedQuestions.push({
+        questionNo: parseInt(questionNo),
+        questionText: answers[questionNo]
+      });
+    }
+
+    // อัพเดทคำตอบในฐานข้อมูล
+    studentAnswer.Questions = updatedQuestions;
+    await studentAnswer.save();
+
+    res.redirect(`/studentIndex/eachLessonStudent?lessonId=${lessonId}`);
+
+  } catch (error) {
+    console.error('Error in studentEditAnswerEndChapter:', error);
+    res.status(500).send("เกิดข้อผิดพลาดในการแก้ไขคำตอบ");
   }
-}
+};
 
 const replyComment = async (req, res) => {
   try {
@@ -2234,25 +2319,35 @@ const deleteReplyComment = async (req, res) => {
 const studentAnswerLists = async (req, res) => {
   try {
     const questionId = req.query.questionId;
-    const StudentAnswers = await StudentAnswer.find({ lessonQuestion: questionId })
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
+    
+    // Get student answers with populated user and student data
+    const studentAnswers = await StudentAnswer.find({ lessonQuestion: questionId })
       .populate({
         path: 'user',
         populate: {
-          path: 'student', // Populate นักเรียนที่อยู่ในฟิลด์ student ของ user
-          model: 'Student'
+          path: 'student',
+          select: 'studentId'
         }
       });
 
-    // เปลี่ยนรูปแบบวันที่ createdAt ใน StudentAnswers
-    const formattedAnswers = StudentAnswers.map(answer => ({
+    // Format the answers
+    const formattedAnswers = studentAnswers.map(answer => ({
       ...answer._doc,
       createdAt: moment(answer.createdAt).format('DD/MM/YYYY HH:mm:ss')
     }));
-    // res.json(formattedAnswers)
-    // StudentAnswer
-    res.render('studentAnswerLists', {formattedAnswers });
+
+    res.render('studentAnswerLists', { 
+      formattedAnswers,
+      userData,
+      theme,
+      isSidebarOpen 
+    });
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    res.status(500).send("เกิดข้อผิดพลาด");
   }
 }
 

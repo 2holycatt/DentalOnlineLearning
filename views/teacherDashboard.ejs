@@ -910,7 +910,7 @@
                   </a>
                 <% } else if (contentType === 'assignment') { %>
                   <a href="/adminIndex/subjectCreateAssignment?subjectId=<%= latestSubject._id %>" class="btn btn-primary">
-                    เพิ่มงานที่มอบหมาย <i class="bi bi-plus-circle "></i>
+                    มอบหมายงาน <i class="bi bi-plus-circle "></i>
                   </a>
                 <% } else { %>
                   <a href="/adminIndex/addLesson?subjectDbId=<%= latestSubject._id %>&subjectName=<%= encodeURIComponent(latestSubject.subjectName) %>&subjectSection=<%= latestSubject.section %>&subjectId=<%= latestSubject.subjectId %>&subjectSemester=<%= latestSubject.semester %>" class="btn btn-primary">

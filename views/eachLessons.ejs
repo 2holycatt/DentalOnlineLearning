@@ -901,16 +901,16 @@
                             <input class="form-check-input me-3 deleteQuesitonsCheckbox" type="checkbox"
                               name="questionCheckDelete<%=question.questionNo%>">
                             <textarea class="form-control my-1 p-2 question<%=question.questionNo%>"
-                              name="question<%=question.questionNo%>" rows="1"><%=question.questionText%></textarea>
+                              name="question<%=question.questionNo%>" rows="1" required><%=question.questionText%></textarea>
                           </div>
                         </div>
                         <% }); %>
                     </div>
                   </div>
                   <div class="d-flex justify-content-end mt-2">
-                    <!-- <button onclick="addQuestion()" class="add-button btn btn-primary p-2" type="button" style="height: fit-content !important;">
-                เพิ่มคำถาม<i class="bi bi-plus-circle-fill mx-2"></i>
-              </button> -->
+                    <button type="button" onclick="addQuestion()" class="btn add-button btn-primary p-2 me-2">
+                      <i class="bi bi-plus-circle-fill me-2"></i>เพิ่มคำถาม
+                    </button>
                     <button type="submit" class="btn add-button btn-success p-2"
                       style="height: fit-content !important;">
                       บันทึก<i class="bi bi-pencil-square mx-2"></i>
@@ -983,8 +983,8 @@
                                 <td style="border-top: 1px solid #ced4daa0; padding-bottom:1em !important;">
                                   <div class="comment">
                                     <div class="content d-flex">
-                                      <img src="<%=comment.user.img%>" alt="รูปโปรไฟล์ผู้ใช้">
-                                      <div>
+                                      <img src="/uploads/<%=comment.user.img%>" alt="รูปโปรไฟล์ผู้ใช้">                      <div>
+                                        <div>
                                         <p class="fw-bold" class="username-comment">
                                           <%=comment.user.name%>
                                             <span class="fw-normal" style="font-size: small;">
@@ -1471,6 +1471,45 @@
       });
     });
   });
+
+  function addQuestion() {
+    const questionForm = document.querySelector('.questionForm .mt-1');
+    const questions = questionForm.querySelectorAll('.editQuestionDiv');
+    const nextQuestionNo = questions.length + 1;
+
+    const newQuestionDiv = document.createElement('div');
+    newQuestionDiv.className = 'mb-1 row editQuestionDiv';
+    newQuestionDiv.innerHTML = `
+        <div class="col-12 d-flex align-items-center">
+            <i class="bi text-primary bi-dot fs-2 questionsIcon"></i>
+            <input class="form-check-input me-3 deleteQuesitonsCheckbox" type="checkbox" 
+                   name="questionCheckDelete${nextQuestionNo}" style="display: none;">
+            <textarea class="form-control my-1 p-2 question${nextQuestionNo}" 
+                     name="question${nextQuestionNo}" rows="1"></textarea>
+        </div>
+    `;
+
+    questionForm.appendChild(newQuestionDiv);
+}
+
+// ปรับปรุงฟังก์ชันที่มีอยู่
+document.getElementById('deleteCheckQuesitonLink').onclick = function(event) {
+    event.preventDefault();
+    var deleteLink = document.querySelector('#deleteCheckQuesitonLink');
+    deleteLink.style.display = 'none';
+    var cancelDeleteCheckQuesitonLink = document.querySelector('#cancelDeleteCheckQuesitonLink');
+    cancelDeleteCheckQuesitonLink.style.display = 'block';
+    var checkAllDeleteDiv = document.querySelector('.checkAllDeleteDiv');
+    checkAllDeleteDiv.style.display = 'block';
+
+    document.querySelectorAll('.deleteQuesitonsCheckbox').forEach(function(checkbox) {
+        checkbox.style.display = 'block';
+    });
+    document.querySelectorAll('.questionsIcon').forEach(function(icon) {
+        icon.style.display = 'none';
+    });
+};
+
       </script>
 </body>
 

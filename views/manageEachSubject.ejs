@@ -844,6 +844,12 @@
             <span>
               <a class='link' href="/subjects"> รายวิชาทั้งหมด </a>
             </span>
+            <% if (subject.isArchived) { %>
+              <span> / </span> 
+              <span>
+                <a class='link' href="/archivedSubject"> รายวิชาที่ถูกจัดเก็บ </a>
+              </span> 
+            <% } %>
             <span> / </span> 
             <span>
              <%=subject.subjectId%> <%=subject.subjectName%> <%=subject.semester%> กลุ่มที่: <%=subject.section%>
@@ -1134,7 +1140,7 @@
         <ul class="custom-dropdown-menu" id="custom-dropdown-menu-4">
           <li>
             <a class="custom-dropdown-item" href="/adminIndex/subjectCreateAssignment?subjectId=<%=subject._id%>">
-              <i class="bi bi-plus-circle me-2"></i>เพิ่มงานที่มอบหมาย
+              <i class="bi bi-plus-circle me-2"></i> มอบหมายงาน
             </a>
           </li>
         </ul>

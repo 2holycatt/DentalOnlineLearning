@@ -4,15 +4,18 @@ const Schema = mongoose.Schema;
 const studentAnswerEndChapterQuestionsSchema = new Schema({
     Questions:[ {
         questionNo: {
-            type: String, 
+            type: Number,
+            required: true
         },
         questionText: {
             type: String, 
+            default: ''
         }
     }],
     lessonQuestion: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'lessonQuestions'
+        ref: 'lessonQuestions',
+        required: true
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
