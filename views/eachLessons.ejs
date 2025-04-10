@@ -628,10 +628,10 @@
                               <div class="w-100 text-center">
                                 <% const file=Img.file %>
                                   <% if (Img.contentType.startsWith("image/")) { %>
-                                    <img class="ImageFile w-75 h-75 my-4 shadow rounded" src="<%=Img.file%>"
+                                    <img class="ImageFile w-75 h-75 my-4 shadow rounded" src="<%= Img.url %>"
                                       alt="รูปภาพประกอบการเรียน">
                                     <% } else { %>
-                                      <video class="ImageFile w-75 h-75 object-fit-cover my-4" src="<%=Img.file%>"
+                                      <video class="ImageFile w-75 h-75 object-fit-cover my-4" src="<%= Img.url %>"
                                         controls autoplay></video>
                                       <% } %>
                               </div>
@@ -756,7 +756,7 @@
                                 style="display: none;"></div>
                               <div class="lesson-content py-2 bg-white my-4">
                                 <input class="d-none" type="text" name="_id" value="<%= Layout._id %>">
-                                <iframe class="pdf-iframe" src="/<%=Layout.file%>" frameborder="0"></iframe>
+                                <iframe class="pdf-iframe" src="<%=Layout.file%>" frameborder="0"></iframe>
                               </div>
                               <% } else if (Layout.name==="TextEditor" ) {%>
                                 <div class="layout" data-id="<%= Layout._id %>" data-type="TextEditor"
@@ -983,7 +983,7 @@
                                 <td style="border-top: 1px solid #ced4daa0; padding-bottom:1em !important;">
                                   <div class="comment">
                                     <div class="content d-flex">
-                                      <img src="/uploads/<%=comment.user.img%>" alt="รูปโปรไฟล์ผู้ใช้">                      <div>
+                                      <img src="uploads/<%=comment.user.img%>" alt="รูปโปรไฟล์ผู้ใช้">                      <div>
                                         <div>
                                         <p class="fw-bold" class="username-comment">
                                           <%=comment.user.name%>

@@ -278,10 +278,18 @@
         </div>
           <div class="col-12 row my-2 ms-2">
             <div class="col-4">
-              <p class="fs-6 fw-bold"><i class="fs-5 bi bi-stopwatch text-success"></i><span class="mx-1 text-success">วันที่เปิดให้ส่ง</span>: <span class="fw-normal"><%=formattedStartDate%></span></p>
+              <p class="fs-6 fw-bold">
+                <i class="fs-5 bi bi-stopwatch text-success"></i>
+                <span class="mx-1 text-success">วันที่เปิดให้ส่ง</span>: 
+                <span class="fw-normal"><%= formattedStartDate %></span>
+              </p>
             </div>
             <div class="col-4">
-              <p class="fs-6 fw-bold"><i class="fs-5 bi bi-stopwatch text-danger"></i><span class="mx-1 text-danger">วันที่หมดเขตส่ง</span>: <span class="fw-normal"><%=formattedDeadline%></span></p>
+              <p class="fs-6 fw-bold">
+                <i class="fs-5 bi bi-stopwatch text-danger"></i>
+                <span class="mx-1 text-danger">วันที่หมดเขตส่ง</span>: 
+                <span class="fw-normal"><%= formattedDeadline %></span>
+              </p>
             </div>
           </div>
         </div>
@@ -290,21 +298,22 @@
           <div class="col-8">
             <p class="my-1 w-100 fw-bold purple">ไฟล์ที่เกี่ยวข้อง:</p>
             <% if (assignment.files.length > 0) { %>
-            <div class="row">
-              <div class="col-12">
-                <% const files = assignment.files%>
-                <% files.forEach((file, index) => { %>
-                <a class="file-a" href="/adminIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
-                  <span class=""><%=index+1%>. </span>
-                  <%=file.file.slice(67)%>
-                </a>
-                <br>
-                <% }); %>
+              <div class="row">
+                <div class="col-12">
+                  <% const files = assignment.files %>
+                  <% files.forEach((file, index) => { %>
+                    <a class="file-a" href="/adminIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
+                      <span class=""><%=index+1%>. </span>
+                      <%= file.file ? file.file.slice(67) : file.originalName || 'ไม่พบชื่อไฟล์' %>
+                    </a>
+                    <br>
+                  <% }); %>
+                </div>
               </div>
-            </div>
-            <% } else if (assignment.files.length < 1) { %>
-            <div class="row ms-2">
-              <p class="fs-6 text-center py-2 border-grey" >ไม่มีไฟล์ที่ถูกแนบ</p>            </div>
+            <% } else { %>
+              <div class="row ms-2">
+                <p class="fs-6 text-center py-2 border-grey">ไม่มีไฟล์ที่ถูกแนบ</p>
+              </div>
             <% } %>
           </div>
           <div class="col-4">
@@ -361,37 +370,29 @@
         <% submitDetail.forEach(detail => { %>
         <a href="/adminIndex/submitDetail?id=<%=assignment._id%>&submitId=<%=detail._id%>" class="data-a ">
           <div class="list-div-data py-3">
-            <p class=" fw-normal grey">
-  <%= detail.user?.studentId || detail.user?.student?.studentId || '-' %>
+            <p class="fw-normal grey">
+              <%= detail.studentId %>
             </p>
-            <p class=" fw-normal grey">
-              <%= detail.user ? `${detail.user.fname || '' } ${detail.user.lname || '' }` : '-' %>
+            <p class="fw-normal grey">
+              <%= detail.user ? `${detail.user.fname} ${detail.user.lname}` : '-' %>
             </p>
-            <% const sendDate = new Date(detail.updatedAt).toLocaleString('en-US', {timeZone: 'Asia/Bangkok', hour12: true, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}); %>
-            <p class=" fw-normal text-success">
-              <%= sendDate.replace(',' , '') %>
+            <p class="fw-normal text-success">
+              <%= detail.formattedDate %>
             </p>
-            <% if (detail.sendStatus) { %>
-              <% const status = detail.sendStatus.status %>
-              <% if (status === "ส่งตรงเวลา") { %>
-                <p class=" fw-normal text-success">
-                  <%= status %>
-                </p>
-              <% } else if (status === "ส่งช้า") { %>
-                <% const { day, hour, minute } = detail.sendStatus %>
-                <p class=" fw-normal">
-                  <span class="text-danger">
-                    <%= status %> <%= day %> วัน <%= hour %> ชั่วโมง <%= minute %> นาที
-                  </span>
-                </p>
+            <p class="fw-normal">
+              <% if (detail.sendStatus.status === "ส่งตรงเวลา") { %>
+                <span class="text-success"><%= detail.sendStatus.status %></span>
+              <% } else { %>
+                <span class="text-danger">
+                  <%= detail.sendStatus.status %> 
+                  <%= detail.sendStatus.day %> วัน 
+                  <%= detail.sendStatus.hour %> ชั่วโมง 
+                  <%= detail.sendStatus.minute %> นาที
+                </span>
               <% } %>
-            <% } else { %>
-              <p class=" fw-normal text-muted">
-                ไม่มีข้อมูลการส่ง
-              </p>
-            <% } %>
-            <p class=" fw-normal text-success ">
-              <%=  detail.Score %>
+            </p>
+            <p class="fw-normal text-success">
+              <%= detail.Score !== undefined ? detail.Score : '-' %>
             </p>
           </div>
         </a>
@@ -421,23 +422,24 @@
               <div class="mb-3 row">
                 <p>ไฟล์ที่เกี่ยวข้อง:</p>
                 <div class="row">
-                  <% if (assignment.files.length < 1) {%>
-                  <p class="mx-1" style="font-size: small;"> - ไม่มีไฟล์ที่ถูกอัปโหลด</p>
-                  <% } else if (assignment.files.length > 0) {%>
-                  <% let files = assignment.files; %>
-                  <% files.forEach((file, index) => { %>
-                  <div class="row">
-                    <div class="col-7">
-                      <a class="file-a-2 mb-1" href="/adminIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
-                      <%=index+1%>. <%=file.file.slice(67)%>
-                      </a>
-                    </div>
-                    <div class="col-2 d-flex justify-content-center">
-                      <a href="/adminIndex/delFile?assignId=<%=assignment._id%>&fileIndex=<%=index%>" class="text-danger fs-6 delFile">ลบ</a>
-                    </div>
-                  </div>
-                  <% }) %>
-                  <% }%>
+                  <% if (assignment.files.length < 1) { %>
+                    <p class="mx-1" style="font-size: small;"> - ไม่มีไฟล์ที่ถูกอัปโหลด</p>
+                  <% } else { %>
+                    <% const files = assignment.files %>
+                    <% files.forEach((file, index) => { %>
+                      <div class="row">
+                        <div class="col-7">
+                          <a class="file-a-2 mb-1" href="/adminIndex/showFileArray?id=<%=assignment._id%>&index=<%=index%>">
+                            <%=index+1%>. <%= file.file ? file.file.slice(67) : file.originalName || 'ไม่พบชื่อไฟล์' %>
+                          </a>
+                        </div>
+                        <div class="col-2 d-flex justify-content-center">
+                          <a href="/adminIndex/delFile?assignId=<%=assignment._id%>&fileIndex=<%=index%>" 
+                             class="text-danger fs-6 delFile">ลบ</a>
+                        </div>
+                      </div>
+                    <% }) %>
+                  <% } %>
                 </div>
               </div>
               <div class="row">
@@ -457,12 +459,19 @@
               <div class="my-1 row">
                 <div class="col-12 mb-3">
                   <label for="StartDate" class="form-label fs-bold">วันที่เปิดให้ส่ง:</label>
-                  <input type="datetime-local" class="form-control p-3 w-50" name="StartDate" id="StartDate" value="<%=assignment.formattedStartDate%>">
-                </div>
+                  <input type="datetime-local" 
+                  class="form-control p-3 w-50" 
+                  name="StartDate" 
+                  id="StartDate" 
+                  value="<%= assignment.formattedStartDateInput %>">                </div>
                 <div class="col-12 mb-3">
                   <label for="Deadline" class="form-label fs-bold">วันที่หมดเขต:</label>
-                  <input type="datetime-local" class="form-control p-3 w-50" name="Deadline" id="Deadline">
-                </div>
+                  <input type="datetime-local" 
+                  class="form-control p-3 w-50" 
+                  name="Deadline" 
+                  id="Deadline" 
+                  value="<%= assignment.formattedDeadlineInput %>">            
+                    </div>
               </div>
               <div class="row">
                 <div class="col-6 my-1 mb-3">
