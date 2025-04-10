@@ -100,28 +100,23 @@ const imgUpload = multer({
 
 const uploadQuestionImage = multer({
   storage: multerS3({
-    s3: s3Client,
-    bucket: process.env.AWS_BUCKET_NAME,
-    key: function (req, file, cb) {
-      const timestamp = new Date().toISOString().replace(/:/g, '-');
-      const sanitizedFilename = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const key = `uploads/question_pics/${timestamp}_${sanitizedFilename}`;
-      console.log('Uploading to:', key); // เพิ่ม log
-      cb(null, key);
-    },
-    contentType: multerS3.AUTO_CONTENT_TYPE,
-    metadata: function (req, file, cb) {
-      cb(null, { fieldName: file.fieldname });
-    }
+      s3: s3Client,
+      bucket: process.env.AWS_BUCKET_NAME,
+      key: function (req, file, cb) {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+          cb(null, `quiz-images/${uniqueSuffix}-${file.originalname}`);
+      },
+      contentType: multerS3.AUTO_CONTENT_TYPE
   }),
   limits: {
-    fileSize: 5 * 1024 * 1024, // เพิ่มขนาดเป็น 5MB
+      fileSize: 5 * 1024 * 1024 // จำกัดขนาดไฟล์ที่ 5MB
   },
   fileFilter: (req, file, cb) => {
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-      return cb(new Error('อนุญาตเฉพาะไฟล์รูปภาพเท่านั้น!'), false);
-    }
-    cb(null, true);
+      if (file.mimetype.startsWith('image/')) {
+          cb(null, true);
+      } else {
+          cb(new Error('อนุญาตเฉพาะไฟล์รูปภาพเท่านั้น'));
+      }
   }
 });
 

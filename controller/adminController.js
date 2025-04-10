@@ -22,6 +22,8 @@ const StudentAnswer = require("../models/StudentAnswerEndChapQuestion");
 const TextEditor = require("../models/TextEditor");
 const Assignment = require("../models/Assignments");
 const SubmitAssign = require("../models/submitAssignDetail");
+const AWS = require('aws-sdk');
+
 
 const { deleteFileFromS3 } = require('../utils/s3Utils');
 
@@ -1856,18 +1858,44 @@ const subjectCreateAssignment = async (req, res) => {
 }
 
 const downloadFile = async (req, res) => {
-  const fileName = 'Teach_stdlistExcel.xls'; // ชื่อไฟล์ที่ต้องการดาวน์โหลด
-  const directoryPath = path.join(__dirname, '..', 'uploads', 'example_file'); // พาธของโฟลเดอร์ที่เก็บไฟล์
-  const filePath = path.join(directoryPath, fileName);
+  try {
+    // ตั้งค่า AWS S3
+    const s3 = new AWS.S3({
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: process.env.AWS_REGION
+    });
 
-  // ส่งไฟล์ไปยังคลายน์
-  res.download(filePath, fileName, (err) => {
-    if (err) {
-      console.error('Error downloading file:', err);
-      res.status(500).send('Error downloading file');
+    const fileName = 'Teach_stdlistExcel.xls';
+    const s3Params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `example_file/${fileName}` // Path ใน S3 bucket
+    };
+
+    // Get file from S3
+    const s3Stream = s3.getObject(s3Params).createReadStream();
+
+    // Set headers
+    res.attachment(fileName);
+    
+    // Pipe the s3 object to response
+    s3Stream.pipe(res);
+
+    // Handle errors
+    s3Stream.on('error', (err) => {
+      console.error('Error streaming file from S3:', err);
+      if (!res.headersSent) {
+        res.status(500).send('Error downloading file');
+      }
+    });
+
+  } catch (err) {
+    console.error('Download Error:', err);
+    if (!res.headersSent) {
+      res.status(500).send('Error initiating download');
     }
-  });
-}
+  }
+};
 
 const setPermission = async (req, res) => {
   try {

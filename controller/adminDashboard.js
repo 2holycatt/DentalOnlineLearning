@@ -321,19 +321,40 @@ const adminDashboard = async (req, res) => {
                     };
                     break;
 
-                case 'assignment':
-                    chartLabels = latestSubject.Assignments.map(assign => assign.name);
-                    chartData = latestSubject.Assignments.map(assign => 
-                        assign.submitDetail ? assign.submitDetail.length : 0
-                    );
-                    lessonLabels = chartLabels;
-                    progressData = chartData;
-                    additionalData = {
-                        totalItems: latestSubject.Assignments.length,
-                        itemType: 'งานที่มอบหมาย',
-                        studentAmount: latestSubject.students.length
-                    };
-                    break;
+                    case 'assignment':
+                        // ดึงข้อมูลและจัดรูปแบบ assignments
+                        case 'assignment':
+        if (latestSubject && latestSubject.Assignments) {
+            // Format assignments data
+            const assignmentsData = latestSubject.Assignments.map(assign => ({
+                _id: assign._id,
+                name: assign.name,
+                startDate: moment(assign.StartDate).format('DD/MM/YYYY HH:mm'),
+                deadline: moment(assign.Deadline).format('DD/MM/YYYY HH:mm'),
+                submissionCount: assign.submitDetail ? assign.submitDetail.length : 0,
+                maxScore: assign.Score || 0
+            }));
+
+            chartLabels = assignmentsData.map(assign => assign.name);
+            chartData = assignmentsData.map(assign => assign.submissionCount);
+            lessonLabels = chartLabels;
+            progressData = chartData;
+
+            additionalData = {
+                totalItems: latestSubject.Assignments.length,
+                itemType: 'งานที่มอบหมาย',
+                studentAmount: latestSubject.students ? latestSubject.students.length : 0,
+                assignmentsData // Add this to pass assignments data to view
+            };
+        } else {
+            additionalData = {
+                totalItems: 0,
+                itemType: 'งานที่มอบหมาย',
+                studentAmount: 0,
+                assignmentsData: []
+            };
+        }
+        break;
 
                 default: // กรณี lesson
                     const lessonProgressList = await lessonProgress.find({
@@ -403,7 +424,8 @@ const adminDashboard = async (req, res) => {
             message: calculateTodayProgress.resultMessage,
             lessonFinishedToday,
             subjectId: subjectId || (latestSubject ? latestSubject._id : null), // เพิ่มบรรทัดนี้
-            ...additionalData
+            additionalData: additionalData || {}, // Ensure additionalData is always defined
+    ...additionalData
         });
 
     } catch (err) {

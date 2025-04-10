@@ -1095,7 +1095,6 @@ exports.search = async (req, res) => {
 
 exports.uploadQuestionImage = [
   uploadQuestionImage.single('avatar'),
-  handleUploadError,
   async (req, res) => {
       try {
           if (!req.file) {
@@ -1113,12 +1112,14 @@ exports.uploadQuestionImage = [
               });
           }
 
-          // ส่งข้อมูลกลับ
+          const imageUrl = req.file.location; // URL จาก S3
+          const contentType = req.file.mimetype;
+
           res.json({
               success: true,
               message: 'อัปโหลดรูปภาพสำเร็จ',
-              imageUrl: req.file.location,
-              contentType: req.file.mimetype
+              imageUrl: imageUrl,
+              contentType: contentType
           });
 
       } catch (error) {
