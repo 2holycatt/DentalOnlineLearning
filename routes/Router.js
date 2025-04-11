@@ -339,6 +339,7 @@ router.post('/addQuestion',teacherMiddleware, adminManageQuestions.addQuestion);
 router.get('/deleteQuestion',teacherMiddleware, adminManageQuestions.deleteQuestion);
 router.post('/updateQuizScores', teacherMiddleware, adminEditDeleteQuizController.updateQuizScores);
 router.post('/studentIndex/submitQuiz/:quizId', studentQuizController.submitQuiz);
+router.post('/studentIndex/startQuiz/:quizId', studentQuizController.startQuiz);
 
 
 //Shuffle Quiz

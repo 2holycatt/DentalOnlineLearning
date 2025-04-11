@@ -1434,6 +1434,8 @@
                             <span class="fw-normal fs-6 text-primary" style="margin-right: 1em !important;">
                                 <select class="select" style="font-size: 0.9rem; max-width: 10em;" id="timeLimit"
                                     name="timeLimit" required onchange="autosave()">
+                                    <option value='{"value":10,"display":"10 วินาที"}' <%=quiz.timeLimit.value===10
+                                        ? 'selected' : '' %>>10 วินาที</option> <!-- 15 นาที = 900 วินาที -->
                                     <option value='{"value":900,"display":"15 นาที"}' <%=quiz.timeLimit.value===900
                                         ? 'selected' : '' %>>15 นาที</option> <!-- 15 นาที = 900 วินาที -->
                                     <option value='{"value":1800,"display":"30 นาที"}' <%=quiz.timeLimit.value===1800
@@ -1673,87 +1675,85 @@ function readURL(input) {
     }
 }
 
-async function savechanges() {
-    try {
-        // แสดง loading state
-        const saveBtn = document.querySelector('#exampleModalLong .modal-footer .btn-primary');
-        saveBtn.disabled = true;
-        saveBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> กำลังบันทึก...';
+function savechanges() {
+    const formData = new FormData(document.getElementById('formimage'));
+    const quizId = '<%= quiz._id %>';
+    const target = document.getElementById('uploadTarget').value;
+    const questionIndex = parseInt(document.getElementById('questionIndex').value);
+    const optionIndex = document.getElementById('optionIndex').value;
 
-        const formData = new FormData(document.getElementById('formimage'));
-        const quizId = '<%= quiz._id %>';
-        const target = document.getElementById('uploadTarget').value;
-        const questionIndex = parseInt(document.getElementById('questionIndex').value);
-        const optionIndex = document.getElementById('optionIndex').value;
-
-        // ตรวจสอบว่ามีการเลือกไฟล์หรือไม่
-        if (!document.getElementById('avatar').files[0]) {
-            Swal.fire({
-                icon: 'error',
-                title: 'กรุณาเลือกรูปภาพ'
-            });
-            saveBtn.disabled = false;
-            saveBtn.innerHTML = 'บันทึก';
-            return;
-        }
-
-        // เพิ่ม metadata ลงใน formData
-        formData.append('target', target);
-        formData.append('questionIndex', questionIndex);
-        formData.append('optionIndex', optionIndex);
-        formData.append('quizId', quizId);
-
-        const response = await fetch(`/adminIndex/uploadQuestionImage`, {
-            method: 'POST', // ต้องระบุ method เป็น POST
-            body: formData
+    if (!document.getElementById('avatar').files[0]) {
+        Swal.fire({
+            icon: 'error',
+            title: 'กรุณาเลือกรูปภาพ'
         });
+        return;
+    }
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    // แสดง loading state
+    const saveBtn = document.querySelector('#exampleModalLong .modal-footer .btn-primary');
+    const originalBtnText = saveBtn.innerHTML;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> กำลังบันทึก...';
 
-        const data = await response.json();
-        
+    fetch(`/adminIndex/uploadQuestionImage?quizId=${quizId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
         if (data.success) {
-            const imageData = {
-                url: data.imageUrl,
-                contentType: data.contentType
-            };
-
             if (target === 'question') {
-                questions[questionIndex].questionImage = imageData;
+                questions[questionIndex].questionImage = {
+                    url: data.imageUrl,
+                    contentType: data.contentType
+                };
             } else if (target === 'option') {
-                questions[questionIndex].options[optionIndex].image = imageData;
+                questions[questionIndex].options[optionIndex].image = {
+                    url: data.imageUrl,
+                    contentType: data.contentType
+                };
             } else if (target.startsWith('matching_')) {
                 const [_, side] = target.split('_');
-                questions[questionIndex].matchingPairs[optionIndex][side].image = imageData;
+                if (!questions[questionIndex].matchingPairs[optionIndex][side].image) {
+                    questions[questionIndex].matchingPairs[optionIndex][side].image = {};
+                }
+                questions[questionIndex].matchingPairs[optionIndex][side].image = {
+                    url: data.imageUrl,
+                    contentType: data.contentType
+                };
             }
 
+            // อัพเดท UI และบันทึกข้อมูล
             renderQuestions();
-            await autosave();
+            autosave();
+
+            // ปิด modal
             handleCloseModal();
-            
+
             Swal.fire({
                 icon: 'success',
-                title: 'อัปโหลดรูปภาพสำเร็จ',
-                showConfirmButton: false,
-                timer: 1500
+                title: 'บันทึกสำเร็จ',
+                timer: 1500,
+                showConfirmButton: false
             });
         } else {
-            throw new Error(data.message || 'อัพโหลดรูปภาพไม่สำเร็จ');
+            throw new Error('อัปโหลดรูปภาพไม่สำเร็จ');
         }
-    } catch (error) {
+    })
+    .catch(error => {
         console.error('Upload error:', error);
         Swal.fire({
             icon: 'error',
             title: 'เกิดข้อผิดพลาด',
-            text: error.message || 'ไม่สามารถอัปโหลดรูปภาพได้'
+            text: 'ไม่สามารถอัปโหลดรูปภาพได้'
         });
-    } finally {
-        const saveBtn = document.querySelector('#exampleModalLong .modal-footer .btn-primary');
+    })
+    .finally(() => {
+        // คืนค่าปุ่มกลับสู่สถานะปกติ
         saveBtn.disabled = false;
-        saveBtn.innerHTML = 'บันทึก';
-    }
+        saveBtn.innerHTML = originalBtnText;
+    });
 }
 
             let debounceTimer;
@@ -1785,7 +1785,9 @@ async function savechanges() {
                 quizdescription: quizDescription,
                 attemptLimit: attemptLimit,
                 timeLimit: timeLimit,
-                questions: questionsWithImages
+                questions: questionsWithImages,
+                preserveAttempts: true
+
             };
 
             fetch('/updateQuiz', {
