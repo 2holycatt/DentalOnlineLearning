@@ -2400,66 +2400,109 @@ const studentAnswerLists = async (req, res) => {
     const theme = req.session.theme || 'light';
     const isSidebarOpen = false;
     
-    // Get student answers with populated user and student data
-    const studentAnswers = await StudentAnswer.find({ lessonQuestion: questionId })
-    .populate({
-      path: 'user',
-      select: 'fname lname email studentId',
-      populate: {
-        path: 'student',
-        model: 'Student',
-        select: 'studentId'
-      }
-    })
-    .sort({ createdAt: -1 });
+    // Populate ข้อมูลให้ครบถ้วน
+    const answers = await StudentAnswer.find({ lessonQuestion: questionId })
+      .populate({
+        path: 'user',
+        select: 'fname lname studentId',
+        populate: {
+          path: 'student',
+          model: 'Student',
+          select: 'studentId'
+        }
+      })
+      .sort({ createdAt: -1 });
 
-    // Format the answers
-    const formattedAnswers = studentAnswers.map(answer => {
-      let studentId = 'N/A';
-      // ตรวจสอบและดึง studentId ตามลำดับ
-      if (answer.user?.student?.studentId) {
-        studentId = answer.user.student.studentId;
-      } else if (answer.user?.studentId) {
-        studentId = answer.user.studentId;
-      }
+    // Format ข้อมูลให้ถูกต้อง
+    const formattedAnswers = await Promise.all(answers.map(async answer => {
+      // ดึง studentId จากทั้ง student model และ user model
+      const student = await Student.findOne({ user: answer.user._id });
 
       return {
-        ...answer._doc,
-        studentId: studentId,
+        _id: answer._id,
+        studentId: student?.studentId || 'N/A',
+        userName: answer.user ? `${answer.user.fname} ${answer.user.lname}` : 'N/A',
         createdAt: moment(answer.createdAt).format('DD/MM/YYYY HH:mm:ss'),
-        userName: answer.user ? `${answer.user.fname} ${answer.user.lname}` : 'N/A'
+        checked: answer.checked,
+        Score: answer.Score,
+        user: answer.user,
+        student: student // เพิ่ม student object
       };
-    });
+    }));
 
-    res.render('studentAnswerLists', { 
+    // ส่งข้อมูลไปแสดงผล
+    res.render('studentAnswerLists', {
       formattedAnswers,
       userData,
       theme,
-      isSidebarOpen 
+      isSidebarOpen,
+      moment
     });
+
   } catch (err) {
-    console.error(err);
+    console.error('Error in studentAnswerLists:', err);
     res.status(500).send("เกิดข้อผิดพลาด");
   }
-}
+};
+
 const showStdAnswerDetail = async (req, res) => {
   try {
     const studentAnswersId = req.query.studentAnswerId;
+    const userData = await User.findById(req.session.userId);
+    const theme = req.session.theme || 'light';
+    const isSidebarOpen = false;
+
+    // Fetch student answer with populated user and lesson question
     const getStudentAnswer = await StudentAnswer.findById(studentAnswersId)
-    .populate({
-      path: 'user',
-      populate: {
-        path: 'student', // Populate นักเรียนที่อยู่ในฟิลด์ student ของ user
-        model: 'Student'
-      }
-    }).populate('lessonQuestion');
-    // res.json(getStudent);
-    
-    res.render('studentAnswerDetail', {getStudentAnswer});
+      .populate({
+        path: 'user',
+        select: 'fname lname email studentId',
+        populate: {
+          path: 'student',
+          model: 'Student',
+          select: 'studentId'
+        }
+      })
+      .populate('lessonQuestion');
+
+    if (!getStudentAnswer) {
+      return res.status(404).send('ไม่พบข้อมูลคำตอบ');
+    }
+
+    // Find student data
+    const student = await Student.findOne({ user: getStudentAnswer.user._id });
+
+    // Format student data
+    const studentData = {
+      studentId: student?.studentId || getStudentAnswer.user?.studentId || 'N/A',
+      name: getStudentAnswer.user ? 
+        `${getStudentAnswer.user.fname || ''} ${getStudentAnswer.user.lname || ''}`.trim() : 'N/A',
+      email: getStudentAnswer.user?.email || 'N/A'
+    };
+
+    // Format questions and answers
+    const formattedQuestions = getStudentAnswer.Questions.map((answer, index) => {
+      const question = getStudentAnswer.lessonQuestion.Questions[index];
+      return {
+        questionText: question?.questionText || 'N/A',
+        answerText: answer.questionText || 'ไม่มีคำตอบ'
+      };
+    });
+
+    res.render('studentAnswerDetail', {
+      getStudentAnswer,
+      studentData,
+      formattedQuestions,
+      userData,
+      theme,
+      isSidebarOpen
+    });
+
   } catch (err) {
-    console.log(err);
+    console.error('Error in showStdAnswerDetail:', err);
+    res.status(500).send("เกิดข้อผิดพลาดในการแสดงรายละเอียดคำตอบ");
   }
-}
+};
 
 const checkEndAnswer = async (req, res) => {
   try {

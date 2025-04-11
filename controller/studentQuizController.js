@@ -14,212 +14,377 @@ const Grid = require('gridfs-stream');
 const { Readable } = require('stream');
 const Subject = require("../models/subjects");
 
-
-exports.submitQuiz = async (req, res) => {
+exports.startQuiz = async (req, res) => {
     try {
-        console.log('Received request body:', req.body);
-        const { quizId, answers, duration } = req.body;
-
-        if (!answers || !Array.isArray(answers) || answers.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'ไม่พบข้อมูลคำตอบ หรือข้อมูลคำตอบไม่ถูกต้อง'
-            });
-        }
+        const quizId = req.params.quizId;
+        const student = await Student.findOne({ user: req.session.userId });
         
-        const userId = req.session.userId;
-
-        // หาข้อมูลนักศึกษาและ populate ข้อมูลที่จำเป็น
-        const student = await Student.findOne({ user: userId })
-            .populate('user')
-            .populate('subjects.subjectMongooseId');
-            
         if (!student) {
             return res.status(404).json({ success: false, message: 'ไม่พบข้อมูลนักศึกษา' });
         }
-
-        console.log('Student data:', {
-            id: student._id,
-            name: `${student.user.fname} ${student.user.lname}`,
-            nickname: student.nickname,
-            studentId: student.studentId
-        });
-        // หาแบบทดสอบ
+        
+        // Find the quiz
         const quiz = await Quiz.findById(quizId);
         if (!quiz) {
             return res.status(404).json({ success: false, message: 'ไม่พบแบบทดสอบ' });
         }
-
-        // คำนวณคะแนนและเตรียมคำตอบ
-        let totalScore = 0;
-        const attemptAnswers = [];
-
-        // Inside the forEach loop for each question
-        for (const answer of answers) {
-            const question = quiz.questions.id(answer.questionId);
-            if (!question) continue;
-
-            let isCorrect = false;
-            let points = 0;
-            let matchingAnswers = [];
-
-            switch (answer.type) {
-                case 'MCQ':
-                    isCorrect = answer.answer === question.answer;
-                    points = isCorrect ? question.points : 0;
-                    break;
-
-                case 'checkbox':
-                    if (Array.isArray(question.answer) && Array.isArray(answer.answer)) {
-                        const correctAnswers = new Set(question.answer);
-                        const submittedAnswers = new Set(answer.answer);
-                        isCorrect = 
-                            answer.answer.every(ans => correctAnswers.has(ans)) && 
-                            correctAnswers.size === submittedAnswers.size;
-                        points = isCorrect ? question.points : 0;
-                    }
-                    break;
-
-                case 'Paragraph':
-                case 'short_answ':
-                    if (question.answerTexts?.length > 0) {
-                        const normalizedAnswer = answer.answer.toLowerCase().trim();
-                        isCorrect = question.answerTexts.some(text => 
-                            normalizedAnswer === text.toLowerCase().trim()
-                        );
-                    } else if (question.answerKey) {
-                        isCorrect = answer.answer.toLowerCase().trim() === 
-                                  question.answerKey.toLowerCase().trim();
-                    }
-                    points = isCorrect ? question.points : 0;
-                    break;
-
-                case 'matching':
-                    if (Array.isArray(answer.answer) && Array.isArray(question.matchingPairs)) {
-                        let matchScore = 0;
-                        matchingAnswers = answer.answer.map(match => {
-                            const matchPair = question.matchingPairs.find(p => 
-                                p.left.index === match.leftIndex || 
-                                p.right.index === match.rightIndex
-                            );
-                            
-                            const pairIsCorrect = matchPair && 
-                                matchPair.correctMatch.leftIndex === match.leftIndex && 
-                                matchPair.correctMatch.rightIndex === match.rightIndex;
-                            
-                            const pairPoints = pairIsCorrect ? 
-                                (matchPair?.points || 1) : 0;
-                            
-                            matchScore += pairPoints;
-                            
-                            return {
-                                leftIndex: match.leftIndex,
-                                rightIndex: match.rightIndex,
-                                isCorrect: pairIsCorrect,
-                                pointsEarned: pairPoints
-                            };
-                        });
-                        
-                        points = matchScore;
-                        isCorrect = matchScore === question.matchingPairs.reduce(
-                            (sum, pair) => sum + (pair.points || 1), 0
-                        );
-                    }
-                    break;
-    }
-
-    totalScore = attemptAnswers.reduce((sum, answer) => sum + (answer.points || 0), 0);;
-    attemptAnswers.push({
-        questionId: answer.questionId,
-        answer: answer.answer,
-        type: answer.type,
-        isCorrect,
-        points,
-        matchingAnswers: matchingAnswers.length > 0 ? matchingAnswers : undefined
-    });
-}
-
-        // Initialize attempts array if undefined
-        if (!quiz.attempts) {
-            quiz.attempts = [];
+        
+        // Check if quiz is released
+        const now = new Date();
+        if (!quiz.isReleased) {
+            return res.status(403).json({ success: false, message: 'แบบทดสอบยังไม่ได้รับการเผยแพร่' });
         }
-
-        const existingAttempt = quiz.attempts.find(a => 
+        
+        // Check deadline if exists
+        if (quiz.deadline && now > new Date(quiz.deadline)) {
+            return res.status(403).json({ success: false, message: 'เลยกำหนดส่งแบบทดสอบแล้ว' });
+        }
+        
+        // Check for existing attempt
+        let studentAttempt = quiz.attempts.find(a => 
             a?.studentDbId?.toString() === student._id.toString()
         );
+        
+        // Check for incomplete attempts first
+        let incompleteAttempt = null;
+        if (studentAttempt && studentAttempt.eachAttempt && studentAttempt.eachAttempt.length > 0) {
+            incompleteAttempt = studentAttempt.eachAttempt.find(a => a.status === 'incomplete');
+        }
+        
+        if (incompleteAttempt) {
+            // Return the existing incomplete attempt
+            return res.status(200).json({ 
+                success: true, 
+                message: 'กำลังกลับไปที่แบบทดสอบที่ยังทำไม่เสร็จ',
+                attemptId: incompleteAttempt._id,
+                isContinuing: true
+            });
+        }
+        
+         // Count completed attempts
+         const completedAttempts = studentAttempt?.eachAttempt?.filter(a => a.status === 'completed') || [];
+         const completedCount = completedAttempts.length;
 
-   // Update quiz attempts first
-   if (existingAttempt) {
-    // Update existing attempt
-    existingAttempt.eachAttempt.push({
-        answers: attemptAnswers,
-        totalScore: totalScore,
-        attemptNumber: existingAttempt.eachAttempt.length + 1,
-        submittedAt: new Date(),
-        duration: duration // เพิ่มบันทึกเวลาที่ใช้
-
-    });
-} else  {
-    // Create new attempt with required fields
-    const newAttempt = {
-        studentDbId: student._id,
-        studentId: student.studentId || '',
-        studentName: student.user.fname + ' ' + student.user.lname,
-        studentNickname: student.nickname || '',
-        eachAttempt: [{
-            answers: attemptAnswers,
-            totalScore: totalScore,
-            attemptNumber: 1,
-            submittedAt: new Date(),
-            duration: duration
-        }]
-    };
-    console.log('New attempt data:', newAttempt);
-    quiz.attempts.push(newAttempt);
-}
-
-await quiz.save();
-
-console.log('Processed answers:', attemptAnswers); // เพิ่ม log เพื่อตรวจสอบคำตอบที่ประมวลผลแล้ว
-
-// Update student model using findOneAndUpdate
-await Student.findOneAndUpdate(
-    { 
-        _id: student._id,
-        'subjects.subjectMongooseId': quiz.subject.subjectMongooseId 
-    },
-    {
-        $push: {
-            'subjects.$.quizAttempts': {
-                quizId: quiz._id,
-                eachAttempt: [{
-                    answers: attemptAnswers,
-                    score: totalScore,
-                    attemptNumber: existingAttempt ? 
-                        existingAttempt.eachAttempt.length + 1 : 1,
-                    submittedAt: new Date()
-                }]
+           // Check attempt limit - แก้ไขส่วนนี้
+        if (completedCount >= quiz.attemptLimit) {
+            return res.status(403).json({ 
+                success: false, 
+                message: `คุณได้ทำแบบทดสอบครบตามจำนวนครั้งที่กำหนด (${quiz.attemptLimit} ครั้ง) แล้ว` 
+            });
+        }
+        
+        // Check attempt limit if no incomplete attempt
+        if (studentAttempt && studentAttempt.eachAttempt) {
+            // Count only completed attempts
+            const completedAttempts = studentAttempt.eachAttempt.filter(a => a.status === 'completed');
+            
+            if (completedAttempts.length >= quiz.attemptLimit) {
+                return res.status(403).json({ success: false, message: 'คุณได้ทำแบบทดสอบครบตามจำนวนครั้งที่กำหนดแล้ว' });
             }
         }
-    },
-    { new: true, runValidators: false }
-);
-
-    return res.status(200).json({
-        success: true,
-        score: totalScore,
-        message: 'ส่งแบบทดสอบสำเร็จ'
-    });
-
-} catch (error) {
-    console.error('Quiz submission error:', error);
-    return res.status(500).json({
-        success: false,
-        message: error.message || 'เกิดข้อผิดพลาดในการส่งแบบทดสอบ'
-    });
-}
+        
+         // Create new attempt
+        const attemptNumber = studentAttempt ? 
+            (completedCount + 1) : 1;
+        
+        const startTime = new Date();
+        
+        // Initialize the new attempt
+        const newAttemptData = {
+            startedAt: startTime,
+            submittedAt: null,
+            attemptNumber: attemptNumber,
+            answers: [],
+            totalScore: 0,
+            status: 'incomplete'
+        };
+        
+        // Add attempt to the quiz
+        if (studentAttempt) {
+            // Add to existing student attempt
+            studentAttempt.eachAttempt.push(newAttemptData);
+        } else {
+            // Create new student attempt record
+            quiz.attempts.push({
+                studentDbId: student._id,
+                studentId: student.studentId || '',
+                studentName: student.user.fname + ' ' + student.user.lname,
+                studentNickname: student.nickname || '',
+                eachAttempt: [newAttemptData]
+            });
+        }
+        
+        await quiz.save();
+        
+        // Get the attempt ID for tracking
+        const updatedStudentAttempt = quiz.attempts.find(a => 
+            a?.studentDbId?.toString() === student._id.toString()
+        );
+        const attemptId = updatedStudentAttempt.eachAttempt[updatedStudentAttempt.eachAttempt.length - 1]._id;
+        
+        return res.status(200).json({ 
+            success: true, 
+            message: 'เริ่มทำแบบทดสอบเรียบร้อยแล้ว',
+            attemptId: attemptId
+        });
+        
+    } catch (error) {
+        console.error('Error starting quiz attempt:', error);
+        return res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในการเริ่มทำแบบทดสอบ' });
+    }
 };
 
+
+
+exports.submitQuiz = async (req, res) => {
+    try {
+        const quizId = req.params.quizId;
+        const { answers = [], duration, attemptId, status } = req.body;
+        
+        console.log('Received answers:', answers);
+        
+        // Check student
+        const student = await Student.findOne({ user: req.session.userId });
+        if (!student) {
+            return res.status(404).json({ success: false, message: 'ไม่พบข้อมูลนักศึกษา' });
+        }
+        
+        // Find quiz
+        const quiz = await Quiz.findById(quizId);
+        if (!quiz) {
+            return res.status(404).json({ success: false, message: 'ไม่พบแบบทดสอบ' });
+        }
+        
+        // Find the specific attempt that was started
+        const studentAttempt = quiz.attempts.find(a => 
+            a?.studentDbId?.toString() === student._id.toString()
+        );
+        
+        if (!studentAttempt) {
+            return res.status(404).json({ success: false, message: 'ไม่พบการทำแบบทดสอบของนักศึกษา' });
+        }
+        
+        // Find the specific eachAttempt by attemptId
+        let currentAttempt;
+        if (attemptId) {
+            currentAttempt = studentAttempt.eachAttempt.find(a => 
+                a._id.toString() === attemptId
+            );
+        }
+        
+        // If no specific attempt found, use the latest incomplete attempt
+        if (!currentAttempt) {
+            currentAttempt = studentAttempt.eachAttempt.find(a => a.status === 'incomplete');
+            if (!currentAttempt) {
+                return res.status(404).json({ success: false, message: 'ไม่พบการทำแบบทดสอบที่ยังไม่เสร็จ' });
+            }
+        }
+        
+        // Calculate scores and process answers
+        let totalScore = 0;
+        const attemptAnswers = [];
+        
+        // Map questions by _id for easier lookup
+        const questionsById = {};
+        quiz.questions.forEach((q, index) => {
+            questionsById[q._id.toString()] = {
+                question: q,
+                index: index
+            };
+        });
+        
+        console.log('Mapped questions:', Object.keys(questionsById));
+        
+        // Process each submitted answer
+        for (const answer of answers) {
+            console.log('Processing answer:', answer);
+            
+            const questionInfo = questionsById[answer.questionId];
+            if (!questionInfo) {
+                console.log('Question not found for ID:', answer.questionId);
+                continue;
+            }
+            
+            const question = questionInfo.question;
+            const questionIndex = questionInfo.index;
+            let isCorrect = false;
+            let points = 0;
+            
+            console.log('Question found:', question.questionText);
+            
+            // Calculate score based on question type
+            switch (answer.type) {
+                case 'MCQ':
+                    console.log('Checking MCQ answer:', answer.answer, 'vs', question.answer);
+                    
+                    // ตรวจสอบทั้ง answer และ answerKey
+                    const selectedIndex = answer.answer;
+                    const correctAnswer = question.answer !== undefined ? question.answer : question.answerKey;
+                    
+                    console.log('Selected index:', selectedIndex);
+                    console.log('Correct answer value:', correctAnswer);
+                    
+                    // ลองเปรียบเทียบโดยแปลงเป็น String เพื่อให้แน่ใจว่าการเปรียบเทียบถูกต้อง
+                    if (selectedIndex !== undefined && 
+                        (selectedIndex.toString() === correctAnswer?.toString() || 
+                         selectedIndex === parseInt(correctAnswer))) {
+                        isCorrect = true;
+                        points = question.points || 0;
+                        console.log('Correct MCQ answer! Points:', points);
+                    } else {
+                        console.log('Incorrect answer. Answer type:', typeof selectedIndex, 
+                                   'correctAnswer type:', typeof correctAnswer);
+                    }
+                    break;
+                
+                case 'checkbox':
+                    // For checkbox, compare arrays of selected options with answer
+                    if (Array.isArray(answer.answer) && Array.isArray(question.answer)) {
+                        console.log('Checking checkbox answer:', answer.answer, 'vs', question.answer);
+                        // ตรวจสอบว่าเลือกตรงกับคำตอบที่ถูกต้องหรือไม่
+                        const correctAnswers = new Set(question.answer.map(a => a.toString()));
+                        const selectedAnswers = new Set(answer.answer.map(a => a.toString()));
+                        
+                        // คำนวณคะแนน - จำนวนข้อที่ถูกต้อง
+                        let correctCount = 0;
+                        let incorrectCount = 0;
+                        
+                        selectedAnswers.forEach(selected => {
+                            if (correctAnswers.has(selected)) {
+                                correctCount++;
+                            } else {
+                                incorrectCount++;
+                            }
+                        });
+                        
+                        if (correctCount === correctAnswers.size && incorrectCount === 0) {
+                            isCorrect = true;
+                            points = question.points || 0;
+                            console.log('Correct checkbox answer! Points:', points);
+                        } else if (correctCount > 0) {
+                            // คะแนนบางส่วน
+                            points = Math.max(0, ((question.points || 0) * correctCount) / correctAnswers.size);
+                            console.log('Partially correct checkbox! Points:', points);
+                        }
+                    }
+                    break;
+                
+                // กรณีอื่นๆ...
+                case 'matching':
+                    // สำหรับ matching questions
+                    if (Array.isArray(answer.answer)) {
+                        console.log('Checking matching answer:', answer.answer);
+                        
+                        let totalMatchPoints = 0;
+                        const matchingResults = [];
+                        
+                        // ตรวจสอบแต่ละการจับคู่
+                        answer.answer.forEach(match => {
+                            const { leftIndex, rightIndex } = match;
+                            
+                            const correctMatch = question.matchingPairs?.find(p => 
+                                p.left.index === leftIndex && 
+                                p.right.index === rightIndex
+                            );
+                            
+                            const isMatchCorrect = !!correctMatch;
+                            const matchPoints = isMatchCorrect ? (correctMatch.points || 1) : 0;
+                            
+                            totalMatchPoints += matchPoints;
+                            
+                            matchingResults.push({
+                                leftIndex,
+                                rightIndex,
+                                isCorrect: isMatchCorrect,
+                                pointsEarned: matchPoints
+                            });
+                            
+                            console.log('Match result:', isMatchCorrect, 'Points:', matchPoints);
+                        });
+                        
+                        // คะแนนสูงสุดไม่เกินคะแนนเต็มของข้อนี้
+                        points = Math.min(totalMatchPoints, question.points || 0);
+                        isCorrect = points > 0;
+                        
+                        attemptAnswers.push({
+                            questionId: answer.questionId,
+                            answer: answer.answer,
+                            type: answer.type,
+                            isCorrect,
+                            points,
+                            matchingAnswers: matchingResults
+                        });
+                        
+                        totalScore += points;
+                        continue; // ข้ามการเพิ่ม answer อีกครั้ง
+                    }
+                    break;
+                    
+                case 'short_answ':
+                    // For short answers, check against possible correct answers
+                    if (question.answerTexts && question.answerTexts.length > 0) {
+                        console.log('Checking short answer:', answer.answer, 'vs', question.answerTexts);
+                        const normalizedUserAnswer = answer.answer.trim().toLowerCase();
+                        
+                        // ตรวจสอบว่าตรงกับคำตอบที่ถูกต้องหรือไม่
+                        const isMatch = question.answerTexts.some(correctAnswer => 
+                            correctAnswer.trim().toLowerCase() === normalizedUserAnswer
+                        );
+                        
+                        if (isMatch) {
+                            isCorrect = true;
+                            points = question.points || 0;
+                            console.log('Correct short answer! Points:', points);
+                        }
+                    }
+                    break;
+                
+                case 'Paragraph':
+                    // For paragraph questions - อาจารย์ต้องตรวจเอง
+                    points = 0;
+                    break;
+            }
+            
+            // เพิ่มคำตอบเข้าไปในอาร์เรย์
+            if (answer.type !== 'matching') { // matching จัดการแล้วในด้านบน
+                attemptAnswers.push({
+                    questionId: answer.questionId,
+                    answer: answer.answer,
+                    type: answer.type,
+                    isCorrect,
+                    points
+                });
+                
+                totalScore += points;
+            }
+        }
+        
+        console.log('Total score:', totalScore);
+        console.log('Processed answers:', attemptAnswers);
+        
+        // อัปเดตข้อมูลการทดสอบ
+        currentAttempt.answers = attemptAnswers;
+        currentAttempt.totalScore = totalScore;
+        currentAttempt.submittedAt = new Date();
+        currentAttempt.duration = duration || 0;
+        currentAttempt.status = 'completed'; // แก้สถานะเป็น completed
+        
+        await quiz.save();
+        
+        return res.status(200).json({
+            success: true,
+            score: totalScore,
+            message: 'ส่งแบบทดสอบสำเร็จ'
+        });
+        
+    } catch (error) {
+        console.error('Quiz submission error:', error);
+        return res.status(500).json({
+            success: false,
+            message: error.message || 'เกิดข้อผิดพลาดในการส่งแบบทดสอบ'
+        });
+    }
+};
   
 
 

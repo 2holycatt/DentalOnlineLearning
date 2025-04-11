@@ -7,6 +7,7 @@ const SchoolYear = require("../models/schoolYear");
 const Subject = require("../models/subjects");
 const Assignment = require("../models/Assignments");
 const fs = require('fs');
+const path = require('path');
 const multer = require('multer');
 const upload = multer();
 const { uploadQuestionImage } = require('../middleware/multer');
@@ -18,39 +19,11 @@ const Grid = require('gridfs-stream');
 const { Readable } = require('stream');
 const schedule = require('node-schedule');
 const cron = require('node-cron');
-const { S3Client } = require('@aws-sdk/client-s3');
-const multerS3 = require('multer-s3');
-const path = require('path');
+
 
 // const Notification = require("../models/notification");
 // const { createNotification } = require('./notificationController');
 // const { sendEmail } = require('../service/notification');
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-  }
-});
-
-
-const handleUploadError = (error, req, res, next) => {
-  console.error('Upload error:', error);
-  
-  if (error instanceof multer.MulterError) {
-    if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({
-        success: false,
-        message: 'ไฟล์มีขนาดใหญ่เกินไป (จำกัดที่ 5MB)'
-      });
-    }
-  }
-  
-  return res.status(500).json({
-    success: false,
-    message: error.message || 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์'
-  });
-};
 
 async function getSubjectsForNav(userId) {
   try {
@@ -443,7 +416,7 @@ exports.eachQuiz = async (req, res) => {
     // ตรวจสอบว่ามี '/edit' หรือไม่
     const studentDbId = req.query.studentDbId;
 
-    const student = await Student.findOne({ user: req.session.userId });
+    const student = await Student.findOne({ user: req.session.userId }).populate('user');
 
     const navSubjects = await getSubjectsForNav(req.session.userId);
 
@@ -594,9 +567,12 @@ exports.eachQuiz = async (req, res) => {
 
     let studentScore = 0;
     let attemptCount = 0;
+    let completedAttemptCount = 0;
+    let hasIncompleteAttempt = false;
+    let incompleteAttempt = null;
+    let bestAttempt = null;
     let highestScore = 0;
     let canAttempt = true;
-
 
     if (userRole === 'student') {
       // Initialize attempts array if undefined
@@ -610,21 +586,30 @@ exports.eachQuiz = async (req, res) => {
         attempt.studentDbId.toString() === student._id.toString()  // เปลี่ยนจาก req.session.userId เป็น student._id
       );
 
+      if (studentAttempt && studentAttempt.eachAttempt) {
+        // Count all attempts
+        attemptCount = studentAttempt.eachAttempt.length;
+        
+        // Check for incomplete attempts
+        incompleteAttempt = studentAttempt.eachAttempt.find(a => a.status === 'incomplete');
+        hasIncompleteAttempt = !!incompleteAttempt;
+        
+        // Count only completed attempts
+        const completedAttempts = studentAttempt.eachAttempt.filter(a => a.status === 'completed');
+        completedAttemptCount = completedAttempts.length;
+        
+        // Find attempt with highest score from completed attempts
+        if (completedAttempts.length > 0) {
+            bestAttempt = completedAttempts.reduce((best, current) => {
+                return (!best || current.totalScore > best.totalScore) ? current : best;
+            }, null);
+            
+            highestScore = bestAttempt ? bestAttempt.totalScore : 0;
+        }
+    }
 
-
-  if (studentAttempt && studentAttempt.eachAttempt) {
-    attemptCount = studentAttempt.eachAttempt.length;
-    // Find attempt with highest score
-    bestAttempt = studentAttempt.eachAttempt.reduce((best, current) => {
-      return (!best || current.totalScore > best.totalScore) ? current : best;
-    }, null);
-    
-    highestScore = bestAttempt ? bestAttempt.totalScore : 0;
-  }
-
-  canAttempt = attemptCount < quiz.attemptLimit;
-
-}
+    canAttempt = (completedAttemptCount < quiz.attemptLimit) || hasIncompleteAttempt;
+    }
 
     // จัดเรียง foundQuestions ตามวันที่สร้าง
     // questions.sort((a, b) => {
@@ -717,14 +702,19 @@ exports.eachQuiz = async (req, res) => {
       } else if (isResultDetailPage) {
         const studentDbId = req.query.studentDbId;
   
-  
-  const studentAttempt = quiz.attempts.find(
-    attempt => attempt.studentDbId.toString() === studentDbId
-  );
+        const studentAttempt = quiz.attempts.find(
+          attempt => attempt.studentDbId.toString() === studentDbId
+        );
 
-  if (!studentAttempt) {
-    return res.status(404).send("Student attempt not found");
-  } 
+        if (!studentAttempt) {
+          return res.status(404).send("Student attempt not found");
+        } 
+
+        // Find best attempt for this student
+        const bestAttempt = studentAttempt.eachAttempt.reduce((best, current) => {
+          return (!best || current.totalScore > best.totalScore) ? current : best;
+        }, null);
+
         res.render("quiz_resultDetailResponse", {
           mytitle: "Quiz Result Detail Response",
           quiz,
@@ -743,7 +733,7 @@ exports.eachQuiz = async (req, res) => {
           studentDbId: studentAttempt, // Pass the student attempt data
           studentScore: studentAttempt.eachAttempt[0].totalScore, // Get the score from the first attempt
           attemptCount: studentAttempt.eachAttempt.length,
-          percentage: (studentAttempt.eachAttempt[0].totalScore / totalPoints) * 100,
+          percentage: (bestAttempt ? (bestAttempt.totalScore / totalPoints) * 100 : 0),
           theme,
           isSidebarOpen,
           navSubjects
@@ -834,7 +824,6 @@ exports.eachQuiz = async (req, res) => {
           navSubjects
         });
       }
-
       else {
         res.render("eachQuizStudent", {
           mytitle: "eachQuizStudent",
@@ -850,9 +839,12 @@ exports.eachQuiz = async (req, res) => {
           totalPoints,
           studentScore: highestScore,
           attemptCount,
+          completedAttemptCount,
           canAttempt,
+          hasIncompleteAttempt,
+          incompleteAttempt,
           bestAttempt,
-          percentage: (studentScore / totalPoints) * 100,
+          percentage: (highestScore / totalPoints) * 100,
           theme,
           isSidebarOpen,
           navSubjects
@@ -1104,7 +1096,6 @@ exports.search = async (req, res) => {
 
 exports.uploadQuestionImage = [
   uploadQuestionImage.single('avatar'),
-  handleUploadError,
   async (req, res) => {
       try {
           if (!req.file) {
@@ -1114,13 +1105,34 @@ exports.uploadQuestionImage = [
               });
           }
 
-          // ส่งข้อมูลกลับไปยัง client
+          const quizId = req.query.quizId;
+          if (!quizId) {
+              return res.status(400).json({
+                  success: false,
+                  message: 'ไม่พบ Quiz ID'
+              });
+          }
+
+          // สร้าง URL สำหรับเข้าถึงรูปภาพ
+          const imageUrl = `/uploads/questions/${req.file.filename}`;
+
+          // อัพเดทข้อมูลใน Quiz model ถ้าจำเป็น
+          const quiz = await Quiz.findById(quizId);
+          if (!quiz) {
+              return res.status(404).json({
+                  success: false,
+                  message: 'ไม่พบแบบทดสอบ'
+              });
+          }
+
+          // ส่งข้อมูลกลับ
           res.json({
               success: true,
               message: 'อัปโหลดรูปภาพสำเร็จ',
-              imageUrl: req.file.location, // S3 URL ของไฟล์
+              imageUrl: imageUrl,
               contentType: req.file.mimetype
           });
+
       } catch (error) {
           console.error('Upload error:', error);
           res.status(500).json({

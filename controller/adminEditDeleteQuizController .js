@@ -49,7 +49,7 @@ const deleteQuiz = async (req, res) => {
 
 const updateQuiz = async (req, res) => {
   try {
-    const { quizId, quizname, quizdescription, attemptLimit, timeLimit, questions } = req.body;
+    const { quizId, quizname, quizdescription, attemptLimit, timeLimit, questions, preserveAttempts } = req.body;
 
     const quiz = await Quiz.findById(quizId);
     if (!quiz) {
@@ -122,6 +122,27 @@ const updateQuiz = async (req, res) => {
       });
     }
 
+    if (!preserveAttempts) {
+      // อัปเดตทุกข้อมูล
+      const updatedQuiz = await Quiz.findByIdAndUpdate(
+          quizId,
+          updateData,
+          { new: true, runValidators: true }
+      );
+  } else {
+      // อัปเดตเฉพาะข้อมูลโดยไม่กระทบกับ attempts
+      const updatedQuiz = await Quiz.findByIdAndUpdate(
+          quizId,
+          { $set: {
+              quizname: quizname,
+              quizdescription: quizdescription,
+              attemptLimit: attemptLimit,
+              timeLimit: timeLimit,
+              questions: questions
+          }},
+          { new: true, runValidators: true }
+      );
+  }
     const savedQuiz = await quiz.save();
     res.json({ success: true, message: 'Quiz updated successfully', quiz: savedQuiz });
 

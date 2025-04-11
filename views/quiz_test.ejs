@@ -2184,123 +2184,117 @@ function restoreMatching(questionIndex, matches) {
 
 async function submitQuiz(quizId) {
     try {
-
         clearInterval(timerInterval);
-
-        const currentDurationKey = localStorage.getItem('current_duration_key');
-        const currentDuration = parseInt(localStorage.getItem(currentDurationKey)) || 0;
-
+        
+        // Get the total duration for this attempt
+        const totalDuration = getElapsedTime(quizId);
+        const attemptId = localStorage.getItem(`quiz_${quizId}_attempt_id`);
+        
+        // สร้างอาร์เรย์เก็บคำตอบ
         const answers = [];
-        let hasAtLeastOneAnswer = false;
 
-        // รวบรวมคำตอบ
-        document.querySelectorAll('.question').forEach((questionDiv, index) => {
-            if (index === 0) return; // ข้ามส่วนหัวของแบบทดสอบ
-
+        // รวบรวมคำตอบจากทุกคำถาม
+        document.querySelectorAll('.question').forEach((questionDiv) => {
+            // ข้ามหัวข้อหรือคำถามที่ไม่มี ID
+            if (!questionDiv.dataset.questionId || !questionDiv.dataset.originalIndex) return;
+            
             const questionId = questionDiv.dataset.questionId;
             const originalIndex = questionDiv.dataset.originalIndex;
             const optionsDiv = questionDiv.querySelector('.options');
             
-            if (!optionsDiv || !questionId) return;
+            if (!optionsDiv) return;
             
             const questionType = optionsDiv.dataset.type;
-            let answer = null;
-
-            try {
-                switch (questionType) {
-                    case 'MCQ':
-                        const selectedRadio = questionDiv.querySelector('input[type="radio"]:checked');
-                        if (selectedRadio) {
-                            answer = {
-                                questionId,
-                                type: 'MCQ',
-                                answer: parseInt(selectedRadio.dataset.originalIndex)
-                            };
-                            hasAtLeastOneAnswer = true;
-                        }
-                        break;
-
-                    case 'checkbox':
-                        const checkedBoxes = Array.from(questionDiv.querySelectorAll('input[type="checkbox"]:checked'));
-                        if (checkedBoxes.length > 0) {
-                            answer = {
-                                questionId,
-                                type: 'checkbox',
-                                answer: checkedBoxes.map(cb => parseInt(cb.dataset.originalIndex))
-                            };
-                            hasAtLeastOneAnswer = true;
-                        }
-                        break;
-
-                    case 'Paragraph':
-                    case 'short_answ':
-                        const textarea = questionDiv.querySelector('textarea');
-                        const textValue = textarea ? textarea.value.trim() : '';
-                        if (textValue) {
-                            answer = {
-                                questionId,
-                                type: questionType,
-                                answer: textValue
-                            };
-                            hasAtLeastOneAnswer = true;
-                        }
-                        break;
-
-                    case 'matching':
-                        const matchLines = Array.from(questionDiv.querySelectorAll('.matching-line'));
-                        if (matchLines.length > 0) {
-                            answer = {
-                                questionId,
-                                type: 'matching',
-                                answer: matchLines.map(line => ({
-                                    leftIndex: parseInt(line.dataset.left),
-                                    rightIndex: parseInt(line.dataset.right)
-                                }))
-                            };
-                            hasAtLeastOneAnswer = true;
-                        }
-                        break;
-                }
-
-                if (answer !== null) {
-                    answers.push(answer);
-                }
-
-            } catch (error) {
-                console.error(`Error processing question ${questionId}:`, error);
+            
+            // เก็บคำตอบตามประเภทคำถาม
+            switch (questionType) {
+              case 'MCQ':
+              const selectedRadio = questionDiv.querySelector('input[type="radio"]:checked');
+              if (selectedRadio) {
+                  // ดูว่าข้อมูลอยู่ในรูปแบบไหน และตรวจสอบให้แน่ใจว่าส่งค่าที่ถูกต้อง
+                  const answerValue = selectedRadio.dataset.originalIndex 
+                      ? parseInt(selectedRadio.dataset.originalIndex) 
+                      : parseInt(selectedRadio.value);
+                  
+                  console.log("MCQ answer found:", answerValue, "type:", typeof answerValue);
+                  
+                  answers.push({
+                      questionId: questionId,
+                      type: 'MCQ',
+                      answer: answerValue // ส่งเป็นตัวเลข not string
+                  });
+              }
+              break;
+                
+                case 'checkbox':
+                    const checkedBoxes = Array.from(questionDiv.querySelectorAll('input[type="checkbox"]:checked'));
+                    if (checkedBoxes.length > 0) {
+                        answers.push({
+                            questionId: questionId,
+                            type: 'checkbox',
+                            answer: checkedBoxes.map(cb => parseInt(cb.dataset.originalIndex || cb.value))
+                        });
+                    }
+                    break;
+                
+                case 'Paragraph':
+                case 'short_answ':
+                    const textarea = questionDiv.querySelector('textarea');
+                    if (textarea && textarea.value.trim()) {
+                        answers.push({
+                            questionId: questionId,
+                            type: questionType,
+                            answer: textarea.value.trim()
+                        });
+                    }
+                    break;
+                
+                case 'matching':
+                    // ดึงข้อมูล matching จาก localStorage หรือ matchingStorage
+                    const questionIndex = questionDiv.dataset.questionIndex;
+                    const matches = matchingStorage.currentMatches.get(parseInt(questionIndex));
+                    
+                    if (matches && matches.length > 0) {
+                        answers.push({
+                            questionId: questionId,
+                            type: 'matching',
+                            answer: matches
+                        });
+                    }
+                    break;
             }
         });
 
-        if (!hasAtLeastOneAnswer) {
-            throw new Error('กรุณาตอบคำถามอย่างน้อย 1 ข้อ');
-        }
+        console.log('คำตอบที่จะส่ง:', answers); // สำหรับ debug
 
-        console.log('Answers to submit:', answers); // ตรวจสอบคำตอบก่อนส่ง
-
+        // ส่ง API request
         const response = await fetch(`/studentIndex/submitQuiz/${quizId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                quizId,
-                answers,
-                duration: currentDuration
+                answers: answers,
+                duration: totalDuration,
+                attemptId: attemptId,
+                status: 'completed'
             })
         });
 
         const result = await response.json();
 
         if (result.success) {
-            // Clear localStorage
+            // ล้าง localStorage
+            localStorage.removeItem(`quiz_${quizId}_start_time`);
+            localStorage.removeItem(`quiz_${quizId}_current_duration`);
+            localStorage.removeItem(`quiz_${quizId}_attempt_id`);
             localStorage.removeItem(`quiz_${quizId}_answers`);
             localStorage.removeItem(`quiz_${quizId}_answers_v2`);
             localStorage.removeItem(`quiz_${quizId}_matching`);
-            localStorage.removeItem(currentDurationKey);
-            localStorage.removeItem('current_duration_key');
-
+            
             Swal.fire({
                 title: 'ส่งแบบทดสอบสำเร็จ!',
+                text: `คะแนนที่ได้: ${result.score} คะแนน`,
                 icon: 'success'
             }).then(() => {
                 window.location.href = `/studentIndex/eachQuiz?quizId=${quizId}`;
@@ -2308,7 +2302,7 @@ async function submitQuiz(quizId) {
         } else {
             throw new Error(result.message || 'เกิดข้อผิดพลาดในการส่งแบบทดสอบ');
         }
-
+        
     } catch (error) {
         console.error('Submit error:', error);
         Swal.fire({
@@ -2722,28 +2716,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ฟังก์ชันเริ่มจับเวลา
 function startTimer() {
-    // สร้าง key ใหม่สำหรับการทำครั้งนี้
     const quizId = document.getElementById('form').dataset.quizId;
-    const durationKey = getDurationKey(quizId);
     
-    // บันทึก key ปัจจุบันไว้ใช้ตอนส่งคำตอบ
-    localStorage.setItem('current_duration_key', durationKey);
+    // Get the elapsed time since quiz started, even after page refresh
+    duration = getElapsedTime(quizId);
+    remainingTime = timeLimit - duration;
     
-    timeLimit = <%= quiz.timeLimit.value %>; // รับค่า timeLimit จาก server
-    duration = 0; // เริ่มนับใหม่ทุกครั้ง
-    remainingTime = timeLimit;
-
+    // If time limit is already exceeded, submit automatically
+    if (remainingTime <= 0) {
+        handleTimeUp();
+        return;
+    }
+    
     updateTimerDisplay();
+    
     timerInterval = setInterval(() => {
         duration++;
         remainingTime--;
         
-        // บันทึก duration ด้วย key ใหม่
-        localStorage.setItem(durationKey, duration.toString());
+        // Update localStorage with current duration
+        localStorage.setItem(`quiz_${quizId}_current_duration`, duration.toString());
         
-        // อัพเดทการแสดงผล
+        // Update timer display
         updateTimerDisplay();
         
+        // Check if time is up
         if (remainingTime <= 0) {
             clearInterval(timerInterval);
             handleTimeUp();
@@ -2780,7 +2777,15 @@ function handleTimeUp() {
     });
 }
 
-
+function getElapsedTime(quizId) {
+    const startTime = localStorage.getItem(`quiz_${quizId}_start_time`);
+    if (!startTime) {
+        return 0;
+    }
+    
+    const elapsedMilliseconds = Date.now() - parseInt(startTime);
+    return Math.floor(elapsedMilliseconds / 1000); // Convert to seconds
+}
 
         </script>
 
