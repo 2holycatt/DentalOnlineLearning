@@ -179,6 +179,8 @@ exports.submitQuiz = async (req, res) => {
                 return res.status(404).json({ success: false, message: 'ไม่พบการทำแบบทดสอบที่ยังไม่เสร็จ' });
             }
         }
+
+        
         
         // Calculate scores and process answers
         let totalScore = 0;
@@ -362,6 +364,14 @@ exports.submitQuiz = async (req, res) => {
         console.log('Total score:', totalScore);
         console.log('Processed answers:', attemptAnswers);
         
+
+         // Ensure duration doesn't exceed the quiz time limit
+         let finalDuration = duration || 0;
+         if (quiz.timeLimit && quiz.timeLimit.value) {
+             // Cap the duration at the time limit value
+             finalDuration = Math.min(finalDuration, quiz.timeLimit.value);
+             console.log(`Limiting duration to time limit: ${finalDuration} seconds`);
+         }
         // อัปเดตข้อมูลการทดสอบ
         currentAttempt.answers = attemptAnswers;
         currentAttempt.totalScore = totalScore;

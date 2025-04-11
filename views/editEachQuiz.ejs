@@ -1297,6 +1297,20 @@
 .d-none {
     display: none !important;
 }
+.modal-footer .btn {
+    min-width: 80px; /* กำหนดความกว้างขั้นต่ำของปุ่ม */
+    transition: none; /* ยกเลิก transition เพื่อป้องกันการเปลี่ยนขนาด */
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
         @media screen and (max-width: 768px) {
             body {
                 width: 100%;

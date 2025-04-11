@@ -2187,7 +2187,15 @@ async function submitQuiz(quizId) {
         clearInterval(timerInterval);
         
         // Get the total duration for this attempt
-        const totalDuration = getElapsedTime(quizId);
+        let totalDuration = getElapsedTime(quizId);
+        const timeLimit = <%= quiz.timeLimit.value %>; // รับค่า timeLimit จาก server
+        
+        // ตรวจสอบและจำกัดค่า duration ไม่ให้เกิน timeLimit
+        if (totalDuration > timeLimit) {
+            console.log(`Duration ${totalDuration} exceeds time limit ${timeLimit}, capping at ${timeLimit}`);
+            totalDuration = timeLimit;
+        }
+        
         const attemptId = localStorage.getItem(`quiz_${quizId}_attempt_id`);
         
         // สร้างอาร์เรย์เก็บคำตอบ
@@ -2765,6 +2773,15 @@ function updateTimerDisplay() {
 }
 
 function handleTimeUp() {
+  clearInterval(timerInterval);
+
+   // กำหนดให้ duration เท่ากับ timeLimit เมื่อหมดเวลา
+   const quizId = document.getElementById('form').dataset.quizId;
+    const timeLimit = <%= quiz.timeLimit.value %>;
+    
+    // บันทึกค่า duration เป็น timeLimit เมื่อหมดเวลา
+    localStorage.setItem(`quiz_${quizId}_current_duration`, timeLimit.toString());
+
     Swal.fire({
         title: 'หมดเวลาทำแบบทดสอบ!',
         text: 'ระบบจะทำการส่งคำตอบอัตโนมัติ',
@@ -2779,12 +2796,17 @@ function handleTimeUp() {
 
 function getElapsedTime(quizId) {
     const startTime = localStorage.getItem(`quiz_${quizId}_start_time`);
+    const timeLimit = <%= quiz.timeLimit.value %>; // รับค่า timeLimit จาก server
+    
     if (!startTime) {
         return 0;
     }
     
     const elapsedMilliseconds = Date.now() - parseInt(startTime);
-    return Math.floor(elapsedMilliseconds / 1000); // Convert to seconds
+    const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+    
+    // จำกัดค่า elapsed time ไม่ให้เกิน timeLimit
+    return Math.min(elapsedSeconds, timeLimit);
 }
 
         </script>
