@@ -1097,13 +1097,17 @@ exports.search = async (req, res) => {
 exports.uploadQuestionImage = [
   uploadQuestionImage.single('avatar'),
   async (req, res) => {
-      try {
-          if (!req.file) {
-              return res.status(400).json({
-                  success: false,
-                  message: 'กรุณาเลือกไฟล์รูปภาพ'
-              });
-          }
+    try {
+      console.log('Request received to upload question image');
+      
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: 'กรุณาเลือกไฟล์รูปภาพ'
+        });
+      }
+      
+      console.log('File received:', req.file);
 
           const quizId = req.query.quizId;
           if (!quizId) {
@@ -1114,7 +1118,7 @@ exports.uploadQuestionImage = [
           }
 
           // สร้าง URL สำหรับเข้าถึงรูปภาพ
-          const imageUrl = `/uploads/questions/${req.file.filename}`;
+      const imageUrl = req.file.location || `/uploads/${req.file.filename}`;
 
           // อัพเดทข้อมูลใน Quiz model ถ้าจำเป็น
           const quiz = await Quiz.findById(quizId);

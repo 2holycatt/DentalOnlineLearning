@@ -98,27 +98,20 @@ const imgUpload = multer({
   }
 });
 
+
 const uploadQuestionImage = multer({
-  storage: multerS3({
-      s3: s3Client,
-      bucket: process.env.AWS_BUCKET_NAME,
-      acl: 'public-read', // ตั้งค่าการเข้าถึง (optional)
-      key: function (req, file, cb) {
-          const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-          const fileName = `question_pics/${timestamp}_${file.originalname.replace(/\s+/g, '_')}`;
-          cb(null, fileName);
-      },
-      contentType: multerS3.AUTO_CONTENT_TYPE
-  }),
-  limits: { 
-      fileSize: 5 * 1024 * 1024 // จำกัดขนาดไฟล์ที่ 5MB
-  },
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // limit to 5MB
   fileFilter: function (req, file, cb) {
-      // ตรวจสอบประเภทไฟล์
-      if (!file.mimetype.startsWith('image/')) {
-          return cb(new Error('เฉพาะไฟล์รูปภาพเท่านั้น'));
-      }
-      cb(null, true);
+    const filetypes = /jpeg|jpg|png|gif|webp/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+    
+    cb(new Error('กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น!'));
   }
 });
 
